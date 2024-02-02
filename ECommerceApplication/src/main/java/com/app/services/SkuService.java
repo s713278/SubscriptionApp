@@ -4,9 +4,9 @@ import com.app.payloads.SkuDTO;
 
 public interface SkuService {
 
-	SkuDTO addProduct(SkuDTO skuDTO);
+	SkuDTO addSku(SkuDTO skuDTO);
 
-	SkuDTO updateProduct(Long skuId, SkuDTO skuDTO);
+	SkuDTO updateSku(Long skuId, SkuDTO skuDTO);
 
 	String deleteSku(Long skuId);
 

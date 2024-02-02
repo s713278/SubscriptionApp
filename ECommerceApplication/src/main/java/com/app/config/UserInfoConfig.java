@@ -13,10 +13,12 @@ import com.app.entites.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Slf4j
 public class UserInfoConfig implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
@@ -28,6 +30,7 @@ public class UserInfoConfig implements UserDetails {
 	public UserInfoConfig(User user) {
 		this.email = user.getEmail();
 		this.password = user.getPassword();
+		log.info("User email {} and role {}",user.getEmail() ,user.getRoles());
 		this.authorities = user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getRoleName()))
 				.collect(Collectors.toList());
 	}

@@ -35,8 +35,9 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf(t -> t.disable()).authorizeHttpRequests(auth -> {
-			auth.requestMatchers(AppConstants.PUBLIC_URLS).permitAll().requestMatchers(AppConstants.USER_URLS)
-					.hasAnyAuthority("USER", "ADMIN").requestMatchers(AppConstants.ADMIN_URLS).hasAuthority("ADMIN")
+					auth.requestMatchers(AppConstants.PUBLIC_URLS).permitAll()
+						.requestMatchers(AppConstants.USER_URLS).hasAnyAuthority("USER", "ADMIN")
+						.requestMatchers(AppConstants.ADMIN_URLS).hasAuthority("ADMIN")
 					.anyRequest().authenticated();
 		}).exceptionHandling(t -> t.authenticationEntryPoint((request, response, authException) -> response
 				.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")))

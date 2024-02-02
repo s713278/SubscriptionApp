@@ -8,9 +8,9 @@ import com.app.payloads.response.AddItemResponse;
 
 public interface CartService {
 
-	AddItemResponse addItemToCart(AddItemRequest request);
+	AddItemResponse addItem(AddItemRequest request);
 
-	CartDTO addSkuToCart(Long storeId, Long cartId, Long skuId, Integer quantity);
+	CartDTO addItem(Long storeId, Long cartId, Long skuId, Integer quantity);
 
 	List<CartDTO> getAllCarts();
 

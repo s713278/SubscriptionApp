@@ -121,7 +121,7 @@ public class OrderServiceImpl implements OrderService {
 
 			Sku product = item.getSku();
 
-			cartService.deleteProductFromCart(cartId, item.getSku().getSkuId());
+			//cartService.deleteProductFromCart(cartId, item.getSku().getSkuId());
 
 			product.setQuantity(product.getQuantity() - quantity);
 		});

@@ -19,11 +19,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Autowired
 	private UserRepo userRepo;
 
+
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Optional<User> user = userRepo.findByEmail(username);
-
-		return user.map(UserInfoConfig::new)
-				.orElseThrow(() -> new ResourceNotFoundException("User", "email", username));
+		if(!user.isPresent()) {
+			throw new ResourceNotFoundException("User", "email", username);
+		}
+		return user.map(UserInfoConfig::new).get();
 	}
 }

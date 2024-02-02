@@ -15,12 +15,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserDTO {
 
-	@JsonIgnore
 	private Long userId;
 	private String firstName;
 	private String lastName;
 	private String mobileNumber;
 	private String email;
+	@JsonIgnore
 	private String password;
 
 	@JsonIgnore

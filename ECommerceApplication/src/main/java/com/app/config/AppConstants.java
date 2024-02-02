@@ -15,7 +15,7 @@ public class AppConstants {
 	public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 	public static final String[] PUBLIC_URLS = { "/v3/api-docs/**", "/swagger-ui/**", "/api/register/**",
 			"/api/login" };
-	public static final String[] USER_URLS = { "/api/public/users/**", "/api/store/**" };
+	public static final String[] USER_URLS = { "/api/public/users/**","/api/store/*/carts/*/items" };
 	public static final String[] ADMIN_URLS = { "/api/store/{store_id}/admin/**" };
 	public static final String[] STORE_URLS = { "/api/store/{store_id}/admin/**" };
 

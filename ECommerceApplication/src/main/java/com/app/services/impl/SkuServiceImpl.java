@@ -18,16 +18,16 @@ public class SkuServiceImpl implements SkuService {
 	final SkuRepo skuRepo;
 
 	@Override
-	public SkuDTO addProduct(SkuDTO skuDTO) {
+	public SkuDTO addSku(SkuDTO skuDTO) {
 		Sku sku = modelMapper.map(skuDTO, Sku.class);
 		skuRepo.save(sku);
 		return modelMapper.map(sku, SkuDTO.class);
 	}
 
 	@Override
-	public SkuDTO updateProduct(Long skuId, SkuDTO skuDTO) {
+	public SkuDTO updateSku(Long skuId, SkuDTO skuDTO) {
 		Sku sku = modelMapper.map(skuDTO, Sku.class);
-		sku.setSkuId(skuId);
+		//sku.setSkuId(skuId);
 		skuRepo.save(sku);
 		return modelMapper.map(sku, SkuDTO.class);
 	}

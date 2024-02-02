@@ -38,6 +38,7 @@ import jakarta.transaction.Transactional;
 @Service
 public class UserServiceImpl implements UserService {
 
+	
 	@Autowired
 	private UserRepo userRepo;
 
@@ -60,6 +61,8 @@ public class UserServiceImpl implements UserService {
 	public UserDTO registerUser(UserDTO userDTO) {
 
 		try {
+			String encodedPass = passwordEncoder.encode(userDTO.getPassword());
+			userDTO.setPassword(encodedPass);
 			User user = modelMapper.map(userDTO, User.class);
 
 			Cart cart = new Cart();
@@ -86,16 +89,11 @@ public class UserServiceImpl implements UserService {
 				}
 				user.setAddresses(List.of(address));
 			}
-
 			User registeredUser = userRepo.save(user);
-
 			// cart.setUser(registeredUser);
-
 			userDTO = modelMapper.map(registeredUser, UserDTO.class);
-
 			// userDTO.setAddress(modelMapper.map(user.getAddresses().stream().findFirst().get(),
 			// AddressDTO.class));
-
 			return userDTO;
 		} catch (DataIntegrityViolationException e) {
 			throw new APIException("User already exists with emailId: " + userDTO.getEmail());
@@ -127,7 +125,7 @@ public class UserServiceImpl implements UserService {
 			List<SkuDTO> skuDTOs = user.getCart().getCartItems().stream()
 					.map(item -> modelMapper.map(item.getSku(), SkuDTO.class)).collect(Collectors.toList());
 			dto.setCart(cart);
-			dto.getCart().setSkus(skuDTOs);
+			//dto.getCart().setSkus(skuDTOs);
 			return dto;
 
 		}).collect(Collectors.toList());
@@ -157,7 +155,7 @@ public class UserServiceImpl implements UserService {
 					.map(item -> modelMapper.map(item.getSku(), SkuDTO.class)).collect(Collectors.toList());
 			userDTO.setCart(cart);
 
-			userDTO.getCart().setSkus(skuDTOs);
+			//userDTO.getCart().setSkus(skuDTOs);
 
 		}
 
@@ -207,7 +205,7 @@ public class UserServiceImpl implements UserService {
 				.map(item -> modelMapper.map(item.getSku(), SkuDTO.class)).collect(Collectors.toList());
 		userDTO.setCart(cart);
 
-		userDTO.getCart().setSkus(skuDTOs);
+		//userDTO.getCart().setSkus(skuDTOs);
 		return userDTO;
 	}
 
@@ -217,14 +215,15 @@ public class UserServiceImpl implements UserService {
 				.orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
 
 		List<CartItem> cartItems = user.getCart().getCartItems();
-		Long cartId = user.getCart().getCartId();
+		Long cartId = user.getCart().getId();
 
-		cartItems.forEach(item -> {
-
-			Long skuId = item.getSku().getSkuId();
-
-			cartService.deleteProductFromCart(cartId, skuId);
-		});
+		/*
+		 * cartItems.forEach(item -> {
+		 * 
+		 * Long skuId = item.getSku().getSkuId();
+		 * 
+		 * cartService.deleteProductFromCart(cartId, skuId); });
+		 */
 
 		userRepo.delete(user);
 

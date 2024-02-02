@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -38,7 +37,7 @@ public class Store extends AbstractAuditingEntity<Long> implements Serializable 
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long storeId;
+	private Long id;
 
 	@NotBlank
 	@Size(min = 5, message = "Store name must contain atleast 5 characters")
@@ -57,10 +56,5 @@ public class Store extends AbstractAuditingEntity<Long> implements Serializable 
 
 	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
 	private List<Category> categories;
-
-	@Override
-	public Long getId() {
-		return this.storeId;
-	}
 
 }

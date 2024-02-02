@@ -1,10 +1,16 @@
 package com.app.security;
 
+import java.time.Instant;
 import java.util.Date;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.app.entites.User;
+import com.app.repositories.UserRepo;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -14,32 +20,42 @@ import com.auth0.jwt.interfaces.JWTVerifier;
 
 @Component
 public class JWTUtil {
+	
+	private static final String NSR_STORES = "NSR Stores";
+
+	@Autowired
+	private  UserRepo userRepo;
 
 	@Value("${jwt_secret}")
 	private String secret;
 
 	public String generateToken(String email) throws IllegalArgumentException, JWTCreationException {
-		return JWT.create().withSubject("User Details").withClaim("email", email).withIssuedAt(new Date())
-				.withIssuer("NSR Stores").sign(Algorithm.HMAC256(secret));
-	}
-
-	public String generateToken(String userId, String storeId) throws IllegalArgumentException, JWTCreationException {
-		return JWT.create().withSubject("User Details").withClaim("userId", userId).withClaim("storeId", storeId)
-				.withIssuedAt(new Date()).withIssuer("NSR Stores").sign(Algorithm.HMAC256(secret));
+		Optional<User>  userOptional = userRepo.findByEmail(email);
+		User user =userOptional.get();
+		return JWT.create()
+				.withSubject(String.valueOf(user.getId())) //User ID
+				.withIssuedAt(Instant.now())
+				.withExpiresAt(Instant.now().plusSeconds(60*60))
+				.withClaim("email", user.getEmail())
+				.withClaim("cart_id", user.getCart().getId())
+				.withClaim("roles", user.getRoles().stream().map(role -> role.getRoleName()).collect(Collectors.joining(email, "[", "]")))
+				.withIssuer(NSR_STORES)
+				.sign(Algorithm.HMAC256(secret));
 	}
 
 	public String validateTokenAndRetrieveSubject(String token) throws JWTVerificationException {
-		JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret)).withSubject("User Details")
-				.withIssuer("NSR Stores").build();
-
+		JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
+				//.withSubject("User Details")
+				.withIssuer(NSR_STORES).build();
+		
 		DecodedJWT jwt = verifier.verify(token);
-
 		return jwt.getClaim("email").asString();
 	}
 
 	public UserClaims validateTokenAndRetrieveSubjectData(String token) throws JWTVerificationException {
-		JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret)).withSubject("User Details")
-				.withIssuer("NSR Stores").build();
+		JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
+				.withSubject("User Details")
+				.withIssuer(NSR_STORES).build();
 
 		DecodedJWT jwt = verifier.verify(token);
 

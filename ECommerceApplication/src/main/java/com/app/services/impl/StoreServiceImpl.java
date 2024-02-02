@@ -70,7 +70,7 @@ public class StoreServiceImpl implements StoreService {
 		Store savedStore = storeRepo.findById(storeId)
 				.orElseThrow(() -> new ResourceNotFoundException("Store", "storeId", storeId));
 		modelMapper.map(storeDTO, savedStore);
-		savedStore.setStoreId(storeId);
+		savedStore.setId(storeId);
 		savedStore = storeRepo.save(savedStore);
 		return modelMapper.map(savedStore, StoreDTO.class);
 	}
