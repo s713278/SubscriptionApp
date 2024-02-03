@@ -12,11 +12,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LoginCredentials {
 
-	@Schema(description = "Email", example = "swamy.kunta@gmail.com")
-	@Email
-	@Column(unique = true, nullable = false)
-	private String email;
+  @Schema(description = "Email", example = "swamy.kunta@gmail.com")
+  @Email
+  @Column(unique = true, nullable = false)
+  private String email;
 
-	@Schema(description = "Email", example = "12345678")
-	private String password;
+  @Schema(description = "Email", example = "12345678")
+  private String password;
 }

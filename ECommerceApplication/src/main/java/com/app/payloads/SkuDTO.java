@@ -9,18 +9,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SkuDTO {
 
-	private Long skuId;
+  private Long skuId;
 
-	private String name;
+  private String name;
 
-	private String image;
+  private String image;
 
-	private String description;
+  private String description;
 
-	private Integer quantity;
-	private double listPrice;
-	private double salePrice;
-	/*
+  private Integer quantity;
+  private double listPrice;
+  private double salePrice;
+  /*
 	 * private Category category; private Product product;
 	 * 
 	 * private Store store;

@@ -1,34 +1,45 @@
 package com.app.payloads;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.app.entites.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(name = "User Registration Request Body")
 public class UserDTO {
 
-	private Long userId;
-	private String firstName;
-	private String lastName;
-	private String mobileNumber;
-	private String email;
-	@JsonIgnore
-	private String password;
+  @JsonIgnore private Long userId;
 
-	@JsonIgnore
-	private Set<Role> roles = new HashSet<>();
+  @JsonProperty("first_name")
+  private String firstName;
 
-	@JsonIgnore
-	private AddressDTO address;
+  @JsonProperty("last_name")
+  private String lastName;
 
-	@JsonIgnore
-	private CartDTO cart;
+  @JsonProperty("mobile_phone")
+  private String mobileNumber;
+
+  @NotBlank(message = "Email is required.")
+  @JsonProperty("email")
+  private String email;
+
+  @NotBlank(message = "Password is required.")
+  private String password;
+
+  @JsonIgnore private Set<Role> roles = new HashSet<>();
+
+  @JsonIgnore private AddressDTO address;
+
+  @JsonIgnore private CartDTO cart;
 }

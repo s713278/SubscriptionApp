@@ -1,8 +1,5 @@
 package com.app.entites;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,6 +10,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,17 +23,20 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Cart {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long id;
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
-	private User user;
+  @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "user_id")
+  private User user;
 
-	@OneToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY, orphanRemoval = true)
-	@JoinColumn(name = "cart_id")
-	private List<CartItem> cartItems = new ArrayList<>();
+  @OneToMany(
+      cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+      fetch = FetchType.LAZY,
+      orphanRemoval = true)
+  @JoinColumn(name = "cart_id")
+  private List<CartItem> cartItems = new ArrayList<>();
 
-	private Double totalPrice = 0.0;
+  private Double totalPrice = 0.0;
 }

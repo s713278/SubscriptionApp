@@ -18,27 +18,26 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OrderItem {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long orderItemId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long orderItemId;
 
-	@ManyToOne
-	@JoinColumn(name = "productId")
-	private Product product;
+  @ManyToOne
+  @JoinColumn(name = "productId")
+  private Product product;
 
-	@ManyToOne
-	@JoinColumn(name = "sku_id")
-	private Sku sku;
+  @ManyToOne
+  @JoinColumn(name = "sku_id")
+  private Sku sku;
 
-	@ManyToOne
-	@JoinColumn(name = "order_id")
-	private Order order;
+  @ManyToOne
+  @JoinColumn(name = "order_id")
+  private Order order;
 
-	private Integer quantity;
+  private Integer quantity;
 
-	// private double orderedProductPrice;
-	private double discount;
-	private double price;
-	private double tax;
-
+  // private double orderedProductPrice;
+  private double discount;
+  private double price;
+  private double tax;
 }

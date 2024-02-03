@@ -20,33 +20,33 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Sku {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long id;
 
-	@NotBlank
-	@Size(min = 3, message = "Sku name must contain atleast 3 characters")
-	private String name;
+  @NotBlank
+  @Size(min = 3, message = "Sku name must contain atleast 3 characters")
+  private String name;
 
-	private String image;
+  private String image;
 
-	@NotBlank
-	@Size(min = 25, message = "Product description must contain atleast 25 characters")
-	private String description;
+  @NotBlank
+  @Size(min = 25, message = "Product description must contain atleast 25 characters")
+  private String description;
 
-	private Integer quantity;
-	private double listPrice;
-	private double salePrice;
+  private Integer quantity;
+  private double listPrice;
+  private double salePrice;
 
-	@ManyToOne
-	@JoinColumn(name = "productId")
-	private Product product;
+  @ManyToOne
+  @JoinColumn(name = "productId")
+  private Product product;
 
-	@ManyToOne
-	@JoinColumn(name = "store_id")
-	private Store store;
+  @ManyToOne
+  @JoinColumn(name = "store_id")
+  private Store store;
 
-	/*
+  /*
 	 * @OneToMany(mappedBy = "sku", cascade = { CascadeType.PERSIST,
 	 * CascadeType.MERGE }, fetch = FetchType.EAGER) private List<CartItem> skus =
 	 * new ArrayList<>();

@@ -5,12 +5,11 @@ import com.app.payloads.response.StoreResponse;
 
 public interface StoreService {
 
-	StoreDTO createStore(StoreDTO category);
+  StoreDTO createStore(StoreDTO category);
 
-	StoreResponse getStore(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
+  StoreResponse getStore(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
-	StoreDTO updateStore(StoreDTO storeDTO, Long storeId);
+  StoreDTO updateStore(StoreDTO storeDTO, Long storeId);
 
-	String deleteStore(Long storeId);
-
+  String deleteStore(Long storeId);
 }

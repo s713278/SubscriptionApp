@@ -1,19 +1,18 @@
 package com.app.services;
 
-import java.util.List;
-
 import com.app.payloads.OrderDTO;
 import com.app.payloads.OrderResponse;
+import java.util.List;
 
 public interface OrderService {
 
-	OrderDTO placeOrder(String emailId, Long cartId, String paymentMethod);
+  OrderDTO placeOrder(String emailId, Long cartId, String paymentMethod);
 
-	OrderDTO getOrder(String emailId, Long orderId);
+  OrderDTO getOrder(String emailId, Long orderId);
 
-	List<OrderDTO> getOrdersByUser(String emailId);
+  List<OrderDTO> getOrdersByUser(String emailId);
 
-	OrderResponse getAllOrders(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
+  OrderResponse getAllOrders(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
-	OrderDTO updateOrder(String emailId, Long orderId, String orderStatus);
+  OrderDTO updateOrder(String emailId, Long orderId, String orderStatus);
 }

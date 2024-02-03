@@ -1,9 +1,5 @@
 package com.app.entites;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,6 +9,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,29 +23,31 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Order {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long orderId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long orderId;
 
-	private Instant orderTime;
+  private Instant orderTime;
 
-	private String email;
+  private String email;
 
-	@OneToOne
-	@JoinColumn(name = "payment_id")
-	private Payment payment;
+  @OneToOne
+  @JoinColumn(name = "payment_id")
+  private Payment payment;
 
-	@OneToOne
-	@JoinColumn(name = "shipping_id")
-	private Shipping shipping;
+  @OneToOne
+  @JoinColumn(name = "shipping_id")
+  private Shipping shipping;
 
-	private Double subTotal;
-	private Double federalTax;
-	private Double stateTax;
-	private Double totalAmount;
-	private String orderStatus;
+  private Double subTotal;
+  private Double federalTax;
+  private Double stateTax;
+  private Double totalAmount;
+  private String orderStatus;
 
-	@OneToMany(mappedBy = "order", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, orphanRemoval = true)
-	private List<OrderItem> items = new ArrayList<>();
-
+  @OneToMany(
+      mappedBy = "order",
+      cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+      orphanRemoval = true)
+  private List<OrderItem> items = new ArrayList<>();
 }
