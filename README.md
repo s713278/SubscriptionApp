@@ -4,35 +4,16 @@
 
 - The APIs are well-documented and easily accessible through Swagger UI, making it simple for developers to test and understand the various endpoints. Overall, this project provides secure Rest APIs to create a scalable platform for businesses to sell their products to customers.
 
-| Left |  Center  | Right |
-|:-----|:--------:|------:|
-| L0   | **bold** | $1600 |
-| L1   |  `code`  |   $12 |
-| L2   | _italic_ |    $1 |
-
 # Features
-## Admin:-
-- Login
-- Users
-- Address
-- Categories
-- Products
-- Price & discount
-- Orders
-## Store:-
-- Login
-- Users
-- Address
-- Categories
-- Products
-- Price & discount
-- Orders
-## User:-
-- Registration & Login
-- Fetch categories and products based on category
-- Adding & deleting products to cart
-- Managing address and Sku quantity
-- Ordering and fetching order status
+
+| Store Admin |  User  | 
+|:-----|:--------:|
+| Login   |  Registration & Login |
+| Users   |  catalog Browse  |
+| Address   | Cart Management |
+|Categories| Orderring|
+|Price & discount|Account History|
+|Orders| |
 
 # Security
 - The API is secured using JSON Web Tokens (JWT) handled by Auth0. To access the API, you will need to obtain a JWT by authenticating with the /login endpoint. The JWT should then be passed in the Authorize option available in the Swagger-ui.
