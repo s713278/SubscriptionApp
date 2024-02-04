@@ -1,5 +1,9 @@
 package com.app.payloads;
 
+import com.app.entites.Product;
+import com.app.entites.Store;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,20 +13,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SkuDTO {
 
-  private Long skuId;
-
+  private Long id;
   private String name;
-
-  private String image;
-
+  private String imagePath;
   private String description;
-
   private Integer quantity;
   private double listPrice;
   private double salePrice;
-  /*
-	 * private Category category; private Product product;
-	 * 
-	 * private Store store;
-	 */
+
+  @ManyToOne
+  @JoinColumn(name = "productId")
+  private Product product;
+
+  @ManyToOne
+  @JoinColumn(name = "store_id")
+  private Store store;
 }

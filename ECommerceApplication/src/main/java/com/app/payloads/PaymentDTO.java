@@ -1,13 +1,17 @@
 package com.app.payloads;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class PaymentDTO {
-  private Long paymentId;
-  private String paymentMethod;
+
+  @JsonProperty("credit_card")
+  private String creditCardNum;
+
+  @JsonProperty("expiry_date")
+  private String expDate;
+
+  @JsonProperty("billing_address")
+  private AddressDTO billingAddress;
 }

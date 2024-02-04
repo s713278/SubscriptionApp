@@ -21,18 +21,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "users")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(callSuper = false)
-public class User extends AbstractAuditingEntity<Long> implements Serializable {
+@Getter
+@Setter
+public class User /* extends AbstractAuditingEntity<Long> */ implements Serializable {
 
   private static final long serialVersionUID = -8493127251609026343L;
 
@@ -84,7 +80,6 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
       cascade = {CascadeType.ALL})
   private Cart cart;
 
-  @Override
   public Long getId() {
     return this.userId;
   }

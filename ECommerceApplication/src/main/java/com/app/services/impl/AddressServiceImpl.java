@@ -8,12 +8,12 @@ import com.app.payloads.AddressDTO;
 import com.app.repositories.AddressRepo;
 import com.app.repositories.UserRepo;
 import com.app.services.AddressService;
-import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @Service
@@ -32,11 +32,11 @@ public class AddressServiceImpl implements AddressService {
     String state = addressDTO.getState();
     String city = addressDTO.getCity();
     String pincode = addressDTO.getPincode();
-    String street = addressDTO.getStreet();
-    String buildingName = addressDTO.getBuildingName();
+    String street = addressDTO.getAddress1();
+    String buildingName = addressDTO.getAddress2();
 
     Address addressFromDB =
-        addressRepo.findByCountryAndStateAndCityAndPincodeAndStreetAndBuildingName(
+        addressRepo.findByCountryAndStateAndCityAndPincodeAndAddress1AndAddress2(
             country, state, city, pincode, street, buildingName);
 
     if (addressFromDB != null) {
@@ -76,13 +76,13 @@ public class AddressServiceImpl implements AddressService {
   @Override
   public AddressDTO updateAddress(Long addressId, Address address) {
     Address addressFromDB =
-        addressRepo.findByCountryAndStateAndCityAndPincodeAndStreetAndBuildingName(
+        addressRepo.findByCountryAndStateAndCityAndPincodeAndAddress1AndAddress2(
             address.getCountry(),
             address.getState(),
             address.getCity(),
             address.getPincode(),
-            address.getStreet(),
-            address.getBuildingName());
+            address.getAddress1(),
+            address.getAddress2());
 
     if (addressFromDB == null) {
       addressFromDB =
@@ -94,8 +94,8 @@ public class AddressServiceImpl implements AddressService {
       addressFromDB.setState(address.getState());
       addressFromDB.setCity(address.getCity());
       addressFromDB.setPincode(address.getPincode());
-      addressFromDB.setStreet(address.getStreet());
-      addressFromDB.setBuildingName(address.getBuildingName());
+      addressFromDB.setAddress1(address.getAddress1());
+      addressFromDB.setAddress2(address.getAddress2());
 
       Address updatedAddress = addressRepo.save(addressFromDB);
 

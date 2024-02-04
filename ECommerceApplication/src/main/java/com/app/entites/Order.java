@@ -6,21 +6,22 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "orders")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Order {
 
   @Id
@@ -31,11 +32,15 @@ public class Order {
 
   private String email;
 
-  @OneToOne
+  @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+  @JoinColumn(name = "user_id")
+  private User user;
+
+  @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   @JoinColumn(name = "payment_id")
   private Payment payment;
 
-  @OneToOne
+  @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   @JoinColumn(name = "shipping_id")
   private Shipping shipping;
 
@@ -50,4 +55,8 @@ public class Order {
       cascade = {CascadeType.PERSIST, CascadeType.MERGE},
       orphanRemoval = true)
   private List<OrderItem> items = new ArrayList<>();
+
+  @OneToOne
+  @JoinColumn(name = "store_id")
+  private Store store;
 }

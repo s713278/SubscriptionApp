@@ -2,8 +2,6 @@ package com.app.services.impl;
 
 import com.app.entites.Cart;
 import com.app.entites.CartItem;
-import com.app.entites.Order;
-import com.app.entites.OrderItem;
 import com.app.entites.Sku;
 import com.app.entites.Store;
 import com.app.exceptions.APIException;
@@ -12,12 +10,12 @@ import com.app.payloads.CartDTO;
 import com.app.payloads.CartItemDTO;
 import com.app.payloads.SkuDTO;
 import com.app.payloads.request.ItemRequest;
-import com.app.payloads.response.AddItemResponse;
 import com.app.payloads.response.ApiResponse;
 import com.app.repositories.CartItemRepo;
 import com.app.repositories.CartRepo;
 import com.app.repositories.SkuRepo;
 import com.app.repositories.StoreRepo;
+import com.app.repositories.UserRepo;
 import com.app.services.CartService;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,19 +30,31 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CartServiceImpl implements CartService {
 
-  private CartRepo cartRepo;
+  private final CartRepo cartRepo;
 
-  private CartItemRepo cartItemRepo;
+  private final CartItemRepo cartItemRepo;
 
-  private ModelMapper modelMapper;
+  private final ModelMapper modelMapper;
 
-  private SkuRepo skuRepo;
+  private final SkuRepo skuRepo;
 
-  private StoreRepo storeRepo;
+  private final StoreRepo storeRepo;
+
+  private final UserRepo userRepo;
 
   @Override
-  public ApiResponse<CartDTO> addOrUpdateItem(
-      Long storeId, Long cartId, Long skuId, Integer quantity) {
+  public ApiResponse<CartDTO> addOrUpdateItem(final Long storeId, final ItemRequest request) {
+    Long userId = request.getUserId();
+    Long skuId = request.getSkuId();
+    Integer quantity = request.getQuantity();
+
+    Long cartId =
+        userRepo
+            .findById(userId)
+            .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId))
+            .getCart()
+            .getId();
+
     Store store =
         storeRepo
             .findById(storeId)
@@ -93,7 +103,8 @@ public class CartServiceImpl implements CartService {
       existingItem.setAmount(quantity * sku.getSalePrice());
     }
     existingItem.setUnitPrice(sku.getSalePrice());
-    existingItem.setDiscount(quantity * (sku.getListPrice() - sku.getSalePrice()));
+    existingItem.setDiscount(
+        existingItem.getQuantity() * (sku.getListPrice() - sku.getSalePrice()));
     cartItemRepo.saveAndFlush(existingItem);
 
     Double totalAmount =
@@ -102,7 +113,8 @@ public class CartServiceImpl implements CartService {
             .mapToDouble(Double::doubleValue)
             .sum();
     shoppingCart.setTotalPrice(totalAmount);
-    // shoppingCart.setTotalPrice(shoppingCart.getTotalPrice() + (cartItem.getUnitPrice() *
+    // shoppingCart.setTotalPrice(shoppingCart.getTotalPrice() +
+    // (cartItem.getUnitPrice() *
     // quantity));
 
     // New CartItemDTO
@@ -113,7 +125,7 @@ public class CartServiceImpl implements CartService {
             .map(cartItemEntity -> modelMapper.map(cartItemEntity, CartItemDTO.class))
             .collect(Collectors.toList());
     cartItemDTOs.add(cartItemDTO);
-    //  cartDTO.setItems(cartItemDTOs);
+    // cartDTO.setItems(cartItemDTOs);
     cartRepo.saveAndFlush(shoppingCart);
     return ApiResponse.success(cartDTO);
   }
@@ -144,19 +156,14 @@ public class CartServiceImpl implements CartService {
   }
 
   @Override
-  public CartDTO getCart(String emailId, Long cartId) {
-    Cart cart = cartRepo.findCartByEmailAndCartId(emailId, cartId);
+  public ApiResponse<CartDTO> getCart(Long cartId) {
+    // Cart cart = cartRepo.findCartByEmailAndCartId(emailId, cartId);
+    Cart cart =
+        cartRepo
+            .findById(cartId)
+            .orElseThrow(() -> new ResourceNotFoundException("Cart", "cartId", cartId));
 
-    if (cart == null) {
-      throw new ResourceNotFoundException("Cart", "cartId", cartId);
-    }
-    CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
-    List<SkuDTO> skus =
-        cart.getCartItems().stream()
-            .map(p -> modelMapper.map(p.getSku(), SkuDTO.class))
-            .collect(Collectors.toList());
-    // cartDTO.setSkus(skus);
-    return cartDTO;
+    return ApiResponse.success(modelMapper.map(cart, CartDTO.class));
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -217,7 +224,7 @@ public class CartServiceImpl implements CartService {
     }
     CartItem newCartItem = new CartItem();
     newCartItem.setSku(sku);
-    //	newCartItem.setCart(cart);
+    // newCartItem.setCart(cart);
     newCartItem.setQuantity(quantity);
     newCartItem.setDiscount(sku.getSalePrice() - sku.getListPrice());
     newCartItem.setUnitPrice(sku.getSalePrice());
@@ -239,15 +246,7 @@ public class CartServiceImpl implements CartService {
   }
 
   @Override
-  public AddItemResponse addItem(ItemRequest request) {
-
-    Order order = new Order();
-    order.setOrderStatus("CREATED");
-
-    OrderItem orderItem = new OrderItem();
-    orderItem.setQuantity(request.getQuantity());
-    order.setItems(null);
-
-    return new AddItemResponse();
+  public ApiResponse<List<CartDTO>> getAllCarts(Long storeId) {
+    return null;
   }
 }

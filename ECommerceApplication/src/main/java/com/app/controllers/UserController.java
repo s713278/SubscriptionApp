@@ -47,7 +47,6 @@ public class UserController {
   @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
   public ResponseEntity<UserDTO> getUser(@PathVariable Long userId) {
     UserDTO user = userService.getUserById(userId);
-
     return new ResponseEntity<UserDTO>(user, HttpStatus.FOUND);
   }
 

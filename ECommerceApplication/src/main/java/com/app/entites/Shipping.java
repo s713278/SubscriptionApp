@@ -34,7 +34,7 @@ public class Shipping {
   @Size(min = 4, message = "Shipping method must contain atleast 4 characters")
   private String shippingMethod;
 
-  @OneToOne
+  @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   @JoinColumn(name = "shipping_id")
   private Address address;
 }

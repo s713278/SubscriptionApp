@@ -1,6 +1,9 @@
 package com.app.payloads;
 
-import java.time.LocalDate;
+import com.app.entites.Store;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -12,11 +15,45 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OrderDTO {
 
+  @JsonProperty("order_id")
   private Long orderId;
+
   private String email;
-  private List<OrderItemDTO> orderItems = new ArrayList<>();
-  private LocalDate orderDate;
+
+  @JsonProperty("order_date")
+  private Instant orderTime;
+
+  @JsonProperty("store_name")
+  private String storeName;
+
+  @JsonProperty("order_items")
+  private List<OrderItemDTO> items = new ArrayList<>();
+
+  @JsonProperty("payment_details")
   private PaymentDTO payment;
+
+  @JsonProperty("total_amount")
   private Double totalAmount;
+
+  @JsonProperty("order_status")
   private String orderStatus;
+
+  @JsonProperty("shipping_details")
+  private ShippingDTO shipping;
+
+  @JsonProperty("sub_total")
+  private Double subTotal;
+
+  @JsonProperty("federal_tax")
+  private Double federalTax;
+
+  @JsonProperty("state_tax")
+  private Double stateTax;
+
+  @JsonIgnore private Store store;
+
+  @JsonProperty("store_name")
+  public String getStoreName() {
+    return store.getName();
+  }
 }

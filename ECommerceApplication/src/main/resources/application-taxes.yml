@@ -1,0 +1,7 @@
+tax:
+	state:
+		name: State Sales Tax
+		rate: 0.1
+	federal: 
+		name: Federal Sales Tax
+		rate: 0.1

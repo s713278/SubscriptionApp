@@ -2,9 +2,12 @@ package com.app.controllers;
 
 import com.app.config.AppConstants;
 import com.app.payloads.OrderDTO;
+import com.app.payloads.OrderRequest;
 import com.app.payloads.OrderResponse;
+import com.app.payloads.response.ApiResponse;
 import com.app.services.OrderService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,10 +16,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "4. Order API")
 @RestController
 @RequestMapping("/api/store/{store_id}")
 @SecurityRequirement(name = "E-Commerce Application")
@@ -25,12 +30,13 @@ public class OrderController {
 
   public final OrderService orderService;
 
-  @PostMapping("/public/users/{emailId}/carts/{cartId}/payments/{paymentMethod}/order")
-  public ResponseEntity<OrderDTO> orderProducts(
-      @PathVariable String emailId, @PathVariable Long cartId, @PathVariable String paymentMethod) {
-    OrderDTO order = orderService.placeOrder(emailId, cartId, paymentMethod);
+  @PostMapping("/order/items")
+  public ResponseEntity<ApiResponse<OrderDTO>> orderProducts(
+      @PathVariable("store_id") Long storeId, @RequestBody OrderRequest request) {
 
-    return new ResponseEntity<OrderDTO>(order, HttpStatus.CREATED);
+    ApiResponse<OrderDTO> order = orderService.placeOrder(storeId, request);
+
+    return new ResponseEntity<>(order, HttpStatus.CREATED);
   }
 
   @GetMapping("/admin/orders")

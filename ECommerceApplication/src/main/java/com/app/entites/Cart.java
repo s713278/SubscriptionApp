@@ -12,15 +12,11 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Data
 @Table(name = "carts")
-@NoArgsConstructor
-@AllArgsConstructor
 public class Cart {
 
   @Id

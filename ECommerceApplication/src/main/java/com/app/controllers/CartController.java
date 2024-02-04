@@ -20,55 +20,57 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "3. Shopping Cart Management API")
+@Tag(name = "3. Shopping Cart API")
 @RestController
-@RequestMapping("/api/store")
+@RequestMapping("/api/store/{store_id}")
 @SecurityRequirement(name = "E-Commerce Application")
 public class CartController {
 
   @Autowired private CartService cartService;
 
-  // @PostMapping("/cart/{cartId}/sku/{skuId}/quantity/{quantity}")
-  @PostMapping("/{store_id}/cart/{cart_id}/items")
-  public ResponseEntity<ApiResponse<CartDTO>> addItemToCart(
-      @PathVariable("store_id") Long storeId,
-      @PathVariable("cart_id") Long cartId,
-      @Valid @RequestBody ItemRequest request) {
-    // TODO : pre Validation
+  @PostMapping("/cart/items")
+  public ResponseEntity<ApiResponse<CartDTO>> addorUpdateItemToCart(
+      @PathVariable("store_id") Long storeId, @Valid @RequestBody ItemRequest request) {
+    // TODO : Pre Validation
     // TODO : Save the cart in database
-    ApiResponse<CartDTO> cartDTO =
-        cartService.addOrUpdateItem(storeId, cartId, request.getSkuId(), request.getQuantity());
+    ApiResponse<CartDTO> cartDTO = cartService.addOrUpdateItem(storeId, request);
     // TODO : post Validation
     return new ResponseEntity<>(cartDTO, HttpStatus.CREATED);
   }
 
-  @PreAuthorize("ADMIN")
-  @GetMapping("/{store_id}/admin/cart")
-  public ResponseEntity<List<CartDTO>> getCarts() {
+  @PreAuthorize("STORE")
+  @GetMapping("/cart/items")
+  public ResponseEntity<List<CartDTO>> getCarts(@PathVariable("store_id") Long storeId) {
     List<CartDTO> cartDTOs = cartService.getAllCarts();
     return new ResponseEntity<List<CartDTO>>(cartDTOs, HttpStatus.FOUND);
   }
 
-  @GetMapping("/{store_id}/public/users/{emailId}/carts/{cartId}")
-  public ResponseEntity<CartDTO> getCartById(
-      @PathVariable String emailId, @PathVariable Long cartId) {
-    CartDTO cartDTO = cartService.getCart(emailId, cartId);
-    return new ResponseEntity<CartDTO>(cartDTO, HttpStatus.FOUND);
+  @GetMapping("/cart/{cart_id}/items")
+  public ResponseEntity<ApiResponse<CartDTO>> getCartById(
+      @PathVariable("store_id") Long storeId, @PathVariable("cart_id") Long cartId) {
+    ApiResponse<CartDTO> cartDTO = cartService.getCart(cartId);
+    return new ResponseEntity<>(cartDTO, HttpStatus.FOUND);
   }
 
-  /*@PutMapping("/{store_id}/public/carts/{cartId}/skus/{skuId}/quantity/{quantity}")
-  @PutMapping("/{store_id}/carts/{cart_id}/items")
-  public ResponseEntity<CartDTO> updateItem(
-      @PathVariable Long cartId, @PathVariable Long skuId, @PathVariable Integer quantity) {
-    CartDTO cartDTO = cartService.updateCart(cartId, skuId, quantity);
-    
-    CartDTO cartDTO =
-            cartService.addOrUpdateItem(storeId, cartId, request.getSkuId(), request.getQuantity());
-    
-    return new ResponseEntity<CartDTO>(cartDTO, HttpStatus.OK);
-  }*/
+  /*
+	 * @PutMapping(
+	 * "/{store_id}/public/carts/{cartId}/skus/{skuId}/quantity/{quantity}")
+	 * 
+	 * @PutMapping("/{store_id}/carts/{cart_id}/items") public
+	 * ResponseEntity<CartDTO> updateItem(
+	 * 
+	 * @PathVariable Long cartId, @PathVariable Long skuId, @PathVariable Integer
+	 * quantity) { CartDTO cartDTO = cartService.updateCart(cartId, skuId,
+	 * quantity);
+	 * 
+	 * CartDTO cartDTO = cartService.addOrUpdateItem(storeId, cartId,
+	 * request.getSkuId(), request.getQuantity());
+	 * 
+	 * return new ResponseEntity<CartDTO>(cartDTO, HttpStatus.OK); }
+	 */
 
-  @DeleteMapping("/{store_id}/cart/{cart_id}/items/{cart_item_id}")
+  @PreAuthorize("USER")
+  @DeleteMapping("/cart/{cart_id}/items/{cart_item_id}")
   public ResponseEntity<ApiResponse<String>> deleteProductFromCart(
       @PathVariable("store_id") Long storeId,
       @PathVariable("cart_id") Long cartId,

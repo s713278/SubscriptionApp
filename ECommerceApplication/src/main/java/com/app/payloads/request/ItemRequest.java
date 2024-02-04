@@ -8,8 +8,8 @@ import lombok.Data;
 
 @Data
 public class ItemRequest {
-  @Schema(description = "Cart ID", example = "1")
-  @NotNull(message = "Cart ID") private Long cartId;
+  @Schema(description = "User ID", example = "1")
+  @NotNull(message = "User ID") private Long userId;
 
   @Schema(description = "SKU ID", example = "1")
   @NotNull(message = "Sku is required.") private Long skuId;

@@ -25,13 +25,13 @@ public class Sku {
   private Long id;
 
   @NotBlank
-  @Size(min = 3, message = "Sku name must contain atleast 3 characters")
+  @Size(min = 3, message = "Name must contain atleast 3 characters")
   private String name;
 
-  private String image;
+  private String imagePath;
 
   @NotBlank
-  @Size(min = 25, message = "Product description must contain atleast 25 characters")
+  @Size(min = 25, message = "Description must contain atleast 25 characters")
   private String description;
 
   private Integer quantity;
@@ -45,14 +45,4 @@ public class Sku {
   @ManyToOne
   @JoinColumn(name = "store_id")
   private Store store;
-
-  /*
-	 * @OneToMany(mappedBy = "sku", cascade = { CascadeType.PERSIST,
-	 * CascadeType.MERGE }, fetch = FetchType.EAGER) private List<CartItem> skus =
-	 * new ArrayList<>();
-	 * 
-	 * @OneToMany(mappedBy = "sku", cascade = { CascadeType.PERSIST,
-	 * CascadeType.MERGE }) private List<OrderItem> orderItems = new ArrayList<>();
-	 */
-
 }

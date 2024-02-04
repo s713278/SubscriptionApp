@@ -12,9 +12,11 @@ import jakarta.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Builder
 @Entity
 @Table(name = "addresses")
 @Data
@@ -28,12 +30,10 @@ public class Address {
   private Long addressId;
 
   @NotBlank
-  @Size(min = 5, message = "Street name must contain atleast 5 characters")
-  private String street;
+  @Size(min = 10, message = "Address1 must contain atleast 10 characters")
+  private String address1;
 
-  @NotBlank
-  @Size(min = 5, message = "Building name must contain atleast 5 characters")
-  private String buildingName;
+  private String address2;
 
   @NotBlank
   @Size(min = 4, message = "City name must contain atleast 4 characters")
@@ -55,17 +55,22 @@ public class Address {
   private List<User> users = new ArrayList<>();
 
   public Address(
-      String country,
-      String state,
-      String city,
-      String pincode,
-      String street,
-      String buildingName) {
-    this.country = country;
-    this.state = state;
+      @NotBlank @Size(min = 10, message = "Address1 must contain atleast 10 characters")
+          String address1,
+      String address2,
+      @NotBlank @Size(min = 4, message = "City name must contain atleast 4 characters") String city,
+      @NotBlank @Size(min = 2, message = "State name must contain atleast 2 characters")
+          String state,
+      @NotBlank @Size(min = 2, message = "Country name must contain atleast 2 characters")
+          String country,
+      @NotBlank @Size(min = 6, message = "Pincode must contain atleast 6 characters")
+          String pincode) {
+    super();
+    this.address1 = address1;
+    this.address2 = address2;
     this.city = city;
+    this.state = state;
+    this.country = country;
     this.pincode = pincode;
-    this.street = street;
-    this.buildingName = buildingName;
   }
 }

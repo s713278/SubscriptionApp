@@ -66,11 +66,11 @@ public class UserServiceImpl implements UserService {
         String state = userDTO.getAddress().getState();
         String city = userDTO.getAddress().getCity();
         String pincode = userDTO.getAddress().getPincode();
-        String street = userDTO.getAddress().getStreet();
-        String buildingName = userDTO.getAddress().getBuildingName();
+        String street = userDTO.getAddress().getAddress1();
+        String buildingName = userDTO.getAddress().getAddress2();
 
         Address address =
-            addressRepo.findByCountryAndStateAndCityAndPincodeAndStreetAndBuildingName(
+            addressRepo.findByCountryAndStateAndCityAndPincodeAndAddress1AndAddress2(
                 country, state, city, pincode, street, buildingName);
 
         if (address == null) {
@@ -149,8 +149,8 @@ public class UserServiceImpl implements UserService {
 
     UserDTO userDTO = modelMapper.map(user, UserDTO.class);
 
-    userDTO.setAddress(
-        modelMapper.map(user.getAddresses().stream().findFirst().get(), AddressDTO.class));
+    /* userDTO.setAddress(
+        modelMapper.map(user.getAddresses().stream().findFirst().get(), AddressDTO.class));*/
 
     if (user.getCart() != null) {
       CartDTO cart = modelMapper.map(user.getCart(), CartDTO.class);
@@ -187,18 +187,16 @@ public class UserServiceImpl implements UserService {
       String state = userDTO.getAddress().getState();
       String city = userDTO.getAddress().getCity();
       String pincode = userDTO.getAddress().getPincode();
-      String street = userDTO.getAddress().getStreet();
-      String buildingName = userDTO.getAddress().getBuildingName();
+      String street = userDTO.getAddress().getAddress1();
+      String buildingName = userDTO.getAddress().getAddress2();
 
       Address address =
-          addressRepo.findByCountryAndStateAndCityAndPincodeAndStreetAndBuildingName(
+          addressRepo.findByCountryAndStateAndCityAndPincodeAndAddress1AndAddress2(
               country, state, city, pincode, street, buildingName);
 
       if (address == null) {
-        address = new Address(country, state, city, pincode, street, buildingName);
-
+        address = new Address(street, buildingName, city, state, country, pincode);
         address = addressRepo.save(address);
-
         user.setAddresses(List.of(address));
       }
     }

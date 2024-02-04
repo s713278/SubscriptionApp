@@ -36,8 +36,8 @@ public class CartItem {
   private Integer quantity;
   private double discount;
   private double unitPrice;
-  private double stateTax = 0;
-  private double federalTax = 0;
+  /* private double stateTax = 0;
+  private double federalTax = 0;*/
 
   @Transient private double amount; // quantity * unitPrice + stateTax + federalTax;
 }
