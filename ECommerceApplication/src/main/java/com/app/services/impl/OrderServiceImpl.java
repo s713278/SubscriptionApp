@@ -67,14 +67,13 @@ public class OrderServiceImpl implements OrderService {
 
   @Transactional(
       propagation = Propagation.REQUIRES_NEW,
-      rollbackForClassName = {"Exception"})
+      rollbackFor = {Exception.class, APIException.class})
   @Override
   public ApiResponse<OrderDTO> placeOrder(final Long storeId, final OrderRequest request) {
 
     Long userId = request.getUserId();
     Long cartId = request.getCartId();
     String paymentMethod = "CreditCard";
-    // Cart cart = cartRepo.findCartByEmailAndCartId(emailId, cartId);
 
     User user =
         userRepo
