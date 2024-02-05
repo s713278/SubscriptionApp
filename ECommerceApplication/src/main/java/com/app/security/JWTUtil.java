@@ -1,6 +1,8 @@
 package com.app.security;
 
 import com.app.entites.User;
+import com.app.payloads.response.ApiResponse;
+import com.app.payloads.response.LoginResponse;
 import com.app.repositories.UserRepo;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -27,9 +29,9 @@ public class JWTUtil {
     private String secret;
 
     @Transactional(readOnly = true)
-    public String generateToken(String email) throws IllegalArgumentException, JWTCreationException {
+    public ApiResponse<LoginResponse> generateToken(String email) throws IllegalArgumentException, JWTCreationException {
         User user = userRepo.findByEmailIgnoreCase(email).get();
-        return JWT.create()
+        String token= JWT.create()
                 .withSubject(String.valueOf(user.getId())) // User ID
                 .withIssuedAt(Instant.now())
                 .withExpiresAt(Instant.now().plusSeconds(60 * 60))
@@ -42,6 +44,13 @@ public class JWTUtil {
                                 .collect(Collectors.joining(email, "[", "]")))
                 .withIssuer(NSR_STORES)
                 .sign(Algorithm.HMAC256(secret));
+        LoginResponse loginResponse=LoginResponse.builder()
+                .userId(String.valueOf(user.getUserId()))
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .userToken(token)
+                .build();
+        return ApiResponse.success(loginResponse);
     }
 
     public String validateTokenAndRetrieveSubject(String token) throws JWTVerificationException {

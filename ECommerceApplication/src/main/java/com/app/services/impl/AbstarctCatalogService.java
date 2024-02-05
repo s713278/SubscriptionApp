@@ -29,19 +29,37 @@ public abstract class AbstarctCatalogService {
 
     protected OrderRepo orderRepo;
 
-    public PaymentRepo paymentRepo;
+    protected PaymentRepo paymentRepo;
 
-    public OrderItemRepo orderItemRepo;
+    protected OrderItemRepo orderItemRepo;
 
-    public CartItemRepo cartItemRepo;
+    protected CartItemRepo cartItemRepo;
 
-    public UserService userService;
+    protected UserService userService;
 
-    public CartService cartService;
+    protected CartService cartService;
 
-    public StoreRepo storeRepo;
+    protected StoreRepo storeRepo;
 
     public ModelMapper modelMapper;
+    
+    
+
+    public AbstarctCatalogService(UserRepo userRepo, CartRepo cartRepo, OrderRepo orderRepo, PaymentRepo paymentRepo,
+            OrderItemRepo orderItemRepo, CartItemRepo cartItemRepo, UserService userService, CartService cartService,
+            StoreRepo storeRepo, ModelMapper modelMapper) {
+        super();
+        this.userRepo = userRepo;
+        this.cartRepo = cartRepo;
+        this.orderRepo = orderRepo;
+        this.paymentRepo = paymentRepo;
+        this.orderItemRepo = orderItemRepo;
+        this.cartItemRepo = cartItemRepo;
+        this.userService = userService;
+        this.cartService = cartService;
+        this.storeRepo = storeRepo;
+        this.modelMapper = modelMapper;
+    }
 
     protected User validateUser(Long userId) {
         log.debug("Validate User {} ", userId);
@@ -84,7 +102,8 @@ public abstract class AbstarctCatalogService {
         cart.getCartItems().forEach(cartItem -> {
             int quantity = cartItem.getQuantity();
             Sku sku = cartItem.getSku();
-            cartService.deleteItem(cart.getId(), cartItem.getCartItemId());
+            cartRepo.deleteById(cartItem.getCartItemId());
+            //cartService.deleteItem(cart.getId(), cartItem.getCartItemId());
             sku.setQuantity(sku.getQuantity() - quantity);
         });
 

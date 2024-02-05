@@ -2,7 +2,10 @@ package com.app.entites;
 
 import com.app.services.constants.PaymentType;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,6 +36,8 @@ public class Payment {
 
     @NotBlank
     @Size(min = 4, message = "Payment method must contain atleast 4 characters")
+    @Column(name = "payment_method", columnDefinition = "payment_method_enum")
+    @Enumerated(EnumType.STRING)
     private PaymentType paymentMethod;
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})

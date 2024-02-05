@@ -2,7 +2,10 @@ package com.app.entites;
 
 import com.app.services.constants.OrderStatus;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -49,6 +52,9 @@ public class Order {
     private Double federalTax;
     private Double stateTax;
     private Double totalAmount;
+    
+    @Column(name = "order_status", columnDefinition = "order_status_enum")
+    @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
     @OneToMany(

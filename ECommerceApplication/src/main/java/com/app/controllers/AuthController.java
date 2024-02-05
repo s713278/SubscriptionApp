@@ -3,11 +3,12 @@ package com.app.controllers;
 import com.app.exceptions.UserNotFoundException;
 import com.app.payloads.LoginCredentials;
 import com.app.payloads.UserDTO;
+import com.app.payloads.response.ApiResponse;
+import com.app.payloads.response.LoginResponse;
 import com.app.security.JWTUtil;
 import com.app.services.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,19 +35,19 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody UserDTO user) throws UserNotFoundException {
+    public ResponseEntity<ApiResponse<LoginResponse>> register(@Valid @RequestBody UserDTO user)
+            throws UserNotFoundException {
         UserDTO userDTO = userService.registerUser(user);
-        String token = jwtUtil.generateToken(userDTO.getEmail());
-        return new ResponseEntity<Map<String, Object>>(
-                Map.of("success", "true", "user-token", token), HttpStatus.CREATED);
+        ApiResponse<LoginResponse> response = jwtUtil.generateToken(userDTO.getEmail());
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginCredentials credentials) {
-        UsernamePasswordAuthenticationToken authCredentials =
-                new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword());
+    public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginCredentials credentials) {
+        UsernamePasswordAuthenticationToken authCredentials = new UsernamePasswordAuthenticationToken(
+                credentials.getEmail(), credentials.getPassword());
         authenticationManager.authenticate(authCredentials);
-        String token = jwtUtil.generateToken(credentials.getEmail());
-        return new ResponseEntity<>(Map.of("success", "true", "user-token", token), HttpStatus.OK);
+        ApiResponse<LoginResponse> response = jwtUtil.generateToken(credentials.getEmail());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

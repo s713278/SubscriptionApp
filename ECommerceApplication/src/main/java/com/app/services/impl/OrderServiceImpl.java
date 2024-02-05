@@ -17,7 +17,16 @@ import com.app.payloads.OrderResponse;
 import com.app.payloads.request.OrderUpdateRequest;
 import com.app.payloads.response.ApiResponse;
 import com.app.payloads.response.OrderUpdateResponse;
+import com.app.repositories.CartItemRepo;
+import com.app.repositories.CartRepo;
+import com.app.repositories.OrderItemRepo;
+import com.app.repositories.OrderRepo;
+import com.app.repositories.PaymentRepo;
+import com.app.repositories.StoreRepo;
+import com.app.repositories.UserRepo;
+import com.app.services.CartService;
 import com.app.services.OrderService;
+import com.app.services.UserService;
 import com.app.services.constants.OrderStatus;
 import com.app.services.constants.PaymentType;
 import com.app.services.constants.ShippingType;
@@ -25,7 +34,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,8 +44,14 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@AllArgsConstructor
 public class OrderServiceImpl extends AbstarctCatalogService implements OrderService {
+
+    public OrderServiceImpl(UserRepo userRepo, CartRepo cartRepo, OrderRepo orderRepo, PaymentRepo paymentRepo,
+            OrderItemRepo orderItemRepo, CartItemRepo cartItemRepo, UserService userService, CartService cartService,
+            StoreRepo storeRepo, ModelMapper modelMapper) {
+        super(userRepo, cartRepo, orderRepo, paymentRepo, orderItemRepo, cartItemRepo, userService, cartService, storeRepo,
+                modelMapper);
+    }
 
     @Transactional(
             propagation = Propagation.REQUIRES_NEW,
@@ -163,7 +178,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
 
         order.setUser(user);
         order.setStore(store);
-        createPayment(request, "", order);
+        createPayment(request, order);
         createShipping(request, order);
         return order;
     }
@@ -187,11 +202,11 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
         return orderItem;
     }
 
-    private void createPayment(final OrderRequest request, final String paymentMethod, Order order) {
+    private void createPayment(final OrderRequest request, Order order) {
         Payment payment = new Payment();
         payment = modelMapper.map(request.getPaymentDetails(), Payment.class);
         payment.setOrder(order);
-        PaymentType paymentType = PaymentType.valueOf(paymentMethod);
+        PaymentType paymentType = PaymentType.valueOf(request.getPaymentDetails().getPaymentMethod());
         payment.setPaymentMethod(paymentType);
         // payment = paymentRepo.save(payment);
         order.setPayment(payment);

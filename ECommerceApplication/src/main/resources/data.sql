@@ -1,3 +1,7 @@
+CREATE TYPE order_status_enum AS ENUM ('CREATED', 'PROCESSING','SHIPPED','DELIVERED','CANCELED');
+CREATE TYPE ship_type_enum AS ENUM ('INSTORE_PICKUP', 'HOME_DELIVERY');
+CREATE TYPE payment_type_enum AS ENUM ('ONLINE', 'IN_STORE_PAYMENT');
+	
 INSERT INTO public.roles (role_id, role_name) VALUES(101,'ADMIN');
 INSERT INTO public.roles (role_id, role_name) VALUES(102,'USER');
 INSERT INTO public.roles (role_id, role_name) VALUES(103,'STORE');
@@ -18,4 +22,5 @@ INSERT INTO public.products (product_id, description, features, image, product_n
 
 INSERT INTO public.skus (sku_id, description, image, list_price, "name", quantity, sale_price, product_id, store_id) VALUES(1000, 'Servers 1 Adult + 1 Child', NULL, 10.0, 'Lunch Mean With Chicken Sandwhich ', 10, 8.0, 1, 1);
 INSERT INTO public.skus (sku_id, description, image, list_price, "name", quantity, sale_price, product_id, store_id) VALUES(1001, 'Servers 2 Adult + 2 Child', NULL, 25.0, 'Group Lunch Meanl With Chicken Sandwhich ', 10, 20.0, 1, 1);
+
 
