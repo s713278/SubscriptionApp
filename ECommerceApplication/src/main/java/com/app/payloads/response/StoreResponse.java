@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class StoreResponse {
 
-  private List<StoreDTO> content;
-  private Integer pageNumber;
-  private Integer pageSize;
-  private Long totalElements;
-  private Integer totalPages;
-  private boolean lastPage;
+    private List<StoreDTO> content;
+    private Integer pageNumber;
+    private Integer pageSize;
+    private Long totalElements;
+    private Integer totalPages;
+    private boolean lastPage;
 }

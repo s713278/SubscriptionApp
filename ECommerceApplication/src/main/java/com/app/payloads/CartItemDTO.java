@@ -11,32 +11,35 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CartItemDTO {
 
-  @JsonProperty("item_id")
-  private Long cartItemId;
+    @JsonProperty("item_id")
+    private Long cartItemId;
 
-  @JsonProperty("item_name")
-  private String skuName;
+    @JsonProperty("item_name")
+    private String skuName;
 
-  // private CartDTO cart;
+    // private CartDTO cart;
 
-  @JsonIgnore private SkuDTO sku;
-  // private ProductDTO product;
-  private Integer quantity;
+    @JsonIgnore
+    private SkuDTO sku;
+    // private ProductDTO product;
+    private Integer quantity;
 
-  @JsonProperty("unit_price")
-  private double unitPrice;
+    @JsonProperty("unit_price")
+    private double unitPrice;
 
-  @JsonProperty("item_amount")
-  private double amount; // quantity * unitPrice + stateTax + federalTax;
+    @JsonProperty("item_amount")
+    private double amount; // quantity * unitPrice + stateTax + federalTax;
 
-  @JsonProperty("item_discount")
-  private double discount;
+    @JsonProperty("item_discount")
+    private double discount;
 
-  @JsonIgnore private double stateTax = 0;
+    @JsonIgnore
+    private double stateTax = 0;
 
-  @JsonIgnore private double federalTax = 0;
+    @JsonIgnore
+    private double federalTax = 0;
 
-  public String getSkuName() {
-    return sku.getName();
-  }
+    public String getSkuName() {
+        return sku.getName();
+    }
 }

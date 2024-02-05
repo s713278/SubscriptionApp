@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class JWTAuthResponse {
-  private String token;
+    private String token;
 
-  private UserDTO user;
+    private UserDTO user;
 }

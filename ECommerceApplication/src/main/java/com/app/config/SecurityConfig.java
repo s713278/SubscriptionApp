@@ -24,56 +24,53 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
 
-  @Autowired private JWTFilter jwtFilter;
+    @Autowired
+    private JWTFilter jwtFilter;
 
-  @Autowired private UserDetailsServiceImpl userDetailsServiceImpl;
+    @Autowired
+    private UserDetailsServiceImpl userDetailsServiceImpl;
 
-  @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.csrf(t -> t.disable())
-        .authorizeHttpRequests(
-            auth -> {
-              auth.requestMatchers(AppConstants.PUBLIC_URLS)
-                  .permitAll()
-                  .requestMatchers(AppConstants.USER_URLS)
-                  .hasAnyAuthority("USER", "ADMIN")
-                  .requestMatchers(AppConstants.ADMIN_URLS)
-                  .hasAuthority("ADMIN")
-                  .anyRequest()
-                  .authenticated();
-            })
-        .exceptionHandling(
-            t ->
-                t.authenticationEntryPoint(
-                    (request, response, authException) ->
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.csrf(t -> t.disable())
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers(AppConstants.PUBLIC_URLS)
+                            .permitAll()
+                            .requestMatchers(AppConstants.USER_URLS)
+                            .hasAnyAuthority("USER", "ADMIN")
+                            .requestMatchers(AppConstants.ADMIN_URLS)
+                            .hasAuthority("ADMIN")
+                            .anyRequest()
+                            .authenticated();
+                })
+                .exceptionHandling(t -> t.authenticationEntryPoint((request, response, authException) ->
                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")))
-        .sessionManagement(t -> t.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
+                .sessionManagement(t -> t.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
 
-    http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-    http.authenticationProvider(daoAuthenticationProvider());
-    DefaultSecurityFilterChain defaultSecurityFilterChain = http.build();
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        http.authenticationProvider(daoAuthenticationProvider());
+        DefaultSecurityFilterChain defaultSecurityFilterChain = http.build();
 
-    return defaultSecurityFilterChain;
-  }
+        return defaultSecurityFilterChain;
+    }
 
-  @Bean
-  public DaoAuthenticationProvider daoAuthenticationProvider() {
-    DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
 
-    provider.setUserDetailsService(userDetailsServiceImpl);
-    provider.setPasswordEncoder(passwordEncoder());
+        provider.setUserDetailsService(userDetailsServiceImpl);
+        provider.setPasswordEncoder(passwordEncoder());
 
-    return provider;
-  }
+        return provider;
+    }
 
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-  @Bean
-  public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
-      throws Exception {
-    return configuration.getAuthenticationManager();
-  }
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
 }

@@ -19,88 +19,80 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class MyGlobalExceptionHandler {
 
-  @ExceptionHandler(RuntimeException.class)
-  public ResponseEntity<APIResponse> handleRuntimeException(RuntimeException e) {
-    String message = e.getMessage();
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<APIResponse> handleRuntimeException(RuntimeException e) {
+        String message = e.getMessage();
 
-    APIResponse res = new APIResponse(message, false);
+        APIResponse res = new APIResponse(message, false);
 
-    return new ResponseEntity<APIResponse>(res, HttpStatus.INTERNAL_SERVER_ERROR);
-  }
+        return new ResponseEntity<APIResponse>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
-  @ExceptionHandler(ResourceNotFoundException.class)
-  public ResponseEntity<APIResponse> myResourceNotFoundException(ResourceNotFoundException e) {
-    String message = e.getMessage();
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<APIResponse> myResourceNotFoundException(ResourceNotFoundException e) {
+        String message = e.getMessage();
 
-    APIResponse res = new APIResponse(message, false);
+        APIResponse res = new APIResponse(message, false);
 
-    return new ResponseEntity<APIResponse>(res, HttpStatus.NOT_FOUND);
-  }
+        return new ResponseEntity<APIResponse>(res, HttpStatus.NOT_FOUND);
+    }
 
-  @ExceptionHandler(APIException.class)
-  public ResponseEntity<APIResponse> myAPIException(APIException e) {
-    String message = e.getMessage();
+    @ExceptionHandler(APIException.class)
+    public ResponseEntity<APIResponse> myAPIException(APIException e) {
+        String message = e.getMessage();
 
-    APIResponse res = new APIResponse(message, false);
+        APIResponse res = new APIResponse(message, false);
 
-    return new ResponseEntity<APIResponse>(res, HttpStatus.BAD_REQUEST);
-  }
+        return new ResponseEntity<APIResponse>(res, HttpStatus.BAD_REQUEST);
+    }
 
-  @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<Map<String, String>> myMethodArgumentNotValidException(
-      MethodArgumentNotValidException e) {
-    Map<String, String> res = new HashMap<>();
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> myMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        Map<String, String> res = new HashMap<>();
 
-    e.getBindingResult()
-        .getAllErrors()
-        .forEach(
-            err -> {
-              String fieldName = ((FieldError) err).getField();
-              String message = err.getDefaultMessage();
+        e.getBindingResult().getAllErrors().forEach(err -> {
+            String fieldName = ((FieldError) err).getField();
+            String message = err.getDefaultMessage();
 
-              res.put(fieldName, message);
-            });
+            res.put(fieldName, message);
+        });
 
-    return new ResponseEntity<Map<String, String>>(res, HttpStatus.BAD_REQUEST);
-  }
+        return new ResponseEntity<Map<String, String>>(res, HttpStatus.BAD_REQUEST);
+    }
 
-  @ExceptionHandler(ConstraintViolationException.class)
-  public ResponseEntity<Map<String, String>> myConstraintsVoilationException(
-      ConstraintViolationException e) {
-    Map<String, String> res = new HashMap<>();
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Map<String, String>> myConstraintsVoilationException(ConstraintViolationException e) {
+        Map<String, String> res = new HashMap<>();
 
-    e.getConstraintViolations()
-        .forEach(
-            voilation -> {
-              String fieldName = voilation.getPropertyPath().toString();
-              String message = voilation.getMessage();
+        e.getConstraintViolations().forEach(voilation -> {
+            String fieldName = voilation.getPropertyPath().toString();
+            String message = voilation.getMessage();
 
-              res.put(fieldName, message);
-            });
+            res.put(fieldName, message);
+        });
 
-    return new ResponseEntity<Map<String, String>>(res, HttpStatus.BAD_REQUEST);
-  }
+        return new ResponseEntity<Map<String, String>>(res, HttpStatus.BAD_REQUEST);
+    }
 
-  @ExceptionHandler(AuthenticationException.class)
-  public ResponseEntity<String> myAuthenticationException(AuthenticationException e) {
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<String> myAuthenticationException(AuthenticationException e) {
 
-    String res = e.getMessage();
+        String res = e.getMessage();
 
-    return new ResponseEntity<String>(res, HttpStatus.BAD_REQUEST);
-  }
+        return new ResponseEntity<String>(res, HttpStatus.BAD_REQUEST);
+    }
 
-  @ExceptionHandler(MissingPathVariableException.class)
-  public ResponseEntity<APIResponse> myMissingPathVariableException(
-      MissingPathVariableException e) {
-    APIResponse res = new APIResponse(e.getMessage(), false);
+    @ExceptionHandler(MissingPathVariableException.class)
+    public ResponseEntity<APIResponse> myMissingPathVariableException(MissingPathVariableException e) {
+        APIResponse res = new APIResponse(e.getMessage(), false);
 
-    return new ResponseEntity<APIResponse>(res, HttpStatus.BAD_REQUEST);
-  }
+        return new ResponseEntity<APIResponse>(res, HttpStatus.BAD_REQUEST);
+    }
 
-  @ExceptionHandler(DataIntegrityViolationException.class)
-  public ResponseEntity<APIResponse> myDataIntegrityException(DataIntegrityViolationException e) {
-    APIResponse res = new APIResponse(e.getMessage(), false);
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<APIResponse> myDataIntegrityException(DataIntegrityViolationException e) {
+        APIResponse res = new APIResponse(e.getMessage(), false);
 
-    return new ResponseEntity<APIResponse>(res, HttpStatus.BAD_REQUEST);
-  }
+        return new ResponseEntity<APIResponse>(res, HttpStatus.BAD_REQUEST);
+    }
 }

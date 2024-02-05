@@ -21,31 +21,32 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 // @SecurityRequirement(name = "E-Commerce Application")
-@Tag(name = "1. User Register & SignIn API")
+@Tag(name = "1. User Reg & SignIn API")
 public class AuthController {
 
-  @Autowired private UserService userService;
+    @Autowired
+    private UserService userService;
 
-  @Autowired private JWTUtil jwtUtil;
+    @Autowired
+    private JWTUtil jwtUtil;
 
-  @Autowired private AuthenticationManager authenticationManager;
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
-  @PostMapping("/register")
-  public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody UserDTO user)
-      throws UserNotFoundException {
-    UserDTO userDTO = userService.registerUser(user);
-    String token = jwtUtil.generateToken(userDTO.getEmail());
-    return new ResponseEntity<Map<String, Object>>(
-        Map.of("success", "true", "user-token", token), HttpStatus.CREATED);
-  }
+    @PostMapping("/register")
+    public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody UserDTO user) throws UserNotFoundException {
+        UserDTO userDTO = userService.registerUser(user);
+        String token = jwtUtil.generateToken(userDTO.getEmail());
+        return new ResponseEntity<Map<String, Object>>(
+                Map.of("success", "true", "user-token", token), HttpStatus.CREATED);
+    }
 
-  @PostMapping("/login")
-  public ResponseEntity<Map<String, Object>> login(
-      @Valid @RequestBody LoginCredentials credentials) {
-    UsernamePasswordAuthenticationToken authCredentials =
-        new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword());
-    authenticationManager.authenticate(authCredentials);
-    String token = jwtUtil.generateToken(credentials.getEmail());
-    return new ResponseEntity<>(Map.of("success", "true", "user-token", token), HttpStatus.OK);
-  }
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginCredentials credentials) {
+        UsernamePasswordAuthenticationToken authCredentials =
+                new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword());
+        authenticationManager.authenticate(authCredentials);
+        String token = jwtUtil.generateToken(credentials.getEmail());
+        return new ResponseEntity<>(Map.of("success", "true", "user-token", token), HttpStatus.OK);
+    }
 }

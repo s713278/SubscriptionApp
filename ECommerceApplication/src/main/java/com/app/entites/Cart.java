@@ -19,20 +19,20 @@ import lombok.Data;
 @Table(name = "carts")
 public class Cart {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
-  @OneToOne(cascade = CascadeType.ALL)
-  @JoinColumn(name = "user_id")
-  private User user;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-  @OneToMany(
-      cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-      fetch = FetchType.LAZY,
-      orphanRemoval = true)
-  @JoinColumn(name = "cart_id")
-  private List<CartItem> cartItems = new ArrayList<>();
+    @OneToMany(
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            fetch = FetchType.LAZY,
+            orphanRemoval = true)
+    @JoinColumn(name = "cart_id")
+    private List<CartItem> cartItems = new ArrayList<>();
 
-  private Double totalPrice = 0.0;
+    private Double totalPrice = 0.0;
 }

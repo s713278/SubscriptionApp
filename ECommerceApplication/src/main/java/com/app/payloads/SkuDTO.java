@@ -13,19 +13,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SkuDTO {
 
-  private Long id;
-  private String name;
-  private String imagePath;
-  private String description;
-  private Integer quantity;
-  private double listPrice;
-  private double salePrice;
+    private Long id;
+    private String name;
+    private String imagePath;
+    private String description;
+    private Integer quantity;
+    private double listPrice;
+    private double salePrice;
 
-  @ManyToOne
-  @JoinColumn(name = "productId")
-  private Product product;
+    @ManyToOne
+    @JoinColumn(name = "productId")
+    private Product product;
 
-  @ManyToOne
-  @JoinColumn(name = "store_id")
-  private Store store;
+    @ManyToOne
+    @JoinColumn(name = "store_id")
+    private Store store;
 }

@@ -12,21 +12,25 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OrderItemDTO {
 
-  @JsonIgnore private Long id;
-  private Integer quantity;
+    @JsonIgnore
+    private Long id;
 
-  @JsonProperty("unit_price")
-  private double unitPrice;
+    private Integer quantity;
 
-  private double discount;
+    @JsonProperty("unit_price")
+    private double unitPrice;
 
-  @JsonIgnore private SkuDTO sku;
+    private double discount;
 
-  @JsonProperty("state_tax")
-  private double stateTax = 0;
+    @JsonIgnore
+    private SkuDTO sku;
 
-  @JsonProperty("federal_tax")
-  private double federalTax = 0;
+    @JsonProperty("state_tax")
+    private double stateTax = 0;
 
-  @Transient private double amount; // quantity * unitPrice + stateTax + federalTax;
+    @JsonProperty("federal_tax")
+    private double federalTax = 0;
+
+    @Transient
+    private double amount; // quantity * unitPrice + stateTax + federalTax;
 }

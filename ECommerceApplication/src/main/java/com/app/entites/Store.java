@@ -29,29 +29,30 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 public class Store extends AbstractAuditingEntity<Long> implements Serializable {
 
-  /**
-	 * 
-	 */
-  private static final long serialVersionUID = -1023982518500140805L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -1023982518500140805L;
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @NotBlank
-  @Size(min = 5, message = "Store name must contain atleast 5 characters")
-  private String name;
+    @NotBlank
+    @Size(min = 5, message = "Store name must contain atleast 5 characters")
+    private String name;
 
-  @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  @JoinColumn(name = "store_id")
-  private Address address;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "store_id")
+    private Address address;
 
-  @Size(min = 10, max = 10, message = "Mobile Number must be exactly 10 digits long")
-  @Pattern(regexp = "^\\d{10}$", message = "Mobile Number must contain only Numbers")
-  private String phoneName;
+    @Size(min = 10, max = 10, message = "Mobile Number must be exactly 10 digits long")
+    @Pattern(regexp = "^\\d{10}$", message = "Mobile Number must contain only Numbers")
+    private String phoneName;
 
-  @Email private String email;
+    @Email
+    private String email;
 
-  @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
-  private List<Category> categories;
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<Category> categories;
 }

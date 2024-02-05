@@ -14,14 +14,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-  @Autowired private UserRepo userRepo;
+    @Autowired
+    private UserRepo userRepo;
 
-  @Override
-  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    Optional<User> user = userRepo.findByEmailIgnoreCase(username);
-    if (!user.isPresent()) {
-      throw new ResourceNotFoundException("User", "email", username);
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<User> user = userRepo.findByEmailIgnoreCase(username);
+        if (!user.isPresent()) {
+            throw new ResourceNotFoundException("User", "email", username);
+        }
+        return user.map(UserInfoConfig::new).get();
     }
-    return user.map(UserInfoConfig::new).get();
-  }
 }

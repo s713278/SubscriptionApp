@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class AddItemResponse {
-  boolean success;
+    boolean success;
 
-  @Builder
-  static class Data {
-    private String orderId;
-    private Order currentOrder;
-  }
+    @Builder
+    static class Data {
+        private String orderId;
+        private Order currentOrder;
+    }
 }

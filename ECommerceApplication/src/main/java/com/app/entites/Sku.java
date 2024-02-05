@@ -20,29 +20,29 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Sku {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
-  @NotBlank
-  @Size(min = 3, message = "Name must contain atleast 3 characters")
-  private String name;
+    @NotBlank
+    @Size(min = 3, message = "Name must contain atleast 3 characters")
+    private String name;
 
-  private String imagePath;
+    private String imagePath;
 
-  @NotBlank
-  @Size(min = 25, message = "Description must contain atleast 25 characters")
-  private String description;
+    @NotBlank
+    @Size(min = 25, message = "Description must contain atleast 25 characters")
+    private String description;
 
-  private Integer quantity;
-  private double listPrice;
-  private double salePrice;
+    private Integer quantity;
+    private double listPrice;
+    private double salePrice;
 
-  @ManyToOne
-  @JoinColumn(name = "productId")
-  private Product product;
+    @ManyToOne
+    @JoinColumn(name = "productId")
+    private Product product;
 
-  @ManyToOne
-  @JoinColumn(name = "store_id")
-  private Store store;
+    @ManyToOne
+    @JoinColumn(name = "store_id")
+    private Store store;
 }

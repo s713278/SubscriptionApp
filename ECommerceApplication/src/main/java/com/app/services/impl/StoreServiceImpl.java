@@ -23,71 +23,66 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class StoreServiceImpl implements StoreService {
 
-  private ModelMapper modelMapper;
+    private ModelMapper modelMapper;
 
-  private StoreRepo storeRepo;
+    private StoreRepo storeRepo;
 
-  @Override
-  public StoreDTO createStore(StoreDTO storeDTO) {
-    Store storeEntity = storeRepo.save(modelMapper.map(storeDTO, Store.class));
-    return modelMapper.map(storeEntity, StoreDTO.class);
-  }
-
-  @Override
-  public StoreResponse getStore(
-      Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
-
-    Sort sortByAndOrder =
-        sortOrder.equalsIgnoreCase("asc")
-            ? Sort.by(sortBy).ascending()
-            : Sort.by(sortBy).descending();
-
-    Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
-    Page<Store> pageStores = storeRepo.findAll(pageDetails);
-    List<Store> stores = pageStores.getContent();
-
-    if (stores.size() == 0) {
-      throw new APIException("No stores is created till now");
+    @Override
+    public StoreDTO createStore(StoreDTO storeDTO) {
+        Store storeEntity = storeRepo.save(modelMapper.map(storeDTO, Store.class));
+        return modelMapper.map(storeEntity, StoreDTO.class);
     }
 
-    List<StoreDTO> storeDTOs =
-        stores.stream()
-            .map(store -> modelMapper.map(store, StoreDTO.class))
-            .collect(Collectors.toList());
+    @Override
+    public StoreResponse getStore(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
 
-    StoreResponse storeResponse = new StoreResponse();
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
 
-    storeResponse.setContent(storeDTOs);
-    storeResponse.setPageNumber(pageStores.getNumber());
-    storeResponse.setPageSize(pageStores.getSize());
-    storeResponse.setTotalElements(pageStores.getTotalElements());
-    storeResponse.setTotalPages(pageStores.getTotalPages());
-    storeResponse.setLastPage(pageStores.isLast());
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
+        Page<Store> pageStores = storeRepo.findAll(pageDetails);
+        List<Store> stores = pageStores.getContent();
 
-    return storeResponse;
-  }
+        if (stores.size() == 0) {
+            throw new APIException("No stores is created till now");
+        }
 
-  @Override
-  public StoreDTO updateStore(StoreDTO storeDTO, Long storeId) {
-    Store savedStore =
-        storeRepo
-            .findById(storeId)
-            .orElseThrow(() -> new ResourceNotFoundException("Store", "storeId", storeId));
-    modelMapper.map(storeDTO, savedStore);
-    savedStore.setId(storeId);
-    savedStore = storeRepo.save(savedStore);
-    return modelMapper.map(savedStore, StoreDTO.class);
-  }
+        List<StoreDTO> storeDTOs = stores.stream()
+                .map(store -> modelMapper.map(store, StoreDTO.class))
+                .collect(Collectors.toList());
 
-  @Override
-  public String deleteStore(Long storeId) {
-    Store store =
-        storeRepo
-            .findById(storeId)
-            .orElseThrow(() -> new ResourceNotFoundException("Store", "storeId", storeId));
-    storeRepo.deleteById(storeId);
-    return "Store with id: " + storeId + " deleted successfully !!!";
+        StoreResponse storeResponse = new StoreResponse();
 
-    // return storeRepo.delete(storeId);
-  }
+        storeResponse.setContent(storeDTOs);
+        storeResponse.setPageNumber(pageStores.getNumber());
+        storeResponse.setPageSize(pageStores.getSize());
+        storeResponse.setTotalElements(pageStores.getTotalElements());
+        storeResponse.setTotalPages(pageStores.getTotalPages());
+        storeResponse.setLastPage(pageStores.isLast());
+
+        return storeResponse;
+    }
+
+    @Override
+    public StoreDTO updateStore(StoreDTO storeDTO, Long storeId) {
+        Store savedStore = storeRepo
+                .findById(storeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Store", "storeId", storeId));
+        modelMapper.map(storeDTO, savedStore);
+        savedStore.setId(storeId);
+        savedStore = storeRepo.save(savedStore);
+        return modelMapper.map(savedStore, StoreDTO.class);
+    }
+
+    @Override
+    public String deleteStore(Long storeId) {
+        Store store = storeRepo
+                .findById(storeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Store", "storeId", storeId));
+        storeRepo.deleteById(storeId);
+        return "Store with id: " + storeId + " deleted successfully !!!";
+
+        // return storeRepo.delete(storeId);
+    }
 }

@@ -6,12 +6,14 @@ import lombok.Data;
 @Data
 public class PaymentDTO {
 
-  @JsonProperty("credit_card")
-  private String creditCardNum;
+    @JsonProperty("credit_card")
+    private String creditCardNum;
 
-  @JsonProperty("expiry_date")
-  private String expDate;
+    @JsonProperty("expiry_date")
+    private String expDate;
 
-  @JsonProperty("billing_address")
-  private AddressDTO billingAddress;
+    private String paymentMethod;
+
+    @JsonProperty("billing_address")
+    private AddressDTO billingAddress;
 }

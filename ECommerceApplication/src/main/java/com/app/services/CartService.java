@@ -7,17 +7,17 @@ import java.util.List;
 
 public interface CartService {
 
-  ApiResponse<CartDTO> addOrUpdateItem(final Long storeId, final ItemRequest request);
+    ApiResponse<CartDTO> addOrUpdateItem(final Long storeId, final ItemRequest request);
 
-  List<CartDTO> getAllCarts();
+    List<CartDTO> getAllCarts();
 
-  ApiResponse<CartDTO> getCart(Long cartId);
+    ApiResponse<CartDTO> getCart(Long cartId);
 
-  CartDTO updateCart(Long cartId, Long skuId, Integer quantity);
+    CartDTO updateCart(Long cartId, Long skuId, Integer quantity);
 
-  void updateProductInCarts(Long cartId, Long skuId);
+    void updateProductInCarts(Long cartId, Long skuId);
 
-  ApiResponse<String> delteItem(Long cartId, Long cartItemId);
+    ApiResponse<String> deleteItem(Long cartId, Long cartItemId);
 
-  ApiResponse<List<CartDTO>> getAllCarts(final Long storeId);
+    ApiResponse<List<CartDTO>> getAllCarts(final Long storeId);
 }

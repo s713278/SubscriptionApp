@@ -12,27 +12,27 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class SkuServiceImpl implements SkuService {
 
-  final ModelMapper modelMapper;
-  final SkuRepo skuRepo;
+    final ModelMapper modelMapper;
+    final SkuRepo skuRepo;
 
-  @Override
-  public SkuDTO addSku(SkuDTO skuDTO) {
-    Sku sku = modelMapper.map(skuDTO, Sku.class);
-    skuRepo.save(sku);
-    return modelMapper.map(sku, SkuDTO.class);
-  }
+    @Override
+    public SkuDTO addSku(SkuDTO skuDTO) {
+        Sku sku = modelMapper.map(skuDTO, Sku.class);
+        skuRepo.save(sku);
+        return modelMapper.map(sku, SkuDTO.class);
+    }
 
-  @Override
-  public SkuDTO updateSku(Long skuId, SkuDTO skuDTO) {
-    Sku sku = modelMapper.map(skuDTO, Sku.class);
-    // sku.setSkuId(skuId);
-    skuRepo.save(sku);
-    return modelMapper.map(sku, SkuDTO.class);
-  }
+    @Override
+    public SkuDTO updateSku(Long skuId, SkuDTO skuDTO) {
+        Sku sku = modelMapper.map(skuDTO, Sku.class);
+        // sku.setSkuId(skuId);
+        skuRepo.save(sku);
+        return modelMapper.map(sku, SkuDTO.class);
+    }
 
-  @Override
-  public String deleteSku(Long skuId) {
-    skuRepo.deleteById(skuId);
-    return "Sku " + skuId + " deleted successfully !!!";
-  }
+    @Override
+    public String deleteSku(Long skuId) {
+        skuRepo.deleteById(skuId);
+        return "Sku " + skuId + " deleted successfully !!!";
+    }
 }

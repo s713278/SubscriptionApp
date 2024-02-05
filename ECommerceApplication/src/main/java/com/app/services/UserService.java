@@ -4,13 +4,13 @@ import com.app.payloads.UserDTO;
 import com.app.payloads.response.UserResponse;
 
 public interface UserService {
-  UserDTO registerUser(UserDTO userDTO);
+    UserDTO registerUser(UserDTO userDTO);
 
-  UserResponse getAllUsers(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
+    UserResponse getAllUsers(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
-  UserDTO getUserById(Long userId);
+    UserDTO getUserById(Long userId);
 
-  UserDTO updateUser(Long userId, UserDTO userDTO);
+    UserDTO updateUser(Long userId, UserDTO userDTO);
 
-  String deleteUser(Long userId);
+    String deleteUser(Long userId);
 }
