@@ -12,8 +12,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,8 +32,8 @@ public class Shipping {
             cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Order order;
 
-    @NotBlank
-    @Size(min = 4, message = "Shipping method must contain atleast 4 characters")
+  //  @NotBlank
+   // @Size(min = 4, message = "Shipping method must contain atleast 4 characters")
     @Column(name = "shipping_method", columnDefinition = "ship_type_enum")
     @Enumerated(EnumType.STRING)
     private ShippingType shippingMethod;

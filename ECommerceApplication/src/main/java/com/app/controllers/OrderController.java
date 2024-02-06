@@ -46,11 +46,29 @@ public class OrderController {
     @PutMapping("/order/items/{order_id}")
     public ResponseEntity<ApiResponse<OrderUpdateResponse>> updateOrder(
             @PathVariable("store_id") Long storeId,
-            @PathVariable Long orderId,
+            @PathVariable("order_id") Long orderId,
             @RequestBody OrderUpdateRequest request) {
         return new ResponseEntity<>(orderService.updateOrder(orderId, request), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('STORE') or hasAuthority('USER')")
+    @GetMapping("/order/items/{order_id}")
+    public ResponseEntity<ApiResponse<OrderDTO>> getOrdersById(
+             @PathVariable("store_id") Long storeId,
+             @PathVariable("order_id") Long orderId){
+        ApiResponse<OrderDTO> order = orderService.getOrderById(orderId);
+        return new ResponseEntity<>(order, HttpStatus.FOUND);
+    }
+    
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('STORE')")
+    @GetMapping("/order/items")
+    public ResponseEntity<ApiResponse<List<OrderDTO>>> getOrdersByStoreId(
+             @PathVariable("store_id") Long storeId){
+        ApiResponse<List<OrderDTO>> orders = orderService.getOrderByStoreId(storeId);
+        return new ResponseEntity<>(orders, HttpStatus.FOUND);
+    }
+    
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('STORE')")
     @GetMapping("/admin/orders")
     public ResponseEntity<OrderResponse> getAllOrders(
             @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false)

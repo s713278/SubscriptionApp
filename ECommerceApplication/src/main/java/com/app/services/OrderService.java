@@ -12,14 +12,16 @@ import java.util.List;
 public interface OrderService {
 
     ApiResponse<OrderDTO> placeOrder(Long storeId, OrderRequest request);
+    
+    ApiResponse<OrderUpdateResponse> updateOrder(Long orderId, OrderUpdateRequest request);
+    ApiResponse<OrderDTO> getOrderById(final Long orderId);
+    ApiResponse<List<OrderDTO>> getOrderByStoreId(final Long storeId);
 
     OrderDTO getOrder(String emailId, Long orderId);
 
     List<OrderDTO> getOrdersByUser(String emailId);
 
     OrderResponse getAllOrders(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
-
-    ApiResponse<OrderUpdateResponse> updateOrder(Long orderId, OrderUpdateRequest request);
 
     OrderDTO updateOrder(String emailId, Long orderId, OrderStatus orderStatus);
 }

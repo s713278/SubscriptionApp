@@ -21,6 +21,7 @@ import com.app.repositories.CartItemRepo;
 import com.app.repositories.CartRepo;
 import com.app.repositories.OrderItemRepo;
 import com.app.repositories.OrderRepo;
+import com.app.repositories.OrderStatusRepo;
 import com.app.repositories.PaymentRepo;
 import com.app.repositories.StoreRepo;
 import com.app.repositories.UserRepo;
@@ -35,27 +36,31 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderServiceImpl extends AbstarctCatalogService implements OrderService {
 
+    @Autowired
+    private OrderStatusRepo orderStatusRepo;
+
     public OrderServiceImpl(UserRepo userRepo, CartRepo cartRepo, OrderRepo orderRepo, PaymentRepo paymentRepo,
             OrderItemRepo orderItemRepo, CartItemRepo cartItemRepo, UserService userService, CartService cartService,
             StoreRepo storeRepo, ModelMapper modelMapper) {
-        super(userRepo, cartRepo, orderRepo, paymentRepo, orderItemRepo, cartItemRepo, userService, cartService, storeRepo,
-                modelMapper);
+        super(userRepo, cartRepo, orderRepo, paymentRepo, orderItemRepo, cartItemRepo, userService, cartService,
+                storeRepo, modelMapper);
     }
 
-    @Transactional(
-            propagation = Propagation.REQUIRES_NEW,
-            rollbackFor = {Exception.class, APIException.class, ResourceNotFoundException.class})
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED, rollbackFor = {
+            Exception.class, APIException.class, ResourceNotFoundException.class })
     @Override
     public ApiResponse<OrderDTO> placeOrder(final Long storeId, final OrderRequest request) {
         final Long userId = request.getUserId();
@@ -77,8 +82,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
     public List<OrderDTO> getOrdersByUser(String emailId) {
         List<Order> orders = orderRepo.findAllByEmail(emailId);
 
-        List<OrderDTO> orderDTOs = orders.stream()
-                .map(order -> modelMapper.map(order, OrderDTO.class))
+        List<OrderDTO> orderDTOs = orders.stream().map(order -> modelMapper.map(order, OrderDTO.class))
                 .collect(Collectors.toList());
 
         if (orderDTOs.size() == 0) {
@@ -103,8 +107,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
     @Override
     public OrderResponse getAllOrders(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
 
-        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
-                ? Sort.by(sortBy).ascending()
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
 
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
@@ -113,8 +116,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
 
         List<Order> orders = pageOrders.getContent();
 
-        List<OrderDTO> orderDTOs = orders.stream()
-                .map(order -> modelMapper.map(order, OrderDTO.class))
+        List<OrderDTO> orderDTOs = orders.stream().map(order -> modelMapper.map(order, OrderDTO.class))
                 .collect(Collectors.toList());
 
         if (orderDTOs.size() == 0) {
@@ -133,17 +135,27 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
         return orderResponse;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public ApiResponse<OrderUpdateResponse> updateOrder(Long orderId, OrderUpdateRequest request) {
-        Order order = orderRepo
-                .findById(orderId)
+        Order order = orderRepo.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "orderId", orderId));
         if (order == null) {
             throw new ResourceNotFoundException("Order", "orderId", orderId);
         }
-        OrderStatus newOrderStatus = OrderStatus.valueOf(request.getNewSatus().toUpperCase());
-        order.setOrderStatus(newOrderStatus);
+        switch (order.getOrderStatus()) {
+        case DELIVERED, CANCELED -> {
+            throw new APIException("Invalid Order Status..");
+        }
+        }
+        ;
+        // OrderStatus newOrderStatus = OrderStatus.valueOf(request.getNewSatus());
+
         OrderStatusHistory orderStatusHistory = createOrderStatusHistory(order);
+        orderStatusHistory.setOldStatus(order.getOrderStatus());
+        orderStatusHistory.setNewStatus(request.getNewSatus());
+        order.setOrderStatus(request.getNewSatus());
+        orderStatusRepo.save(orderStatusHistory);
         return ApiResponse.success(modelMapper.map(OrderStatusHistory.class, OrderUpdateResponse.class));
     }
 
@@ -184,8 +196,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
     }
 
     private void processOrderItems(Cart cart, Order order) {
-        List<OrderItem> orderItems = cart.getCartItems().stream()
-                .map(cartItem -> createOrderItem(cartItem, order))
+        List<OrderItem> orderItems = cart.getCartItems().stream().map(cartItem -> createOrderItem(cartItem, order))
                 .collect(Collectors.toList());
         order.setItems(orderItems);
     }
@@ -214,8 +225,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
 
     private void createShipping(final OrderRequest request, Order order) {
         Shipping shipping = modelMapper.map(request.getShippingDetails(), Shipping.class);
-        ShippingType shippingType =
-                ShippingType.valueOf(request.getShippingDetails().getShippingMethod());
+        ShippingType shippingType = ShippingType.valueOf(request.getShippingDetails().getShippingMethod());
         shipping.setShippingMethod(shippingType);
         shipping.setOrder(order);
         // Shipping
@@ -229,5 +239,20 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
         orderStatusHistory.setNewStatus(OrderStatus.CREATED);
         orderStatusHistory.setChangedAt(LocalDateTime.now());
         return orderStatusHistory;
+    }
+
+    @Override
+    public ApiResponse<OrderDTO> getOrderById(Long orderId) {
+        Order order = orderRepo.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order", "orderId", orderId));
+        return ApiResponse.success(modelMapper.map(order, OrderDTO.class));
+    }
+
+    @Override
+    public ApiResponse<List<OrderDTO>> getOrderByStoreId(Long storeId) {
+        List<OrderDTO> orders = orderRepo.findOrderByStoreId(storeId)
+                .stream()
+                .map(orderEntity->modelMapper.map(orderEntity, OrderDTO.class)).collect(Collectors.toList());
+        return ApiResponse.success(orders);
     }
 }

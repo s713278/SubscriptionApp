@@ -48,7 +48,7 @@ public class Address {
     private String country;
 
     @NotBlank
-    @Size(min = 6, message = "Pincode must contain atleast 6 characters")
+    @Size(min = 5, max=6 ,message = "Pincode must contain atleast 5 characters")
     private String pincode;
 
     @ManyToMany(mappedBy = "addresses")
@@ -60,7 +60,7 @@ public class Address {
             @NotBlank @Size(min = 4, message = "City name must contain atleast 4 characters") String city,
             @NotBlank @Size(min = 2, message = "State name must contain atleast 2 characters") String state,
             @NotBlank @Size(min = 2, message = "Country name must contain atleast 2 characters") String country,
-            @NotBlank @Size(min = 6, message = "Pincode must contain atleast 6 characters") String pincode) {
+            @NotBlank @Size(min = 5, max=6, message = "Pincode must contain atleast 6 characters") String pincode) {
         super();
         this.address1 = address1;
         this.address2 = address2;

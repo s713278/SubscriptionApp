@@ -19,6 +19,7 @@ import com.app.services.UserService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.util.Assert;
 
 @Slf4j
 public abstract class AbstarctCatalogService {
@@ -98,15 +99,21 @@ public abstract class AbstarctCatalogService {
         return store;
     }
 
+    /**
+     * <p>Updating the sku's inventory.</p<
+     * <p>Clean up the user's cart.</p<
+     * @param cart
+     */
     protected void updateCartAndSkuQuantities(Cart cart) {
         cart.getCartItems().forEach(cartItem -> {
-            int quantity = cartItem.getQuantity();
-            Sku sku = cartItem.getSku();
-            cartRepo.deleteById(cartItem.getCartItemId());
-            //cartService.deleteItem(cart.getId(), cartItem.getCartItemId());
-            sku.setQuantity(sku.getQuantity() - quantity);
+             int quantity = cartItem.getQuantity();
+             Sku sku = cartItem.getSku();
+             sku.setQuantity(sku.getQuantity() - quantity);
         });
-
+        cart.getCartItems().clear();
         cart.setTotalPrice(0D);
+        cartItemRepo.deleteByCartId(cart.getId().longValue());
+        Assert.isTrue(cart.getTotalPrice().compareTo(0D)==0,String.format("Cart %d total amount is not zero but expection is ZERO.",cart.getId()));
+        Assert.isTrue(cart.getCartItems().isEmpty(), String.format("Cart %d have %d items and expectation is EMPTY",cart.getId(),cart.getCartItems().size()));
     }
 }
