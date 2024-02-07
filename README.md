@@ -51,7 +51,6 @@
 <img width="947" alt="Swagger-UI" src="https://user-images.githubusercontent.com/101395494/216388614-f8eed33e-cbbb-4cfa-997e-b76674bbb465.png">
 
 # API Controllers
-![image](https://github.com/s713278/ECommerceApp/assets/14287419/8c24bf49-880a-401d-83be-1311c9cf3f7e)
 ![image](https://github.com/s713278/ECommerceApp/assets/14287419/a9188676-3211-4eb3-8a3d-f13ed18536d7)
 ![image](https://github.com/s713278/ECommerceApp/assets/14287419/ead9e229-37aa-4ee2-995d-15db39d9264a)
 ![image](https://github.com/s713278/ECommerceApp/assets/14287419/c01491ba-ef2e-48ed-8ef6-7b019cb0965e)
