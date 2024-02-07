@@ -85,8 +85,8 @@ public class UserServiceImpl implements UserService {
                 }
                 user.setAddresses(List.of(address));
             }
+            cart.setUser(user);
             User registeredUser = userRepo.saveAndFlush(user);
-            cart.setUser(registeredUser);
             userDTO = modelMapper.map(registeredUser, UserDTO.class);
             // userDTO.setAddress(modelMapper.map(user.getAddresses().stream().findFirst().get(),
             // AddressDTO.class));

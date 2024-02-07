@@ -51,6 +51,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
 
     @Autowired
     private OrderStatusRepo orderStatusRepo;
+    
 
     public OrderServiceImpl(UserRepo userRepo, CartRepo cartRepo, OrderRepo orderRepo, PaymentRepo paymentRepo,
             OrderItemRepo orderItemRepo, CartItemRepo cartItemRepo, UserService userService, CartService cartService,
@@ -245,6 +246,12 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
     public ApiResponse<OrderDTO> getOrderById(Long orderId) {
         Order order = orderRepo.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "orderId", orderId));
+        try{
+            modelMapper.map(order, OrderDTO.class);
+        }catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
         return ApiResponse.success(modelMapper.map(order, OrderDTO.class));
     }
 

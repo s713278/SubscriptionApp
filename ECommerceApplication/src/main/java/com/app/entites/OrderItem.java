@@ -35,8 +35,6 @@ public class OrderItem {
     private Integer quantity;
 
     private double discount;
-    private double price;
-    private double tax;
     private double unitPrice;
     private double stateTax = 0;
     private double federalTax = 0;
