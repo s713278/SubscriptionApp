@@ -1,7 +1,6 @@
 package com.app.controllers;
 
 import com.app.config.AppConstants;
-import com.app.entites.Category;
 import com.app.payloads.CategoryDTO;
 import com.app.payloads.response.CategoryResponse;
 import com.app.services.CategoryService;
@@ -11,6 +10,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,15 +29,16 @@ public class CategoryController {
 
     @Autowired
     private CategoryService categoryService;
+    
 
-    @PostMapping("/admin/category")
-    public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody Category category) {
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('STORE')")
+    @PostMapping("/categories")
+    public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO category) {
         CategoryDTO savedCategoryDTO = categoryService.createCategory(category);
-
         return new ResponseEntity<CategoryDTO>(savedCategoryDTO, HttpStatus.CREATED);
     }
 
-    @GetMapping("/public/categories")
+    @GetMapping("/categories")
     public ResponseEntity<CategoryResponse> getCategories(
             @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false)
                     Integer pageNumber,
@@ -52,14 +53,16 @@ public class CategoryController {
         return new ResponseEntity<CategoryResponse>(categoryResponse, HttpStatus.FOUND);
     }
 
-    @PutMapping("/admin/categories/{categoryId}")
-    public ResponseEntity<CategoryDTO> updateCategory(@RequestBody Category category, @PathVariable Long categoryId) {
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('STORE')")
+    @PutMapping("/categories/{categoryId}")
+    public ResponseEntity<CategoryDTO> updateCategory(@RequestBody CategoryDTO category, @PathVariable Long categoryId) {
         CategoryDTO categoryDTO = categoryService.updateCategory(category, categoryId);
 
         return new ResponseEntity<CategoryDTO>(categoryDTO, HttpStatus.OK);
     }
 
-    @DeleteMapping("/admin/categories/{categoryId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping("/categories/{categoryId}")
     public ResponseEntity<String> deleteCategory(@PathVariable Long categoryId) {
         String status = categoryService.deleteCategory(categoryId);
 

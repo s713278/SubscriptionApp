@@ -13,10 +13,14 @@ public class AppConstants {
     public static final Long USER_ID = 102L;
     public static final Long STORE_ID = 103L;
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
-    public static final String[] PUBLIC_URLS = {"/v3/api-docs/**", "/swagger-ui/**", "/api/register/**", "/api/login"};
+    public static final String[] PUBLIC_URLS = {"/v3/api-docs/**", "/swagger-ui/**",
+            "/api/register/**", "/api/login","/api/store/*/categories", 
+            "/api/store/*/categories/*/products",
+             "/api/store/*/products","/api/stores/*"};
     public static final String[] USER_URLS = {
-        "/api/public/users/**", "/api/store/*/carts/items", "/api/store/*/carts/*/items"
+        "/api/users/**", "/api/store/*/carts", "/api/store/*/carts/*","/api/store/*/orders"
     };
-    public static final String[] ADMIN_URLS = {"/api/store/{store_id}/admin/**"};
-    public static final String[] STORE_URLS = {"/api/store/{store_id}/admin/**"};
+    public static final String[] ADMIN_URLS = {"/api/store/*/admin/**"};
+    
+    public static final String[] STORE_URLS = {"/api/store/*"};
 }

@@ -73,7 +73,7 @@ public class ProductServiceImpl implements ProductService {
             }
         }
         if (isProductNotPresent) {
-            product.setImage("default.png");
+            product.setImagePath("default.png");
             product.setCategory(category);
             Product savedProduct = productRepo.save(product);
             return modelMapper.map(savedProduct, ProductDTO.class);
@@ -185,28 +185,21 @@ public class ProductServiceImpl implements ProductService {
         Product productFromDB = productRepo
                 .findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
-
         if (productFromDB == null) {
             throw new APIException("Product not found with productId: " + productId);
         }
-
-        product.setImage(productFromDB.getImage());
+        product.setImagePath(productFromDB.getImagePath());
         product.setProductId(productId);
         product.setCategory(productFromDB.getCategory());
-
         Product savedProduct = productRepo.save(product);
-
         List<Cart> carts = cartRepo.findCartsBySkuId(productId);
-
         List<CartDTO> cartDTOs = carts.stream()
                 .map(cart -> {
                     CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
                     return cartDTO;
                 })
                 .collect(Collectors.toList());
-
         cartDTOs.forEach(cart -> cartService.updateProductInCarts(cart.getCartId(), productId));
-
         return modelMapper.map(savedProduct, ProductDTO.class);
     }
 
@@ -219,13 +212,9 @@ public class ProductServiceImpl implements ProductService {
         if (productFromDB == null) {
             throw new APIException("Product not found with productId: " + productId);
         }
-
         String fileName = fileService.uploadImage(path, image);
-
-        productFromDB.setImage(fileName);
-
+        productFromDB.setImagePath(fileName);
         Product updatedProduct = productRepo.save(productFromDB);
-
         return modelMapper.map(updatedProduct, ProductDTO.class);
     }
 

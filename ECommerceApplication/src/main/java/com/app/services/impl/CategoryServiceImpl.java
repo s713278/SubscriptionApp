@@ -2,6 +2,7 @@ package com.app.services.impl;
 
 import com.app.entites.Category;
 import com.app.entites.Product;
+import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.payloads.CategoryDTO;
@@ -34,15 +35,13 @@ public class CategoryServiceImpl implements CategoryService {
     private ModelMapper modelMapper;
 
     @Override
-    public CategoryDTO createCategory(Category category) {
-        Category savedCategory = categoryRepo.findByCategoryName(category.getCategoryName());
-
+    public CategoryDTO createCategory(CategoryDTO categoryDTO) {
+        Category category = modelMapper.map(categoryDTO, Category.class);
+        Category savedCategory = categoryRepo.findByCategoryNameIgnoreCase(category.getCategoryName());
         if (savedCategory != null) {
-            throw new APIException("Category with the name '" + category.getCategoryName() + "' already exists !!!");
+            throw new APIException(APIErrorCode.API_302, "Category with the name '" + category.getCategoryName() + "' already exists !!!");
         }
-
         savedCategory = categoryRepo.save(category);
-
         return modelMapper.map(savedCategory, CategoryDTO.class);
     }
 
@@ -79,14 +78,14 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDTO updateCategory(Category category, Long categoryId) {
+    public CategoryDTO updateCategory(CategoryDTO category, Long categoryId) {
         Category savedCategory = categoryRepo
                 .findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
 
         category.setCategoryId(categoryId);
 
-        savedCategory = categoryRepo.save(category);
+        savedCategory = categoryRepo.save(modelMapper.map(category,Category.class));
 
         return modelMapper.map(savedCategory, CategoryDTO.class);
     }

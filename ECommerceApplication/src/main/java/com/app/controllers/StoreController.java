@@ -21,20 +21,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "5. Store Service API")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/stores")
 @SecurityRequirement(name = "E-Commerce Application")
 public class StoreController {
 
     private StoreService storeService;
 
-    @PostMapping("/public/store")
+    @PostMapping("/")
     public ResponseEntity<StoreDTO> createStore(@Valid @RequestBody StoreDTO storeDTO) {
         StoreDTO savedStoreDTO = storeService.createStore(storeDTO);
         return new ResponseEntity<StoreDTO>(savedStoreDTO, HttpStatus.CREATED);
     }
 
-    @GetMapping("/admin/public/stores")
-    public ResponseEntity<StoreResponse> getCategories(
+    @GetMapping("/stores")
+    public ResponseEntity<StoreResponse> getStores(
             @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false)
                     Integer pageNumber,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
@@ -48,13 +48,13 @@ public class StoreController {
         return new ResponseEntity<StoreResponse>(categoryResponse, HttpStatus.FOUND);
     }
 
-    @PutMapping("/public/stores/{storeId}")
+    @PutMapping("/stores/{storeId}")
     public ResponseEntity<StoreDTO> updateStore(@RequestBody StoreDTO storeDTO, @PathVariable Long storeId) {
         StoreDTO updatedStoreDTO = storeService.updateStore(storeDTO, storeId);
         return new ResponseEntity<StoreDTO>(updatedStoreDTO, HttpStatus.OK);
     }
 
-    @DeleteMapping("/admin/stores/{storeId}")
+    @DeleteMapping("/{storeId}")
     public ResponseEntity<String> deleteStore(@PathVariable Long storeId) {
         String status = storeService.deleteStore(storeId);
         return new ResponseEntity<String>(status, HttpStatus.OK);

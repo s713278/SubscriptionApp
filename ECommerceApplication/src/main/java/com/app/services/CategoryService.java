@@ -1,16 +1,15 @@
 package com.app.services;
 
-import com.app.entites.Category;
 import com.app.payloads.CategoryDTO;
 import com.app.payloads.response.CategoryResponse;
 
 public interface CategoryService {
 
-    CategoryDTO createCategory(Category category);
+    CategoryDTO createCategory(CategoryDTO category);
 
     CategoryResponse getCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
-    CategoryDTO updateCategory(Category category, Long categoryId);
+    CategoryDTO updateCategory(CategoryDTO category, Long categoryId);
 
     String deleteCategory(Long categoryId);
 }

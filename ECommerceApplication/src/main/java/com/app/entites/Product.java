@@ -1,5 +1,6 @@
 package com.app.entites;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -32,12 +33,13 @@ public class Product {
     @Size(min = 3, message = "Product name must contain atleast 3 characters")
     private String productName;
 
-    private String image;
+    private String imagePath;
 
     @NotBlank
     @Size(min = 25, message = "Product description must contain atleast 25 characters")
     private String description;
 
+    @JsonIgnore
     /*
      * private Integer quantity; private double price; private double discount;
      * private double specialPrice;
@@ -45,6 +47,7 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Sku> skus;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;

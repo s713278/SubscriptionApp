@@ -1,6 +1,7 @@
 package com.app.exceptions;
 
 import com.app.payloads.APIResponse;
+import com.app.payloads.response.ApiResponse;
 import jakarta.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,12 +39,9 @@ public class MyGlobalExceptionHandler {
     }
 
     @ExceptionHandler(APIException.class)
-    public ResponseEntity<APIResponse> myAPIException(APIException e) {
-        String message = e.getMessage();
-
-        APIResponse res = new APIResponse(message, false);
-
-        return new ResponseEntity<APIResponse>(res, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ApiResponse> myAPIException(APIException e) {
+        ApiResponse<?> errorResponse =ApiResponse.error(e.getErrorReason(),e.getMessage());
+        return new ResponseEntity<>(errorResponse, e.getErrorCode().getHttpStatus());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

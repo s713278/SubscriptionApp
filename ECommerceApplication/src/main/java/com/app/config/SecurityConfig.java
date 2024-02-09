@@ -1,11 +1,13 @@
 package com.app.config;
 
+import com.app.security.AppFilter;
 import com.app.security.JWTFilter;
 import com.app.services.impl.UserDetailsServiceImpl;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -26,6 +28,9 @@ public class SecurityConfig {
 
     @Autowired
     private JWTFilter jwtFilter;
+    
+    @Autowired
+    private AppFilter appFilter;
 
     @Autowired
     private UserDetailsServiceImpl userDetailsServiceImpl;
@@ -34,26 +39,44 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(t -> t.disable())
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers(AppConstants.PUBLIC_URLS)
+                    auth.requestMatchers(HttpMethod.GET, AppConstants.PUBLIC_URLS)
                             .permitAll()
-                            .requestMatchers(AppConstants.USER_URLS)
-                            .hasAnyAuthority("USER", "ADMIN")
-                            .requestMatchers(AppConstants.ADMIN_URLS)
-                            .hasAuthority("ADMIN")
+                            
+                            .requestMatchers(HttpMethod.GET,AppConstants.USER_URLS)
+                            .hasAnyAuthority("USER","STORE", "ADMIN")
+                            
+                            .requestMatchers(HttpMethod.POST,AppConstants.STORE_URLS)
+                            .hasAnyAuthority("STORE","ADMIN")
+                            .requestMatchers(HttpMethod.PUT,AppConstants.STORE_URLS)
+                            .hasAnyAuthority("STORE","ADMIN")
+                            .requestMatchers(HttpMethod.DELETE,AppConstants.STORE_URLS)
+                            .hasAnyAuthority("STORE","ADMIN")
+                            
+                            .requestMatchers(HttpMethod.POST, AppConstants.ADMIN_URLS)
+                            .hasAnyAuthority("ADMIN")
+                            .requestMatchers(HttpMethod.PUT, AppConstants.ADMIN_URLS)
+                            .hasAnyAuthority("ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, AppConstants.ADMIN_URLS)
+                            .hasAnyAuthority("ADMIN")
                             .anyRequest()
                             .authenticated();
                 })
                 .exceptionHandling(t -> t.authenticationEntryPoint((request, response, authException) ->
                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")))
-                .sessionManagement(t -> t.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
+                .sessionManagement(t -> t.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        
+        http.addFilterAfter(appFilter, UsernamePasswordAuthenticationFilter.class);
+        
         http.authenticationProvider(daoAuthenticationProvider());
         DefaultSecurityFilterChain defaultSecurityFilterChain = http.build();
 
         return defaultSecurityFilterChain;
     }
 
+  
+    
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();

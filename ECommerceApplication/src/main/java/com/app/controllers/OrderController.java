@@ -33,7 +33,7 @@ public class OrderController {
 
     public final OrderService orderService;
 
-    @PostMapping("/order/items")
+    @PostMapping("/orders")
     public ResponseEntity<ApiResponse<OrderDTO>> placeOrder(
             @PathVariable("store_id") Long storeId, @RequestBody OrderRequest request) {
 
@@ -43,7 +43,7 @@ public class OrderController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('STORE')")
-    @PutMapping("/order/items/{order_id}")
+    @PutMapping("/orders/{order_id}")
     public ResponseEntity<ApiResponse<OrderUpdateResponse>> updateOrder(
             @PathVariable("store_id") Long storeId,
             @PathVariable("order_id") Long orderId,
@@ -52,7 +52,7 @@ public class OrderController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('STORE') or hasAuthority('USER')")
-    @GetMapping("/order/items/{order_id}")
+    @GetMapping("/orders/{order_id}")
     public ResponseEntity<ApiResponse<OrderDTO>> getOrdersById(
              @PathVariable("store_id") Long storeId,
              @PathVariable("order_id") Long orderId){
@@ -61,7 +61,7 @@ public class OrderController {
     }
     
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('STORE')")
-    @GetMapping("/order/items")
+    @GetMapping("/orders")
     public ResponseEntity<ApiResponse<List<OrderDTO>>> getOrdersByStoreId(
              @PathVariable("store_id") Long storeId){
         ApiResponse<List<OrderDTO>> orders = orderService.getOrderByStoreId(storeId);

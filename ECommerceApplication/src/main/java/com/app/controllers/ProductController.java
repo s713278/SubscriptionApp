@@ -9,9 +9,11 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @Tag(name = "7. Product Service API")
 @RestController
 @RequestMapping("/api/store/{store_id}")
@@ -32,7 +35,8 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @PostMapping("/admin/categories/{categoryId}/product")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('STORE')")
+    @PostMapping("/categories/{categoryId}/products")
     public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody Product product, @PathVariable Long categoryId) {
 
         ProductDTO savedProduct = productService.addProduct(categoryId, product);
@@ -40,7 +44,7 @@ public class ProductController {
         return new ResponseEntity<ProductDTO>(savedProduct, HttpStatus.CREATED);
     }
 
-    @GetMapping("/public/products")
+    @GetMapping("/products")
     public ResponseEntity<ProductResponse> getAllProducts(
             @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false)
                     Integer pageNumber,
@@ -55,7 +59,7 @@ public class ProductController {
         return new ResponseEntity<ProductResponse>(productResponse, HttpStatus.FOUND);
     }
 
-    @GetMapping("/public/categories/{categoryId}/products")
+    @GetMapping("/categories/{categoryId}/products")
     public ResponseEntity<ProductResponse> getProductsByCategory(
             @PathVariable Long categoryId,
             @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false)
@@ -72,7 +76,7 @@ public class ProductController {
         return new ResponseEntity<ProductResponse>(productResponse, HttpStatus.FOUND);
     }
 
-    @GetMapping("/public/products/keyword/{keyword}")
+    @GetMapping("/products/keyword/{keyword}")
     public ResponseEntity<ProductResponse> getProductsByKeyword(
             @PathVariable String keyword,
             @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false)
@@ -89,14 +93,17 @@ public class ProductController {
         return new ResponseEntity<ProductResponse>(productResponse, HttpStatus.FOUND);
     }
 
-    @PutMapping("/admin/products/{productId}")
+
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('STORE')")
+    @PutMapping("/categories/products/{productId}")
     public ResponseEntity<ProductDTO> updateProduct(@RequestBody Product product, @PathVariable Long productId) {
         ProductDTO updatedProduct = productService.updateProduct(productId, product);
 
         return new ResponseEntity<ProductDTO>(updatedProduct, HttpStatus.OK);
     }
 
-    @PutMapping("/admin/products/{productId}/image")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('STORE')")
+    @PutMapping("/categories/products/{productId}/image")
     public ResponseEntity<ProductDTO> updateProductImage(
             @PathVariable Long productId, @RequestParam("image") MultipartFile image) throws IOException {
         ProductDTO updatedProduct = productService.updateProductImage(productId, image);
@@ -104,7 +111,8 @@ public class ProductController {
         return new ResponseEntity<ProductDTO>(updatedProduct, HttpStatus.OK);
     }
 
-    @DeleteMapping("/admin/products/{productId}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('STORE')")
+    @DeleteMapping("/categories/products/{productId}")
     public ResponseEntity<String> deleteProductByCategory(@PathVariable Long productId) {
         String status = productService.deleteProduct(productId);
 

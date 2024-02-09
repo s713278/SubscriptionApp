@@ -42,14 +42,14 @@ public class UserController {
         return new ResponseEntity<UserResponse>(userResponse, HttpStatus.FOUND);
     }
 
-    @GetMapping("/public/users/{userId}")
+    @GetMapping("/users/{userId}")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
     public ResponseEntity<UserDTO> getUser(@PathVariable Long userId) {
         UserDTO user = userService.getUserById(userId);
         return new ResponseEntity<UserDTO>(user, HttpStatus.FOUND);
     }
 
-    @PutMapping("/public/users/{userId}")
+    @PutMapping("/users/{userId}")
     public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO, @PathVariable Long userId) {
         UserDTO updatedUser = userService.updateUser(userId, userDTO);
 

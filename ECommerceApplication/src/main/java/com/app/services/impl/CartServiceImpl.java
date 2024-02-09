@@ -4,6 +4,7 @@ import com.app.entites.Cart;
 import com.app.entites.CartItem;
 import com.app.entites.Sku;
 import com.app.entites.Store;
+import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.payloads.CartDTO;
@@ -61,10 +62,10 @@ public class CartServiceImpl implements CartService {
                 .orElseThrow(() -> new ResourceNotFoundException("Sku", "skuId", skuId));
 
         if (sku.getStore().getId() != storeId && sku.getId() == skuId) {
-            throw new APIException("The item " + sku.getName() + "is not avaiable @ store " + store.getName() + ".");
+            throw new APIException(APIErrorCode.API_400, "The item " + sku.getName() + "is not avaiable @ store " + store.getName() + ".");
         }
         if (sku.getQuantity() == 0 && sku.getStore().getId() == storeId) {
-            throw new APIException(
+            throw new APIException(APIErrorCode.API_400,
                     sku.getName() + " is not out of stack at " + sku.getStore().getName());
         }
 
@@ -185,7 +186,7 @@ public class CartServiceImpl implements CartService {
             throw new APIException("Sku " + sku.getName() + " already exists in the cart");
         }
         if (sku.getQuantity() == 0) {
-            throw new APIException(sku.getName() + " is not available");
+            throw new APIException(APIErrorCode.API_400, sku.getName() + " is out of stock and not available");
         }
         if (sku.getQuantity() < quantity) {
             throw new APIException("Please, make an order of the "

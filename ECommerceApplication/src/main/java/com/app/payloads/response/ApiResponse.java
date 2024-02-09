@@ -1,7 +1,6 @@
 package com.app.payloads.response;
 
-import java.time.LocalDateTime;
-import java.util.Map;
+import java.time.Instant;
 import lombok.Data;
 
 @Data
@@ -9,8 +8,10 @@ public class ApiResponse<T> {
 
     private Boolean success;
     private T data;
-    private Map<String, Object> metadata;
-    private String message; // Optional field for additional messages or errors
+    //private Map<String, Object> metadata;
+    private String userMessage; // Optional field for additional messages or errors
+    private String apiMessage;
+    private Instant timestamp;
 
     // Constructors, getters, setters, etc.
 
@@ -18,15 +19,16 @@ public class ApiResponse<T> {
         ApiResponse<T> response = new ApiResponse<>();
         response.setSuccess(Boolean.TRUE);
         response.setData(data);
-        response.setMetadata(Map.of("timestamp", LocalDateTime.now()));
+        response.setTimestamp(Instant.now());
         return response;
     }
 
-    public static ApiResponse<?> error(String message) {
+    public static ApiResponse<?> error(String apiMessage,String userMessage) {
         ApiResponse<?> response = new ApiResponse<>();
-        response.setSuccess(Boolean.TRUE);
-        response.setMessage(message);
-        response.setMetadata(Map.of("timestamp", LocalDateTime.now()));
+        response.setSuccess(Boolean.FALSE);
+        response.setApiMessage(apiMessage);
+        response.setUserMessage(userMessage);
+        response.setTimestamp(Instant.now());
         return response;
     }
 
