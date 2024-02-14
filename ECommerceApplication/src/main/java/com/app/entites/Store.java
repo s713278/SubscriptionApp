@@ -15,6 +15,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -43,7 +44,7 @@ public class Store extends AbstractAuditingEntity<Long> implements Serializable 
     private String name;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "store_id")
+    @JoinColumn(name = "id")
     private Address address;
 
     @Size(min = 10, max = 10, message = "Mobile Number must be exactly 10 digits long")
@@ -53,6 +54,6 @@ public class Store extends AbstractAuditingEntity<Long> implements Serializable 
     @Email
     private String email;
 
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
-    private List<Category> categories;
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private List<Category> categories = new ArrayList<>();
 }

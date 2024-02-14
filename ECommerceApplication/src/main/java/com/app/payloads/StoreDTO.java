@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class StoreDTO {
 
-    private Long storeId;
+    private Long id;
 
     private String name;
 

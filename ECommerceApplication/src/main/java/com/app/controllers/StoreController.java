@@ -2,11 +2,14 @@ package com.app.controllers;
 
 import com.app.config.AppConstants;
 import com.app.payloads.StoreDTO;
+import com.app.payloads.response.ApiResponse;
 import com.app.payloads.response.StoreResponse;
 import com.app.services.StoreService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,40 +26,44 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/stores")
 @SecurityRequirement(name = "E-Commerce Application")
+@RequiredArgsConstructor
 public class StoreController {
 
-    private StoreService storeService;
+    
+    private final StoreService storeService;
 
     @PostMapping("/")
-    public ResponseEntity<StoreDTO> createStore(@Valid @RequestBody StoreDTO storeDTO) {
-        StoreDTO savedStoreDTO = storeService.createStore(storeDTO);
-        return new ResponseEntity<StoreDTO>(savedStoreDTO, HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse<StoreDTO>> createStore(@Valid @RequestBody StoreDTO storeDTO) {
+        return new ResponseEntity<>(storeService.createStore(storeDTO), HttpStatus.CREATED);
     }
 
-    @GetMapping("/stores")
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse<List<StoreDTO>>> getAllStores() {
+        return new ResponseEntity<>(storeService.getStores(), HttpStatus.FOUND);
+    }
+    
+    @GetMapping("/")
     public ResponseEntity<StoreResponse> getStores(
             @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false)
                     Integer pageNumber,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
-            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_CATEGORIES_BY, required = false)
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_STORE_BY, required = false)
                     String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false)
                     String sortOrder) {
 
-        StoreResponse categoryResponse = storeService.getStore(pageNumber, pageSize, sortBy, sortOrder);
+        StoreResponse storeResponse = storeService.getStore(pageNumber, pageSize, sortBy, sortOrder);
 
-        return new ResponseEntity<StoreResponse>(categoryResponse, HttpStatus.FOUND);
+        return new ResponseEntity<StoreResponse>(storeResponse, HttpStatus.FOUND);
     }
 
-    @PutMapping("/stores/{storeId}")
-    public ResponseEntity<StoreDTO> updateStore(@RequestBody StoreDTO storeDTO, @PathVariable Long storeId) {
-        StoreDTO updatedStoreDTO = storeService.updateStore(storeDTO, storeId);
-        return new ResponseEntity<StoreDTO>(updatedStoreDTO, HttpStatus.OK);
+    @PutMapping("/{storeId}")
+    public ResponseEntity<ApiResponse<StoreDTO>> updateStore(@RequestBody StoreDTO storeDTO, @PathVariable Long storeId) {
+        return new ResponseEntity<>(storeService.updateStore(storeDTO, storeId), HttpStatus.OK);
     }
 
     @DeleteMapping("/{storeId}")
-    public ResponseEntity<String> deleteStore(@PathVariable Long storeId) {
-        String status = storeService.deleteStore(storeId);
-        return new ResponseEntity<String>(status, HttpStatus.OK);
+    public ResponseEntity<ApiResponse<String>> deleteStore(@PathVariable Long storeId) {
+        return new ResponseEntity<>(storeService.deleteStore(storeId), HttpStatus.OK);
     }
 }

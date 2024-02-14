@@ -7,6 +7,7 @@ import com.app.payloads.response.ApiResponse;
 import com.app.payloads.response.LoginResponse;
 import com.app.security.JWTUtil;
 import com.app.services.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Operation(description = "User Creation")
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<LoginResponse>> register(@Valid @RequestBody UserDTO user)
             throws UserNotFoundException {
@@ -42,6 +44,7 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @Operation(description = "User Login")
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginCredentials credentials) {
         UsernamePasswordAuthenticationToken authCredentials = new UsernamePasswordAuthenticationToken(

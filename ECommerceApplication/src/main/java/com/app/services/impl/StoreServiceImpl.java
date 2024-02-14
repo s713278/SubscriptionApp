@@ -1,16 +1,17 @@
 package com.app.services.impl;
 
 import com.app.entites.Store;
+import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.payloads.StoreDTO;
+import com.app.payloads.response.ApiResponse;
 import com.app.payloads.response.StoreResponse;
 import com.app.repositories.StoreRepo;
 import com.app.services.StoreService;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,18 +20,17 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
-@NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class StoreServiceImpl implements StoreService {
 
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
-    private StoreRepo storeRepo;
+    private final StoreRepo storeRepo;
 
     @Override
-    public StoreDTO createStore(StoreDTO storeDTO) {
+    public ApiResponse<StoreDTO> createStore(StoreDTO storeDTO) {
         Store storeEntity = storeRepo.save(modelMapper.map(storeDTO, Store.class));
-        return modelMapper.map(storeEntity, StoreDTO.class);
+        return ApiResponse.success(modelMapper.map(storeEntity, StoreDTO.class));
     }
 
     @Override
@@ -53,7 +53,6 @@ public class StoreServiceImpl implements StoreService {
                 .collect(Collectors.toList());
 
         StoreResponse storeResponse = new StoreResponse();
-
         storeResponse.setContent(storeDTOs);
         storeResponse.setPageNumber(pageStores.getNumber());
         storeResponse.setPageSize(pageStores.getSize());
@@ -65,24 +64,36 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public StoreDTO updateStore(StoreDTO storeDTO, Long storeId) {
+    public ApiResponse<StoreDTO> updateStore(StoreDTO storeDTO, Long storeId) {
         Store savedStore = storeRepo
                 .findById(storeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Store", "storeId", storeId));
         modelMapper.map(storeDTO, savedStore);
         savedStore.setId(storeId);
         savedStore = storeRepo.save(savedStore);
-        return modelMapper.map(savedStore, StoreDTO.class);
+        return ApiResponse.success(modelMapper.map(savedStore, StoreDTO.class));
     }
 
     @Override
-    public String deleteStore(Long storeId) {
+    public ApiResponse<String> deleteStore(Long storeId) {
         Store store = storeRepo
                 .findById(storeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Store", "storeId", storeId));
         storeRepo.deleteById(storeId);
-        return "Store with id: " + storeId + " deleted successfully !!!";
+        return ApiResponse.success("Store with id: " + storeId + " deleted successfully !!!");
 
         // return storeRepo.delete(storeId);
+    }
+    
+    @Override
+    public ApiResponse<List<StoreDTO>> getStores() {
+        List<Store> stores = storeRepo.findAll();
+        if (stores.size() == 0) {
+            throw new APIException(APIErrorCode.API_404, "No stores is created till now");
+        }
+        List<StoreDTO> storeDTOs = stores.stream()
+                .map(store -> modelMapper.map(store, StoreDTO.class))
+                .collect(Collectors.toList());
+        return ApiResponse.success(storeDTOs);
     }
 }
