@@ -1,7 +1,10 @@
 package com.app.entites;
 
+import com.app.entites.type.AddressTypeConverter;
+import com.app.payloads.AddressDTO;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -17,18 +20,21 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
-@Table(name = "users")
+@Table(name = "tb_customer")
 @Getter
 @Setter
-public class User /* extends AbstractAuditingEntity<Long> */ implements Serializable {
+public class Customer implements Serializable {
 
     private static final long serialVersionUID = -8493127251609026343L;
 
@@ -36,22 +42,20 @@ public class User /* extends AbstractAuditingEntity<Long> */ implements Serializ
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Size(min = 5, max = 20, message = "First Name must be between 5 and 30 characters long")
+    @Size(min = 4, max = 20, message = "First Name must be between 4 and 20 characters long")
     @Pattern(regexp = "^[a-zA-Z]*$", message = "First Name must not contain numbers or special characters")
     private String firstName;
 
-    @Size(min = 5, max = 20, message = "Last Name must be between 5 and 30 characters long")
-    @Pattern(regexp = "^[a-zA-Z]*$", message = "Last Name must not contain numbers or special characters")
     private String lastName;
-
-    @Size(min = 10, max = 10, message = "Mobile Number must be exactly 10 digits long")
-    @Pattern(regexp = "^\\d{10}$", message = "Mobile Number must contain only Numbers")
-    @Column(unique = true, nullable = false)
-    private String mobileNumber;
 
     @Email
     @Column(unique = true, nullable = false)
     private String email;
+    
+    //@Size(min = 10, max = 10, message = "Mobile Number must be exactly 10 digits long")
+    //@Pattern(regexp = "^\\d{10}$", message = "Mobile Number must contain only Numbers")
+    @Column(unique = true, nullable = false)
+    private Long mobile;
 
     private String password;
 
@@ -62,14 +66,6 @@ public class User /* extends AbstractAuditingEntity<Long> */ implements Serializ
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    @ManyToMany(
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "user_address",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "address_id"))
-    private List<Address> addresses = new ArrayList<>();
 
     @OneToOne(
             mappedBy = "user",
@@ -83,8 +79,22 @@ public class User /* extends AbstractAuditingEntity<Long> */ implements Serializ
     // One user can manage many stores
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "user_id")
-    List<Store> stores = new ArrayList<>();
+    List<Vendor> stores = new ArrayList<>();
 
     // Google or Facebook or ...
-    private String source;
+    private String regSource;
+    
+    private String regDevice;
+    
+    @Column(name="delivery_address",columnDefinition = "jsonb")
+    @Convert(converter = AddressTypeConverter.class)
+    private AddressDTO deliveryAddress;
+    
+    @CreatedDate
+    @Column(name = "created_date", updatable = false)
+    private Instant createdDate = Instant.now();
+    
+    @LastModifiedDate
+    @Column(name = "last_modified_date")
+    private Instant lastModifiedDate = Instant.now();
 }

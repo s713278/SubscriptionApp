@@ -16,7 +16,7 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "carts")
+@Table(name = "tb_carts")
 public class Cart {
 
     @Id
@@ -25,7 +25,7 @@ public class Cart {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
-    private User user;
+    private Customer user;
 
     @OneToMany(
             cascade = {CascadeType.PERSIST, CascadeType.MERGE},

@@ -1,14 +1,29 @@
 package com.app.services.impl;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.app.entites.Cart;
 import com.app.entites.CartItem;
+import com.app.entites.Customer;
 import com.app.entites.Order;
 import com.app.entites.OrderItem;
 import com.app.entites.OrderStatusHistory;
 import com.app.entites.Payment;
 import com.app.entites.Shipping;
-import com.app.entites.Store;
-import com.app.entites.User;
+import com.app.entites.Vendor;
 import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.payloads.OrderDTO;
@@ -31,20 +46,6 @@ import com.app.services.UserService;
 import com.app.services.constants.OrderStatus;
 import com.app.services.constants.PaymentType;
 import com.app.services.constants.ShippingType;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderServiceImpl extends AbstarctCatalogService implements OrderService {
@@ -66,9 +67,9 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
     public ApiResponse<OrderDTO> placeOrder(final Long storeId, final OrderRequest request) {
         final Long userId = request.getUserId();
         final Long cartId = request.getCartId();
-        final User user = validateUser(userId);
+        final Customer user = validateUser(userId);
         Cart cart = validateCart(cartId, user);
-        final Store store = validateCartItemsAndStore(storeId, cart);
+        final Vendor store = validateCartItemsAndStore(storeId, cart);
         Order order = createOrder(request, user, cart, store);
         processOrderItems(cart, order);
         // Update inventory
@@ -81,7 +82,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
 
     @Override
     public List<OrderDTO> getOrdersByUser(String emailId) {
-        List<Order> orders = orderRepo.findAllByEmail(emailId);
+        List<Order> orders = orderRepo.findAllByCustomerEmail(emailId);
 
         List<OrderDTO> orderDTOs = orders.stream().map(order -> modelMapper.map(order, OrderDTO.class))
                 .collect(Collectors.toList());
@@ -179,18 +180,18 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
      * @param cart
      * @return
      */
-    private Order createOrder(OrderRequest request, User user, Cart cart, Store store) {
+    private Order createOrder(OrderRequest request, Customer user, Cart cart, Vendor store) {
         Order order = new Order();
-        order.setEmail(user.getEmail());
-        order.setOrderTime(Instant.now());
-        order.setOrderStatus(OrderStatus.CREATED);
+      //  order.setEmail(user.getEmail());
+        //order.setOrderTime(Instant.now());
+        order.setOrderStatus(OrderStatus.PENDING);
         order.setFederalTax(cart.getTotalPrice() * 0.2);
         order.setStateTax(cart.getTotalPrice() * 0.5);
         order.setSubTotal(cart.getTotalPrice());
         order.setTotalAmount(cart.getTotalPrice() + order.getFederalTax() + order.getStateTax());
 
-        order.setUser(user);
-        order.setStore(store);
+        order.setCustomer(user);
+        order.setVendor(store);
         createPayment(request, order);
         createShipping(request, order);
         return order;
@@ -237,7 +238,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
         OrderStatusHistory orderStatusHistory = new OrderStatusHistory();
         orderStatusHistory.setOrder(order);
         orderStatusHistory.setOldStatus(order.getOrderStatus());
-        orderStatusHistory.setNewStatus(OrderStatus.CREATED);
+        orderStatusHistory.setNewStatus(OrderStatus.PENDING);
         orderStatusHistory.setChangedAt(LocalDateTime.now());
         return orderStatusHistory;
     }
@@ -257,7 +258,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
 
     @Override
     public ApiResponse<List<OrderDTO>> getOrderByStoreId(Long storeId) {
-        List<OrderDTO> orders = orderRepo.findOrderByStoreId(storeId)
+        List<OrderDTO> orders = orderRepo.findOrderByVendorId(storeId)
                 .stream()
                 .map(orderEntity->modelMapper.map(orderEntity, OrderDTO.class)).collect(Collectors.toList());
         return ApiResponse.success(orders);

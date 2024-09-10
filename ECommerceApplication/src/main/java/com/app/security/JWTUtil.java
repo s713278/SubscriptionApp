@@ -1,6 +1,6 @@
 package com.app.security;
 
-import com.app.entites.User;
+import com.app.entites.Customer;
 import com.app.payloads.response.ApiResponse;
 import com.app.payloads.response.LoginResponse;
 import com.app.repositories.UserRepo;
@@ -30,7 +30,7 @@ public class JWTUtil {
 
     @Transactional(readOnly = true)
     public ApiResponse<LoginResponse> generateToken(String email) throws IllegalArgumentException, JWTCreationException {
-        User user = userRepo.findByEmailIgnoreCase(email).get();
+        Customer user = userRepo.findByEmailIgnoreCase(email).get();
         String token= JWT.create()
                 .withSubject(String.valueOf(user.getId())) // User ID
                 .withIssuedAt(Instant.now())

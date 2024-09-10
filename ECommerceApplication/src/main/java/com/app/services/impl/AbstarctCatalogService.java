@@ -2,9 +2,9 @@ package com.app.services.impl;
 
 import com.app.entites.Cart;
 import com.app.entites.CartItem;
+import com.app.entites.Customer;
 import com.app.entites.Sku;
-import com.app.entites.Store;
-import com.app.entites.User;
+import com.app.entites.Vendor;
 import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.repositories.CartItemRepo;
@@ -62,14 +62,14 @@ public abstract class AbstarctCatalogService {
         this.modelMapper = modelMapper;
     }
 
-    protected User validateUser(Long userId) {
+    protected Customer validateUser(Long userId) {
         log.debug("Validate User {} ", userId);
-        User user =
+        Customer user =
                 userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
         return user;
     }
 
-    protected Cart validateCart(Long cartId, User user) {
+    protected Cart validateCart(Long cartId, Customer user) {
         log.debug("Validate Cart {} for User {} ", cartId, user.getId());
         Cart cart = user.getCart();
         if (cart.getId().compareTo(cartId) != 0) {
@@ -84,9 +84,9 @@ public abstract class AbstarctCatalogService {
         return cart;
     }
 
-    protected Store validateCartItemsAndStore(Long storeId, Cart cart) {
+    protected Vendor validateCartItemsAndStore(Long storeId, Cart cart) {
         log.debug("Validate CartItems {} against the store {}  ", cart.getId(), storeId);
-        Store store = storeRepo
+        Vendor store = storeRepo
                 .findById(storeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Store", "storeId", storeId));
         boolean allItemsStoreMatched =

@@ -1,7 +1,7 @@
 package com.app.services.impl;
 
 import com.app.entites.Address;
-import com.app.entites.User;
+import com.app.entites.Customer;
 import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.payloads.AddressDTO;
@@ -98,10 +98,10 @@ public class AddressServiceImpl implements AddressService {
 
             return modelMapper.map(updatedAddress, AddressDTO.class);
         } else {
-            List<User> users = userRepo.findByAddress(addressId);
+            List<Customer> users = userRepo.findByAddress(addressId);
             final Address a = addressFromDB;
 
-            users.forEach(user -> user.getAddresses().add(a));
+           // users.forEach(user -> user.getAddresses().add(a));
 
             deleteAddress(addressId);
 
@@ -115,10 +115,10 @@ public class AddressServiceImpl implements AddressService {
                 .findById(addressId)
                 .orElseThrow(() -> new ResourceNotFoundException("Address", "addressId", addressId));
 
-        List<User> users = userRepo.findByAddress(addressId);
+        List<Customer> users = userRepo.findByAddress(addressId);
 
         users.forEach(user -> {
-            user.getAddresses().remove(addressFromDB);
+          //  user.getAddresses().remove(addressFromDB);
 
             userRepo.save(user);
         });

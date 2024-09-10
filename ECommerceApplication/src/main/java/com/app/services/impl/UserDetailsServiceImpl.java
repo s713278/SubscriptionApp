@@ -1,7 +1,7 @@
 package com.app.services.impl;
 
 import com.app.config.UserInfoConfig;
-import com.app.entites.User;
+import com.app.entites.Customer;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.repositories.UserRepo;
 import java.util.Optional;
@@ -19,7 +19,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = userRepo.findByEmailIgnoreCase(username);
+        Optional<Customer> user = userRepo.findByEmailIgnoreCase(username);
         if (!user.isPresent()) {
             throw new ResourceNotFoundException("User", "email", username);
         }

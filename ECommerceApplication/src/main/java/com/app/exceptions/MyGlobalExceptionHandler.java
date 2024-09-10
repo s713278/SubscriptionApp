@@ -40,7 +40,7 @@ public class MyGlobalExceptionHandler {
 
     @ExceptionHandler(APIException.class)
     public ResponseEntity<ApiResponse> myAPIException(APIException e) {
-        ApiResponse<?> errorResponse =ApiResponse.error(e.getErrorReason(),e.getMessage());
+        ApiResponse<?> errorResponse =ApiResponse.error(e.getErrorReason(),e.getErrorCode().getUserMessage());
         return new ResponseEntity<>(errorResponse, e.getErrorCode().getHttpStatus());
     }
 

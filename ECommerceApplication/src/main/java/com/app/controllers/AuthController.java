@@ -1,8 +1,8 @@
 package com.app.controllers;
 
 import com.app.exceptions.UserNotFoundException;
+import com.app.payloads.CustomerDTO;
 import com.app.payloads.LoginCredentials;
-import com.app.payloads.UserDTO;
 import com.app.payloads.response.ApiResponse;
 import com.app.payloads.response.LoginResponse;
 import com.app.security.JWTUtil;
@@ -37,9 +37,11 @@ public class AuthController {
 
     @Operation(description = "User Creation")
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<LoginResponse>> register(@Valid @RequestBody UserDTO user)
+    public ResponseEntity<ApiResponse<LoginResponse>> register(@Valid @RequestBody CustomerDTO user)
             throws UserNotFoundException {
-        UserDTO userDTO = userService.registerUser(user);
+        String email = user.getEmail().trim().toLowerCase();
+        user.setEmail(email);
+        CustomerDTO userDTO = userService.registerUser(user);
         ApiResponse<LoginResponse> response = jwtUtil.generateToken(userDTO.getEmail());
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -53,4 +55,18 @@ public class AuthController {
         ApiResponse<LoginResponse> response = jwtUtil.generateToken(credentials.getEmail());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    
+    @Operation(description = "Mobile Register/Login")
+    @PostMapping("/mobile/login")
+    public ResponseEntity<ApiResponse<LoginResponse>> googlelogin(@Valid @RequestBody LoginCredentials credentials) {
+        UsernamePasswordAuthenticationToken authCredentials = new UsernamePasswordAuthenticationToken(
+                credentials.getEmail(), credentials.getPassword());
+        authenticationManager.authenticate(authCredentials);
+        ApiResponse<LoginResponse> response = jwtUtil.generateToken(credentials.getEmail());
+        
+        // Request OTP
+        //Verify OTP
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    
 }

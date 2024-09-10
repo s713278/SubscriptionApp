@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@Table(name = "payments")
+@Table(name = "tb_payments")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Payment {
@@ -34,7 +34,7 @@ public class Payment {
 
    // @NotBlank
   //  @Size(min = 4, message = "Payment method must contain atleast 4 characters")
-    @Column(name = "payment_method", columnDefinition = "payment_method_enum")
+    @Column(name = "payment_method", columnDefinition = "payment_type_enum")
     @Enumerated(EnumType.STRING)
     private PaymentType paymentMethod;
 

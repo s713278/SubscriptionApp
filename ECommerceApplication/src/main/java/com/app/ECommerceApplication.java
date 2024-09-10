@@ -36,8 +36,9 @@ public class ECommerceApplication implements CommandLineRunner {
     @Override
     public void run(String... args) {
         try {
+            roleRepo.findByRoleName("ADMIN");
             long count = roleRepo.count();
-            if (count != 3) throw new RuntimeException("Initiatial data missed!!!!");
+         //   if (count != 3) throw new RuntimeException("Initiatial data missed!!!!");
         } catch (Exception e) {
             log.error("Error During the initial ROLES ..data setup {} ", e.getMessage(), e);
         }

@@ -1,6 +1,6 @@
 package com.app.payloads.response;
 
-import com.app.payloads.StoreDTO;
+import com.app.payloads.VendorDTO;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class StoreResponse {
 
-    private List<StoreDTO> content;
+    private List<VendorDTO> content;
     private Integer pageNumber;
     private Integer pageSize;
     private Long totalElements;

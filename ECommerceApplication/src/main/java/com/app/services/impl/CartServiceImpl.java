@@ -3,7 +3,7 @@ package com.app.services.impl;
 import com.app.entites.Cart;
 import com.app.entites.CartItem;
 import com.app.entites.Sku;
-import com.app.entites.Store;
+import com.app.entites.Vendor;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
@@ -54,7 +54,7 @@ public class CartServiceImpl implements CartService {
                 .getCart()
                 .getId();
 
-        Store store = storeRepo
+        Vendor store = storeRepo
                 .findById(storeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Store", "storeId", storeId));
 
@@ -62,11 +62,11 @@ public class CartServiceImpl implements CartService {
                 .orElseThrow(() -> new ResourceNotFoundException("Sku", "skuId", skuId));
 
         if (sku.getStore().getId() != storeId && sku.getId() == skuId) {
-            throw new APIException(APIErrorCode.API_400, "The item " + sku.getName() + "is not avaiable @ store " + store.getName() + ".");
+            throw new APIException(APIErrorCode.API_400, "The item " + sku.getName() + "is not avaiable @ store " + store.getBusinessName() + ".");
         }
         if (sku.getQuantity() == 0 && sku.getStore().getId() == storeId) {
             throw new APIException(APIErrorCode.API_400,
-                    sku.getName() + " is not out of stack at " + sku.getStore().getName());
+                    sku.getName() + " is not out of stack at " + sku.getStore().getBusinessName());
         }
 
         if (quantity > sku.getQuantity() && sku.getStore().getId() == storeId) {

@@ -1,10 +1,10 @@
 package com.app.controllers;
 
 import com.app.config.AppConstants;
-import com.app.payloads.StoreDTO;
+import com.app.payloads.VendorDTO;
 import com.app.payloads.response.ApiResponse;
 import com.app.payloads.response.StoreResponse;
-import com.app.services.StoreService;
+import com.app.services.VendorService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -22,23 +22,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "5. Store Service API")
+@Tag(name = "5. Vendor API")
 @RestController
 @RequestMapping("/api/stores")
 @SecurityRequirement(name = "E-Commerce Application")
 @RequiredArgsConstructor
-public class StoreController {
+public class VendorController {
 
     
-    private final StoreService storeService;
+    private final VendorService storeService;
 
     @PostMapping("/")
-    public ResponseEntity<ApiResponse<StoreDTO>> createStore(@Valid @RequestBody StoreDTO storeDTO) {
+    public ResponseEntity<ApiResponse<VendorDTO>> createStore(@Valid @RequestBody VendorDTO storeDTO) {
         return new ResponseEntity<>(storeService.createStore(storeDTO), HttpStatus.CREATED);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<StoreDTO>>> getAllStores() {
+    public ResponseEntity<ApiResponse<List<VendorDTO>>> getAllStores() {
         return new ResponseEntity<>(storeService.getStores(), HttpStatus.FOUND);
     }
     
@@ -58,7 +58,7 @@ public class StoreController {
     }
 
     @PutMapping("/{storeId}")
-    public ResponseEntity<ApiResponse<StoreDTO>> updateStore(@RequestBody StoreDTO storeDTO, @PathVariable Long storeId) {
+    public ResponseEntity<ApiResponse<VendorDTO>> updateStore(@RequestBody VendorDTO storeDTO, @PathVariable Long storeId) {
         return new ResponseEntity<>(storeService.updateStore(storeDTO, storeId), HttpStatus.OK);
     }
 

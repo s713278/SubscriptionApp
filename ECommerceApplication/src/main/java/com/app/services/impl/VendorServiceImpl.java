@@ -1,14 +1,14 @@
 package com.app.services.impl;
 
-import com.app.entites.Store;
+import com.app.entites.Vendor;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
-import com.app.payloads.StoreDTO;
+import com.app.payloads.VendorDTO;
 import com.app.payloads.response.ApiResponse;
 import com.app.payloads.response.StoreResponse;
 import com.app.repositories.StoreRepo;
-import com.app.services.StoreService;
+import com.app.services.VendorService;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -21,16 +21,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class StoreServiceImpl implements StoreService {
+public class VendorServiceImpl implements VendorService {
 
     private final ModelMapper modelMapper;
 
     private final StoreRepo storeRepo;
 
     @Override
-    public ApiResponse<StoreDTO> createStore(StoreDTO storeDTO) {
-        Store storeEntity = storeRepo.save(modelMapper.map(storeDTO, Store.class));
-        return ApiResponse.success(modelMapper.map(storeEntity, StoreDTO.class));
+    public ApiResponse<VendorDTO> createStore(VendorDTO storeDTO) {
+        Vendor storeEntity = storeRepo.save(modelMapper.map(storeDTO, Vendor.class));
+        return ApiResponse.success(modelMapper.map(storeEntity, VendorDTO.class));
     }
 
     @Override
@@ -41,15 +41,15 @@ public class StoreServiceImpl implements StoreService {
                 : Sort.by(sortBy).descending();
 
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
-        Page<Store> pageStores = storeRepo.findAll(pageDetails);
-        List<Store> stores = pageStores.getContent();
+        Page<Vendor> pageStores = storeRepo.findAll(pageDetails);
+        List<Vendor> stores = pageStores.getContent();
 
         if (stores.size() == 0) {
             throw new APIException("No stores is created till now");
         }
 
-        List<StoreDTO> storeDTOs = stores.stream()
-                .map(store -> modelMapper.map(store, StoreDTO.class))
+        List<VendorDTO> storeDTOs = stores.stream()
+                .map(store -> modelMapper.map(store, VendorDTO.class))
                 .collect(Collectors.toList());
 
         StoreResponse storeResponse = new StoreResponse();
@@ -64,19 +64,19 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public ApiResponse<StoreDTO> updateStore(StoreDTO storeDTO, Long storeId) {
-        Store savedStore = storeRepo
+    public ApiResponse<VendorDTO> updateStore(VendorDTO storeDTO, Long storeId) {
+        Vendor savedStore = storeRepo
                 .findById(storeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Store", "storeId", storeId));
         modelMapper.map(storeDTO, savedStore);
         savedStore.setId(storeId);
         savedStore = storeRepo.save(savedStore);
-        return ApiResponse.success(modelMapper.map(savedStore, StoreDTO.class));
+        return ApiResponse.success(modelMapper.map(savedStore, VendorDTO.class));
     }
 
     @Override
     public ApiResponse<String> deleteStore(Long storeId) {
-        Store store = storeRepo
+        Vendor store = storeRepo
                 .findById(storeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Store", "storeId", storeId));
         storeRepo.deleteById(storeId);
@@ -86,13 +86,13 @@ public class StoreServiceImpl implements StoreService {
     }
     
     @Override
-    public ApiResponse<List<StoreDTO>> getStores() {
-        List<Store> stores = storeRepo.findAll();
+    public ApiResponse<List<VendorDTO>> getStores() {
+        List<Vendor> stores = storeRepo.findAll();
         if (stores.size() == 0) {
             throw new APIException(APIErrorCode.API_404, "No stores is created till now");
         }
-        List<StoreDTO> storeDTOs = stores.stream()
-                .map(store -> modelMapper.map(store, StoreDTO.class))
+        List<VendorDTO> storeDTOs = stores.stream()
+                .map(store -> modelMapper.map(store, VendorDTO.class))
                 .collect(Collectors.toList());
         return ApiResponse.success(storeDTOs);
     }

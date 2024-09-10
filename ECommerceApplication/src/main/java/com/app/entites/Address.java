@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 
 @Builder
 @Entity
-@Table(name = "addresses")
+@Table(name = "tb_addresses")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -51,8 +51,9 @@ public class Address {
     @Size(min = 5, max=6 ,message = "Pincode must contain atleast 5 characters")
     private String pincode;
 
+    /*
     @ManyToMany(mappedBy = "addresses")
-    private List<User> users = new ArrayList<>();
+    private List<Customer> users = new ArrayList<>();*/
 
     public Address(
             @NotBlank @Size(min = 10, message = "Address1 must contain atleast 10 characters") String address1,

@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@Table(name = "Shipping")
+@Table(name = "tb_shipping")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Shipping {

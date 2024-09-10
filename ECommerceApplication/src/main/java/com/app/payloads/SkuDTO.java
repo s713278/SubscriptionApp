@@ -1,7 +1,7 @@
 package com.app.payloads;
 
 import com.app.entites.Product;
-import com.app.entites.Store;
+import com.app.entites.Vendor;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
@@ -27,5 +27,5 @@ public class SkuDTO {
 
     @ManyToOne
     @JoinColumn(name = "store_id")
-    private Store store;
+    private Vendor store;
 }

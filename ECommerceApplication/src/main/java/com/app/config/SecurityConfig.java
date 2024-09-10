@@ -39,8 +39,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(t -> t.disable())
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers(HttpMethod.GET, AppConstants.PUBLIC_URLS)
+                    auth.requestMatchers( HttpMethod.GET, AppConstants.PUBLIC_URLS)
                             .permitAll()
+                            .requestMatchers(HttpMethod.POST, AppConstants.PUBLIC_URLS).permitAll() 
                             
                             .requestMatchers(HttpMethod.GET,AppConstants.USER_URLS)
                             .hasAnyAuthority("USER","STORE", "ADMIN")

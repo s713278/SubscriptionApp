@@ -17,7 +17,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(name = "User Registration Request Body")
-public class UserDTO {
+public class CustomerDTO {
 
     @JsonIgnore
     private Long userId;
@@ -28,8 +28,8 @@ public class UserDTO {
     @JsonProperty("last_name")
     private String lastName;
 
-    @JsonProperty("mobile_phone")
-    private String mobileNumber;
+    @JsonProperty("mobile")
+    private Long mobile;
 
     @NotBlank(message = "Email is required.")
     @JsonProperty("email")
