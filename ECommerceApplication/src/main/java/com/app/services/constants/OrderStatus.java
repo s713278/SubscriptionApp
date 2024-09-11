@@ -1,7 +1,7 @@
 package com.app.services.constants;
 
 public enum OrderStatus {
-	PENDING,
+    PENDING,
     SCHEDULED,
     IN_PROCESS,
     DELIVERED,

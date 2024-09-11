@@ -1,7 +1,19 @@
 package com.app.services.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.app.config.AppConstants;
-import com.app.entites.Address;
 import com.app.entites.Cart;
 import com.app.entites.CartItem;
 import com.app.entites.Customer;
@@ -18,19 +30,9 @@ import com.app.repositories.RoleRepo;
 import com.app.repositories.UserRepo;
 import com.app.services.CartService;
 import com.app.services.UserService;
+
 import jakarta.transaction.Transactional;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 @Transactional
 @Service
@@ -69,23 +71,26 @@ public class UserServiceImpl implements UserService {
             Role role = roleRepo.findById(AppConstants.USER_ID).get();
             user.getRoles().add(role);
 
-            if (userDTO.getAddress() != null) {
-                String country = userDTO.getAddress().getCountry();
-                String state = userDTO.getAddress().getState();
-                String city = userDTO.getAddress().getCity();
-                String pincode = userDTO.getAddress().getPincode();
-                String street = userDTO.getAddress().getAddress1();
-                String buildingName = userDTO.getAddress().getAddress2();
-
-                Address address = addressRepo.findByCountryAndStateAndCityAndPincodeAndAddress1AndAddress2(
-                        country, state, city, pincode, street, buildingName);
-
-                if (address == null) {
-                    address = new Address(country, state, city, pincode, street, buildingName);
-
-                    address = addressRepo.save(address);
-                }
-                user.setDeliveryAddress(userDTO.getAddress());
+            log.debug("(User delivery address \t {}",userDTO.getDeliveryAddress());
+            if (userDTO.getDeliveryAddress() != null) {
+				/*
+				 * String country = userDTO.getAddress().getCountry(); String state =
+				 * userDTO.getAddress().getState(); String city =
+				 * userDTO.getAddress().getCity(); String pincode =
+				 * userDTO.getAddress().getPincode(); String street =
+				 * userDTO.getAddress().getAddress1(); String buildingName =
+				 * userDTO.getAddress().getAddress2();
+				 * 
+				 * Address address =
+				 * addressRepo.findByCountryAndStateAndCityAndPincodeAndAddress1AndAddress2(
+				 * country, state, city, pincode, street, buildingName);
+				 * 
+				 * if (address == null) { address = new Address(country, state, city, pincode,
+				 * street, buildingName);
+				 * 
+				 * address = addressRepo.save(address); }
+				 */
+                user.setDeliveryAddress(userDTO.getDeliveryAddress());
                // user.setAddresses(List.of(address));
             }
             cart.setUser(user);

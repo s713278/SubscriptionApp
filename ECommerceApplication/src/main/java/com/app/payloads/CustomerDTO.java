@@ -16,12 +16,14 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(name = "User Registration Request Body")
+@Schema(name = "Customer Registration Request")
 public class CustomerDTO {
 
+   
     @JsonIgnore
     private Long userId;
 
+    @NotBlank(message="First name is required.")
     @JsonProperty("first_name")
     private String firstName;
 
@@ -41,8 +43,8 @@ public class CustomerDTO {
     @JsonIgnore
     private Set<Role> roles = new HashSet<>();
 
-    @JsonIgnore
-    private AddressDTO address;
+    @JsonProperty("delivery_address")
+    private AddressDTO deliveryAddress;
 
     @JsonIgnore
     private CartDTO cart;

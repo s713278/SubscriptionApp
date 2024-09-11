@@ -35,7 +35,7 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Operation(description = "User Creation")
+    @Operation(description = "Customer Creation")
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<LoginResponse>> register(@Valid @RequestBody CustomerDTO user)
             throws UserNotFoundException {
@@ -46,7 +46,7 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @Operation(description = "User Login")
+    @Operation(description = "Customer Login")
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginCredentials credentials) {
         UsernamePasswordAuthenticationToken authCredentials = new UsernamePasswordAuthenticationToken(
