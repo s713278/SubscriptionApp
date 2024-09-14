@@ -2,7 +2,7 @@ package com.app.controllers;
 
 import com.app.payloads.CartDTO;
 import com.app.payloads.request.ItemRequest;
-import com.app.payloads.response.ApiResponse;
+import com.app.payloads.response.AppResponse;
 import com.app.services.CartService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,11 +30,11 @@ public class CartController {
     private CartService cartService;
 
     @PostMapping("/cart/items")
-    public ResponseEntity<ApiResponse<CartDTO>> addorUpdateItemToCart(
-            @PathVariable("store_id") Long storeId, @Valid @RequestBody ItemRequest request) {
+    public ResponseEntity<AppResponse<CartDTO>> addorUpdateItemToCart(@PathVariable("store_id") Long storeId,
+            @Valid @RequestBody ItemRequest request) {
         // TODO : Pre Validation
         // TODO : Save the cart in database
-        ApiResponse<CartDTO> cartDTO = cartService.addOrUpdateItem(storeId, request);
+        AppResponse<CartDTO> cartDTO = cartService.addOrUpdateItem(storeId, request);
         // TODO : post Validation
         return new ResponseEntity<>(cartDTO, HttpStatus.CREATED);
     }
@@ -47,9 +47,9 @@ public class CartController {
     }
 
     @GetMapping("/cart/{cart_id}/items")
-    public ResponseEntity<ApiResponse<CartDTO>> getCartById(
-            @PathVariable("store_id") Long storeId, @PathVariable("cart_id") Long cartId) {
-        ApiResponse<CartDTO> cartDTO = cartService.getCart(cartId);
+    public ResponseEntity<AppResponse<CartDTO>> getCartById(@PathVariable("store_id") Long storeId,
+            @PathVariable("cart_id") Long cartId) {
+        AppResponse<CartDTO> cartDTO = cartService.getCart(cartId);
         return new ResponseEntity<>(cartDTO, HttpStatus.FOUND);
     }
 
@@ -72,11 +72,9 @@ public class CartController {
 
     @PreAuthorize("USER")
     @DeleteMapping("/cart/{cart_id}/items/{cart_item_id}")
-    public ResponseEntity<ApiResponse<String>> deleteProductFromCart(
-            @PathVariable("store_id") Long storeId,
-            @PathVariable("cart_id") Long cartId,
-            @PathVariable("cart_item_id") Long cartItemId) {
-        ApiResponse<String> status = cartService.deleteItem(cartId, cartItemId);
+    public ResponseEntity<AppResponse<String>> deleteProductFromCart(@PathVariable("store_id") Long storeId,
+            @PathVariable("cart_id") Long cartId, @PathVariable("cart_item_id") Long cartItemId) {
+        AppResponse<String> status = cartService.deleteItem(cartId, cartItemId);
         return new ResponseEntity<>(status, HttpStatus.OK);
     }
 }

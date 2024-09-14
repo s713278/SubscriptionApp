@@ -15,16 +15,16 @@ import com.app.payloads.OrderDTO;
 import com.app.payloads.OrderRequest;
 import com.app.payloads.OrderResponse;
 import com.app.payloads.request.OrderUpdateRequest;
-import com.app.payloads.response.ApiResponse;
+import com.app.payloads.response.AppResponse;
 import com.app.payloads.response.OrderUpdateResponse;
 import com.app.repositories.CartItemRepo;
 import com.app.repositories.CartRepo;
+import com.app.repositories.CustomerRepo;
 import com.app.repositories.OrderItemRepo;
 import com.app.repositories.OrderRepo;
 import com.app.repositories.OrderStatusRepo;
 import com.app.repositories.PaymentRepo;
-import com.app.repositories.StoreRepo;
-import com.app.repositories.UserRepo;
+import com.app.repositories.VendorRepo;
 import com.app.services.CartService;
 import com.app.services.OrderService;
 import com.app.services.UserService;
@@ -40,6 +40,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -50,11 +51,10 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
 
     @Autowired
     private OrderStatusRepo orderStatusRepo;
-    
 
-    public OrderServiceImpl(UserRepo userRepo, CartRepo cartRepo, OrderRepo orderRepo, PaymentRepo paymentRepo,
+    public OrderServiceImpl(CustomerRepo userRepo, CartRepo cartRepo, OrderRepo orderRepo, PaymentRepo paymentRepo,
             OrderItemRepo orderItemRepo, CartItemRepo cartItemRepo, UserService userService, CartService cartService,
-            StoreRepo storeRepo, ModelMapper modelMapper) {
+            VendorRepo storeRepo, ModelMapper modelMapper) {
         super(userRepo, cartRepo, orderRepo, paymentRepo, orderItemRepo, cartItemRepo, userService, cartService,
                 storeRepo, modelMapper);
     }
@@ -62,7 +62,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED, rollbackFor = {
             Exception.class, APIException.class, ResourceNotFoundException.class })
     @Override
-    public ApiResponse<OrderDTO> placeOrder(final Long storeId, final OrderRequest request) {
+    public AppResponse<OrderDTO> placeOrder(final Long storeId, final OrderRequest request) {
         final Long userId = request.getUserId();
         final Long cartId = request.getCartId();
         final Customer user = validateUser(userId);
@@ -75,7 +75,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
         OrderDTO orderDTO = modelMapper.map(order, OrderDTO.class);
         order = orderRepo.saveAndFlush(order);
         orderDTO.setOrderId(order.getOrderId());
-        return ApiResponse.success(orderDTO);
+        return AppResponse.success(HttpStatus.OK.value(), orderDTO);
     }
 
     @Override
@@ -137,7 +137,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public ApiResponse<OrderUpdateResponse> updateOrder(Long orderId, OrderUpdateRequest request) {
+    public AppResponse<OrderUpdateResponse> updateOrder(Long orderId, OrderUpdateRequest request) {
         Order order = orderRepo.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "orderId", orderId));
         if (order == null) {
@@ -156,7 +156,8 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
         orderStatusHistory.setNewStatus(request.getNewSatus());
         order.setOrderStatus(request.getNewSatus());
         orderStatusRepo.save(orderStatusHistory);
-        return ApiResponse.success(modelMapper.map(OrderStatusHistory.class, OrderUpdateResponse.class));
+        return AppResponse.success(HttpStatus.OK.value(),
+                modelMapper.map(OrderStatusHistory.class, OrderUpdateResponse.class));
     }
 
     @Override
@@ -180,8 +181,8 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
      */
     private Order createOrder(OrderRequest request, Customer user, Cart cart, Vendor store) {
         Order order = new Order();
-      //  order.setEmail(user.getEmail());
-        //order.setOrderTime(Instant.now());
+        // order.setEmail(user.getEmail());
+        // order.setOrderTime(Instant.now());
         order.setOrderStatus(OrderStatus.PENDING);
         order.setFederalTax(cart.getTotalPrice() * 0.2);
         order.setStateTax(cart.getTotalPrice() * 0.5);
@@ -242,23 +243,22 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
     }
 
     @Override
-    public ApiResponse<OrderDTO> getOrderById(Long orderId) {
+    public AppResponse<OrderDTO> getOrderById(Long orderId) {
         Order order = orderRepo.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "orderId", orderId));
-        try{
+        try {
             modelMapper.map(order, OrderDTO.class);
-        }catch (Exception e) {
+        } catch (Exception e) {
             // TODO: handle exception
             e.printStackTrace();
         }
-        return ApiResponse.success(modelMapper.map(order, OrderDTO.class));
+        return AppResponse.success(HttpStatus.OK.value(), modelMapper.map(order, OrderDTO.class));
     }
 
     @Override
-    public ApiResponse<List<OrderDTO>> getOrderByStoreId(Long storeId) {
-        List<OrderDTO> orders = orderRepo.findOrderByVendorId(storeId)
-                .stream()
-                .map(orderEntity->modelMapper.map(orderEntity, OrderDTO.class)).collect(Collectors.toList());
-        return ApiResponse.success(orders);
+    public AppResponse<List<OrderDTO>> getOrderByStoreId(Long storeId) {
+        List<OrderDTO> orders = orderRepo.findOrderByVendorId(storeId).stream()
+                .map(orderEntity -> modelMapper.map(orderEntity, OrderDTO.class)).collect(Collectors.toList());
+        return AppResponse.success(HttpStatus.OK.value(), orders);
     }
 }

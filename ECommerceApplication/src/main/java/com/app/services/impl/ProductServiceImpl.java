@@ -56,8 +56,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDTO addProduct(Long categoryId, Product product) {
 
-        Category category = categoryRepo
-                .findById(categoryId)
+        Category category = categoryRepo.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
 
         boolean isProductNotPresent = true;
@@ -85,8 +84,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
 
-        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
-                ? Sort.by(sortBy).ascending()
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
 
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
@@ -95,8 +93,7 @@ public class ProductServiceImpl implements ProductService {
 
         List<Product> products = pageProducts.getContent();
 
-        List<ProductDTO> productDTOs = products.stream()
-                .map(product -> modelMapper.map(product, ProductDTO.class))
+        List<ProductDTO> productDTOs = products.stream().map(product -> modelMapper.map(product, ProductDTO.class))
                 .collect(Collectors.toList());
 
         ProductResponse productResponse = new ProductResponse();
@@ -112,15 +109,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponse searchByCategory(
-            Long categoryId, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+    public ProductResponse searchByCategory(Long categoryId, Integer pageNumber, Integer pageSize, String sortBy,
+            String sortOrder) {
 
-        Category category = categoryRepo
-                .findById(categoryId)
+        Category category = categoryRepo.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
 
-        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
-                ? Sort.by(sortBy).ascending()
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
 
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
@@ -133,8 +128,8 @@ public class ProductServiceImpl implements ProductService {
             throw new APIException(category.getCategoryName() + " category doesn't contain any products !!!");
         }
 
-        List<ProductDTO> productDTOs =
-                products.stream().map(p -> modelMapper.map(p, ProductDTO.class)).collect(Collectors.toList());
+        List<ProductDTO> productDTOs = products.stream().map(p -> modelMapper.map(p, ProductDTO.class))
+                .collect(Collectors.toList());
 
         ProductResponse productResponse = new ProductResponse();
 
@@ -149,10 +144,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponse searchProductByKeyword(
-            String keyword, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
-        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
-                ? Sort.by(sortBy).ascending()
+    public ProductResponse searchProductByKeyword(String keyword, Integer pageNumber, Integer pageSize, String sortBy,
+            String sortOrder) {
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
 
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
@@ -165,8 +159,8 @@ public class ProductServiceImpl implements ProductService {
             throw new APIException("Products not found with keyword: " + keyword);
         }
 
-        List<ProductDTO> productDTOs =
-                products.stream().map(p -> modelMapper.map(p, ProductDTO.class)).collect(Collectors.toList());
+        List<ProductDTO> productDTOs = products.stream().map(p -> modelMapper.map(p, ProductDTO.class))
+                .collect(Collectors.toList());
 
         ProductResponse productResponse = new ProductResponse();
 
@@ -182,8 +176,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDTO updateProduct(Long productId, Product product) {
-        Product productFromDB = productRepo
-                .findById(productId)
+        Product productFromDB = productRepo.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
         if (productFromDB == null) {
             throw new APIException("Product not found with productId: " + productId);
@@ -193,20 +186,17 @@ public class ProductServiceImpl implements ProductService {
         product.setCategory(productFromDB.getCategory());
         Product savedProduct = productRepo.save(product);
         List<Cart> carts = cartRepo.findCartsBySkuId(productId);
-        List<CartDTO> cartDTOs = carts.stream()
-                .map(cart -> {
-                    CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
-                    return cartDTO;
-                })
-                .collect(Collectors.toList());
+        List<CartDTO> cartDTOs = carts.stream().map(cart -> {
+            CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
+            return cartDTO;
+        }).collect(Collectors.toList());
         cartDTOs.forEach(cart -> cartService.updateProductInCarts(cart.getCartId(), productId));
         return modelMapper.map(savedProduct, ProductDTO.class);
     }
 
     @Override
     public ProductDTO updateProductImage(Long productId, MultipartFile image) throws IOException {
-        Product productFromDB = productRepo
-                .findById(productId)
+        Product productFromDB = productRepo.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
 
         if (productFromDB == null) {

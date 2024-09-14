@@ -7,15 +7,15 @@ import lombok.Data;
 @Data
 public class PaymentDTO {
 
-     @Schema(description="Creditcard Number" ,example = "XXXX-XXXX-XXXX-1280")
+    @Schema(description = "Creditcard Number", example = "XXXX-XXXX-XXXX-1280")
     @JsonProperty("credit_card")
     private String creditCardNum;
 
-     @Schema(description="Exp Date" ,example = "12/2030")
+    @Schema(description = "Exp Date", example = "12/2030")
     @JsonProperty("expiry_date")
     private String expDate;
 
-    @Schema(description="Payment Method" ,example = "IN_STORE_PAYMENT")
+    @Schema(description = "Payment Method", example = "IN_STORE_PAYMENT")
     @JsonProperty("payment_method")
     private String paymentMethod;
 

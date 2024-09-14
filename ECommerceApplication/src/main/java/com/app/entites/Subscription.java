@@ -22,25 +22,24 @@ public class Subscription {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
+
     @Enumerated(EnumType.STRING)
     private SubFrequency frequency;
-    
+
     @Enumerated(EnumType.STRING)
     private SubStatus status;
-    
 
     @Enumerated(EnumType.STRING)
     private DeliverySlot timeSlot;
-    
+
     private LocalDate startDate;
 
     private LocalDate endDate;
-    
+
     @CreatedDate
     @Column(name = "created_date", updatable = false)
     private LocalDateTime createdDate;
-    
+
     private LocalDateTime updatedAt;
-    
+
 }

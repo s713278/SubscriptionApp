@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class ShippingDTO {
 
-    @Schema(description ="Shipping Type",example = "INSTORE_PICKUP")
+    @Schema(description = "Shipping Type", example = "INSTORE_PICKUP")
     @JsonProperty("shipping_type")
     private String shippingMethod;
 

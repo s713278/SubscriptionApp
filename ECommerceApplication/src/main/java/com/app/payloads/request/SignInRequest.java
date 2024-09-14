@@ -1,5 +1,6 @@
-package com.app.payloads;
+package com.app.payloads.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
@@ -10,13 +11,17 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginCredentials {
+public class SignInRequest {
 
-    @Schema(description = "Email", example = "swamy.kunta@gmail.com")
+    @Schema(description = "Customer's Email", example = "ram.ayodhya@example.com")
     @Email
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Schema(description = "Email", example = "12345678")
+    @Schema(description = "Customer's password", example = "StrongP@ssword123")
     private String password;
+
+    @JsonProperty("mobile_number")
+    private String mobile;
+
 }

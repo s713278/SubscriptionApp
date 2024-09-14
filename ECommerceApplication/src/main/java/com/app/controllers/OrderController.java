@@ -5,7 +5,7 @@ import com.app.payloads.OrderDTO;
 import com.app.payloads.OrderRequest;
 import com.app.payloads.OrderResponse;
 import com.app.payloads.request.OrderUpdateRequest;
-import com.app.payloads.response.ApiResponse;
+import com.app.payloads.response.AppResponse;
 import com.app.payloads.response.OrderUpdateResponse;
 import com.app.services.OrderService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -34,49 +34,43 @@ public class OrderController {
     public final OrderService orderService;
 
     @PostMapping("/orders")
-    public ResponseEntity<ApiResponse<OrderDTO>> placeOrder(
-            @PathVariable("store_id") Long storeId, @RequestBody OrderRequest request) {
+    public ResponseEntity<AppResponse<OrderDTO>> placeOrder(@PathVariable("store_id") Long storeId,
+            @RequestBody OrderRequest request) {
 
-        ApiResponse<OrderDTO> order = orderService.placeOrder(storeId, request);
+        AppResponse<OrderDTO> order = orderService.placeOrder(storeId, request);
 
         return new ResponseEntity<>(order, HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('STORE')")
     @PutMapping("/orders/{order_id}")
-    public ResponseEntity<ApiResponse<OrderUpdateResponse>> updateOrder(
-            @PathVariable("store_id") Long storeId,
-            @PathVariable("order_id") Long orderId,
-            @RequestBody OrderUpdateRequest request) {
+    public ResponseEntity<AppResponse<OrderUpdateResponse>> updateOrder(@PathVariable("store_id") Long storeId,
+            @PathVariable("order_id") Long orderId, @RequestBody OrderUpdateRequest request) {
         return new ResponseEntity<>(orderService.updateOrder(orderId, request), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('STORE') or hasAuthority('USER')")
     @GetMapping("/orders/{order_id}")
-    public ResponseEntity<ApiResponse<OrderDTO>> getOrdersById(
-             @PathVariable("store_id") Long storeId,
-             @PathVariable("order_id") Long orderId){
-        ApiResponse<OrderDTO> order = orderService.getOrderById(orderId);
+    public ResponseEntity<AppResponse<OrderDTO>> getOrdersById(@PathVariable("store_id") Long storeId,
+            @PathVariable("order_id") Long orderId) {
+        AppResponse<OrderDTO> order = orderService.getOrderById(orderId);
         return new ResponseEntity<>(order, HttpStatus.FOUND);
     }
-    
+
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('STORE')")
     @GetMapping("/orders")
-    public ResponseEntity<ApiResponse<List<OrderDTO>>> getOrdersByStoreId(
-             @PathVariable("store_id") Long storeId){
-        ApiResponse<List<OrderDTO>> orders = orderService.getOrderByStoreId(storeId);
+    public ResponseEntity<AppResponse<List<OrderDTO>>> getOrdersByStoreId(@PathVariable("store_id") Long storeId) {
+        AppResponse<List<OrderDTO>> orders = orderService.getOrderByStoreId(storeId);
         return new ResponseEntity<>(orders, HttpStatus.FOUND);
     }
-    
+
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('STORE')")
     @GetMapping("/admin/orders")
     public ResponseEntity<OrderResponse> getAllOrders(
-            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false)
-                    Integer pageNumber,
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
             @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_ORDERS_BY, required = false) String sortBy,
-            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false)
-                    String sortOrder) {
+            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
 
         OrderResponse orderResponse = orderService.getAllOrders(pageNumber, pageSize, sortBy, sortOrder);
 

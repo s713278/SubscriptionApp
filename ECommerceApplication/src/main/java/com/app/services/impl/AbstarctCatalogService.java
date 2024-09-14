@@ -9,11 +9,11 @@ import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.repositories.CartItemRepo;
 import com.app.repositories.CartRepo;
+import com.app.repositories.CustomerRepo;
 import com.app.repositories.OrderItemRepo;
 import com.app.repositories.OrderRepo;
 import com.app.repositories.PaymentRepo;
-import com.app.repositories.StoreRepo;
-import com.app.repositories.UserRepo;
+import com.app.repositories.VendorRepo;
 import com.app.services.CartService;
 import com.app.services.UserService;
 import java.util.List;
@@ -24,7 +24,7 @@ import org.springframework.util.Assert;
 @Slf4j
 public abstract class AbstarctCatalogService {
 
-    protected UserRepo userRepo;
+    protected CustomerRepo userRepo;
 
     protected CartRepo cartRepo;
 
@@ -40,15 +40,13 @@ public abstract class AbstarctCatalogService {
 
     protected CartService cartService;
 
-    protected StoreRepo storeRepo;
+    protected VendorRepo storeRepo;
 
     public ModelMapper modelMapper;
-    
-    
 
-    public AbstarctCatalogService(UserRepo userRepo, CartRepo cartRepo, OrderRepo orderRepo, PaymentRepo paymentRepo,
-            OrderItemRepo orderItemRepo, CartItemRepo cartItemRepo, UserService userService, CartService cartService,
-            StoreRepo storeRepo, ModelMapper modelMapper) {
+    public AbstarctCatalogService(CustomerRepo userRepo, CartRepo cartRepo, OrderRepo orderRepo,
+            PaymentRepo paymentRepo, OrderItemRepo orderItemRepo, CartItemRepo cartItemRepo, UserService userService,
+            CartService cartService, VendorRepo storeRepo, ModelMapper modelMapper) {
         super();
         this.userRepo = userRepo;
         this.cartRepo = cartRepo;
@@ -64,8 +62,8 @@ public abstract class AbstarctCatalogService {
 
     protected Customer validateUser(Long userId) {
         log.debug("Validate User {} ", userId);
-        Customer user =
-                userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
+        Customer user = userRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
         return user;
     }
 
@@ -74,8 +72,8 @@ public abstract class AbstarctCatalogService {
         Cart cart = user.getCart();
         if (cart.getId().compareTo(cartId) != 0) {
             throw new APIException(String.format(
-                    "Malformed request while placing the order where cartId: %d is not belongs to userId : %d",
-                    cartId, user.getId()));
+                    "Malformed request while placing the order where cartId: %d is not belongs to userId : %d", cartId,
+                    user.getId()));
         }
         List<CartItem> cartItems = cart.getCartItems();
         if (cartItems.size() == 0) {
@@ -86,11 +84,10 @@ public abstract class AbstarctCatalogService {
 
     protected Vendor validateCartItemsAndStore(Long storeId, Cart cart) {
         log.debug("Validate CartItems {} against the store {}  ", cart.getId(), storeId);
-        Vendor store = storeRepo
-                .findById(storeId)
+        Vendor store = storeRepo.findById(storeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Store", "storeId", storeId));
-        boolean allItemsStoreMatched =
-                cart.getCartItems().stream().allMatch(t -> t.getSku().getStore().getId() == storeId);
+        boolean allItemsStoreMatched = cart.getCartItems().stream()
+                .allMatch(t -> t.getSku().getStore().getId() == storeId);
 
         if (!allItemsStoreMatched) {
             throw new APIException(
@@ -100,20 +97,25 @@ public abstract class AbstarctCatalogService {
     }
 
     /**
-     * <p>Updating the sku's inventory.</p<
-     * <p>Clean up the user's cart.</p<
+     * <p>
+     * Updating the sku's inventory.</p<
+     * <p>
+     * Clean up the user's cart.</p<
+     * 
      * @param cart
      */
     protected void updateCartAndSkuQuantities(Cart cart) {
         cart.getCartItems().forEach(cartItem -> {
-             int quantity = cartItem.getQuantity();
-             Sku sku = cartItem.getSku();
-             sku.setQuantity(sku.getQuantity() - quantity);
+            int quantity = cartItem.getQuantity();
+            Sku sku = cartItem.getSku();
+            sku.setQuantity(sku.getQuantity() - quantity);
         });
         cart.getCartItems().clear();
         cart.setTotalPrice(0D);
         cartItemRepo.deleteByCartId(cart.getId().longValue());
-        Assert.isTrue(cart.getTotalPrice().compareTo(0D)==0,String.format("Cart %d total amount is not zero but expection is ZERO.",cart.getId()));
-        Assert.isTrue(cart.getCartItems().isEmpty(), String.format("Cart %d have %d items and expectation is EMPTY",cart.getId(),cart.getCartItems().size()));
+        Assert.isTrue(cart.getTotalPrice().compareTo(0D) == 0,
+                String.format("Cart %d total amount is not zero but expection is ZERO.", cart.getId()));
+        Assert.isTrue(cart.getCartItems().isEmpty(), String.format("Cart %d have %d items and expectation is EMPTY",
+                cart.getId(), cart.getCartItems().size()));
     }
 }

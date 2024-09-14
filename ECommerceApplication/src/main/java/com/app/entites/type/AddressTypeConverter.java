@@ -1,37 +1,36 @@
 package com.app.entites.type;
+
 import com.app.payloads.AddressDTO;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.AttributeConverter;
-import jakarta.persistence.Converter;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-
-@Converter
+@Component
 @Slf4j
-public class AddressTypeConverter implements AttributeConverter<AddressDTO, String> {
+public class AddressTypeConverter implements TypeConverter<AddressDTO, Map<String, String>> {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public String convertToDatabaseColumn(AddressDTO attribute) {
-        try {
-        	log.debug("AddressDTO {}",attribute);
-            return objectMapper.writeValueAsString(attribute);
-        } catch (JsonProcessingException e) {
-        	log.error("Unable to creating into JSON string for address DTO {}",attribute,e);
-            throw new IllegalArgumentException("Error converting address to JSON string", e);
+    public Map<String, String> toEntityType(AddressDTO addressDTO) {
+        log.debug("AddressDTO {}", addressDTO);
+        if (addressDTO == null) {
+            return Map.of();
         }
+        Map<String, String> map = objectMapper.convertValue(addressDTO, new TypeReference<Map<String, String>>() {
+        });
+        return map;
     }
 
     @Override
-    public AddressDTO convertToEntityAttribute(String dbData) {
-        try {
-            return objectMapper.readValue(dbData, AddressDTO.class);
-        } catch (IOException e) {
-        	log.error("Unable to creating into JSON Object for address string {}",dbData,e);
-            throw new IllegalArgumentException("Error converting JSON string to address", e);
+    public AddressDTO fromEntityType(Map<String, String> dbData) {
+        if (dbData == null) {
+            return new AddressDTO();
         }
+        AddressDTO addressData = objectMapper.convertValue(dbData, new TypeReference<AddressDTO>() {
+        });
+        return addressData;
     }
 }

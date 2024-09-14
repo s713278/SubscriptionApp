@@ -27,9 +27,6 @@ public class CartDTO {
     private Integer itemsCount;
 
     public Integer getItemsCount() {
-        return items.stream()
-                .map(t -> t.getQuantity())
-                .mapToInt(Integer::intValue)
-                .sum();
+        return items.stream().map(t -> t.getQuantity()).mapToInt(Integer::intValue).sum();
     }
 }

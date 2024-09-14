@@ -1,10 +1,20 @@
 package com.app.entites;
 
-import com.app.entites.type.AddressTypeConverter;
-import com.app.payloads.AddressDTO;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -19,16 +29,8 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import java.io.Serializable;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
 @Table(name = "tb_customer")
@@ -40,7 +42,7 @@ public class Customer implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long id;
 
     @Size(min = 4, max = 20, message = "First Name must be between 4 and 20 characters long")
     @Pattern(regexp = "^[a-zA-Z]*$", message = "First Name must not contain numbers or special characters")
@@ -51,29 +53,29 @@ public class Customer implements Serializable {
     @Email
     @Column(unique = true, nullable = false)
     private String email;
-    
-    //@Size(min = 10, max = 10, message = "Mobile Number must be exactly 10 digits long")
-    //@Pattern(regexp = "^\\d{10}$", message = "Mobile Number must contain only Numbers")
-    @Column(unique = true, nullable = false)
+
+    // @Size(min = 10, max = 10, message = "Mobile Number must be exactly 10 digits
+    // long")
+    // @Pattern(regexp = "^\\d{10}$", message = "Mobile Number must contain only
+    // Numbers")
+    @Column(name = "", unique = true, nullable = false)
     private Long mobile;
 
     private String password;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "user_role",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
+        name = "tb_user_roles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
     private Set<Role> roles = new HashSet<>();
 
-
-    @OneToOne(
-            mappedBy = "user",
-            cascade = {CascadeType.ALL})
+    @OneToOne(mappedBy = "user", cascade = { CascadeType.ALL })
     private Cart cart;
 
     public Long getId() {
-        return this.userId;
+        return this.id;
     }
 
     // One user can manage many stores
@@ -83,18 +85,32 @@ public class Customer implements Serializable {
 
     // Google or Facebook or ...
     private String regSource;
-    
+
     private String regDevice;
-    
-    @Column(name="delivery_address",columnDefinition = "jsonb")
-    @Convert(converter = AddressTypeConverter.class)
-    private AddressDTO deliveryAddress;
-    
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "delivery_address", columnDefinition = "jsonb")
+    private Map<String, String> deliveryAddress;
+
+    private String otp;
+
+    private LocalDateTime otpExpiration;
+
+    public Boolean verified;
+
+    public void setEmail(String email) {
+        this.email = ( this.email!=null?email.trim().toLowerCase():this.email);
+    }
+
+    public String getEmail(String email) {
+        return ( this.email!=null?email.trim().toLowerCase():this.email);
+    }
+
     @CreatedDate
     @Column(name = "created_date", updatable = false)
-    private Instant createdDate = Instant.now();
-    
+    private LocalDateTime createdDate;
+
     @LastModifiedDate
     @Column(name = "last_modified_date")
-    private Instant lastModifiedDate = Instant.now();
+    private LocalDateTime lastModifiedDate;
 }

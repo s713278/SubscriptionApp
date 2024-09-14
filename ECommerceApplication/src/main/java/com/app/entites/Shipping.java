@@ -27,18 +27,16 @@ public class Shipping {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(
-            mappedBy = "shipping",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(mappedBy = "shipping", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private Order order;
 
-  //  @NotBlank
-   // @Size(min = 4, message = "Shipping method must contain atleast 4 characters")
+    // @NotBlank
+    // @Size(min = 4, message = "Shipping method must contain atleast 4 characters")
     @Column(name = "shipping_method", columnDefinition = "ship_type_enum")
     @Enumerated(EnumType.STRING)
     private ShippingType shippingMethod;
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "shipping_id")
     private Address address;
 }

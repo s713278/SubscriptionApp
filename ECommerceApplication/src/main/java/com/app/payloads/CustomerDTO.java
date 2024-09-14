@@ -19,11 +19,10 @@ import lombok.Setter;
 @Schema(name = "Customer Registration Request")
 public class CustomerDTO {
 
-   
     @JsonIgnore
     private Long userId;
 
-    @NotBlank(message="First name is required.")
+    @NotBlank(message = "First name is required.")
     @JsonProperty("first_name")
     private String firstName;
 
@@ -33,7 +32,7 @@ public class CustomerDTO {
     @JsonProperty("mobile")
     private Long mobile;
 
-    @NotBlank(message = "Email is required.")
+    // @NotBlank(message = "Email is required.")
     @JsonProperty("email")
     private String email;
 
@@ -43,6 +42,7 @@ public class CustomerDTO {
     @JsonIgnore
     private Set<Role> roles = new HashSet<>();
 
+    @JsonIgnore
     @JsonProperty("delivery_address")
     private AddressDTO deliveryAddress;
 

@@ -1,13 +1,14 @@
 package com.app.exceptions;
+
 import org.springframework.http.HttpStatus;
 
 public enum APIErrorCode {
 
     API_404(HttpStatus.NOT_FOUND, "Please change the input and Try again."),
     API_400(HttpStatus.BAD_REQUEST, "Please check the request and try again."),
-    API_302(HttpStatus.FOUND,"Resource already existed."),
+    API_302(HttpStatus.FOUND, "Resource already existed."),
     API_500(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error"),
- API_417(HttpStatus.EXPECTATION_FAILED, "User creation is failed.");
+    API_417(HttpStatus.EXPECTATION_FAILED, "User creation is failed.");
 
     private final HttpStatus httpStatus;
     private final String userMessage;

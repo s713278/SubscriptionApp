@@ -1,9 +1,7 @@
 package com.app.entites;
 
-import com.app.entites.type.AddressTypeConverter;
 import com.app.entites.type.MapTypeConverter;
 import com.app.entites.type.VerificationStatus;
-import com.app.payloads.AddressDTO;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -52,40 +50,39 @@ public class Vendor extends AbstractAuditingEntity<Long> implements Serializable
     @Size(min = 5, message = "Business name must contain atleast 5 characters")
     private String businessName;
 
-
     @NotBlank
     @Size(min = 3, message = "Owner name must contain atleast 3 characters")
     private String ownerName;
-    
-  
-   // @Size(min = 10, max = 10, message = "Mobile Number must be exactly 10 digits long")
-    //@Pattern(regexp = "^\\d{10}$", message = "Mobile Number must contain only Numbers")
-    @NotBlank(message="Contact number is required.")
+
+    // @Size(min = 10, max = 10, message = "Mobile Number must be exactly 10 digits
+    // long")
+    // @Pattern(regexp = "^\\d{10}$", message = "Mobile Number must contain only
+    // Numbers")
+    @NotBlank(message = "Contact number is required.")
     private String contactNumber;
 
     @Email
-    @NotBlank(message="Contact email is required.")
+    @NotBlank(message = "Contact email is required.")
     private String customerEmail;
 
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Category> categories = new ArrayList<>();
-    
+
     @Enumerated(EnumType.STRING)
     private VerificationStatus verificationStatus;
-    
-    @Column(name="business_address",columnDefinition = "jsonb")
-    @Convert(converter = AddressTypeConverter.class)
-    private AddressDTO businessAddress;
 
-    @Column(name="service_area",columnDefinition = "jsonb")
+    @Column(name = "business_address", columnDefinition = "jsonb")
+    //@Convert(converter = AddressTypeConverter.class)
+    private  Map<String, String> businessAddress;
+
+    @Column(name = "service_area", columnDefinition = "jsonb")
     @Convert(converter = MapTypeConverter.class)
     private Map<String, Object> serviceAreas;
-    
-    
+
     @CreatedDate
     @Column(name = "created_date", updatable = false)
     private Instant createdDate = Instant.now();
-    
+
     @LastModifiedDate
     @Column(name = "last_modified_date")
     private Instant lastModifiedDate = Instant.now();

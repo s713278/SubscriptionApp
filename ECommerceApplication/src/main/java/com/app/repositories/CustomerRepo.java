@@ -8,10 +8,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepo extends JpaRepository<Customer, Long> {
+public interface CustomerRepo extends JpaRepository<Customer, Long> {
 
-    @Query("SELECT u FROM Customer u WHERE u.userId = ?1")
+    @Query("SELECT u FROM Customer u WHERE u.id = ?1")
     List<Customer> findByAddress(Long userId);
 
-    Optional<Customer> findByEmailIgnoreCase(String email);
+    Optional<Customer> findByEmail(String email);
+
+    Optional<Customer> findByMobile(Long mobileNumber);
 }

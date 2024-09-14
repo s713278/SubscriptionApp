@@ -1,4 +1,5 @@
 package com.app.entites.type;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;
@@ -13,7 +14,7 @@ public class MapTypeConverter implements AttributeConverter<Map<String, Object>,
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public String convertToDatabaseColumn(Map<String, Object>  attribute) {
+    public String convertToDatabaseColumn(Map<String, Object> attribute) {
         try {
             return objectMapper.writeValueAsString(attribute);
         } catch (JsonProcessingException e) {

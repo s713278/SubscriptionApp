@@ -1,6 +1,27 @@
 logging:
   level:
-    org.springframework.security: DEBUG
+    root: INFO
+    com:
+      app:
+        controllers: DEBUG
+        services: DEBUG
+  file:
+    name: logs/application.log
+    max-size: 10MB
+    max-history: 10
+
 spring:
-  jpa:
-    defer-datasource-initialization: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: swamy.kunta@gmail.com
+    password: your-email-password
+    properties.mail.smtp:
+      auth: true
+      starttls.enable: true
+application:
+  vendor_config:
+  customer_config:
+    signup_props:
+      otp_exp_time: 60  #In secods
+      otp_no_of_retry: 31  #In secods

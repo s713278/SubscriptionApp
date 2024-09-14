@@ -2,14 +2,23 @@ package com.app.controllers;
 
 import com.app.exceptions.UserNotFoundException;
 import com.app.payloads.CustomerDTO;
-import com.app.payloads.LoginCredentials;
-import com.app.payloads.response.ApiResponse;
-import com.app.payloads.response.LoginResponse;
+import com.app.payloads.request.OtpVerificationRequest;
+import com.app.payloads.request.ResendOtpRequest;
+import com.app.payloads.request.SignInRequest;
+import com.app.payloads.request.SignUpRequest;
+import com.app.payloads.response.AppResponse;
+import com.app.payloads.response.SignInResponse;
 import com.app.security.JWTUtil;
+import com.app.services.AuthService;
 import com.app.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +29,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/auth")
 // @SecurityRequirement(name = "E-Commerce Application")
 @Tag(name = "1. User Reg & SignIn API")
 public class AuthController {
@@ -30,43 +40,70 @@ public class AuthController {
     private UserService userService;
 
     @Autowired
+    private AuthService authService;
+
+    @Autowired
     private JWTUtil jwtUtil;
 
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Operation(description = "Customer Creation")
+    @Operation(description = "Customer Full Profile Registration")
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<LoginResponse>> register(@Valid @RequestBody CustomerDTO user)
+    public ResponseEntity<AppResponse<SignInResponse>> register(@Valid @RequestBody CustomerDTO user)
             throws UserNotFoundException {
         String email = user.getEmail().trim().toLowerCase();
         user.setEmail(email);
         CustomerDTO userDTO = userService.registerUser(user);
-        ApiResponse<LoginResponse> response = jwtUtil.generateToken(userDTO.getEmail());
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        SignInResponse response = jwtUtil.generateToken(userDTO.getEmail());
+        return new ResponseEntity<>(AppResponse.success(HttpStatus.CREATED.value(), response), HttpStatus.CREATED);
     }
 
-    @Operation(description = "Customer Login")
-    @PostMapping("/login")
-    public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginCredentials credentials) {
+    @Operation(description = "Customer SignIn")
+    @PostMapping("/signin")
+    public ResponseEntity<AppResponse<SignInResponse>> signIn(@Valid @RequestBody SignInRequest signInRequest) {
         UsernamePasswordAuthenticationToken authCredentials = new UsernamePasswordAuthenticationToken(
-                credentials.getEmail(), credentials.getPassword());
+                signInRequest.getEmail(), signInRequest.getPassword());
         authenticationManager.authenticate(authCredentials);
-        ApiResponse<LoginResponse> response = jwtUtil.generateToken(credentials.getEmail());
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        SignInResponse response = jwtUtil.generateToken(signInRequest.getEmail());
+        return new ResponseEntity<>(AppResponse.success(HttpStatus.OK.value(), response), HttpStatus.OK);
     }
-    
-    @Operation(description = "Mobile Register/Login")
-    @PostMapping("/mobile/login")
-    public ResponseEntity<ApiResponse<LoginResponse>> googlelogin(@Valid @RequestBody LoginCredentials credentials) {
-        UsernamePasswordAuthenticationToken authCredentials = new UsernamePasswordAuthenticationToken(
-                credentials.getEmail(), credentials.getPassword());
-        authenticationManager.authenticate(authCredentials);
-        ApiResponse<LoginResponse> response = jwtUtil.generateToken(credentials.getEmail());
-        
-        // Request OTP
-        //Verify OTP
-        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    @Operation(summary = "Customer sign-up", description = "Registers a new user by providing their first name, email, mobile number, and password.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "User registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AppResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request due to validation errors", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AppResponse.class))) })
+    @PostMapping("/signup")
+    public ResponseEntity<?> signUp(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Customer registration request", required = true, content = @Content(schema = @Schema(implementation = SignUpRequest.class))) @Valid @RequestBody SignUpRequest signUpRequest) {
+        try {
+            log.info("Received sign-up request for email: {}", signUpRequest.getEmail());
+            String response = authService.signUp(signUpRequest);
+            var apiResponse = AppResponse.success(HttpStatus.CREATED.value(), response);
+            return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            log.error("Error during sign-up for email: {}: {}", signUpRequest.getEmail(), e.getMessage());
+            throw e;
+        }
     }
-    
+
+    @Operation(description = "Customer OTP Veriifcation")
+    @PostMapping("/verify-otp")
+    public ResponseEntity<?> verifyOtp(@Valid @RequestBody OtpVerificationRequest otpRequest) {
+        try {
+            String response = authService.verifyOtp(otpRequest);
+            var apiResponse = AppResponse.success(HttpStatus.OK.value(), response);
+            return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            log.error("Error during otp-verification for email: {}: {}", otpRequest.getEmail(), e.getMessage());
+            throw e;
+        }
+    }
+
+    @PostMapping("/resend-otp")
+    public ResponseEntity<?> resendOtp(@RequestBody ResendOtpRequest resendOtpRequest) {
+        return null;
+        // Logic to resend OTP, similar to signUp OTP generation
+    }
+
 }

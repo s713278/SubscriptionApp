@@ -2,7 +2,7 @@ package com.app.controllers;
 
 import com.app.config.AppConstants;
 import com.app.payloads.VendorDTO;
-import com.app.payloads.response.ApiResponse;
+import com.app.payloads.response.AppResponse;
 import com.app.payloads.response.StoreResponse;
 import com.app.services.VendorService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -29,28 +29,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class VendorController {
 
-    
     private final VendorService storeService;
 
     @PostMapping("/")
-    public ResponseEntity<ApiResponse<VendorDTO>> createStore(@Valid @RequestBody VendorDTO storeDTO) {
+    public ResponseEntity<AppResponse<VendorDTO>> createStore(@Valid @RequestBody VendorDTO storeDTO) {
         return new ResponseEntity<>(storeService.createStore(storeDTO), HttpStatus.CREATED);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<VendorDTO>>> getAllStores() {
+    public ResponseEntity<AppResponse<List<VendorDTO>>> getAllStores() {
         return new ResponseEntity<>(storeService.getStores(), HttpStatus.FOUND);
     }
-    
+
     @GetMapping("/")
     public ResponseEntity<StoreResponse> getStores(
-            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false)
-                    Integer pageNumber,
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
-            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_STORE_BY, required = false)
-                    String sortBy,
-            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false)
-                    String sortOrder) {
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_STORE_BY, required = false) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
 
         StoreResponse storeResponse = storeService.getStore(pageNumber, pageSize, sortBy, sortOrder);
 
@@ -58,12 +54,13 @@ public class VendorController {
     }
 
     @PutMapping("/{storeId}")
-    public ResponseEntity<ApiResponse<VendorDTO>> updateStore(@RequestBody VendorDTO storeDTO, @PathVariable Long storeId) {
+    public ResponseEntity<AppResponse<VendorDTO>> updateStore(@RequestBody VendorDTO storeDTO,
+            @PathVariable Long storeId) {
         return new ResponseEntity<>(storeService.updateStore(storeDTO, storeId), HttpStatus.OK);
     }
 
     @DeleteMapping("/{storeId}")
-    public ResponseEntity<ApiResponse<String>> deleteStore(@PathVariable Long storeId) {
+    public ResponseEntity<AppResponse<String>> deleteStore(@PathVariable Long storeId) {
         return new ResponseEntity<>(storeService.deleteStore(storeId), HttpStatus.OK);
     }
 }

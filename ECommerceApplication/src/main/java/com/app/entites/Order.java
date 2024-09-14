@@ -30,10 +30,10 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "customer_id")
     private Customer customer;
-    
+
     @OneToOne
     @JoinColumn(name = "vendor_id")
     private Vendor vendor;
@@ -42,11 +42,11 @@ public class Order {
     @JoinColumn(name = "subscription_id", nullable = false)
     private Subscription subscription;
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "payment_id")
     private Payment payment;
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "shipping_id")
     private Shipping shipping;
 
@@ -54,18 +54,15 @@ public class Order {
     private Double federalTax;
     private Double stateTax;
     private Double totalAmount;
-    
+
     @Column(name = "order_status", columnDefinition = "order_status_enum")
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
-    @OneToMany(
-            mappedBy = "order",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            orphanRemoval = true,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "order", cascade = { CascadeType.PERSIST,
+            CascadeType.MERGE }, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<OrderItem> items = new ArrayList<>();
 
-   
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderStatusHistory> statusHistory = new ArrayList<>();
 }

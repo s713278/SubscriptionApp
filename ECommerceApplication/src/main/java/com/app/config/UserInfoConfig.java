@@ -28,8 +28,7 @@ public class UserInfoConfig implements UserDetails {
         this.email = user.getEmail();
         this.password = user.getPassword();
         log.info("User email {} and role {}", user.getEmail(), user.getRoles());
-        this.authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getRoleName()))
+        this.authorities = user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getRoleName()))
                 .collect(Collectors.toList());
     }
 
