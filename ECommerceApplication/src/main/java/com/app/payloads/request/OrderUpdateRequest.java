@@ -9,14 +9,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OrderUpdateRequest {
-    
-    @Schema(description = "Old Status" ,example = "CREATED/PROCESSING/SHIPPED/DELIVERED")
+
+    @Schema(description = "Old Status", example = "CREATED/PROCESSING/SHIPPED/DELIVERED")
     @JsonProperty("old_status")
     OrderStatus oldStatus;
-    
-    @Schema(description = "New Status" ,example = "PROCESSING")
+
+    @Schema(description = "New Status", example = "PROCESSING")
     @JsonProperty("new_status")
     OrderStatus newSatus;
 
-   
 }

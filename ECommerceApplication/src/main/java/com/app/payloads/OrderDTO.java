@@ -1,6 +1,6 @@
 package com.app.payloads;
 
-import com.app.entites.Store;
+import com.app.entites.Vendor;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.Instant;
@@ -51,10 +51,10 @@ public class OrderDTO {
     private Double stateTax;
 
     @JsonIgnore
-    private Store store;
+    private Vendor store;
 
     @JsonProperty("store_name")
     public String getStoreName() {
-        return store.getName();
+        return store.getBusinessName();
     }
 }

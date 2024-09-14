@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@Table(name = "categories")
+@Table(name = "tb_categories")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Category {
@@ -36,5 +36,5 @@ public class Category {
 
     @ManyToOne
     @JoinColumn(name = "store_id")
-    private Store store;
+    private Vendor store;
 }

@@ -28,7 +28,7 @@ public class SecurityConfig {
 
     @Autowired
     private JWTFilter jwtFilter;
-    
+
     @Autowired
     private AppFilter appFilter;
 
@@ -37,46 +37,34 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(t -> t.disable())
-                .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers(HttpMethod.GET, AppConstants.PUBLIC_URLS)
-                            .permitAll()
-                            
-                            .requestMatchers(HttpMethod.GET,AppConstants.USER_URLS)
-                            .hasAnyAuthority("USER","STORE", "ADMIN")
-                            
-                            .requestMatchers(HttpMethod.POST,AppConstants.STORE_URLS)
-                            .hasAnyAuthority("STORE","ADMIN")
-                            .requestMatchers(HttpMethod.PUT,AppConstants.STORE_URLS)
-                            .hasAnyAuthority("STORE","ADMIN")
-                            .requestMatchers(HttpMethod.DELETE,AppConstants.STORE_URLS)
-                            .hasAnyAuthority("STORE","ADMIN")
-                            
-                            .requestMatchers(HttpMethod.POST, AppConstants.ADMIN_URLS)
-                            .hasAnyAuthority("ADMIN")
-                            .requestMatchers(HttpMethod.PUT, AppConstants.ADMIN_URLS)
-                            .hasAnyAuthority("ADMIN")
-                            .requestMatchers(HttpMethod.DELETE, AppConstants.ADMIN_URLS)
-                            .hasAnyAuthority("ADMIN")
-                            .anyRequest()
-                            .authenticated();
-                })
-                .exceptionHandling(t -> t.authenticationEntryPoint((request, response, authException) ->
-                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")))
+        http.csrf(t -> t.disable()).authorizeHttpRequests(auth -> {
+            auth.requestMatchers(HttpMethod.GET, AppConstants.PUBLIC_URLS).permitAll()
+                    .requestMatchers(HttpMethod.POST, AppConstants.PUBLIC_URLS).permitAll()
+
+                    .requestMatchers(HttpMethod.GET, AppConstants.USER_URLS).hasAnyAuthority("USER", "STORE", "ADMIN")
+
+                    .requestMatchers(HttpMethod.POST, AppConstants.VENDOR_URLS).hasAnyAuthority("STORE", "ADMIN")
+                    .requestMatchers(HttpMethod.PUT, AppConstants.VENDOR_URLS).hasAnyAuthority("STORE", "ADMIN")
+                    .requestMatchers(HttpMethod.DELETE, AppConstants.VENDOR_URLS).hasAnyAuthority("STORE", "ADMIN")
+
+                    .requestMatchers(HttpMethod.POST, AppConstants.ADMIN_URLS).hasAnyAuthority("ADMIN")
+                    .requestMatchers(HttpMethod.PUT, AppConstants.ADMIN_URLS).hasAnyAuthority("ADMIN")
+                    .requestMatchers(HttpMethod.DELETE, AppConstants.ADMIN_URLS).hasAnyAuthority("ADMIN").anyRequest()
+                    .authenticated();
+        }).exceptionHandling(t -> t.authenticationEntryPoint((request, response, authException) -> response
+                .sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")))
                 .sessionManagement(t -> t.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-        
+
         http.addFilterAfter(appFilter, UsernamePasswordAuthenticationFilter.class);
-        
+
         http.authenticationProvider(daoAuthenticationProvider());
         DefaultSecurityFilterChain defaultSecurityFilterChain = http.build();
 
         return defaultSecurityFilterChain;
     }
 
-  
-    
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();

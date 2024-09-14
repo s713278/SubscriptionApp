@@ -1,46 +1,51 @@
 package com.app.exceptions;
 
-import com.app.payloads.APIResponse;
-import com.app.payloads.response.ApiResponse;
+import com.app.payloads.response.AppResponse;
 import jakarta.validation.ConstraintViolationException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 @Slf4j
-public class MyGlobalExceptionHandler {
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<AppResponse<?>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        List<String> errors = Collections.singletonList(ex.getMessage());
+        AppResponse<?> response = AppResponse.error(HttpStatus.BAD_REQUEST.value(), "Invalid input", errors);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<APIResponse> handleRuntimeException(RuntimeException e) {
-        String message = e.getMessage();
-
-        APIResponse res = new APIResponse(message, false);
-
-        return new ResponseEntity<APIResponse>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<AppResponse> handleRuntimeException(RuntimeException e) {
+        List<String> errors = Collections.singletonList(e.getMessage());
+        AppResponse<?> apiResponse = AppResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal Syste Error",
+                errors);
+        return new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<APIResponse> myResourceNotFoundException(ResourceNotFoundException e) {
-        String message = e.getMessage();
-
-        APIResponse res = new APIResponse(message, false);
-
-        return new ResponseEntity<APIResponse>(res, HttpStatus.NOT_FOUND);
+    public ResponseEntity<AppResponse> myResourceNotFoundException(ResourceNotFoundException e) {
+        List<String> errors = Collections.singletonList(e.getMessage());
+        AppResponse<?> apiResponse = AppResponse.error(HttpStatus.NOT_FOUND.value(), "Resournce Not Found.", errors);
+        return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(APIException.class)
-    public ResponseEntity<ApiResponse> myAPIException(APIException e) {
-        ApiResponse<?> errorResponse =ApiResponse.error(e.getErrorReason(),e.getMessage());
+    public ResponseEntity<AppResponse> myAPIException(APIException e) {
+        List<String> errors = Collections.singletonList(e.getMessage());
+        AppResponse<?> errorResponse = AppResponse.error(e.getErrorCode().getHttpStatus().value(), e.getErrorReason(),
+                errors);
         return new ResponseEntity<>(errorResponse, e.getErrorCode().getHttpStatus());
     }
 
@@ -68,29 +73,13 @@ public class MyGlobalExceptionHandler {
 
             res.put(fieldName, message);
         });
-
         return new ResponseEntity<Map<String, String>>(res, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<String> myAuthenticationException(AuthenticationException e) {
-
         String res = e.getMessage();
-
-        return new ResponseEntity<String>(res, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<String>(res, HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler(MissingPathVariableException.class)
-    public ResponseEntity<APIResponse> myMissingPathVariableException(MissingPathVariableException e) {
-        APIResponse res = new APIResponse(e.getMessage(), false);
-
-        return new ResponseEntity<APIResponse>(res, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<APIResponse> myDataIntegrityException(DataIntegrityViolationException e) {
-        APIResponse res = new APIResponse(e.getMessage(), false);
-
-        return new ResponseEntity<APIResponse>(res, HttpStatus.BAD_REQUEST);
-    }
 }

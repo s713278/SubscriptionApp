@@ -12,19 +12,13 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfig {
 
     @Bean
-    public OpenAPI springShopOpenAPI() {
-        return new OpenAPI()
-                .info(new Info()
-                        .title("Multi Tenant E-Commerce App")
-                        .description("Backend APIs for Multi E-Commerce App")
-                        .version("v1.0")
-                        .contact(new Contact()
-                                .name("Swamy Kunta")
-                                .url("https://github.com/s713278/ECommerceApp/tree/master")
-                                .email("swamy.kunta@gmail.com"))
-                        .license(new License().name("License").url("/")))
-                .externalDocs(new ExternalDocumentation()
-                        .description("E-Commerce API Documentation")
+    public OpenAPI shopOpenAPI() {
+        return new OpenAPI().info(new Info().title("Mulit Tenant Milk and Vegetable Subscription API")
+                .description("API documentation for the Milk and Vegetable subscription service").version("1.0")
+                .contact(new Contact().name("Swamy Kunta").url("https://github.com/s713278/ECommerceApp/tree/master")
+                        .email("swamy.kunta@gmail.com"))
+                .license(new License().name("License").url("/")))
+                .externalDocs(new ExternalDocumentation().description("E-Commerce API Documentation")
                         .url("http://localhost:8080/swagger-ui/index.html"));
     }
 }

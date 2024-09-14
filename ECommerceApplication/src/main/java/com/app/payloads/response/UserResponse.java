@@ -1,6 +1,6 @@
 package com.app.payloads.response;
 
-import com.app.payloads.UserDTO;
+import com.app.payloads.CustomerDTO;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserResponse {
 
-    private List<UserDTO> content;
+    private List<CustomerDTO> content;
     private Integer pageNumber;
     private Integer pageSize;
     private Long totalElements;

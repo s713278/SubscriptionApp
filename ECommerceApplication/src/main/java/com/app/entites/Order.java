@@ -15,17 +15,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Table(name = "orders")
-@Getter
-@Setter
+@Table(name = "tb_orders")
+@Data
 @NoArgsConstructor
 public class Order {
 
@@ -33,19 +30,23 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
 
-    private Instant orderTime;
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
 
-    private String email;
+    @OneToOne
+    @JoinColumn(name = "vendor_id")
+    private Vendor vendor;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "user_id")
-    private User user;
+    @ManyToOne
+    @JoinColumn(name = "subscription_id", nullable = false)
+    private Subscription subscription;
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "payment_id")
     private Payment payment;
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "shipping_id")
     private Shipping shipping;
 
@@ -53,20 +54,14 @@ public class Order {
     private Double federalTax;
     private Double stateTax;
     private Double totalAmount;
-    
+
     @Column(name = "order_status", columnDefinition = "order_status_enum")
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
-    @OneToMany(
-            mappedBy = "order",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            orphanRemoval = true,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "order", cascade = { CascadeType.PERSIST,
+            CascadeType.MERGE }, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<OrderItem> items = new ArrayList<>();
-
-    @OneToOne
-    @JoinColumn(name = "store_id")
-    private Store store;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderStatusHistory> statusHistory = new ArrayList<>();

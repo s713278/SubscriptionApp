@@ -7,15 +7,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@Table(name = "roles")
+@Table(name = "tb_roles")
 @NoArgsConstructor
-@AllArgsConstructor
 public class Role {
 
     @Id
@@ -26,4 +24,5 @@ public class Role {
     @NotBlank
     @Column(name = "ROLE_NAME")
     private String roleName;
+
 }

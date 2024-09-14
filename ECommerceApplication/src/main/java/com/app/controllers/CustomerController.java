@@ -1,7 +1,7 @@
 package com.app.controllers;
 
 import com.app.config.AppConstants;
-import com.app.payloads.UserDTO;
+import com.app.payloads.CustomerDTO;
 import com.app.payloads.response.UserResponse;
 import com.app.services.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -23,19 +23,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 @SecurityRequirement(name = "E-Commerce Application")
 @Tag(name = "2. User Service API")
-public class UserController {
+public class CustomerController {
 
     @Autowired
     private UserService userService;
 
     @GetMapping("/admin/users")
     public ResponseEntity<UserResponse> getUsers(
-            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false)
-                    Integer pageNumber,
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
             @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_USERS_BY, required = false) String sortBy,
-            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false)
-                    String sortOrder) {
+            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
 
         UserResponse userResponse = userService.getAllUsers(pageNumber, pageSize, sortBy, sortOrder);
 
@@ -44,16 +42,16 @@ public class UserController {
 
     @GetMapping("/users/{userId}")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
-    public ResponseEntity<UserDTO> getUser(@PathVariable Long userId) {
-        UserDTO user = userService.getUserById(userId);
-        return new ResponseEntity<UserDTO>(user, HttpStatus.FOUND);
+    public ResponseEntity<CustomerDTO> getUser(@PathVariable Long userId) {
+        CustomerDTO user = userService.getUserById(userId);
+        return new ResponseEntity<CustomerDTO>(user, HttpStatus.FOUND);
     }
 
     @PutMapping("/users/{userId}")
-    public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO, @PathVariable Long userId) {
-        UserDTO updatedUser = userService.updateUser(userId, userDTO);
+    public ResponseEntity<CustomerDTO> updateUser(@RequestBody CustomerDTO userDTO, @PathVariable Long userId) {
+        CustomerDTO updatedUser = userService.updateUser(userId, userDTO);
 
-        return new ResponseEntity<UserDTO>(updatedUser, HttpStatus.OK);
+        return new ResponseEntity<CustomerDTO>(updatedUser, HttpStatus.OK);
     }
 
     @DeleteMapping("/admin/users/{userId}")

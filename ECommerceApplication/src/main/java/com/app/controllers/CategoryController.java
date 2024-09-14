@@ -29,7 +29,6 @@ public class CategoryController {
 
     @Autowired
     private CategoryService categoryService;
-    
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('STORE')")
     @PostMapping("/categories")
@@ -40,13 +39,10 @@ public class CategoryController {
 
     @GetMapping("/categories")
     public ResponseEntity<CategoryResponse> getCategories(
-            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false)
-                    Integer pageNumber,
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
-            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_CATEGORIES_BY, required = false)
-                    String sortBy,
-            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false)
-                    String sortOrder) {
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_CATEGORIES_BY, required = false) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
 
         CategoryResponse categoryResponse = categoryService.getCategories(pageNumber, pageSize, sortBy, sortOrder);
 
@@ -55,7 +51,8 @@ public class CategoryController {
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('STORE')")
     @PutMapping("/categories/{categoryId}")
-    public ResponseEntity<CategoryDTO> updateCategory(@RequestBody CategoryDTO category, @PathVariable Long categoryId) {
+    public ResponseEntity<CategoryDTO> updateCategory(@RequestBody CategoryDTO category,
+            @PathVariable Long categoryId) {
         CategoryDTO categoryDTO = categoryService.updateCategory(category, categoryId);
 
         return new ResponseEntity<CategoryDTO>(categoryDTO, HttpStatus.OK);

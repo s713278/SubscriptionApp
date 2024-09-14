@@ -1,12 +1,12 @@
 package com.app.services.impl;
 
 import com.app.entites.Address;
-import com.app.entites.User;
+import com.app.entites.Customer;
 import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.payloads.AddressDTO;
 import com.app.repositories.AddressRepo;
-import com.app.repositories.UserRepo;
+import com.app.repositories.CustomerRepo;
 import com.app.services.AddressService;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +23,7 @@ public class AddressServiceImpl implements AddressService {
     private AddressRepo addressRepo;
 
     @Autowired
-    private UserRepo userRepo;
+    private CustomerRepo userRepo;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -38,8 +38,8 @@ public class AddressServiceImpl implements AddressService {
         String street = addressDTO.getAddress1();
         String buildingName = addressDTO.getAddress2();
 
-        Address addressFromDB = addressRepo.findByCountryAndStateAndCityAndPincodeAndAddress1AndAddress2(
-                country, state, city, pincode, street, buildingName);
+        Address addressFromDB = addressRepo.findByCountryAndStateAndCityAndPincodeAndAddress1AndAddress2(country, state,
+                city, pincode, street, buildingName);
 
         if (addressFromDB != null) {
             throw new APIException("Address already exists with addressId: " + addressFromDB.getAddressId());
@@ -56,8 +56,7 @@ public class AddressServiceImpl implements AddressService {
     public List<AddressDTO> getAddresses() {
         List<Address> addresses = addressRepo.findAll();
 
-        List<AddressDTO> addressDTOs = addresses.stream()
-                .map(address -> modelMapper.map(address, AddressDTO.class))
+        List<AddressDTO> addressDTOs = addresses.stream().map(address -> modelMapper.map(address, AddressDTO.class))
                 .collect(Collectors.toList());
 
         return addressDTOs;
@@ -65,8 +64,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public AddressDTO getAddress(Long addressId) {
-        Address address = addressRepo
-                .findById(addressId)
+        Address address = addressRepo.findById(addressId)
                 .orElseThrow(() -> new ResourceNotFoundException("Address", "addressId", addressId));
 
         return modelMapper.map(address, AddressDTO.class);
@@ -75,16 +73,11 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public AddressDTO updateAddress(Long addressId, Address address) {
         Address addressFromDB = addressRepo.findByCountryAndStateAndCityAndPincodeAndAddress1AndAddress2(
-                address.getCountry(),
-                address.getState(),
-                address.getCity(),
-                address.getPincode(),
-                address.getAddress1(),
-                address.getAddress2());
+                address.getCountry(), address.getState(), address.getCity(), address.getPincode(),
+                address.getAddress1(), address.getAddress2());
 
         if (addressFromDB == null) {
-            addressFromDB = addressRepo
-                    .findById(addressId)
+            addressFromDB = addressRepo.findById(addressId)
                     .orElseThrow(() -> new ResourceNotFoundException("Address", "addressId", addressId));
 
             addressFromDB.setCountry(address.getCountry());
@@ -98,10 +91,10 @@ public class AddressServiceImpl implements AddressService {
 
             return modelMapper.map(updatedAddress, AddressDTO.class);
         } else {
-            List<User> users = userRepo.findByAddress(addressId);
+            List<Customer> users = userRepo.findByAddress(addressId);
             final Address a = addressFromDB;
 
-            users.forEach(user -> user.getAddresses().add(a));
+            // users.forEach(user -> user.getAddresses().add(a));
 
             deleteAddress(addressId);
 
@@ -111,14 +104,13 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public String deleteAddress(Long addressId) {
-        Address addressFromDB = addressRepo
-                .findById(addressId)
+        Address addressFromDB = addressRepo.findById(addressId)
                 .orElseThrow(() -> new ResourceNotFoundException("Address", "addressId", addressId));
 
-        List<User> users = userRepo.findByAddress(addressId);
+        List<Customer> users = userRepo.findByAddress(addressId);
 
         users.forEach(user -> {
-            user.getAddresses().remove(addressFromDB);
+            // user.getAddresses().remove(addressFromDB);
 
             userRepo.save(user);
         });

@@ -1,16 +1,16 @@
 package com.app.services;
 
-import com.app.payloads.UserDTO;
+import com.app.payloads.CustomerDTO;
 import com.app.payloads.response.UserResponse;
 
 public interface UserService {
-    UserDTO registerUser(UserDTO userDTO);
+    CustomerDTO registerUser(CustomerDTO userDTO);
 
     UserResponse getAllUsers(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
-    UserDTO getUserById(Long userId);
+    CustomerDTO getUserById(Long userId);
 
-    UserDTO updateUser(Long userId, UserDTO userDTO);
+    CustomerDTO updateUser(Long userId, CustomerDTO userDTO);
 
     String deleteUser(Long userId);
 }

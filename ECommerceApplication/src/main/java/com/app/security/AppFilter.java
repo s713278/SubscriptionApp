@@ -16,8 +16,7 @@ public class AppFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        
-        
+
         log.debug(ALREADY_FILTERED_SUFFIX);
 
         filterChain.doFilter(request, response);

@@ -1,6 +1,6 @@
 package com.app.config;
 
-import com.app.entites.User;
+import com.app.entites.Customer;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,12 +24,11 @@ public class UserInfoConfig implements UserDetails {
     private String password;
     private List<GrantedAuthority> authorities;
 
-    public UserInfoConfig(User user) {
+    public UserInfoConfig(Customer user) {
         this.email = user.getEmail();
         this.password = user.getPassword();
         log.info("User email {} and role {}", user.getEmail(), user.getRoles());
-        this.authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getRoleName()))
+        this.authorities = user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getRoleName()))
                 .collect(Collectors.toList());
     }
 

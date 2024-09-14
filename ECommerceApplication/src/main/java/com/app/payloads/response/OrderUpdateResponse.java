@@ -19,10 +19,7 @@ public class OrderUpdateResponse {
     @JsonProperty("new_staus")
     private OrderStatus newStatus;
 
-    @JsonFormat(
-            shape = JsonFormat.Shape.STRING,
-            pattern = DateTimeFormat.DATE_TIME_FORMAT,
-            timezone = DateTimeFormat.TIME_ZONE)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateTimeFormat.DATE_TIME_FORMAT, timezone = DateTimeFormat.TIME_ZONE)
     @JsonProperty("timestamp")
     private LocalDateTime changedAt;
 }

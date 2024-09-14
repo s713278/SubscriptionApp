@@ -1,6 +1,5 @@
 package com.app.services.constants;
 
 public enum PaymentType {
-    ONLINE,
-    IN_STORE_PAYMENT
+    CASH_ON_DELIVERY, ONLINE, IN_STORE_PAYMENT
 }

@@ -11,9 +11,7 @@ import org.springframework.data.annotation.LastModifiedDate;
  * Base abstract class for entities which will hold definitions for created,
  * last modified, created by, last modified by attributes.
  */
-@JsonIgnoreProperties(
-        value = {"createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"},
-        allowGetters = true)
+@JsonIgnoreProperties(value = { "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate" }, allowGetters = true)
 public abstract class AbstractAuditingEntity<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
