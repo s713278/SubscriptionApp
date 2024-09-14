@@ -46,7 +46,7 @@
 - API documentation is available via Swagger UI at http://localhost:8080/swagger-ui/index.html
 
 # ER-Diagram
-<img width="605" alt="ER-Diagram" src="https://user-images.githubusercontent.com/101395494/216134703-e7cefef6-187f-44df-9fd4-52aedc66d24b.png">
+![multi_ecommerce - public](https://github.com/user-attachments/assets/c7ef19b4-fe5d-4318-b277-40f4b4776cca)
 
 # Swagger-ui
 <img width="947" alt="Swagger-UI" src="https://user-images.githubusercontent.com/101395494/216388614-f8eed33e-cbbb-4cfa-997e-b76674bbb465.png">
