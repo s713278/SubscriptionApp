@@ -6,9 +6,9 @@
 
 # Features
 
-| Store Admin |  User  | 
+| Store Admin |  Customer  | 
 |:-----|:--------:|
-| Login   |  Registration & Login |
+| Login   |  SignUp & SignIn |
 | Users   |  catalog Browse  |
 | Address   | Cart Management |
 |Categories| Orderring|
@@ -22,8 +22,8 @@
   - Authorization: <your_jwt>
 
 # Technologies:
-- Java 20 or above
-- Spring Boot 3.2
+- Java 21
+- Spring Boot 3.2.1
 - Maven
 - PostgraSQL
 - Spring Data JPA
@@ -31,6 +31,7 @@
 - JSON Web Tokens (JWT)
 - Auth0
 - Swagger UI
+- Event Listner
 
 # Running the app
 1. Clone the repository: git clone https://github.com/s713278/ECommerceApp.git 
