@@ -7,6 +7,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +16,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@Table(name = "tb_order_status_history")
 public class OrderStatusHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
