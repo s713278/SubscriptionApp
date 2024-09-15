@@ -10,8 +10,8 @@ public class SignInResponse {
     @JsonProperty("user_id")
     private String userId;
 
-    @JsonProperty("user_token")
-    @Schema(description = "User Auth Token", example = "sdfasdAAASDF.SDFSDFSAFADFSFD.JKOJIJH")
+    @JsonProperty("access_token")
+    @Schema(description = "Access Token", example = "sdfasdAAASDF.SDFSDFSAFADFSFD.JKOJIJH")
     private String userToken;
 
     @JsonProperty("first_name")
@@ -19,5 +19,9 @@ public class SignInResponse {
 
     @JsonProperty("last_name")
     private String lastName;
-
+    
+    
+    @JsonProperty("refresh_token")
+    @Schema(description = "Refresh Token", example = "sdfasdAAASDF.SDFSDFSAFADFSFD.JKOJIJH")
+    private String refreshToken;
 }

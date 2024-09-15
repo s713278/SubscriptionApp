@@ -1,3 +1,13 @@
+# Session settings
+server:
+  servlet:
+    session:
+      cookie:
+        name: JSESSIONID  # Custom name for the session cookie
+        http-only: true   # Make the cookie HTTP-only to prevent client-side access
+        secure: false      # Send cookie only over HTTPS (enable in production)
+        path: /           # Path for the session cookie
+      timeout: 1m        # Session timeout set to 30 minutes
 logging:
   level:
     root: INFO
@@ -20,6 +30,11 @@ spring:
       auth: true
       starttls.enable: true
 application:
+  jwt_config:
+    issuer: MyStores
+    secret: cl$ksc^nas%lkdm!cz@xclk#as&dmka;s28*392da%jskd#n9827@3498%
+    access_exp_time: 7776000000 #Short-lived (e.g., 15 minutes, 1 hour).
+    refresh_exp_time: 1800  #Stored securely on the client.
   vendor_config:
   customer_config:
     signup_props:
