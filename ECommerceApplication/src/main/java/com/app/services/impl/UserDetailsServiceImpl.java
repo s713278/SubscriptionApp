@@ -2,7 +2,6 @@ package com.app.services.impl;
 
 import com.app.config.UserInfoConfig;
 import com.app.entites.Customer;
-import com.app.exceptions.ResourceNotFoundException;
 import com.app.repositories.CustomerRepo;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Customer> user = userRepo.findByEmail(username.toLowerCase());
         if (!user.isPresent()) {
-            throw new ResourceNotFoundException("Customer", "email", username);
+            return null;
+           // throw new ResourceNotFoundException("Customer", "email", username);
         }
         return user.map(UserInfoConfig::new).get();
     }

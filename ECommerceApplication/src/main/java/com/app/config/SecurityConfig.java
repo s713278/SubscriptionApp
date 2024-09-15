@@ -2,7 +2,6 @@ package com.app.config;
 
 import com.app.security.AppFilter;
 import com.app.security.JWTFilter;
-import com.app.services.impl.UserDetailsServiceImpl;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +14,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.DefaultSecurityFilterChain;
@@ -32,28 +32,52 @@ public class SecurityConfig {
     @Autowired
     private AppFilter appFilter;
 
-    @Autowired
-    private UserDetailsServiceImpl userDetailsServiceImpl;
+    private final UserDetailsService userDetailsService;
+
+    public SecurityConfig(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(t -> t.disable()).authorizeHttpRequests(auth -> {
-            auth.requestMatchers(HttpMethod.GET, AppConstants.PUBLIC_URLS).permitAll()
-                    .requestMatchers(HttpMethod.POST, AppConstants.PUBLIC_URLS).permitAll()
+        http
+                // Disable CSRF since we're using tokens (JWT, session cookies) in REST APIs
+                .csrf(csrf -> csrf.disable())
+                .cors(cors ->cors.disable() )
+                // Allow stateless sessions or create sessions on login
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) 
+                )
+                // Authorization rules
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers(HttpMethod.GET, AppConstants.PUBLIC_URLS).permitAll()
+                            .requestMatchers(HttpMethod.POST, AppConstants.PUBLIC_URLS).permitAll()
 
-                    .requestMatchers(HttpMethod.GET, AppConstants.USER_URLS).hasAnyAuthority("USER", "STORE", "ADMIN")
+                            .requestMatchers(HttpMethod.GET, AppConstants.USER_URLS)
+                            .hasAnyAuthority("USER", "STORE", "ADMIN")
 
-                    .requestMatchers(HttpMethod.POST, AppConstants.VENDOR_URLS).hasAnyAuthority("STORE", "ADMIN")
-                    .requestMatchers(HttpMethod.PUT, AppConstants.VENDOR_URLS).hasAnyAuthority("STORE", "ADMIN")
-                    .requestMatchers(HttpMethod.DELETE, AppConstants.VENDOR_URLS).hasAnyAuthority("STORE", "ADMIN")
+                            .requestMatchers(HttpMethod.POST, AppConstants.VENDOR_URLS)
+                            .hasAnyAuthority("STORE", "ADMIN").requestMatchers(HttpMethod.PUT, AppConstants.VENDOR_URLS)
+                            .hasAnyAuthority("STORE", "ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, AppConstants.VENDOR_URLS)
+                            .hasAnyAuthority("STORE", "ADMIN")
 
-                    .requestMatchers(HttpMethod.POST, AppConstants.ADMIN_URLS).hasAnyAuthority("ADMIN")
-                    .requestMatchers(HttpMethod.PUT, AppConstants.ADMIN_URLS).hasAnyAuthority("ADMIN")
-                    .requestMatchers(HttpMethod.DELETE, AppConstants.ADMIN_URLS).hasAnyAuthority("ADMIN").anyRequest()
-                    .authenticated();
-        }).exceptionHandling(t -> t.authenticationEntryPoint((request, response, authException) -> response
-                .sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")))
-                .sessionManagement(t -> t.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                            .requestMatchers(HttpMethod.POST, AppConstants.ADMIN_URLS).hasAnyAuthority("ADMIN")
+                            .requestMatchers(HttpMethod.PUT, AppConstants.ADMIN_URLS).hasAnyAuthority("ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, AppConstants.ADMIN_URLS).hasAnyAuthority("ADMIN")
+                            .anyRequest().authenticated();
+                })
+                // Use basic form-based authentication for the REST APIs
+                //.formLogin(login -> login.loginProcessingUrl(AppConstants.SIGN_IN_URL).permitAll() // URL to submit login request
+                //)
+                // Logout configuration for REST API
+                .logout(logout -> logout.logoutUrl(AppConstants.SIGN_OUT_URL).invalidateHttpSession(true)
+                        .deleteCookies(AppConstants.JSESSION_ID)
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                            response.getWriter().write("Signout out successfully");
+                        }))
+                .exceptionHandling(t -> t.authenticationEntryPoint((request, response, authException) -> response
+                        .sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")));
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -69,7 +93,7 @@ public class SecurityConfig {
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
 
-        provider.setUserDetailsService(userDetailsServiceImpl);
+        provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
 
         return provider;

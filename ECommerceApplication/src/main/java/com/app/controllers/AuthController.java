@@ -3,12 +3,14 @@ package com.app.controllers;
 import com.app.exceptions.UserNotFoundException;
 import com.app.payloads.CustomerDTO;
 import com.app.payloads.request.OtpVerificationRequest;
+import com.app.payloads.request.RefreshTokenRequest;
 import com.app.payloads.request.ResendOtpRequest;
 import com.app.payloads.request.SignInRequest;
 import com.app.payloads.request.SignUpRequest;
 import com.app.payloads.response.AppResponse;
 import com.app.payloads.response.SignInResponse;
-import com.app.security.JWTUtil;
+import com.app.security.RefreshTokenService;
+import com.app.security.TokenService;
 import com.app.services.AuthService;
 import com.app.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,17 +20,23 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@RequiredArgsConstructor
 @Slf4j
 @RestController
 @RequestMapping("/api/auth")
@@ -36,14 +44,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "1. User Reg & SignIn API")
 public class AuthController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final AuthService authService;
+    private final TokenService tokenService;
 
-    @Autowired
-    private AuthService authService;
-
-    @Autowired
-    private JWTUtil jwtUtil;
+    private final RefreshTokenService refreshTokenService;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -55,18 +60,29 @@ public class AuthController {
         String email = user.getEmail().trim().toLowerCase();
         user.setEmail(email);
         CustomerDTO userDTO = userService.registerUser(user);
-        SignInResponse response = jwtUtil.generateToken(userDTO.getEmail());
-        return new ResponseEntity<>(AppResponse.success(HttpStatus.CREATED.value(), response), HttpStatus.CREATED);
+        String accessToken = tokenService.generateToken(userDTO.getEmail());
+
+        String refreshToken = refreshTokenService.createRefreshToken(user.getEmail());
+        SignInResponse loginResponse = SignInResponse.builder().userToken(accessToken).refreshToken(refreshToken)
+                .build();
+
+        return new ResponseEntity<>(AppResponse.success(HttpStatus.CREATED.value(), loginResponse), HttpStatus.CREATED);
     }
 
     @Operation(description = "Customer SignIn")
     @PostMapping("/signin")
     public ResponseEntity<AppResponse<SignInResponse>> signIn(@Valid @RequestBody SignInRequest signInRequest) {
+        log.info("Received sign-in request for email: {}", signInRequest.getEmail());
         UsernamePasswordAuthenticationToken authCredentials = new UsernamePasswordAuthenticationToken(
                 signInRequest.getEmail(), signInRequest.getPassword());
-        authenticationManager.authenticate(authCredentials);
-        SignInResponse response = jwtUtil.generateToken(signInRequest.getEmail());
-        return new ResponseEntity<>(AppResponse.success(HttpStatus.OK.value(), response), HttpStatus.OK);
+        var authentication = authenticationManager.authenticate(authCredentials);
+        String accessToken = tokenService.generateToken(signInRequest.getEmail());
+        String refreshToken = refreshTokenService.createRefreshToken(signInRequest.getEmail());
+        SignInResponse loginResponse = SignInResponse.builder().userToken(accessToken).refreshToken(refreshToken)
+                .build();
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return new ResponseEntity<>(AppResponse.success(HttpStatus.OK.value(), loginResponse), HttpStatus.OK);
     }
 
     @Operation(summary = "Customer sign-up", description = "Registers a new user by providing their first name, email, mobile number, and password.")
@@ -106,4 +122,26 @@ public class AuthController {
         // Logic to resend OTP, similar to signUp OTP generation
     }
 
+    // REST API to get authenticated user details (for testing session management)
+    @Operation(description = "Logged-In User")
+    @GetMapping("/me")
+    public @ResponseBody String getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            return "Authenticated user: " + authentication.getName();
+        } else {
+            return "No authenticated user";
+        }
+    }
+
+    @PostMapping("/refresh")
+    public @ResponseBody ResponseEntity<?> refreshAccessToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+        String refreshToken = refreshTokenRequest.getRefreshToken();
+        if (refreshTokenService.validateRefreshToken(refreshToken)) {
+            String newAccessToken =  tokenService.generateToken(refreshTokenService.getUserIdFromRefreshToken(refreshToken));
+            return new ResponseEntity<>(AppResponse.success(HttpStatus.OK.value(), newAccessToken), HttpStatus.OK);
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid refresh token");
+        }
+    }
 }

@@ -3,12 +3,15 @@ package com.app.config;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 @Setter
 @Getter
 @ConfigurationProperties(prefix = "application")
+@Component
 public class GlobalConfig {
 
+    private JwtConfig jwtConfig;
     public static class CustomerConfig {
         private Long otpExpTime;
 
@@ -16,5 +19,14 @@ public class GlobalConfig {
 
     public static class VendorConfig {
 
+    }
+    
+    @Setter
+    @Getter
+    public static class JwtConfig {
+        private String issuer;
+        private String secret;
+        private Long accessExpTime;
+        private Long refreshExpTime;
     }
 }
