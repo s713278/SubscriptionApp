@@ -1,5 +1,6 @@
 package com.app.security;
 
+import com.app.config.AppConstants;
 import com.app.services.impl.UserDetailsServiceImpl;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import jakarta.servlet.FilterChain;
@@ -7,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,11 +16,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+@Slf4j
 @Service
 public class JWTFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JWTUtil jwtUtil;
+    private TokenService jwtUtil;
 
     @Autowired
     private UserDetailsServiceImpl userDetailsServiceImpl;
@@ -27,16 +30,16 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        String authHeader = request.getHeader("Authorization");
-
+        String authHeader = request.getHeader(AppConstants.AUTHORIZATION_HEADER);
+        String email  = "";
         if (authHeader != null && !authHeader.isBlank() && authHeader.startsWith("Bearer ")) {
             String jwt = authHeader.substring(7);
 
             if (jwt == null || jwt.isBlank()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invlaid JWT token in Bearer Header");
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invlaid JWT token in Bearer Header");
             } else {
                 try {
-                    String email = jwtUtil.validateTokenAndRetrieveSubject(jwt);
+                    email = jwtUtil.validateTokenAndRetrieveSubject(jwt);
 
                     UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(email);
 
@@ -47,11 +50,11 @@ public class JWTFilter extends OncePerRequestFilter {
                         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                     }
                 } catch (JWTVerificationException e) {
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid JWT Token");
+                    log.error("JWTVerificationException for user {}",email,e);
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT Token");
                 }
             }
         }
-
         filterChain.doFilter(request, response);
     }
 }

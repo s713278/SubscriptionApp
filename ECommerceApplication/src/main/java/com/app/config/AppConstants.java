@@ -21,4 +21,10 @@ public class AppConstants {
     public static final String[] ADMIN_URLS = { "/api/store/*/admin/**" };
 
     public static final String[] VENDOR_URLS = { "/api/store/*" };
+    
+    public static final String SIGN_UP_URL="/api/auth/signup";
+    public static final String SIGN_IN_URL="/api/auth/signin";
+    public static final String SIGN_OUT_URL="/api/auth/signout";
+    public static final String JSESSION_ID = "JSESSIONID";
+    public static final String AUTHORIZATION_HEADER="Authorization";
 }
