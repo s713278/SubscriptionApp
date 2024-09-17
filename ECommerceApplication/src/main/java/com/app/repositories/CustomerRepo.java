@@ -18,4 +18,7 @@ public interface CustomerRepo extends JpaRepository<Customer, Long> {
     Optional<Customer> findByEmailOrMobile(String email,Long mobile);
 
     Optional<Customer> findByMobile(Long mobileNumber);
+    
+    Customer findByEmailActivationToken(String token);
+    Customer findByResetPasswordToken(String token);
 }

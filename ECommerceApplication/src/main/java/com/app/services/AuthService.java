@@ -1,9 +1,11 @@
 package com.app.services;
 
 import com.app.config.AppConstants;
+import com.app.config.GlobalConfig;
 import com.app.entites.Customer;
 import com.app.entites.Role;
 import com.app.event.CustomerSignUpEvent;
+import com.app.exceptions.ResourceNotFoundException;
 import com.app.payloads.request.OtpVerificationRequest;
 import com.app.payloads.request.SignUpRequest;
 import com.app.repositories.CustomerRepo;
@@ -11,6 +13,7 @@ import com.app.repositories.RoleRepo;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -21,18 +24,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthService {
 
-    @Autowired
     private final CustomerRepo customerRepo;
     
-    @Autowired
     private final RoleRepo roleRepo;
 
-    @Autowired
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private final EmailService emailService; // Or SMS service for mobile OTP
-    
+   private final GlobalConfig globalConfig;
+   
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
@@ -52,7 +51,7 @@ public class AuthService {
         Customer user = new Customer();
         user.setFirstName(request.getFirstName());
         user.setEmail(request.getEmail());
-        user.setMobile(Long.parseLong(request.getMobile()));
+       // user.setMobile(Long.parseLong(request.getMobile()));
         user.setPassword(passwordEncoder.encode(request.getPassword())); // Use BCrypt for password encryption
         
      // Fetch the role and ensure it is managed
@@ -67,6 +66,9 @@ public class AuthService {
         user.setOtpExpiration(LocalDateTime.now().plusMinutes(5)); // Set OTP expiration to 5 minutes
         user.setDeliveryAddress(Collections.emptyMap());
 
+        user.setEmailActivationToken(UUID.randomUUID().toString()); // Generate a random activation token
+        user.setEmailTokenExpiration(LocalDateTime.now().plusSeconds(globalConfig.getCustomerConfig().getEmailTokenExp())); // Set token expiration time
+        
         customerRepo.save(user);
 
      // Publish a sign-up event asynchronously
@@ -74,7 +76,7 @@ public class AuthService {
             this,
             request.getEmail(),
             request.getMobile(),
-            request.getFirstName(),
+            user.getEmailActivationToken(),
             otp
         );
         eventPublisher.publishEvent(signUpEvent);
@@ -99,7 +101,7 @@ public class AuthService {
         }
 
         // Mark user as verified
-        user.setVerified(true);
+       // user.setVerified(true);
         user.setOtp(null); // Clear the OTP
         user.setOtpExpiration(null);
 
@@ -110,5 +112,44 @@ public class AuthService {
 
     private String generateOtp() {
         return String.valueOf((int) (Math.random() * 900000) + 100000); // Generates 6-digit OTP
+    }
+    
+
+    // Activate user account
+    public boolean activateAccount(final String token) {
+        Customer customer = customerRepo.findByEmailActivationToken(token);
+        if (customer != null && customer.getEmailTokenExpiration().isAfter(LocalDateTime.now())) {
+            customer.setEmailVerified(true);
+            customer.setEmailActivationToken(null); // Clear the token after activation
+            customer.setEmailTokenExpiration(null);
+            customerRepo.save(customer);
+            return true;
+        }
+        return false;
+    }
+    
+
+    // Generate reset password token
+    public Customer generateResetToken(String email) {
+        Customer customer = customerRepo.findByEmail(email).orElseThrow(()->new ResourceNotFoundException());
+        if (customer!=null) {
+            customer.setResetPasswordToken(UUID.randomUUID().toString());
+            customer.setEmailTokenExpiration(LocalDateTime.now().plusHours(1)); // Token expires in 1 hour
+            customerRepo.save(customer);
+        }
+        return customer;
+    }
+    
+ // Reset password
+    public boolean resetPassword(String token, String newPassword) {
+        Customer customer = customerRepo.findByResetPasswordToken(token);
+        if (customer != null && customer.getEmailTokenExpiration().isAfter(LocalDateTime.now())) {
+            customer.setPassword(passwordEncoder.encode(newPassword)); // Set new encoded password
+            customer.setResetPasswordToken(null); // Clear the token
+            customer.setEmailTokenExpiration(null);
+            customerRepo.save(customer);
+            return true;
+        }
+        return false;
     }
 }

@@ -90,18 +90,20 @@ public class Customer implements Serializable {
     @Column(name = "delivery_address", columnDefinition = "jsonb")
     private Map<String, String> deliveryAddress;
 
+    @Column(name="otp_code")
     private String otp;
 
     private LocalDateTime otpExpiration;
 
-    public Boolean verified;
+    @Column(name="mobile_verifed")
+    public Boolean mobileVerifed;
 
     public void setEmail(String email) {
-        this.email = ( this.email!=null?email.trim().toLowerCase():this.email);
+        this.email = email.trim().toLowerCase();
     }
 
     public String getEmail(String email) {
-        return ( this.email!=null?email.trim().toLowerCase():this.email);
+        return this.email;
     }
 
     @CreatedDate
@@ -111,4 +113,17 @@ public class Customer implements Serializable {
     @LastModifiedDate
     @Column(name = "last_modified_date")
     private LocalDateTime lastModifiedDate;
+    
+    @Column(name="email_verified")
+    private Boolean emailVerified;
+    
+    @Column(name="email_activation_token")
+    private String emailActivationToken;
+    
+    @Column(name="reset_password_token")
+    private String resetPasswordToken;
+    
+    @Column(name="email_token_expiration")
+    private LocalDateTime emailTokenExpiration;
+
 }

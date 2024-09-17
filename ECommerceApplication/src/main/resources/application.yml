@@ -22,10 +22,10 @@ logging:
 
 spring:
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: swamy.kunta@gmail.com
-    password: your-email-password
+    host: sandbox.smtp.mailtrap.io
+    port: 2525
+    username: 48210583b24f35
+    password: 3af3b672efa73f
     properties.mail.smtp:
       auth: true
       starttls.enable: true
@@ -37,6 +37,6 @@ application:
     refresh_exp_time: 1800  #Stored securely on the client.
   vendor_config:
   customer_config:
-    signup_props:
-      otp_exp_time: 60  #In secods
-      otp_no_of_retry: 31  #In secods
+    otp_exp_time: 60  #In secods
+    otp_no_of_retry: 3  #In secods
+    email_token_exp: 3600
