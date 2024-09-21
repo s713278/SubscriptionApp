@@ -25,14 +25,14 @@ spring:
     host: sandbox.smtp.mailtrap.io
     port: 2525
     username: 48210583b24f35
-    password: 3af3b672efa73f
+    password: 
     properties.mail.smtp:
       auth: true
       starttls.enable: true
 application:
   jwt_config:
     issuer: MyStores
-    secret: cl$ksc^nas%lkdm!cz@xclk#as&dmka;s28*392da%jskd#n9827@3498%
+    secret: 
     access_exp_time: 7776000000 #Short-lived (e.g., 15 minutes, 1 hour).
     refresh_exp_time: 1800  #Stored securely on the client.
   vendor_config:
