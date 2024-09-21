@@ -12,8 +12,13 @@ import org.springframework.stereotype.Component;
 public class GlobalConfig {
 
     private JwtConfig jwtConfig;
+    private CustomerConfig customerConfig;
+    
+    @Getter
+    @Setter
     public static class CustomerConfig {
         private Long otpExpTime;
+        private Long emailTokenExp;
 
     }
 

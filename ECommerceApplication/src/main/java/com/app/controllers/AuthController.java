@@ -1,10 +1,13 @@
 package com.app.controllers;
 
+import com.app.entites.Customer;
 import com.app.exceptions.UserNotFoundException;
 import com.app.payloads.CustomerDTO;
+import com.app.payloads.request.ForgotPasswordRequest;
 import com.app.payloads.request.OtpVerificationRequest;
 import com.app.payloads.request.RefreshTokenRequest;
 import com.app.payloads.request.ResendOtpRequest;
+import com.app.payloads.request.ResetPasswordRequest;
 import com.app.payloads.request.SignInRequest;
 import com.app.payloads.request.SignUpRequest;
 import com.app.payloads.response.AppResponse;
@@ -12,6 +15,7 @@ import com.app.payloads.response.SignInResponse;
 import com.app.security.RefreshTokenService;
 import com.app.security.TokenService;
 import com.app.services.AuthService;
+import com.app.services.EmailService;
 import com.app.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,6 +34,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,6 +52,7 @@ public class AuthController {
     private final UserService userService;
     private final AuthService authService;
     private final TokenService tokenService;
+    private final EmailService emailService;
 
     private final RefreshTokenService refreshTokenService;
 
@@ -134,6 +140,7 @@ public class AuthController {
         }
     }
 
+    @Operation(description = "Refresh Token")
     @PostMapping("/refresh")
     public @ResponseBody ResponseEntity<?> refreshAccessToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
         String refreshToken = refreshTokenRequest.getRefreshToken();
@@ -143,5 +150,41 @@ public class AuthController {
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid refresh token");
         }
+    }
+    
+
+    // Account activation endpoint
+    @Operation(description = "Account Access Actication")
+    @GetMapping("/activate/{token}")
+    public ResponseEntity<?> activateAccount(@PathVariable String token) {
+        boolean isActivated = authService.activateAccount(token);
+        if (isActivated) {
+            return ResponseEntity.ok("Account activated successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or expired activation token.");
+        }
+    }
+    
+ // Forgot password endpoint
+    @Operation(description = " Forgot password endpoint")
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        Customer customer = authService.generateResetToken(request.getEmail());
+        if (customer != null) {
+            emailService.sendResetPasswordEmail(customer.getEmail(), customer.getResetPasswordToken());
+            return ResponseEntity.ok("Password reset link has been sent to your email.");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found.");
+    }
+
+    // Reset password endpoint
+    @Operation(description = "Reset password endpoint")
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
+        boolean isReset = authService.resetPassword(request.getToken(), request.getNewPassword());
+        if (isReset) {
+            return ResponseEntity.ok("Password reset successful.");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or expired reset token.");
     }
 }

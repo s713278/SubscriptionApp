@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<AppResponse<?>> handleIllegalArgumentException(IllegalArgumentException ex) {
         List<String> errors = Collections.singletonList(ex.getMessage());
-        AppResponse<?> response = AppResponse.error(HttpStatus.BAD_REQUEST.value(), "Invalid input", errors);
+        AppResponse<?> response = AppResponse.error(HttpStatus.BAD_REQUEST.value(), "User registration failed.", errors);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
