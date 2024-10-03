@@ -68,7 +68,7 @@ public class TokenService {
                                 .collect(Collectors.joining(String.valueOf(id),"[", "]")))
                 .withIssuer(NSR_STORES)
                 .sign(Algorithm.HMAC256(globalConfig.getJwtConfig().getSecret()));
-        SignInResponse loginResponse = SignInResponse.builder().userId(String.valueOf(user.getId()))
+        SignInResponse loginResponse = SignInResponse.builder().userId(user.getId())
                 .firstName(user.getFirstName()).lastName(user.getLastName()).userToken(token).build();
         return token;
     }
@@ -77,18 +77,15 @@ public class TokenService {
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(globalConfig.getJwtConfig().getSecret()))
                 // .withSubject("User Details")
                 .withIssuer(NSR_STORES).build();
-
         DecodedJWT jwt = verifier.verify(token);
-        return jwt.getClaim("email").asString();
+        return jwt.getSubject();
     }
 
     public UserClaims validateTokenAndRetrieveSubjectData(String token) throws JWTVerificationException {
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(globalConfig.getJwtConfig().getSecret()))
                 .withSubject("User Details").withIssuer(NSR_STORES)
                 .build();
-
         DecodedJWT jwt = verifier.verify(token);
-
         return UserClaims.builder().userId(jwt.getClaim("userId").asString())
                 .storeId(jwt.getClaim("storeId").asString()).build();
     }
@@ -109,7 +106,6 @@ public class TokenService {
     
     // Extract username from the token
     public String getUsernameFromToken(String token) {
-
          try {
              DecodedJWT jwt = JWT
                      .require(Algorithm.HMAC256(globalConfig.getJwtConfig().getSecret()))

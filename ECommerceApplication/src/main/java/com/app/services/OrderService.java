@@ -1,5 +1,6 @@
 package com.app.services;
 
+import com.app.entites.SubscriptionItem;
 import com.app.payloads.OrderDTO;
 import com.app.payloads.OrderRequest;
 import com.app.payloads.OrderResponse;
@@ -26,4 +27,6 @@ public interface OrderService {
     OrderResponse getAllOrders(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
     OrderDTO updateOrder(String emailId, Long orderId, OrderStatus orderStatus);
+
+    void createInitialOrder(SubscriptionItem subscription);
 }

@@ -8,7 +8,7 @@ import lombok.Builder;
 public class SignInResponse {
 
     @JsonProperty("user_id")
-    private String userId;
+    private Long userId;
 
     @JsonProperty("access_token")
     @Schema(description = "Access Token", example = "sdfasdAAASDF.SDFSDFSAFADFSFD.JKOJIJH")

@@ -1,5 +1,6 @@
 package com.app.controllers;
 
+import com.app.config.UserInfoConfig;
 import com.app.entites.Customer;
 import com.app.exceptions.UserNotFoundException;
 import com.app.payloads.CustomerDTO;
@@ -82,9 +83,11 @@ public class AuthController {
         UsernamePasswordAuthenticationToken authCredentials = new UsernamePasswordAuthenticationToken(
                 signInRequest.getEmail(), signInRequest.getPassword());
         var authentication = authenticationManager.authenticate(authCredentials);
+       var userDetails = (UserInfoConfig)authentication.getPrincipal();
         String accessToken = tokenService.generateToken(signInRequest.getEmail());
         String refreshToken = refreshTokenService.createRefreshToken(signInRequest.getEmail());
         SignInResponse loginResponse = SignInResponse.builder().userToken(accessToken).refreshToken(refreshToken)
+                .userId(userDetails.getId())
                 .build();
 
         SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -8,6 +8,7 @@ import com.app.entites.OrderItem;
 import com.app.entites.OrderStatusHistory;
 import com.app.entites.Payment;
 import com.app.entites.Shipping;
+import com.app.entites.SubscriptionItem;
 import com.app.entites.Vendor;
 import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
@@ -34,6 +35,7 @@ import com.app.services.constants.ShippingType;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -47,6 +49,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 public class OrderServiceImpl extends AbstarctCatalogService implements OrderService {
 
     @Autowired
@@ -249,8 +252,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
         try {
             modelMapper.map(order, OrderDTO.class);
         } catch (Exception e) {
-            // TODO: handle exception
-            e.printStackTrace();
+           log.error("Excception occured while fetching order details for order id : {}",orderId);
         }
         return AppResponse.success(HttpStatus.OK.value(), modelMapper.map(order, OrderDTO.class));
     }
@@ -261,4 +263,11 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
                 .map(orderEntity -> modelMapper.map(orderEntity, OrderDTO.class)).collect(Collectors.toList());
         return AppResponse.success(HttpStatus.OK.value(), orders);
     }
+
+    @Override
+    public void createInitialOrder(SubscriptionItem subscription) {
+        // TODO Auto-generated method stub
+        
+    }
+    
 }

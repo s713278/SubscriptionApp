@@ -12,6 +12,7 @@ import com.app.exceptions.ResourceNotFoundException;
 import com.app.payloads.CartDTO;
 import com.app.payloads.CustomerDTO;
 import com.app.payloads.SkuDTO;
+import com.app.payloads.response.GetUserResponse;
 import com.app.payloads.response.UserResponse;
 import com.app.repositories.AddressRepo;
 import com.app.repositories.CustomerRepo;
@@ -146,18 +147,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public CustomerDTO getUserById(Long userId) {
+    public CustomerDTO getUserById(final Long userId) {
         Customer user = userRepo.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
-
         CustomerDTO userDTO = modelMapper.map(user, CustomerDTO.class);
-
         /*
          * userDTO.setAddress(
          * modelMapper.map(user.getAddresses().stream().findFirst().get(),
          * AddressDTO.class));
          */
-
         if (user.getCart() != null) {
             CartDTO cart = modelMapper.map(user.getCart(), CartDTO.class);
             List<SkuDTO> skuDTOs = user.getCart().getCartItems().stream()
@@ -165,9 +163,7 @@ public class UserServiceImpl implements UserService {
             userDTO.setCart(cart);
 
             // userDTO.getCart().setSkus(skuDTOs);
-
         }
-
         return userDTO;
     }
 
@@ -175,15 +171,12 @@ public class UserServiceImpl implements UserService {
     public CustomerDTO updateUser(Long userId, CustomerDTO userDTO) {
         Customer user = userRepo.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
-
         String encodedPass = passwordEncoder.encode(userDTO.getPassword());
-
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
         user.setMobile(userDTO.getMobile());
         user.setEmail(userDTO.getEmail());
         user.setPassword(encodedPass);
-
         /*
          * if (userDTO.getAddress() != null) { String country =
          * userDTO.getAddress().getCountry(); String state =
@@ -201,21 +194,16 @@ public class UserServiceImpl implements UserService {
          * state, country, pincode); address = addressRepo.save(address);
          * user.setAddresses(List.of(address)); } }
          */
-
         userDTO = modelMapper.map(user, CustomerDTO.class);
-
         /*
          * userDTO.setAddress(
          * modelMapper.map(user.getAddresses().stream().findFirst().get(),
          * AddressDTO.class));
          */
-
         CartDTO cart = modelMapper.map(user.getCart(), CartDTO.class);
-
         List<SkuDTO> skuDTOs = user.getCart().getCartItems().stream()
                 .map(item -> modelMapper.map(item.getSku(), SkuDTO.class)).collect(Collectors.toList());
         userDTO.setCart(cart);
-
         // userDTO.getCart().setSkus(skuDTOs);
         return userDTO;
     }
@@ -240,4 +228,16 @@ public class UserServiceImpl implements UserService {
 
         return "User with userId " + userId + " deleted successfully!!!";
     }
+
+    @Override
+    public GetUserResponse getUserInfo(Long userId) {
+        Customer customer = userRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
+      // Creating the Data object
+         GetUserResponse.Data data = new GetUserResponse.Data(customer.getId(),customer.getFirstName(),customer.getEmail(),customer.getMobile());
+         // Creating the GetUserResponse object
+         GetUserResponse response = new GetUserResponse(true, data);
+        return response;
+    }
+    
 }

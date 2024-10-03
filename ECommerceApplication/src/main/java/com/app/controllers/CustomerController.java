@@ -2,6 +2,7 @@ package com.app.controllers;
 
 import com.app.config.AppConstants;
 import com.app.payloads.CustomerDTO;
+import com.app.payloads.response.GetUserResponse;
 import com.app.payloads.response.UserResponse;
 import com.app.services.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 @SecurityRequirement(name = "E-Commerce Application")
-@Tag(name = "2. User Service API")
+@Tag(name = "2. Profile Management")
 public class CustomerController {
 
     @Autowired
@@ -43,9 +44,8 @@ public class CustomerController {
 
     @GetMapping("/users/{userId}")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
-    public ResponseEntity<CustomerDTO> getUser(@PathVariable Long userId) {
-        CustomerDTO user = userService.getUserById(userId);
-        return new ResponseEntity<CustomerDTO>(user, HttpStatus.FOUND);
+    public ResponseEntity<GetUserResponse> getUser(@PathVariable Long userId) {
+        return new ResponseEntity<GetUserResponse>( userService.getUserInfo(userId), HttpStatus.FOUND);
     }
 
     @PutMapping("/users/{userId}")

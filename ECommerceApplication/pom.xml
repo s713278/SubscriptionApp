@@ -166,7 +166,7 @@
                             <nrOfIndentSpace>4</nrOfIndentSpace>
                             <indentBlankLines>false</indentBlankLines>
                             <!--
-							<indentSchemaLocation>true</indentSchemaLocation>-->
+							<indentSchemaLocation>true</indentSchemaLocation> -->
                             <expandEmptyElements>false</expandEmptyElements>
                             <sortProperties>true</sortProperties>
                         </sortPom>

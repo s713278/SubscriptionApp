@@ -19,7 +19,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "tb_products")
+@Table(name = "tb_product")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,7 +31,7 @@ public class Product {
 
     @NotBlank
     @Size(min = 3, message = "Product name must contain atleast 3 characters")
-    private String productName;
+    private String name;
 
     private String imagePath;
 

@@ -14,7 +14,7 @@ public interface CartItemRepo extends JpaRepository<CartItem, Long> {
     // @Query("SELECT ci.cart FROM CartItem ci WHERE ci.product.id = ?1")
     // List<Cart> findCartsByProductId(Long productId);
 
-    @Query("SELECT ci FROM CartItem ci WHERE ci.sku.id = ?1 AND ci.cart.id = ?2 AND ci.sku.store.id=?3")
+    @Query("SELECT ci FROM CartItem ci WHERE ci.sku.id = ?1 AND ci.cart.id = ?2 AND ci.sku.id=?3")
     CartItem findCartItemBySkuIdAndCartIdAndSkuId(Long skuId, Long cartId, Long streId);
 
     // @Query("SELECT ci FROM CartItem ci WHERE ci.sku.id = ?1")
@@ -33,7 +33,7 @@ public interface CartItemRepo extends JpaRepository<CartItem, Long> {
     // void deleteCartItemBySkuIdAndCartId(Long skuId, Long cartId);
 
     @Modifying
-    @Query("DELETE FROM CartItem ci WHERE ci.cartItemId = ?1 AND ci.cart.id = ?2")
+    @Query("DELETE FROM CartItem ci WHERE ci.id = ?1 AND ci.cart.id = ?2")
     void deleteBycartItemIdAndCartId(Long cartItemId, Long cartId);
 
     @Modifying
