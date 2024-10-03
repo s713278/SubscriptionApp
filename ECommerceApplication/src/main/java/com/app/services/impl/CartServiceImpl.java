@@ -56,21 +56,21 @@ public class CartServiceImpl implements CartService {
         Vendor store = storeRepo.findById(storeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Store", "storeId", storeId));
 
-        Sku sku = skuRepo.findByIdAndStoreId(skuId, storeId)
+        Sku sku = skuRepo.findByIdAndStoreId(skuId)
                 .orElseThrow(() -> new ResourceNotFoundException("Sku", "skuId", skuId));
 
-        if (sku.getStore().getId() != storeId && sku.getId() == skuId) {
+      /*  if (sku.getStore().getId() != storeId && sku.getId() == skuId) {
             throw new APIException(APIErrorCode.API_400,
                     "The item " + sku.getName() + "is not avaiable @ store " + store.getBusinessName() + ".");
         }
         if (sku.getQuantity() == 0 && sku.getStore().getId() == storeId) {
             throw new APIException(APIErrorCode.API_400,
                     sku.getName() + " is not out of stack at " + sku.getStore().getBusinessName());
-        }
+        }*/
 
-        if (quantity > sku.getQuantity() && sku.getStore().getId() == storeId) {
+        if (quantity > sku.getStock() ) {
             throw new APIException("Please, make an order of the " + sku.getName()
-                    + " less than or equal to the quantity " + sku.getQuantity() + ".");
+                    + " less than or equal to the quantity " + sku.getStock() + ".");
         }
 
         // Retrieve Existing Cart if any
@@ -147,7 +147,7 @@ public class CartServiceImpl implements CartService {
         Cart cart = cartRepo.findById(cartId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart", "cartId", cartId));
 
-        CartItem matchedCartITem = cart.getCartItems().stream().filter(t -> t.getCartItemId() == cartItemId).findFirst()
+        CartItem matchedCartITem = cart.getCartItems().stream().filter(t -> t.getId() == cartItemId).findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("CartItem", "cartItemId", cartItemId));
         cartItemRepo.deleteBycartItemIdAndCartId(cartItemId, cartId);
         if (cart.getCartItems().isEmpty()) {
@@ -174,12 +174,12 @@ public class CartServiceImpl implements CartService {
         if (cartItem != null) {
             throw new APIException("Sku " + sku.getName() + " already exists in the cart");
         }
-        if (sku.getQuantity() == 0) {
+        if (sku.getStock() == 0) {
             throw new APIException(APIErrorCode.API_400, sku.getName() + " is out of stock and not available");
         }
-        if (sku.getQuantity() < quantity) {
+        if (sku.getStock() < quantity) {
             throw new APIException("Please, make an order of the " + sku.getName()
-                    + " less than or equal to the quantity " + sku.getQuantity() + ".");
+                    + " less than or equal to the quantity " + sku.getStock() + ".");
         }
         CartItem newCartItem = new CartItem();
         newCartItem.setSku(sku);

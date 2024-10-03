@@ -1,10 +1,12 @@
 package com.app.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
+@Slf4j
 public class EmailService {
 
     public void sendOtp(String email, String otp) {
@@ -19,12 +21,17 @@ public class EmailService {
     }
 
     // Send activation email
+    
     public void sendActivationEmail(String email, String activationToken) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
         message.setSubject("Account Activation");
         message.setText("Click the link to activate your account: http://localhost:8080/api/auth/activate/" + activationToken);
-        mailSender.send(message);
+      try {
+          mailSender.send(message);
+      }catch(Exception e) {
+          log.error("Unable to send user {}",email);
+      }
     }
 
     // Send reset password email

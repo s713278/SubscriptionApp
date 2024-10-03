@@ -64,7 +64,7 @@ public class ProductServiceImpl implements ProductService {
         List<Product> products = category.getProducts();
 
         for (int i = 0; i < products.size(); i++) {
-            if (products.get(i).getProductName().equals(product.getProductName())
+            if (products.get(i).getName().equals(product.getName())
                     && products.get(i).getDescription().equals(product.getDescription())) {
 
                 isProductNotPresent = false;
@@ -125,7 +125,7 @@ public class ProductServiceImpl implements ProductService {
         List<Product> products = pageProducts.getContent();
 
         if (products.size() == 0) {
-            throw new APIException(category.getCategoryName() + " category doesn't contain any products !!!");
+            throw new APIException(category.getName() + " category doesn't contain any products !!!");
         }
 
         List<ProductDTO> productDTOs = products.stream().map(p -> modelMapper.map(p, ProductDTO.class))
@@ -151,7 +151,7 @@ public class ProductServiceImpl implements ProductService {
 
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
 
-        Page<Product> pageProducts = productRepo.findByProductNameLike(keyword, pageDetails);
+        Page<Product> pageProducts = productRepo.findByNameLike(keyword, pageDetails);
 
         List<Product> products = pageProducts.getContent();
 

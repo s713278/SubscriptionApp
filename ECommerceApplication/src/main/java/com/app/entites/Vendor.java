@@ -2,25 +2,20 @@ package com.app.entites;
 
 import com.app.entites.type.MapTypeConverter;
 import com.app.entites.type.VerificationStatus;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -63,10 +58,7 @@ public class Vendor extends AbstractAuditingEntity<Long> implements Serializable
 
     @Email
     @NotBlank(message = "Contact email is required.")
-    private String customerEmail;
-
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Category> categories = new ArrayList<>();
+    private String email;
 
     @Enumerated(EnumType.STRING)
     private VerificationStatus verificationStatus;
@@ -80,7 +72,7 @@ public class Vendor extends AbstractAuditingEntity<Long> implements Serializable
     private Map<String, Object> serviceAreas;
 
     @CreatedDate
-    @Column(name = "created_date", updatable = false)
+    @Column(name = "created_date", updatable = false,insertable = false)
     private Instant createdDate = Instant.now();
 
     @LastModifiedDate

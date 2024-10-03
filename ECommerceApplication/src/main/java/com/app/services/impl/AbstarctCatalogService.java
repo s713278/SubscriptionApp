@@ -87,7 +87,7 @@ public abstract class AbstarctCatalogService {
         Vendor store = storeRepo.findById(storeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Store", "storeId", storeId));
         boolean allItemsStoreMatched = cart.getCartItems().stream()
-                .allMatch(t -> t.getSku().getStore().getId() == storeId);
+                .allMatch(t -> t.getSku().getProduct().getCategory().getCatalog().getVendor().getId() == storeId);
 
         if (!allItemsStoreMatched) {
             throw new APIException(
@@ -108,7 +108,7 @@ public abstract class AbstarctCatalogService {
         cart.getCartItems().forEach(cartItem -> {
             int quantity = cartItem.getQuantity();
             Sku sku = cartItem.getSku();
-            sku.setQuantity(sku.getQuantity() - quantity);
+            sku.setStock(sku.getStock() - quantity);
         });
         cart.getCartItems().clear();
         cart.setTotalPrice(0D);

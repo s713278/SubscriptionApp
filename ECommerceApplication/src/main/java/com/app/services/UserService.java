@@ -1,6 +1,7 @@
 package com.app.services;
 
 import com.app.payloads.CustomerDTO;
+import com.app.payloads.response.GetUserResponse;
 import com.app.payloads.response.UserResponse;
 
 public interface UserService {
@@ -13,4 +14,6 @@ public interface UserService {
     CustomerDTO updateUser(Long userId, CustomerDTO userDTO);
 
     String deleteUser(Long userId);
+    
+    GetUserResponse getUserInfo(Long userId);
 }

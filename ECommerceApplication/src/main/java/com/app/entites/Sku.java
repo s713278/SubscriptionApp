@@ -14,7 +14,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "tb_skus")
+@Table(name = "tb_sku")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,20 +29,19 @@ public class Sku {
     private String name;
 
     private String imagePath;
-
-    @NotBlank
-    @Size(min = 25, message = "Description must contain atleast 25 characters")
-    private String description;
-
-    private Integer quantity;
+  
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
+    
+    private String skuCode;
+    
+    private String size;
+    
+   // private Integer quantity;
     private double listPrice;
     private double salePrice;
+    
+    private Integer stock;
 
-    @ManyToOne
-    @JoinColumn(name = "productId")
-    private Product product;
-
-    @ManyToOne
-    @JoinColumn(name = "store_id")
-    private Vendor store;
 }
