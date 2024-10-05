@@ -1,7 +1,8 @@
 package com.app.entites;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -13,43 +14,31 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "tb_sku")
+@Table(name="tb_vendor_sku_price")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Sku {
-
+@Entity
+public class VendorSkuPrice {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotBlank
-    @Size(min = 3, message = "Name must contain atleast 3 characters")
-    private String name;
-
-    private String imagePath;
-  
     @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
-    
-    private String skuCode;
-    
-    private String size;
- 
-    @OneToMany(mappedBy = "sku")
-    private List<VendorSkuPrice> vendorSkuPrices;
-    
+    @JoinColumn(name = "tenant_id", nullable = false)
+    private Vendor vendor;
+
+    @ManyToOne
+    @JoinColumn(name = "sku_id", nullable = false)
+    private Sku sku;
+
     private Integer stock;
+    
+    private BigDecimal listPrice;
+    private BigDecimal salePrice;
+
+    private LocalDate effectiveDate;
     
     @CreatedDate
     @Column(name = "created_date", updatable = false)
@@ -59,4 +48,5 @@ public class Sku {
     @Column(name = "last_modified_date")
     private LocalDateTime lastModifiedDate;
 
+    // Getters and Setters
 }

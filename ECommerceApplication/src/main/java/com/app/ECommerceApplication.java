@@ -1,10 +1,8 @@
 package com.app;
 
-import com.app.repositories.RoleRepo;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
-import lombok.extern.slf4j.Slf4j;
+import java.time.ZoneId;
+import java.util.TimeZone;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -12,6 +10,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
+
+import com.app.repositories.RoleRepo;
+
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @SpringBootApplication
@@ -23,6 +28,7 @@ public class ECommerceApplication implements CommandLineRunner {
     private RoleRepo roleRepo;
 
     public static void main(String[] args) {
+        TimeZone.setDefault(TimeZone.getTimeZone(ZoneId.of("Asia/Kolkata")));
         SpringApplication.run(ECommerceApplication.class, args);
     }
 

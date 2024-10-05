@@ -1,13 +1,12 @@
 package com.app.payloads.response;
 
+import java.time.LocalDate;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.time.LocalDateTime;
-import java.util.List;
 
-public record SubscriptionResponse(boolean success,List<Data> subscribedtItems) {
+public record SubscriptionResponse(boolean success,Data subscribedtItem) {
 
-
-    public static record Data(@JsonProperty("order_id") Long id, LocalDateTime nextDeliveryDate, String message) {
+    public static record Data(@JsonProperty("subcription_id") Long id, LocalDate nextDeliveryDate) {
 
      }
 }
