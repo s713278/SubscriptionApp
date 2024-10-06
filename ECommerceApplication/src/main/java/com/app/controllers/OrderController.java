@@ -29,7 +29,7 @@ import lombok.AllArgsConstructor;
 
 @Tag(name = "4. Order Service API")
 @RestController
-@RequestMapping("/api/store/{store_id}")
+@RequestMapping("/store/{store_id}")
 @SecurityRequirement(name = "E-Commerce Application")
 @AllArgsConstructor
 public class OrderController {

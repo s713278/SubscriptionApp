@@ -25,7 +25,7 @@ import jakarta.validation.Valid;
 
 @Tag(name = "3. Shopping Cart API")
 @RestController
-@RequestMapping("/api/store/{store_id}")
+@RequestMapping("/store/{store_id}")
 @SecurityRequirement(name = "E-Commerce Application")
 public class CartController {
 

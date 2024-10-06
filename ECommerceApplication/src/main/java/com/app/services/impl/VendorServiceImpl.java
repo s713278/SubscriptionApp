@@ -48,7 +48,7 @@ public class VendorServiceImpl implements VendorService {
         List<Vendor> stores = pageStores.getContent();
 
         if (stores.size() == 0) {
-            throw new APIException("No stores is created till now");
+            throw new APIException("No stores is created!!");
         }
 
         List<VendorDTO> storeDTOs = stores.stream().map(store -> modelMapper.map(store, VendorDTO.class))

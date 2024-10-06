@@ -4,9 +4,15 @@ import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record SubscriptionResponse(boolean success,Data subscribedtItem) {
+public record SubscriptionResponse(boolean success, String message, Data data) {
 
-    public static record Data(@JsonProperty("subcription_id") Long id, LocalDate nextDeliveryDate) {
+    // Constructor with only 'success' and 'message', setting 'data' as null
+    public SubscriptionResponse(boolean success, String message) {
+        this(success, message, null); // 'data' is set to null by default
+    }
 
-     }
+    public static record Data(@JsonProperty("subcription_id") Long id,
+            @JsonProperty("next_delivery_date") LocalDate nextDeliveryDate) {
+
+    }
 }

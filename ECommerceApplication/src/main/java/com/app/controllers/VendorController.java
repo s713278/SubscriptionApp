@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "5. Vendor API")
 @RestController
-@RequestMapping("/api/stores")
+@RequestMapping("/stores")
 @SecurityRequirement(name = "E-Commerce Application")
 @RequiredArgsConstructor
 public class VendorController {

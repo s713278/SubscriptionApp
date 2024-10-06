@@ -9,6 +9,6 @@ import com.app.entites.VendorSkuPrice;
 public interface VendorSkuPriceRepo  extends CrudRepository<VendorSkuPrice,Long>{
 
 
-	public Optional<VendorSkuPrice> findByVendorIdAndSkuId(Long vendorId, Long skuId);
+    public Optional<VendorSkuPrice> findByVendorIdAndSkuId(Long vendorId, Long skuId);
 
 }

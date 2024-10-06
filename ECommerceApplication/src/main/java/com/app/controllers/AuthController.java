@@ -47,7 +47,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 // @SecurityRequirement(name = "E-Commerce Application")
 @Tag(name = "1. User Reg & SignIn API")
 public class AuthController {

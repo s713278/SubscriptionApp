@@ -15,16 +15,18 @@ public class AppConstants {
     public static final Long VENDOR_ROLE_ID = 103L;
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
     public static final String[] PUBLIC_URLS = { "/v3/api-docs/**", "/swagger-ui/**", "/api/auth/**",
-            "/api/store/*/categories", "/api/store/*/categories/*/products", "/api/store/*/products", "/api/stores/*" ,"/api/subscriptions/*"};
+            "/api/store/*/categories", "/api/store/*/categories/*/products", "/api/store/*/products", "/api/stores/*" ,
+            "/vendor/*/subscription",
+            "/vendor/*/subscription/*","/vendor/*/customer/*"};
     public static final String[] USER_URLS = { "/api/users/**", "/api/store/*/carts", "/api/store/*/carts/*",
             "/api/store/*/orders" };
     public static final String[] ADMIN_URLS = { "/api/store/*/admin/**" };
 
     public static final String[] VENDOR_URLS = { "/api/store/*" };
     
-    public static final String SIGN_UP_URL="/api/auth/signup";
-    public static final String SIGN_IN_URL="/api/auth/signin";
-    public static final String SIGN_OUT_URL="/api/auth/signout";
+    public static final String SIGN_UP_URL="/auth/signup";
+    public static final String SIGN_IN_URL="/auth/signin";
+    public static final String SIGN_OUT_URL="/auth/signout";
     public static final String JSESSION_ID = "JSESSIONID";
     public static final String AUTHORIZATION_HEADER="Authorization";
 }

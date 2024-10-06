@@ -31,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Tag(name = "7. Product Service API")
 @RestController
-@RequestMapping("/api/store/{store_id}")
+@RequestMapping("/store/{store_id}")
 @SecurityRequirement(name = "E-Commerce Application")
 public class ProductController {
 

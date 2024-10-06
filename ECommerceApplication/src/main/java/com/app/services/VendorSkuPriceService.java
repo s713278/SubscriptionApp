@@ -14,13 +14,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class VendorSkuPriceService {
-	
-	private final VendorSkuPriceRepo vendorSkuPriceRepo;
+    
+    private final VendorSkuPriceRepo vendorSkuPriceRepo;
 
-	public BigDecimal getPriceForSku(Long vendorId, Long skuId) {
-	    return vendorSkuPriceRepo.findByVendorIdAndSkuId(vendorId, skuId)
-	                                   .map(VendorSkuPrice::getSalePrice)
-	                                   .orElseThrow(() -> new RuntimeException("Price not found!"));
-	}
+    public BigDecimal getPriceForSku(Long vendorId, Long skuId) {
+        return vendorSkuPriceRepo.findByVendorIdAndSkuId(vendorId, skuId)
+                                       .map(VendorSkuPrice::getSalePrice)
+                                       .orElseThrow(() -> new RuntimeException("Price not found!"));
+    }
 
 }

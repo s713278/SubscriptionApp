@@ -24,7 +24,7 @@ import jakarta.validation.Valid;
 
 @Tag(name = "8. Address Service API")
 @RestController
-@RequestMapping("/api/store/{store_id}/admin")
+@RequestMapping("/store/{store_id}/admin")
 @SecurityRequirement(name = "E-Commerce Application")
 public class AddressController {
 
