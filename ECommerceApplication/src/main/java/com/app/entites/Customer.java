@@ -1,5 +1,18 @@
 package com.app.entites;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,19 +29,8 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
 @Table(name = "tb_customer")
@@ -39,7 +41,7 @@ public class Customer implements Serializable {
     private static final long serialVersionUID = -8493127251609026343L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Size(min = 4, max = 20, message = "First Name must be between 4 and 20 characters long")
@@ -52,16 +54,12 @@ public class Customer implements Serializable {
     @Column(unique = true, nullable = false)
     private String email;
 
-    // @Size(min = 10, max = 10, message = "Mobile Number must be exactly 10 digits
-    // long")
-    // @Pattern(regexp = "^\\d{10}$", message = "Mobile Number must contain only
-    // Numbers")
     @Column(name = "", unique = true, nullable = false)
     private Long mobile;
 
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "tb_user_roles",
         joinColumns = @JoinColumn(name = "user_id"),

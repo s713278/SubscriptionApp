@@ -1,19 +1,23 @@
 package com.app.exceptions;
 
-import com.app.payloads.response.AppResponse;
-import jakarta.validation.ConstraintViolationException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import com.app.payloads.response.AppResponse;
+
+import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 
 @RestControllerAdvice
 @Slf4j
@@ -80,6 +84,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> myAuthenticationException(AuthenticationException e) {
         String res = e.getMessage();
         return new ResponseEntity<String>(res, HttpStatus.FORBIDDEN);
+    }
+    
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<String> handleEnumConversionError(HttpMessageNotReadableException ex) {
+        return ResponseEntity.badRequest().body("Invalid subscription status value.");
     }
 
 }

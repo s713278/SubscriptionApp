@@ -1,11 +1,13 @@
 package com.app.payloads.response;
 
+import java.time.Instant;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.Instant;
-import java.util.List;
 import lombok.Data;
 
 @Data

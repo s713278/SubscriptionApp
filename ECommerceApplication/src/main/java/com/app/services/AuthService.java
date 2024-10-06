@@ -1,5 +1,15 @@
 package com.app.services;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.app.config.AppConstants;
 import com.app.config.GlobalConfig;
 import com.app.entites.Customer;
@@ -10,15 +20,8 @@ import com.app.payloads.request.OtpVerificationRequest;
 import com.app.payloads.request.SignUpRequest;
 import com.app.repositories.CustomerRepo;
 import com.app.repositories.RoleRepo;
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor

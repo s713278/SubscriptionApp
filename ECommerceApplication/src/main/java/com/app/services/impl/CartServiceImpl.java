@@ -1,5 +1,14 @@
 package com.app.services.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.app.entites.Cart;
 import com.app.entites.CartItem;
 import com.app.entites.Sku;
@@ -18,14 +27,8 @@ import com.app.repositories.CustomerRepo;
 import com.app.repositories.SkuRepo;
 import com.app.repositories.VendorRepo;
 import com.app.services.CartService;
-import java.util.List;
-import java.util.stream.Collectors;
+
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @AllArgsConstructor
 @Transactional
@@ -58,6 +61,8 @@ public class CartServiceImpl implements CartService {
 
         Sku sku = skuRepo.findByIdAndStoreId(skuId)
                 .orElseThrow(() -> new ResourceNotFoundException("Sku", "skuId", skuId));
+        
+        
 
       /*  if (sku.getStore().getId() != storeId && sku.getId() == skuId) {
             throw new APIException(APIErrorCode.API_400,
@@ -80,7 +85,7 @@ public class CartServiceImpl implements CartService {
         CartItem existingItem = cartItemRepo.findCartItemBySkuIdAndCartIdAndSkuId(skuId, cartId, storeId);
         if (existingItem != null) {
             existingItem.setQuantity(existingItem.getQuantity() + quantity);
-            existingItem.setAmount(existingItem.getQuantity() * sku.getSalePrice());
+           //TODO: existingItem.setAmount(existingItem.getQuantity() * sku.getSalePrice());
             // Reducing the quantity
             // sku.setQuantity(sku.getQuantity() - quantity);
         } else {
@@ -88,10 +93,10 @@ public class CartServiceImpl implements CartService {
             existingItem.setSku(sku);
             existingItem.setCart(shoppingCart);
             existingItem.setQuantity(quantity);
-            existingItem.setAmount(quantity * sku.getSalePrice());
+            //TODO:   existingItem.setAmount(quantity * sku.getSalePrice());
         }
-        existingItem.setUnitPrice(sku.getSalePrice());
-        existingItem.setDiscount(existingItem.getQuantity() * (sku.getListPrice() - sku.getSalePrice()));
+        //TODO: existingItem.setUnitPrice(sku.getSalePrice());
+        //TODO:  existingItem.setDiscount(existingItem.getQuantity() * (sku.getListPrice() - sku.getSalePrice()));
         cartItemRepo.saveAndFlush(existingItem);
 
         Double totalAmount = shoppingCart.getCartItems().stream()
@@ -185,10 +190,10 @@ public class CartServiceImpl implements CartService {
         newCartItem.setSku(sku);
         // newCartItem.setCart(cart);
         newCartItem.setQuantity(quantity);
-        newCartItem.setDiscount(sku.getSalePrice() - sku.getListPrice());
-        newCartItem.setUnitPrice(sku.getSalePrice());
+        //TODO:  newCartItem.setDiscount(sku.getSalePrice() - sku.getListPrice());
+        //TODO:  newCartItem.setUnitPrice(sku.getSalePrice());
         cartItemRepo.save(newCartItem);
-        cart.setTotalPrice(cart.getTotalPrice() + (sku.getSalePrice() * quantity));
+        //TODO:  cart.setTotalPrice(cart.getTotalPrice() + (sku.getSalePrice() * quantity));
         CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
         List<SkuDTO> skuDTOs = cart.getCartItems().stream().map(p -> modelMapper.map(p.getSku(), SkuDTO.class))
                 .collect(Collectors.toList());

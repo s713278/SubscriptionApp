@@ -1,15 +1,7 @@
 package com.app.controllers;
 
-import com.app.config.AppConstants;
-import com.app.entites.Product;
-import com.app.payloads.ProductDTO;
-import com.app.payloads.response.ProductResponse;
-import com.app.services.ProductService;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import java.io.IOException;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +17,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.app.config.AppConstants;
+import com.app.entites.Product;
+import com.app.payloads.ProductDTO;
+import com.app.payloads.response.ProductResponse;
+import com.app.services.ProductService;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @Tag(name = "7. Product Service API")
 @RestController
-@RequestMapping("/api/store/{store_id}")
+@RequestMapping("/store/{store_id}")
 @SecurityRequirement(name = "E-Commerce Application")
 public class ProductController {
 

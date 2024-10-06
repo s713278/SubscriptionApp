@@ -6,3 +6,7 @@ CREATE TYPE payment_type_enum AS ENUM ('CASH_ON_DELIVERY','ONLINE', 'IN_STORE_PA
 INSERT INTO public.roles (role_id, role_name) VALUES(101,'ADMIN');
 INSERT INTO public.roles (role_id, role_name) VALUES(102,'USER');
 INSERT INTO public.roles (role_id, role_name) VALUES(103,'STORE');
+
+
+CREATE TYPE Subscription_Status AS ENUM ('ACTIVE', 'PAUSED', 'CANCELLED');
+CREATE TYPE Subscription_Item_Status AS ENUM ('PENDING', 'IN_PROGRESS', 'DELIVERED','PAUSED','CANCELLED');

@@ -1,12 +1,5 @@
 package com.app.controllers;
 
-import com.app.config.AppConstants;
-import com.app.payloads.CategoryDTO;
-import com.app.payloads.response.CategoryResponse;
-import com.app.services.CategoryService;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +14,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.config.AppConstants;
+import com.app.payloads.CategoryDTO;
+import com.app.payloads.response.CategoryResponse;
+import com.app.services.CategoryService;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+
 @Tag(name = "6. Catalog Service API")
 @RestController
-@RequestMapping("/api/store/{store_id}")
+@RequestMapping("/store/{store_id}")
 @SecurityRequirement(name = "E-Commerce Application")
 public class CategoryController {
 

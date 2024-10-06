@@ -1,9 +1,10 @@
 package com.app.services;
 
+import java.util.List;
+
 import com.app.payloads.VendorDTO;
 import com.app.payloads.response.AppResponse;
 import com.app.payloads.response.StoreResponse;
-import java.util.List;
 
 public interface VendorService {
 

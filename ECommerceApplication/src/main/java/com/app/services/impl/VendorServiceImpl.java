@@ -1,5 +1,16 @@
 package com.app.services.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
 import com.app.entites.Vendor;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
@@ -9,16 +20,8 @@ import com.app.payloads.response.AppResponse;
 import com.app.payloads.response.StoreResponse;
 import com.app.repositories.VendorRepo;
 import com.app.services.VendorService;
-import java.util.List;
-import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +48,7 @@ public class VendorServiceImpl implements VendorService {
         List<Vendor> stores = pageStores.getContent();
 
         if (stores.size() == 0) {
-            throw new APIException("No stores is created till now");
+            throw new APIException("No stores is created!!");
         }
 
         List<VendorDTO> storeDTOs = stores.stream().map(store -> modelMapper.map(store, VendorDTO.class))

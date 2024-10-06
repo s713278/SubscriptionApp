@@ -1,11 +1,19 @@
 package com.app.entites;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -37,11 +45,18 @@ public class Sku {
     private String skuCode;
     
     private String size;
-    
-   // private Integer quantity;
-    private double listPrice;
-    private double salePrice;
+ 
+    @OneToMany(mappedBy = "sku")
+    private List<VendorSkuPrice> vendorSkuPrices;
     
     private Integer stock;
+    
+    @CreatedDate
+    @Column(name = "created_date", updatable = false)
+    private LocalDateTime createdDate;
+
+    @LastModifiedDate
+    @Column(name = "last_modified_date")
+    private LocalDateTime lastModifiedDate;
 
 }
