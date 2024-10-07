@@ -1,0 +1,94 @@
+package com.app.auth.services;
+
+import com.app.config.AppConstants;
+import com.app.config.GlobalConfig;
+import com.app.entites.Customer;
+import com.app.entites.Role;
+import com.app.event.EmailActivationEvent;
+import com.app.exceptions.APIErrorCode;
+import com.app.exceptions.APIException;
+import com.app.payloads.request.EmailSignUpRequest;
+import com.app.payloads.response.SignUpResponse;
+import com.app.repositories.RepositoryManager;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.UUID;
+
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Transactional
+@Service
+public class EmailSignUpService extends AbstractSignUp<EmailSignUpRequest> {
+
+    public EmailSignUpService(RepositoryManager repoManager, PasswordEncoder passwordEncoder,
+            GlobalConfig globalConfig, ApplicationEventPublisher eventPublisher, OTPService otpService) {
+        this.globalConfig = globalConfig;
+        this.repoManager = repoManager;
+        this.passwordEncoder = passwordEncoder;
+        this.eventPublisher = eventPublisher;
+        this.otpService = otpService;
+    }
+
+    @Override
+    protected void preSignUpOperations(EmailSignUpRequest request) {
+        super.preSignUpOperations(request);
+        // Publish a sign-up event asynchronously
+        EmailActivationEvent activationEvent = new EmailActivationEvent(this, request.getEmail(), "","request.getOtp()");
+        eventPublisher.publishEvent(activationEvent);
+    }
+
+    @Override
+    protected void postSignUpOperations(EmailSignUpRequest request) {
+        super.postSignUpOperations(request);
+        // Perform mobile-specific pre-sign-up operations, like OTP validation
+        if (!isValidEmail(request.getEmail())) {
+            throw new APIException(APIErrorCode.API_400, "Invalid email number");
+        }
+        // Optionally check if mobile number already exists
+        if (isEmailRegistered(request.getEmail())) {
+            throw new APIException(APIErrorCode.API_400, "Email is already registered!");
+        }
+    }
+
+    @Transactional
+    @Override
+    protected SignUpResponse doSignUp(EmailSignUpRequest request) {
+        // Create a new user
+        Customer customer = new Customer();
+        customer.setFirstName(request.getFirstName());
+        customer.setEmail(request.getEmail());
+        customer.setPassword(passwordEncoder.encode(request.getPassword())); // Use BCrypt for password encryption
+
+        // Fetch the role and ensure it is managed
+        Role role = repoManager.getRoleRepo().findById(AppConstants.USER_ROLE_ID)
+                .orElseThrow(() -> new IllegalArgumentException("Role not found"));
+        customer.getRoles().add(role);
+
+        // Generate OTP
+        String otp = otpService.generateOtp();
+        customer.setOtp(otp);
+        customer.setOtpExpiration(LocalDateTime.now().plusMinutes(15)); // Set OTP expiration to 5 minutes
+        customer.setOtpExpiration(LocalDateTime.now().plusMinutes(5)); // Set OTP expiration to 5 minutes
+        customer.setDeliveryAddress(Collections.emptyMap());
+        
+        String activationToken = UUID.randomUUID().toString();
+        customer.setEmailActivationToken(activationToken); // Generate a random activation token
+        customer.setEmailTokenExpiration(LocalDateTime.now().plusSeconds(globalConfig.getCustomerConfig().getEmailTokenExp())); // Set token expiration time
+        customer = repoManager.getCustomerRepo().save(customer);
+        request.setEmailActivationtoken(activationToken);
+        request.setOtp(otp);
+        return new SignUpResponse(customer.getId(),"Email registered successdully!");
+    }
+
+    private boolean isValidEmail(String email) {
+        // Mobile number validation logic
+        return true;
+    }
+
+    private boolean isEmailRegistered(String email) {
+        return repoManager.getCustomerRepo().findByEmail(email).isPresent();
+    }
+}

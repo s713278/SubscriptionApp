@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -67,7 +67,7 @@ public class Customer implements Serializable {
     )
     private Set<Role> roles = new HashSet<>();
 
-    @OneToOne(mappedBy = "user", cascade = { CascadeType.ALL })
+    @OneToOne(mappedBy = "user", cascade = { CascadeType.ALL },fetch = FetchType.LAZY)
     private Cart cart;
 
     public Long getId() {
@@ -104,11 +104,11 @@ public class Customer implements Serializable {
         return this.email;
     }
 
-    @CreatedDate
+    @CreationTimestamp
     @Column(name = "created_date", updatable = false)
     private LocalDateTime createdDate;
 
-    @LastModifiedDate
+    @UpdateTimestamp
     @Column(name = "last_modified_date")
     private LocalDateTime lastModifiedDate;
     

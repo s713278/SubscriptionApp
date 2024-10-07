@@ -1,18 +1,5 @@
 package com.app.services.impl;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import com.app.config.AppConstants;
 import com.app.entites.Cart;
 import com.app.entites.CartItem;
@@ -32,9 +19,19 @@ import com.app.repositories.CustomerRepo;
 import com.app.repositories.RoleRepo;
 import com.app.services.CartService;
 import com.app.services.UserService;
-
 import jakarta.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 @Transactional
 @Service

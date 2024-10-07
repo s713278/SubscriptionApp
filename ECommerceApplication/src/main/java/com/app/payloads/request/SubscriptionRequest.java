@@ -1,13 +1,11 @@
 package com.app.payloads.request;
 
-import java.time.LocalDate;
-import java.util.List;
-
 import com.app.entites.SubscriptionFrequency;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.Data;
 
 @Data

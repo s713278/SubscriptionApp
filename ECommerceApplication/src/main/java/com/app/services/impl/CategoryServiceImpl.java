@@ -1,16 +1,5 @@
 package com.app.services.impl;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-
 import com.app.entites.Category;
 import com.app.entites.Product;
 import com.app.exceptions.APIErrorCode;
@@ -21,8 +10,16 @@ import com.app.payloads.response.CategoryResponse;
 import com.app.repositories.CategoryRepo;
 import com.app.services.CategoryService;
 import com.app.services.ProductService;
-
 import jakarta.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 @Transactional
 @Service

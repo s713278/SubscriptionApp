@@ -1,8 +1,7 @@
 package com.app.payloads.response;
 
-import java.time.LocalDate;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.time.LocalDate;
 
 public record SubscriptionResponse(boolean success, String message, Data data) {
 

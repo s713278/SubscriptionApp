@@ -1,13 +1,11 @@
 package com.app.payloads.response;
 
-import java.time.Instant;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Data;
 
 @Data
@@ -25,7 +23,7 @@ public class AppResponse<T> {
 
     @Schema(description = "Response message", example = "Customer registered successfully")
     private String message; // Optional field for additional messages or errors
-    private Instant timestamp;
+    private LocalDateTime timestamp;
 
     @Schema(description = "Error messages (if any)")
     private List<String> errors;
@@ -37,7 +35,7 @@ public class AppResponse<T> {
         response.setSuccess(Boolean.TRUE);
         response.setStatusCode(statusCode);
         response.setData(data);
-        response.setTimestamp(Instant.now());
+        response.setTimestamp(LocalDateTime.now());
         return response;
     }
 
@@ -45,7 +43,7 @@ public class AppResponse<T> {
         AppResponse<?> response = new AppResponse<>();
         response.setSuccess(Boolean.FALSE);
         response.setMessage(message);
-        response.setTimestamp(Instant.now());
+        response.setTimestamp(LocalDateTime.now());
         response.setErrors(errors);
         response.setStatusCode(statusCode);
         return response;

@@ -14,7 +14,7 @@ public class AppConstants {
     public static final Long USER_ROLE_ID = 102L;
     public static final Long VENDOR_ROLE_ID = 103L;
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
-    public static final String[] PUBLIC_URLS = { "/v3/api-docs/**", "/swagger-ui/**", "/api/auth/**",
+    public static final String[] PUBLIC_URLS = { "/v3/api-docs/**", "/swagger-ui/**", "/auth/signup/**",
             "/api/store/*/categories", "/api/store/*/categories/*/products", "/api/store/*/products", "/api/stores/*" ,
             "/vendor/*/subscription",
             "/vendor/*/subscription/*","/vendor/*/customer/*"};
@@ -24,7 +24,7 @@ public class AppConstants {
 
     public static final String[] VENDOR_URLS = { "/api/store/*" };
     
-    public static final String SIGN_UP_URL="/auth/signup";
+    public static final String SIGN_UP_URL="/auth/signup/**";
     public static final String SIGN_IN_URL="/auth/signin";
     public static final String SIGN_OUT_URL="/auth/signout";
     public static final String JSESSION_ID = "JSESSIONID";
