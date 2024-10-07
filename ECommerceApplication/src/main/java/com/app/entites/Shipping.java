@@ -1,7 +1,6 @@
 package com.app.entites;
 
 import com.app.services.constants.ShippingType;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -1,7 +1,16 @@
 package com.app.controllers;
 
+import com.app.entites.Subscription;
+import com.app.payloads.request.SubscriptionRequest;
+import com.app.payloads.request.SubscriptionStatusRequest;
+import com.app.payloads.request.UpdateSubscriptionRequest;
+import com.app.payloads.response.SubscriptionResponse;
+import com.app.services.SubscriptionService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,18 +22,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.app.entites.Subscription;
-import com.app.payloads.request.SubscriptionRequest;
-import com.app.payloads.request.SubscriptionStatusRequest;
-import com.app.payloads.request.UpdateSubscriptionRequest;
-import com.app.payloads.response.SubscriptionResponse;
-import com.app.services.SubscriptionService;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 
 
 @Tag(name = "8. Subscription Service API")

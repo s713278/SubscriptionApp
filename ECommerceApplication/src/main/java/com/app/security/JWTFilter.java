@@ -1,23 +1,20 @@
 package com.app.security;
 
+import com.app.config.AppConstants;
+import com.app.services.impl.UserDetailsServiceImpl;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import com.app.config.AppConstants;
-import com.app.services.impl.UserDetailsServiceImpl;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service

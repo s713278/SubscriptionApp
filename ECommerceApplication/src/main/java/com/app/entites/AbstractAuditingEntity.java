@@ -1,14 +1,11 @@
 package com.app.entites;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.Column;
 import java.io.Serializable;
 import java.time.Instant;
-
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import jakarta.persistence.Column;
 
 /**
  * Base abstract class for entities which will hold definitions for created,

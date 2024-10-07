@@ -1,17 +1,14 @@
 package com.app.security.filters;
 
-import java.io.IOException;
-import java.util.UUID;
-
-import org.slf4j.MDC;
-import org.springframework.web.filter.OncePerRequestFilter;
-
 import com.app.services.constants.MDCConstants;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.UUID;
+import org.slf4j.MDC;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 public class MDCFilter extends OncePerRequestFilter {
 

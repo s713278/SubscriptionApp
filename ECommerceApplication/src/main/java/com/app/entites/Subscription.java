@@ -1,17 +1,6 @@
 package com.app.entites;
 
-import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.dialect.PostgreSQLEnumJdbcType;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -25,30 +14,37 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "tb_subscription")
-//@EntityListeners(AuditingEntityListener.class)
 public class Subscription  implements Serializable {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 2038580641079721330L;
+     * 
+     */
+    private static final long serialVersionUID = 2038580641079721330L;
 
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-	@JsonIgnore
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY )
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
-	@JsonIgnore
+    @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sku_id")
     private Sku sku;

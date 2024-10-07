@@ -1,13 +1,11 @@
 package com.app.payloads;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.app.entites.Vendor;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,10 +1,8 @@
 package com.app.repositories;
 
-import java.util.Optional;
-
-import org.springframework.data.repository.CrudRepository;
-
 import com.app.entites.VendorSkuPrice;
+import java.util.Optional;
+import org.springframework.data.repository.CrudRepository;
 
 public interface VendorSkuPriceRepo  extends CrudRepository<VendorSkuPrice,Long>{
 

@@ -5,22 +5,19 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import com.app.entites.Customer;
+import com.app.entites.SubscriptionFrequency;
+import com.app.payloads.request.SubscriptionRequest;
+import com.app.payloads.request.UpdateSubscriptionRequest;
+import com.app.repositories.RepositoryManager;
+import jakarta.transaction.Transactional;
 import java.time.LocalDate;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
-
-import com.app.entites.Customer;
-import com.app.entites.SubscriptionFrequency;
-import com.app.payloads.request.SubscriptionRequest;
-import com.app.payloads.request.UpdateSubscriptionRequest;
-import com.app.repositories.RepositoryManager;
-
-import jakarta.transaction.Transactional;
 
 @SpringBootTest
 @Transactional
@@ -77,8 +74,8 @@ class SubscriptionServiceTest {
     
     @Test()
     void testUpdateSubscription() {
-    	var oldSub=subscriptionService.fetchSubscription(testSubscriptionId);
-    	
+        var oldSub=subscriptionService.fetchSubscription(testSubscriptionId);
+        
         UpdateSubscriptionRequest request = new UpdateSubscriptionRequest();
         request.setSubscriptionId(testSubscriptionId);
         request.setCustomerId(customerId);

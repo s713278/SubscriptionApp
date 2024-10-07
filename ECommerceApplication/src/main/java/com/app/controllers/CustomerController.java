@@ -1,5 +1,12 @@
 package com.app.controllers;
 
+import com.app.config.AppConstants;
+import com.app.payloads.CustomerDTO;
+import com.app.payloads.response.GetUserResponse;
+import com.app.payloads.response.UserResponse;
+import com.app.services.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,15 +19,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.app.config.AppConstants;
-import com.app.payloads.CustomerDTO;
-import com.app.payloads.response.GetUserResponse;
-import com.app.payloads.response.UserResponse;
-import com.app.services.UserService;
-
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @SecurityRequirement(name = "E-Commerce Application")
