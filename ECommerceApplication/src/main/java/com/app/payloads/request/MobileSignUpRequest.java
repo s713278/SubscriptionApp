@@ -12,8 +12,7 @@ import lombok.EqualsAndHashCode;
 @Schema(description = "Request object for mobile registration")
 public class MobileSignUpRequest extends SignUpRequest{
 
-    @NotNull
-	@Schema(description = "Customer's mobile number", example = "9876543210")
+    @NotNull @Schema(description = "Customer's mobile number", example = "9876543210")
     @JsonProperty("mobile_number")
     private Long mobile;
     

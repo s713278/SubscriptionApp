@@ -13,7 +13,8 @@ import com.app.repositories.RepositoryManager;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.UUID;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Service
 public class EmailSignUpService extends AbstractSignUp<EmailSignUpRequest> {
+    // Email validation regex pattern
+    private static final String EMAIL_PATTERN = "^(?!.*\\.\\.)(?!.*\\.$)(?!^\\.)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+
 
     public EmailSignUpService(RepositoryManager repoManager, PasswordEncoder passwordEncoder,
             GlobalConfig globalConfig, ApplicationEventPublisher eventPublisher, OTPService otpService) {
@@ -35,22 +39,23 @@ public class EmailSignUpService extends AbstractSignUp<EmailSignUpRequest> {
     @Override
     protected void preSignUpOperations(EmailSignUpRequest request) {
         super.preSignUpOperations(request);
-        // Publish a sign-up event asynchronously
-        EmailActivationEvent activationEvent = new EmailActivationEvent(this, request.getEmail(), "","request.getOtp()");
-        eventPublisher.publishEvent(activationEvent);
-    }
-
-    @Override
-    protected void postSignUpOperations(EmailSignUpRequest request) {
-        super.postSignUpOperations(request);
         // Perform mobile-specific pre-sign-up operations, like OTP validation
         if (!isValidEmail(request.getEmail())) {
-            throw new APIException(APIErrorCode.API_400, "Invalid email number");
+            throw new APIException(APIErrorCode.API_400, "Invalid email address!");
         }
         // Optionally check if mobile number already exists
         if (isEmailRegistered(request.getEmail())) {
             throw new APIException(APIErrorCode.API_400, "Email is already registered!");
         }
+       
+    }
+
+    @Override
+    protected void postSignUpOperations(EmailSignUpRequest request) {
+        super.postSignUpOperations(request);
+        // Publish a sign-up event asynchronously
+        EmailActivationEvent activationEvent = new EmailActivationEvent(this, request.getEmail(), request.getEmailActivationtoken(),request.getOtp());
+        eventPublisher.publishEvent(activationEvent);
     }
 
     @Transactional
@@ -84,8 +89,11 @@ public class EmailSignUpService extends AbstractSignUp<EmailSignUpRequest> {
     }
 
     private boolean isValidEmail(String email) {
-        // Mobile number validation logic
-        return true;
+         // Compile the pattern
+        Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+        // Match the given email against the pattern
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 
     private boolean isEmailRegistered(String email) {
