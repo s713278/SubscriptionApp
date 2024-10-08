@@ -55,7 +55,7 @@ public class MobileSignUpService extends AbstractSignUp<MobileSignUpRequest> {
     @Transactional
     @Override
     protected SignUpResponse doSignUp(MobileSignUpRequest request) {
-    	
+        
         // Create a new user
         Customer customer = new Customer();
         customer.setFirstName(request.getFirstName());
