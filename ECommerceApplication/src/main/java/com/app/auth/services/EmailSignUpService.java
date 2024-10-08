@@ -1,16 +1,5 @@
 package com.app.auth.services;
 
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.app.config.AppConstants;
 import com.app.config.GlobalConfig;
 import com.app.entites.Customer;
@@ -21,11 +10,20 @@ import com.app.exceptions.APIException;
 import com.app.payloads.request.EmailSignUpRequest;
 import com.app.payloads.response.SignUpResponse;
 import com.app.repositories.RepositoryManager;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @Service
 public class EmailSignUpService extends AbstractSignUp<EmailSignUpRequest> {
-	// Email validation regex pattern
+    // Email validation regex pattern
     private static final String EMAIL_PATTERN = "^(?!.*\\.\\.)(?!.*\\.$)(?!^\\.)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
 
 
@@ -91,7 +89,7 @@ public class EmailSignUpService extends AbstractSignUp<EmailSignUpRequest> {
     }
 
     private boolean isValidEmail(String email) {
-    	 // Compile the pattern
+         // Compile the pattern
         Pattern pattern = Pattern.compile(EMAIL_PATTERN);
         // Match the given email against the pattern
         Matcher matcher = pattern.matcher(email);
