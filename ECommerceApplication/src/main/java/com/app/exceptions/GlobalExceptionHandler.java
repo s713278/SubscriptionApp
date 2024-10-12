@@ -1,92 +1,87 @@
 package com.app.exceptions;
 
-import com.app.payloads.response.AppResponse;
 import jakarta.validation.ConstraintViolationException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<AppResponse<?>> handleIllegalArgumentException(IllegalArgumentException ex) {
-        List<String> errors = Collections.singletonList(ex.getMessage());
-        AppResponse<?> response = AppResponse.error(HttpStatus.BAD_REQUEST.value(), "User registration failed.", errors);
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<AppResponse> handleRuntimeException(RuntimeException e) {
-        List<String> errors = Collections.singletonList(e.getMessage());
-        AppResponse<?> apiResponse = AppResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal Syste Error",
-                errors);
-        return new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<APIErrorResponse> handleAllExceptions(Exception ex, WebRequest request) {
+        APIErrorResponse apiError = new APIErrorResponse(APIErrorCode.API_500, ex.getMessage(), List.of(request.getDescription(false)));
+        return new ResponseEntity<>(apiError, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<AppResponse> myResourceNotFoundException(ResourceNotFoundException e) {
-        List<String> errors = Collections.singletonList(e.getMessage());
-        AppResponse<?> apiResponse = AppResponse.error(HttpStatus.NOT_FOUND.value(), "Resournce Not Found.", errors);
-        return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(APIException.class)
-    public ResponseEntity<AppResponse> myAPIException(APIException e) {
-        List<String> errors = Collections.singletonList(e.getMessage());
-        AppResponse<?> errorResponse = AppResponse.error(e.getErrorCode().getHttpStatus().value(), e.getErrorReason(),
-                errors);
-        return new ResponseEntity<>(errorResponse, e.getErrorCode().getHttpStatus());
+    public ResponseEntity<APIErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
+        APIErrorResponse apiError = new APIErrorResponse(APIErrorCode.API_404, ex.getMessage(), List.of(request.getDescription(false)));
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> myMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        Map<String, String> res = new HashMap<>();
+    public ResponseEntity<APIErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        List<String> validationErrors = ex.getBindingResult().getFieldErrors().stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage()).collect(Collectors.toList());
+        APIErrorResponse apiError = new APIErrorResponse(APIErrorCode.API_400, ex.getMessage(), validationErrors);
+        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
+    }
 
-        e.getBindingResult().getAllErrors().forEach(err -> {
-            String fieldName = ((FieldError) err).getField();
-            String message = err.getDefaultMessage();
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<APIErrorResponse> handleEnumConversionError(HttpMessageNotReadableException ex, WebRequest request) {
+        APIErrorResponse apiError = new APIErrorResponse(APIErrorCode.API_400, ex.getMessage(), List.of(request.getDescription(false)));
+        return new ResponseEntity<>(apiError, APIErrorCode.API_400.getHttpStatus());
+    }
 
-            res.put(fieldName, message);
-        });
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<APIErrorResponse> handleBadCredentialsException(BadCredentialsException ex) {
+        APIErrorResponse apiError = new APIErrorResponse(APIErrorCode.API_401, ex.getMessage());
+        return new ResponseEntity<>(apiError, APIErrorCode.API_401.getHttpStatus());
+    }
 
-        return new ResponseEntity<Map<String, String>>(res, HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<APIErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
+        List<String> errors = Collections.singletonList(ex.getMessage());
+        APIErrorResponse apiError = new APIErrorResponse(APIErrorCode.API_400, ex.getMessage(), errors);
+        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<APIErrorResponse> handleRuntimeException(RuntimeException e,WebRequest request) {
+        APIErrorResponse apiError = new APIErrorResponse(APIErrorCode.API_500, e.getMessage(), List.of(request.getDescription(false)));
+        return new ResponseEntity<>(apiError, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(APIException.class)
+    public ResponseEntity<APIErrorResponse> handleAPIErrorResponse(APIErrorResponse apiError) {
+        return new ResponseEntity<>(apiError, apiError.getErrorCode().getHttpStatus());
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Map<String, String>> myConstraintsVoilationException(ConstraintViolationException e) {
-        Map<String, String> res = new HashMap<>();
-
-        e.getConstraintViolations().forEach(voilation -> {
-            String fieldName = voilation.getPropertyPath().toString();
-            String message = voilation.getMessage();
-
-            res.put(fieldName, message);
-        });
-        return new ResponseEntity<Map<String, String>>(res, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<APIErrorResponse> myConstraintsVoilationException(ConstraintViolationException e) {
+        var errors = e.getConstraintViolations().stream().map(v -> v.getPropertyPath() + "==>" + v.getMessage())
+                .collect(Collectors.toList());
+        APIErrorResponse apiError = new APIErrorResponse(APIErrorCode.API_400, e.getMessage(), errors);
+        return new ResponseEntity<>(apiError, APIErrorCode.API_400.getHttpStatus());
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<String> myAuthenticationException(AuthenticationException e) {
-        String res = e.getMessage();
-        return new ResponseEntity<String>(res, HttpStatus.FORBIDDEN);
-    }
-    
-
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<String> handleEnumConversionError(HttpMessageNotReadableException ex) {
-        return ResponseEntity.badRequest().body("Invalid subscription status value.");
+    public ResponseEntity<APIErrorResponse> myAuthenticationException(AuthenticationException ex) {
+        List<String> errors = Collections.singletonList(ex.getMessage());
+        APIErrorResponse apiError = new APIErrorResponse(APIErrorCode.API_401, ex.getMessage(), errors);
+        return new ResponseEntity<>(apiError, APIErrorCode.API_401.getHttpStatus());
     }
 
 }

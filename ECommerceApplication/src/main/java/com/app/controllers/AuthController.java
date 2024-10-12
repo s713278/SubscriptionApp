@@ -1,32 +1,32 @@
 package com.app.controllers;
 
+import com.app.auth.dto.AuthUserDetails;
 import com.app.auth.services.SignUpStrategy;
 import com.app.auth.services.SignUpStrategyFactory;
-import com.app.config.UserInfoConfig;
 import com.app.entites.Customer;
-import com.app.exceptions.UserNotFoundException;
-import com.app.payloads.CustomerDTO;
+import com.app.exceptions.APIErrorCode;
+import com.app.exceptions.APIException;
 import com.app.payloads.request.EmailSignUpRequest;
 import com.app.payloads.request.ForgotPasswordRequest;
+import com.app.payloads.request.MobileSignInRequest;
 import com.app.payloads.request.MobileSignUpRequest;
 import com.app.payloads.request.OtpVerificationRequest;
 import com.app.payloads.request.RefreshTokenRequest;
 import com.app.payloads.request.ResendOtpRequest;
 import com.app.payloads.request.ResetPasswordRequest;
-import com.app.payloads.request.SignInRequest;
 import com.app.payloads.request.SignUpRequest;
-import com.app.payloads.response.AppResponse;
+import com.app.payloads.response.APIResponse;
 import com.app.payloads.response.SignInResponse;
 import com.app.security.RefreshTokenService;
 import com.app.security.TokenService;
 import com.app.services.AuthService;
 import com.app.services.EmailService;
-import com.app.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,11 +50,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping("/auth")
-// @SecurityRequirement(name = "E-Commerce Application")
-@Tag(name = "1. User Reg & SignIn API")
+@Tag(name = "1. User SignUp & SignIn API")
 public class AuthController {
 
-    private final UserService userService;
     private final AuthService authService;
     private final TokenService tokenService;
     private final EmailService emailService;
@@ -65,52 +63,37 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Operation(description = "Customer Full Profile Registration")
-    @PostMapping("/register")
-    public ResponseEntity<AppResponse<SignInResponse>> register(@Valid @RequestBody CustomerDTO user)
-            throws UserNotFoundException {
-        String email = user.getEmail().trim().toLowerCase();
-        user.setEmail(email);
-        CustomerDTO userDTO = userService.registerUser(user);
-        String accessToken = tokenService.generateToken(userDTO.getEmail());
 
-        String refreshToken = refreshTokenService.createRefreshToken(user.getEmail());
-        SignInResponse loginResponse = SignInResponse.builder().userToken(accessToken).refreshToken(refreshToken)
-                .build();
-
-        return new ResponseEntity<>(AppResponse.success(HttpStatus.CREATED.value(), loginResponse), HttpStatus.CREATED);
-    }
-
-    @Operation(description = "Customer SignIn")
+    @Operation(description = "Customer Mobile SignIn")
     @PostMapping("/signin")
-    public ResponseEntity<AppResponse<SignInResponse>> signIn(@Valid @RequestBody SignInRequest signInRequest) {
-        log.info("Received sign-in request for email: {}", signInRequest.getEmail());
+    public ResponseEntity<APIResponse<?>> signIn(@Valid @RequestBody MobileSignInRequest signInRequest) {
+        log.info("Received sign-in request for mobile: {}", signInRequest.getMobile());
         UsernamePasswordAuthenticationToken authCredentials = new UsernamePasswordAuthenticationToken(
-                signInRequest.getEmail(), signInRequest.getPassword());
+                signInRequest.getMobile(), signInRequest.getPassword());
         var authentication = authenticationManager.authenticate(authCredentials);
-        var userDetails = (UserInfoConfig) authentication.getPrincipal();
-        String accessToken = tokenService.generateToken(signInRequest.getEmail());
-        String refreshToken = refreshTokenService.createRefreshToken(signInRequest.getEmail());
-        SignInResponse loginResponse = SignInResponse.builder().userToken(accessToken).refreshToken(refreshToken)
+        var userDetails = (AuthUserDetails) authentication.getPrincipal();
+        String accessToken = tokenService.generateToken(userDetails);
+        String refreshToken = refreshTokenService.createRefreshToken(userDetails);
+        SignInResponse signInResponse = SignInResponse.builder().userToken(accessToken).refreshToken(refreshToken)
                 .userId(userDetails.getId()).build();
-
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return new ResponseEntity<>(AppResponse.success(HttpStatus.OK.value(), loginResponse), HttpStatus.OK);
+        return new ResponseEntity<>(APIResponse.success(signInResponse), HttpStatus.OK);
     }
 
     @Operation(summary = "Customer Email Sign-up", description = "Registers a new user by providing their first name, email, and password.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "User registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AppResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Bad request due to validation errors", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AppResponse.class))) })
+            
+            @ApiResponse(responseCode = "201", description = "User registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = APIResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request due to validation errors", content = @Content(mediaType = "application/json", schema = @Schema(implementation = APIResponse.class))) })
     @PostMapping("/signup/email")
-    public ResponseEntity<?> signUp(
+    public ResponseEntity<APIResponse<?>> signUp(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Customer registration request", required = true, content = @Content(schema = @Schema(implementation = SignUpRequest.class))) @Valid @RequestBody EmailSignUpRequest signUpRequest) {
         try {
             log.info("Received sign-up request for email: {}", signUpRequest.getEmail());
             SignUpStrategy<EmailSignUpRequest> signUpStrategy = signUpStrategyFactory
                     .getStrategy("emailSignUpStrategy");
             var response = signUpStrategy.signUp(signUpRequest);
-            var apiResponse = AppResponse.success(HttpStatus.CREATED.value(), response);
+            var apiResponse = APIResponse.success(HttpStatus.CREATED.value(), response);
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             log.error("Error during sign-up for email: {}: {}", signUpRequest.getEmail(), e.getMessage());
@@ -120,20 +103,20 @@ public class AuthController {
 
     @Operation(summary = "Customer Mobile Sign-up", description = "Registers a new user by providing their first name, mobile number, and password.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Customer registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AppResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Bad request due to validation errors", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AppResponse.class))) })
+            @ApiResponse(responseCode = "201", description = "Customer registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = APIResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request due to validation errors", content = @Content(mediaType = "application/json", schema = @Schema(implementation = APIResponse.class))) })
     @PostMapping("/signup/mobile")
-    public ResponseEntity<?> mobileSignUp(@Valid @RequestBody MobileSignUpRequest signUpRequest) {
+    public ResponseEntity<APIResponse<?>> mobileSignUp(@Valid @RequestBody MobileSignUpRequest signUpRequest) {
         try {
             log.info("Received sign-up request for mobile: {}", signUpRequest.getMobile());
             SignUpStrategy<MobileSignUpRequest> signUpStrategy = signUpStrategyFactory
                     .getStrategy("mobileSignUpStrategy");
             var response = signUpStrategy.signUp(signUpRequest);
-            var appResponse = AppResponse.success(HttpStatus.CREATED.value(), response);
+            var appResponse = APIResponse.success(HttpStatus.CREATED.value(), response);
             return new ResponseEntity<>(appResponse, HttpStatus.CREATED);
         } catch (Exception e) {
             log.error("Error during sign-up for email: {}: {}", signUpRequest.getMobile(), e.getMessage());
-            throw e;
+            throw new APIException(APIErrorCode.API_417,e.getMessage());
         }
     }
 
@@ -142,11 +125,11 @@ public class AuthController {
     public ResponseEntity<?> verifyOtp(@Valid @RequestBody OtpVerificationRequest otpRequest) {
         try {
             String response = authService.verifyOtp(otpRequest);
-            var apiResponse = AppResponse.success(HttpStatus.OK.value(), response);
+            var apiResponse = APIResponse.success(HttpStatus.OK.value(), response);
             return new ResponseEntity<>(apiResponse, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             log.error("Error during otp-verification for email: {}: {}", otpRequest.getEmail(), e.getMessage());
-            throw e;
+            throw new APIException(APIErrorCode.API_420,e.getMessage());
         }
     }
 
@@ -157,13 +140,13 @@ public class AuthController {
     }
 
     // REST API to get authenticated user details (for testing session management)
-    @Operation(description = "Logged-In User")
-    @GetMapping("/me")
-    public @ResponseBody String getAuthenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            return "Authenticated user: " + authentication.getName();
-        } else {
+    @Operation(description = "Authenticated Profile Info")
+    @GetMapping("/profile")
+    @SecurityRequirement(name = "E-Commerce Application")
+    public @ResponseBody String getAuthenticatedUser(@AuthenticationPrincipal Long userId) {
+        if (userId != null) {
+            return "Its authenticated request for the user :"+userId;
+            } else {
             return "No authenticated user";
         }
     }
@@ -175,14 +158,14 @@ public class AuthController {
         if (refreshTokenService.validateRefreshToken(refreshToken)) {
             String newAccessToken = tokenService
                     .generateToken(refreshTokenService.getUserIdFromRefreshToken(refreshToken));
-            return new ResponseEntity<>(AppResponse.success(HttpStatus.OK.value(), newAccessToken), HttpStatus.OK);
+            return new ResponseEntity<>(APIResponse.success(HttpStatus.OK.value(), newAccessToken), HttpStatus.OK);
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid refresh token");
         }
     }
 
     // Account activation endpoint
-    @Operation(description = "Account Access Actication")
+    @Operation(description = "User signup actication")
     @GetMapping("/activate/{token}")
     public ResponseEntity<?> activateAccount(@PathVariable String token) {
         boolean isActivated = authService.activateAccount(token);

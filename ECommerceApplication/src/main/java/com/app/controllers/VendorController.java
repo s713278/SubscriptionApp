@@ -2,7 +2,7 @@ package com.app.controllers;
 
 import com.app.config.AppConstants;
 import com.app.payloads.VendorDTO;
-import com.app.payloads.response.AppResponse;
+import com.app.payloads.response.APIResponse;
 import com.app.payloads.response.StoreResponse;
 import com.app.services.VendorService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -32,12 +32,12 @@ public class VendorController {
     private final VendorService storeService;
 
     @PostMapping("/")
-    public ResponseEntity<AppResponse<VendorDTO>> createStore(@Valid @RequestBody VendorDTO storeDTO) {
+    public ResponseEntity<APIResponse<VendorDTO>> createStore(@Valid @RequestBody VendorDTO storeDTO) {
         return new ResponseEntity<>(storeService.createStore(storeDTO), HttpStatus.CREATED);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<AppResponse<List<VendorDTO>>> getAllStores() {
+    public ResponseEntity<APIResponse<List<VendorDTO>>> getAllStores() {
         return new ResponseEntity<>(storeService.getStores(), HttpStatus.FOUND);
     }
 
@@ -54,13 +54,13 @@ public class VendorController {
     }
 
     @PutMapping("/{storeId}")
-    public ResponseEntity<AppResponse<VendorDTO>> updateStore(@RequestBody VendorDTO storeDTO,
+    public ResponseEntity<APIResponse<VendorDTO>> updateStore(@RequestBody VendorDTO storeDTO,
             @PathVariable Long storeId) {
         return new ResponseEntity<>(storeService.updateStore(storeDTO, storeId), HttpStatus.OK);
     }
 
     @DeleteMapping("/{storeId}")
-    public ResponseEntity<AppResponse<String>> deleteStore(@PathVariable Long storeId) {
+    public ResponseEntity<APIResponse<String>> deleteStore(@PathVariable Long storeId) {
         return new ResponseEntity<>(storeService.deleteStore(storeId), HttpStatus.OK);
     }
 }

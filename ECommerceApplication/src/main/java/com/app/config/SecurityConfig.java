@@ -1,6 +1,8 @@
 package com.app.config;
 
 import com.app.security.AppFilter;
+import com.app.security.CustomAccessDeniedHandler;
+import com.app.security.CustomAuthenticationEntryPoint;
 import com.app.security.JWTFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     @Autowired
@@ -33,9 +35,15 @@ public class SecurityConfig {
     private AppFilter appFilter;
 
     private final UserDetailsService userDetailsService;
+    private final CustomAuthenticationEntryPoint  authenticationEntryPoint;
+    private final CustomAccessDeniedHandler  accessDeniedHandler;
 
-    public SecurityConfig(UserDetailsService userDetailsService) {
+    public SecurityConfig(UserDetailsService userDetailsService,
+    		CustomAuthenticationEntryPoint authenticationEntryPoint,
+    		 CustomAccessDeniedHandler  accessDeniedHandler) {
         this.userDetailsService = userDetailsService;
+        this.authenticationEntryPoint = authenticationEntryPoint;
+        this.accessDeniedHandler = accessDeniedHandler;
     }
 
     @Bean
@@ -49,9 +57,12 @@ public class SecurityConfig {
                 )
                 // Authorization rules
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers(HttpMethod.GET, AppConstants.PUBLIC_URLS).permitAll()
-                            .requestMatchers(HttpMethod.POST, AppConstants.PUBLIC_URLS).permitAll()
+                    auth.requestMatchers(HttpMethod.GET, AppConstants.PUBLIC_GET_URLS).permitAll()
+                            .requestMatchers(HttpMethod.POST, AppConstants.PUBLIC_POST_URLS).permitAll()
 
+                            .requestMatchers(HttpMethod.PATCH, AppConstants.AUTH_PATCH_URLS)
+                            .hasAnyAuthority("USER")
+                            
                             .requestMatchers(HttpMethod.GET, AppConstants.USER_URLS)
                             .hasAnyAuthority("USER", "STORE", "ADMIN")
 
@@ -76,8 +87,11 @@ public class SecurityConfig {
                             response.setStatus(HttpServletResponse.SC_OK);
                             response.getWriter().write("Signout out successfully");
                         }))
-                .exceptionHandling(t -> t.authenticationEntryPoint((request, response, authException) -> response
-                        .sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")));
+				.exceptionHandling(t -> t.authenticationEntryPoint(authenticationEntryPoint/*
+																	 * (request, response, authException) -> response
+																	 * .sendError(HttpServletResponse.SC_UNAUTHORIZED,
+																	 * "Unauthorized Access")
+																	 */).accessDeniedHandler(accessDeniedHandler));
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
