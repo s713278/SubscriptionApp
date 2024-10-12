@@ -2,6 +2,7 @@ package com.app.services.impl;
 
 import com.app.entites.Address;
 import com.app.entites.Customer;
+import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.payloads.AddressDTO;
@@ -42,7 +43,7 @@ public class AddressServiceImpl implements AddressService {
                 city, pincode, street, buildingName);
 
         if (addressFromDB != null) {
-            throw new APIException("Address already exists with addressId: " + addressFromDB.getAddressId());
+            throw new APIException(APIErrorCode.API_400,"Address already exists with addressId: " + addressFromDB.getAddressId());
         }
 
         Address address = modelMapper.map(addressDTO, Address.class);

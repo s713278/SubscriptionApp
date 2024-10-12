@@ -5,6 +5,7 @@ import com.app.entites.CartItem;
 import com.app.entites.Customer;
 import com.app.entites.Sku;
 import com.app.entites.Vendor;
+import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.repositories.CartItemRepo;
@@ -15,7 +16,6 @@ import com.app.repositories.OrderRepo;
 import com.app.repositories.PaymentRepo;
 import com.app.repositories.VendorRepo;
 import com.app.services.CartService;
-import com.app.services.UserService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -71,13 +71,13 @@ public abstract class AbstarctCatalogService {
         log.debug("Validate Cart {} for User {} ", cartId, user.getId());
         Cart cart = user.getCart();
         if (cart.getId().compareTo(cartId) != 0) {
-            throw new APIException(String.format(
+            throw new APIException(APIErrorCode.API_400, String.format(
                     "Malformed request while placing the order where cartId: %d is not belongs to userId : %d", cartId,
                     user.getId()));
         }
         List<CartItem> cartItems = cart.getCartItems();
         if (cartItems.size() == 0) {
-            throw new APIException("Cart is empty");
+            throw new APIException(APIErrorCode.API_400,"Cart is empty");
         }
         return cart;
     }
@@ -90,7 +90,7 @@ public abstract class AbstarctCatalogService {
                 .allMatch(t -> t.getSku().getProduct().getCategory().getCatalog().getVendor().getId() == storeId);
 
         if (!allItemsStoreMatched) {
-            throw new APIException(
+            throw new APIException(APIErrorCode.API_400,
                     String.format("Not all order items have store id % in the cart % ", storeId, cart.getId()));
         }
         return store;

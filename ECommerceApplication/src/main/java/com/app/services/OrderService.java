@@ -5,20 +5,20 @@ import com.app.payloads.OrderDTO;
 import com.app.payloads.OrderRequest;
 import com.app.payloads.OrderResponse;
 import com.app.payloads.request.OrderUpdateRequest;
-import com.app.payloads.response.AppResponse;
+import com.app.payloads.response.APIResponse;
 import com.app.payloads.response.OrderUpdateResponse;
 import com.app.services.constants.OrderStatus;
 import java.util.List;
 
 public interface OrderService {
 
-    AppResponse<OrderDTO> placeOrder(Long storeId, OrderRequest request);
+    APIResponse<OrderDTO> placeOrder(Long storeId, OrderRequest request);
 
-    AppResponse<OrderUpdateResponse> updateOrder(Long orderId, OrderUpdateRequest request);
+    APIResponse<OrderUpdateResponse> updateOrder(Long orderId, OrderUpdateRequest request);
 
-    AppResponse<OrderDTO> getOrderById(final Long orderId);
+    APIResponse<OrderDTO> getOrderById(final Long orderId);
 
-    AppResponse<List<OrderDTO>> getOrderByStoreId(final Long storeId);
+    APIResponse<List<OrderDTO>> getOrderByStoreId(final Long storeId);
 
     OrderDTO getOrder(String emailId, Long orderId);
 

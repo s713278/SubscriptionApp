@@ -1,9 +1,12 @@
 package com.app.config;
 
-import lombok.Getter;
-import lombok.Setter;
+import java.util.List;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Setter
 @Getter
@@ -19,6 +22,7 @@ public class GlobalConfig {
     public static class CustomerConfig {
         private Long otpExpTime;
         private Long emailTokenExp;
+        private List<String> addressValidKeys;
 
     }
 

@@ -3,6 +3,7 @@ package com.app.services.impl;
 import com.app.entites.Cart;
 import com.app.entites.Category;
 import com.app.entites.Product;
+import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.payloads.CartDTO;
@@ -77,7 +78,7 @@ public class ProductServiceImpl implements ProductService {
             Product savedProduct = productRepo.save(product);
             return modelMapper.map(savedProduct, ProductDTO.class);
         } else {
-            throw new APIException("Product already exists !!!");
+            throw new APIException(APIErrorCode.API_400,"Product already exists !!!");
         }
     }
 
@@ -125,7 +126,7 @@ public class ProductServiceImpl implements ProductService {
         List<Product> products = pageProducts.getContent();
 
         if (products.size() == 0) {
-            throw new APIException(category.getName() + " category doesn't contain any products !!!");
+            throw new APIException(APIErrorCode.API_400,category.getName() + " category doesn't contain any products !!!");
         }
 
         List<ProductDTO> productDTOs = products.stream().map(p -> modelMapper.map(p, ProductDTO.class))
@@ -156,7 +157,7 @@ public class ProductServiceImpl implements ProductService {
         List<Product> products = pageProducts.getContent();
 
         if (products.size() == 0) {
-            throw new APIException("Products not found with keyword: " + keyword);
+            throw new APIException(APIErrorCode.API_400,"Products not found with keyword: " + keyword);
         }
 
         List<ProductDTO> productDTOs = products.stream().map(p -> modelMapper.map(p, ProductDTO.class))
@@ -179,7 +180,7 @@ public class ProductServiceImpl implements ProductService {
         Product productFromDB = productRepo.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
         if (productFromDB == null) {
-            throw new APIException("Product not found with productId: " + productId);
+            throw new APIException(APIErrorCode.API_400,"Product not found with productId: " + productId);
         }
         product.setImagePath(productFromDB.getImagePath());
         product.setProductId(productId);
@@ -200,7 +201,7 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
 
         if (productFromDB == null) {
-            throw new APIException("Product not found with productId: " + productId);
+            throw new APIException(APIErrorCode.API_400,"Product not found with productId: " + productId);
         }
         String fileName = fileService.uploadImage(path, image);
         productFromDB.setImagePath(fileName);

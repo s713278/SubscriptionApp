@@ -35,10 +35,18 @@ application:
   jwt_config:
     issuer: MyStores
     secret: 
-    access_exp_time: 7776000000 #Short-lived (e.g., 15 minutes, 1 hour).
-    refresh_exp_time: 1800  #Stored securely on the client.
+    access_exp_time: 1800 #Short-lived (e.g., 15 minutes, 1 hour).
+    refresh_exp_time: 7776000000  #Stored securely on the client.
   vendor_config:
   customer_config:
     otp_exp_time: 60  #In secods
     otp_no_of_retry: 3  #In secods
     email_token_exp: 3600
+    address_valid_keys:
+      - address1
+      - address2
+      - city    
+      - state
+      - zipCode
+      - state
+      - country

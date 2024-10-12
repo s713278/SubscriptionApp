@@ -13,12 +13,12 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI shopOpenAPI() {
-        return new OpenAPI().info(new Info().title("Mulit Tenant Milk and Vegetable Subscription API")
-                .description("API documentation for the Milk and Vegetable subscription service").version("1.0")
+        return new OpenAPI().info(new Info().title("White label subscription servicesI")
+                .description("API documentation for the subscription services").version("1.0")
                 .contact(new Contact().name("Swamy Kunta").url("https://github.com/s713278/ECommerceApp/tree/master")
                         .email("swamy.kunta@gmail.com"))
                 .license(new License().name("License").url("/")))
-                .externalDocs(new ExternalDocumentation().description("E-Commerce API Documentation")
+                .externalDocs(new ExternalDocumentation().description("Subscription Model API Documentation")
                         .url("http://localhost:8080/swagger-ui/index.html"));
     }
 }

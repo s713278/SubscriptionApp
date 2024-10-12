@@ -5,7 +5,7 @@ import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.payloads.VendorDTO;
-import com.app.payloads.response.AppResponse;
+import com.app.payloads.response.APIResponse;
 import com.app.payloads.response.StoreResponse;
 import com.app.repositories.VendorRepo;
 import com.app.services.VendorService;
@@ -29,9 +29,9 @@ public class VendorServiceImpl implements VendorService {
     private final VendorRepo storeRepo;
 
     @Override
-    public AppResponse<VendorDTO> createStore(VendorDTO storeDTO) {
+    public APIResponse<VendorDTO> createStore(VendorDTO storeDTO) {
         Vendor storeEntity = storeRepo.save(modelMapper.map(storeDTO, Vendor.class));
-        return AppResponse.success(HttpStatus.CREATED.value(), modelMapper.map(storeEntity, VendorDTO.class));
+        return APIResponse.success(HttpStatus.CREATED.value(), modelMapper.map(storeEntity, VendorDTO.class));
     }
 
     @Override
@@ -45,7 +45,7 @@ public class VendorServiceImpl implements VendorService {
         List<Vendor> stores = pageStores.getContent();
 
         if (stores.size() == 0) {
-            throw new APIException("No stores is created!!");
+            throw new APIException(APIErrorCode.API_400,"No stores is created!!");
         }
 
         List<VendorDTO> storeDTOs = stores.stream().map(store -> modelMapper.map(store, VendorDTO.class))
@@ -63,33 +63,33 @@ public class VendorServiceImpl implements VendorService {
     }
 
     @Override
-    public AppResponse<VendorDTO> updateStore(VendorDTO storeDTO, Long storeId) {
+    public APIResponse<VendorDTO> updateStore(VendorDTO storeDTO, Long storeId) {
         Vendor savedStore = storeRepo.findById(storeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Store", "storeId", storeId));
         modelMapper.map(storeDTO, savedStore);
         savedStore.setId(storeId);
         savedStore = storeRepo.save(savedStore);
-        return AppResponse.success(HttpStatus.OK.value(), modelMapper.map(savedStore, VendorDTO.class));
+        return APIResponse.success(HttpStatus.OK.value(), modelMapper.map(savedStore, VendorDTO.class));
     }
 
     @Override
-    public AppResponse<String> deleteStore(Long storeId) {
+    public APIResponse<String> deleteStore(Long storeId) {
         Vendor store = storeRepo.findById(storeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Store", "storeId", storeId));
         storeRepo.deleteById(storeId);
-        return AppResponse.success(HttpStatus.OK.value(), "Store with id: " + storeId + " deleted successfully !!!");
+        return APIResponse.success(HttpStatus.OK.value(), "Store with id: " + storeId + " deleted successfully !!!");
 
         // return storeRepo.delete(storeId);
     }
 
     @Override
-    public AppResponse<List<VendorDTO>> getStores() {
+    public APIResponse<List<VendorDTO>> getStores() {
         List<Vendor> stores = storeRepo.findAll();
         if (stores.size() == 0) {
             throw new APIException(APIErrorCode.API_404, "No stores is created till now");
         }
         List<VendorDTO> storeDTOs = stores.stream().map(store -> modelMapper.map(store, VendorDTO.class))
                 .collect(Collectors.toList());
-        return AppResponse.success(HttpStatus.OK.value(), storeDTOs);
+        return APIResponse.success(HttpStatus.OK.value(), storeDTOs);
     }
 }

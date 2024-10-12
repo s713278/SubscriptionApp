@@ -1,9 +1,11 @@
 package com.app.security;
 
+import com.app.auth.dto.AuthUserDetails;
 import com.app.config.GlobalConfig;
 import com.app.entites.Customer;
-import com.app.payloads.response.SignInResponse;
-import com.app.repositories.CustomerRepo;
+import com.app.exceptions.APIErrorCode;
+import com.app.exceptions.APIException;
+import com.app.repositories.RepositoryManager;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -21,41 +23,35 @@ import org.springframework.transaction.annotation.Transactional;
 public class TokenService {
 
     private static final String NSR_STORES = "NSR Stores";
-
-    private final CustomerRepo customerRepo;
     
     private final GlobalConfig globalConfig;
     
-   // private final static String secret=  globalConfig.getJwtConfig().getSecret();
+    private final RepositoryManager repositoryManager;
 
-    /**
-     * Access Token
-     * @param email
-     * @return
-     * @throws IllegalArgumentException
-     * @throws JWTCreationException
-     */
-    @Transactional(readOnly = true)
-    public String generateToken(String email) throws IllegalArgumentException, JWTCreationException {
-        Customer user = customerRepo.findByEmail(email.toLowerCase()).get();
+    public String generateToken(AuthUserDetails authUserDetails) throws IllegalArgumentException, JWTCreationException {
         String token = JWT.create()
-                .withSubject(String.valueOf(user.getId())) // User ID
+                .withSubject(String.valueOf(authUserDetails.getId())) // User ID
                 .withIssuedAt(Instant.now())
                 .withExpiresAt(Instant.now()
-                        .plusSeconds(globalConfig.getJwtConfig().getAccessExpTime()))
-               // .withClaim("email", user.getEmail())
-                //.withClaim("cart_id", user.getCart().getId())
+                        .plusSeconds(globalConfig.getJwtConfig().getRefreshExpTime()))
                 .withClaim("roles",
-                        user.getRoles().stream().map(role -> role.getRoleName())
-                                .collect(Collectors.joining(email, "[", "]")))
+                        authUserDetails.getAuthorities().stream().map(auth -> auth.getAuthority())
+                                .collect(Collectors.joining(String.valueOf(authUserDetails.getId()),"[", "]")))
                 .withIssuer(NSR_STORES)
                 .sign(Algorithm.HMAC256(globalConfig.getJwtConfig().getSecret()));
         return token;
     }
     
+    /**
+     * <p>
+     * @param id
+     * @return
+     * @throws IllegalArgumentException
+     * @throws JWTCreationException
+     */
     @Transactional(readOnly = true)
-    public String generateToken(Long id) throws IllegalArgumentException, JWTCreationException {
-        Customer user = customerRepo.findById(id).get();
+    public String generateToken(String id) throws IllegalArgumentException, JWTCreationException {
+        Customer user = repositoryManager.getCustomerRepo().findById(Long.parseLong(id)).orElseThrow(() -> new APIException(APIErrorCode.API_401, "No user existed in system"));
         String token = JWT.create()
                 .withSubject(String.valueOf(user.getId())) // User ID
                 .withIssuedAt(Instant.now())
@@ -68,26 +64,29 @@ public class TokenService {
                                 .collect(Collectors.joining(String.valueOf(id),"[", "]")))
                 .withIssuer(NSR_STORES)
                 .sign(Algorithm.HMAC256(globalConfig.getJwtConfig().getSecret()));
-        SignInResponse loginResponse = SignInResponse.builder().userId(user.getId())
-                .firstName(user.getFirstName()).lastName(user.getLastName()).userToken(token).build();
         return token;
     }
 
-    public String validateTokenAndRetrieveSubject(String token) throws JWTVerificationException {
-        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(globalConfig.getJwtConfig().getSecret()))
-                // .withSubject("User Details")
-                .withIssuer(NSR_STORES).build();
-        DecodedJWT jwt = verifier.verify(token);
-        return jwt.getSubject();
-    }
-
-    public UserClaims validateTokenAndRetrieveSubjectData(String token) throws JWTVerificationException {
-        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(globalConfig.getJwtConfig().getSecret()))
-                .withSubject("User Details").withIssuer(NSR_STORES)
-                .build();
-        DecodedJWT jwt = verifier.verify(token);
-        return UserClaims.builder().userId(jwt.getClaim("userId").asString())
-                .storeId(jwt.getClaim("storeId").asString()).build();
+    /**
+     * <p>
+     * Return userId from the token.
+     * </p>
+     * @param token
+     * @return
+     * @throws JWTVerificationException
+     */
+    public String validateTokenAndRetrieveSubject(String token)  {
+        try {
+            JWTVerifier verifier = JWT.require(Algorithm.HMAC256(globalConfig.getJwtConfig().getSecret()))
+                    // .withSubject("User Details")
+                    .withIssuer(NSR_STORES).build();
+            DecodedJWT jwt = verifier.verify(token);
+            return jwt.getSubject();
+        } catch (IllegalArgumentException e) {
+        throw new APIException(APIErrorCode.API_400	, e.getMessage());
+        } catch (JWTVerificationException e) {
+            throw new APIException(APIErrorCode.API_401	, e.getMessage());
+        }
     }
     
     // Validate token
@@ -100,7 +99,7 @@ public class TokenService {
                     .verify(token);
             return true;
         } catch (Exception e) {
-            return false;
+            throw new APIException(APIErrorCode.API_401	, e.getMessage());
         }
     }
     

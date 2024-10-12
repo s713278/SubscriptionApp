@@ -10,13 +10,14 @@ import com.app.entites.Payment;
 import com.app.entites.Shipping;
 import com.app.entites.Subscription;
 import com.app.entites.Vendor;
+import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.payloads.OrderDTO;
 import com.app.payloads.OrderRequest;
 import com.app.payloads.OrderResponse;
 import com.app.payloads.request.OrderUpdateRequest;
-import com.app.payloads.response.AppResponse;
+import com.app.payloads.response.APIResponse;
 import com.app.payloads.response.OrderUpdateResponse;
 import com.app.repositories.CartItemRepo;
 import com.app.repositories.CartRepo;
@@ -28,7 +29,6 @@ import com.app.repositories.PaymentRepo;
 import com.app.repositories.VendorRepo;
 import com.app.services.CartService;
 import com.app.services.OrderService;
-import com.app.services.UserService;
 import com.app.services.constants.OrderStatus;
 import com.app.services.constants.PaymentType;
 import com.app.services.constants.ShippingType;
@@ -65,7 +65,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED, rollbackFor = {
             Exception.class, APIException.class, ResourceNotFoundException.class })
     @Override
-    public AppResponse<OrderDTO> placeOrder(final Long storeId, final OrderRequest request) {
+    public APIResponse<OrderDTO> placeOrder(final Long storeId, final OrderRequest request) {
         final Long userId = request.getUserId();
         final Long cartId = request.getCartId();
         final Customer user = validateUser(userId);
@@ -78,7 +78,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
         OrderDTO orderDTO = modelMapper.map(order, OrderDTO.class);
         order = orderRepo.saveAndFlush(order);
         orderDTO.setOrderId(order.getOrderId());
-        return AppResponse.success(HttpStatus.OK.value(), orderDTO);
+        return APIResponse.success(HttpStatus.OK.value(), orderDTO);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
                 .collect(Collectors.toList());
 
         if (orderDTOs.size() == 0) {
-            throw new APIException("No orders placed yet by the user with email: " + emailId);
+            throw new APIException(APIErrorCode.API_400, "No orders placed yet by the user with email: " + emailId);
         }
 
         return orderDTOs;
@@ -123,7 +123,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
                 .collect(Collectors.toList());
 
         if (orderDTOs.size() == 0) {
-            throw new APIException("No orders placed yet by the users");
+            throw new APIException(APIErrorCode.API_400, "No orders placed yet by the users");
         }
 
         OrderResponse orderResponse = new OrderResponse();
@@ -140,7 +140,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public AppResponse<OrderUpdateResponse> updateOrder(Long orderId, OrderUpdateRequest request) {
+    public APIResponse<OrderUpdateResponse> updateOrder(Long orderId, OrderUpdateRequest request) {
         Order order = orderRepo.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "orderId", orderId));
         if (order == null) {
@@ -148,7 +148,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
         }
         switch (order.getOrderStatus()) {
         case DELIVERED, CANCELED -> {
-            throw new APIException("Invalid Order Status..");
+            throw new APIException(APIErrorCode.API_400, "Invalid Order Status..");
         }
         }
         ;
@@ -159,7 +159,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
         orderStatusHistory.setNewStatus(request.getNewSatus());
         order.setOrderStatus(request.getNewSatus());
         orderStatusRepo.save(orderStatusHistory);
-        return AppResponse.success(HttpStatus.OK.value(),
+        return APIResponse.success(HttpStatus.OK.value(),
                 modelMapper.map(OrderStatusHistory.class, OrderUpdateResponse.class));
     }
 
@@ -246,28 +246,28 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
     }
 
     @Override
-    public AppResponse<OrderDTO> getOrderById(Long orderId) {
+    public APIResponse<OrderDTO> getOrderById(Long orderId) {
         Order order = orderRepo.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "orderId", orderId));
         try {
             modelMapper.map(order, OrderDTO.class);
         } catch (Exception e) {
-           log.error("Excception occured while fetching order details for order id : {}",orderId);
+            log.error("Excception occured while fetching order details for order id : {}", orderId);
         }
-        return AppResponse.success(HttpStatus.OK.value(), modelMapper.map(order, OrderDTO.class));
+        return APIResponse.success(HttpStatus.OK.value(), modelMapper.map(order, OrderDTO.class));
     }
 
     @Override
-    public AppResponse<List<OrderDTO>> getOrderByStoreId(Long storeId) {
+    public APIResponse<List<OrderDTO>> getOrderByStoreId(Long storeId) {
         List<OrderDTO> orders = orderRepo.findOrderByVendorId(storeId).stream()
                 .map(orderEntity -> modelMapper.map(orderEntity, OrderDTO.class)).collect(Collectors.toList());
-        return AppResponse.success(HttpStatus.OK.value(), orders);
+        return APIResponse.success(HttpStatus.OK.value(), orders);
     }
 
     @Override
     public void createInitialOrder(Subscription subscription) {
         // TODO Auto-generated method stub
-        
+
     }
-    
+
 }

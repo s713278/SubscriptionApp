@@ -11,7 +11,7 @@ import com.app.payloads.CartDTO;
 import com.app.payloads.CartItemDTO;
 import com.app.payloads.SkuDTO;
 import com.app.payloads.request.ItemRequest;
-import com.app.payloads.response.AppResponse;
+import com.app.payloads.response.APIResponse;
 import com.app.repositories.CartItemRepo;
 import com.app.repositories.CartRepo;
 import com.app.repositories.CustomerRepo;
@@ -45,7 +45,7 @@ public class CartServiceImpl implements CartService {
     private final CustomerRepo userRepo;
 
     @Override
-    public AppResponse<CartDTO> addOrUpdateItem(final Long storeId, final ItemRequest request) {
+    public APIResponse<CartDTO> addOrUpdateItem(final Long storeId, final ItemRequest request) {
         Long userId = request.getUserId();
         Long skuId = request.getSkuId();
         Integer quantity = request.getQuantity();
@@ -71,7 +71,7 @@ public class CartServiceImpl implements CartService {
         }*/
 
         if (quantity > sku.getStock() ) {
-            throw new APIException("Please, make an order of the " + sku.getName()
+            throw new APIException(APIErrorCode.API_400,"Please, make an order of the " + sku.getName()
                     + " less than or equal to the quantity " + sku.getStock() + ".");
         }
 
@@ -112,7 +112,7 @@ public class CartServiceImpl implements CartService {
         cartItemDTOs.add(cartItemDTO);
         // cartDTO.setItems(cartItemDTOs);
         cartRepo.saveAndFlush(shoppingCart);
-        return AppResponse.success(HttpStatus.OK.value(), cartDTO);
+        return APIResponse.success(HttpStatus.OK.value(), cartDTO);
     }
 
     @Override
@@ -120,7 +120,7 @@ public class CartServiceImpl implements CartService {
         List<Cart> carts = cartRepo.findAll();
 
         if (carts.size() == 0) {
-            throw new APIException("No cart exists");
+            throw new APIException(APIErrorCode.API_400,"No cart exists");
         }
 
         List<CartDTO> cartDTOs = carts.stream().map(cart -> {
@@ -135,17 +135,17 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public AppResponse<CartDTO> getCart(Long cartId) {
+    public APIResponse<CartDTO> getCart(Long cartId) {
         // Cart cart = cartRepo.findCartByEmailAndCartId(emailId, cartId);
         Cart cart = cartRepo.findById(cartId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart", "cartId", cartId));
 
-        return AppResponse.success(HttpStatus.OK.value(), modelMapper.map(cart, CartDTO.class));
+        return APIResponse.success(HttpStatus.OK.value(), modelMapper.map(cart, CartDTO.class));
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
-    public AppResponse<String> deleteItem(Long cartId, Long cartItemId) {
+    public APIResponse<String> deleteItem(Long cartId, Long cartItemId) {
         Cart cart = cartRepo.findById(cartId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart", "cartId", cartId));
 
@@ -161,7 +161,7 @@ public class CartServiceImpl implements CartService {
             cart.setTotalPrice(totalAmount);
         }
         cartItemRepo.flush();
-        return AppResponse.success(HttpStatus.OK.value(),
+        return APIResponse.success(HttpStatus.OK.value(),
                 "Item " + matchedCartITem.getSku().getName() + " removed from the cart !!!");
     }
 
@@ -174,13 +174,13 @@ public class CartServiceImpl implements CartService {
         CartItem cartItem = cartItemRepo.findCartItemBySkuIdAndCartIdAndSkuId(skuId, 1L, 1L);
 
         if (cartItem != null) {
-            throw new APIException("Sku " + sku.getName() + " already exists in the cart");
+            throw new APIException(APIErrorCode.API_400,"Sku " + sku.getName() + " already exists in the cart");
         }
         if (sku.getStock() == 0) {
             throw new APIException(APIErrorCode.API_400, sku.getName() + " is out of stock and not available");
         }
         if (sku.getStock() < quantity) {
-            throw new APIException("Please, make an order of the " + sku.getName()
+            throw new APIException(APIErrorCode.API_400,"Please, make an order of the " + sku.getName()
                     + " less than or equal to the quantity " + sku.getStock() + ".");
         }
         CartItem newCartItem = new CartItem();
@@ -205,7 +205,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public AppResponse<List<CartDTO>> getAllCarts(Long storeId) {
+    public APIResponse<List<CartDTO>> getAllCarts(Long storeId) {
         return null;
     }
 }

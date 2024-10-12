@@ -39,7 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = modelMapper.map(categoryDTO, Category.class);
         Category savedCategory = categoryRepo.findByNameIgnoreCase(category.getName());
         if (savedCategory != null) {
-            throw new APIException(APIErrorCode.API_302,
+            throw new APIException(APIErrorCode.API_417,
                     "Category with the name '" + category.getName() + "' already exists !!!");
         }
         savedCategory = categoryRepo.save(category);
@@ -58,7 +58,7 @@ public class CategoryServiceImpl implements CategoryService {
         List<Category> categories = pageCategories.getContent();
 
         if (categories.size() == 0) {
-            throw new APIException("No category is created till now");
+            throw new APIException(APIErrorCode.API_400,"No category is created till now");
         }
 
         List<CategoryDTO> categoryDTOs = categories.stream()

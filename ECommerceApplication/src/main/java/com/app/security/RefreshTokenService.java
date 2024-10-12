@@ -1,5 +1,6 @@
 package com.app.security;
 
+import com.app.auth.dto.AuthUserDetails;
 import com.app.config.GlobalConfig;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,11 +31,12 @@ public class RefreshTokenService {
     public void storeRefreshToken(String username, String refreshToken) {
         refreshTokenStore.put(refreshToken, username);
     }
+
     
     // Generate and store a refresh token for the user
-    public String createRefreshToken(String userId) {
+    public String createRefreshToken(AuthUserDetails authUserDetails) {
         String refreshToken = UUID.randomUUID().toString(); // Generate unique refresh token
-        refreshTokenStore.put(refreshToken, userId);
+        refreshTokenStore.put(refreshToken, String.valueOf(authUserDetails.getId()));
         return refreshToken;
     }
 }

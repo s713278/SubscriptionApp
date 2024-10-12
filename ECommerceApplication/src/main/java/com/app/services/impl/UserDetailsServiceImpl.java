@@ -1,37 +1,38 @@
 package com.app.services.impl;
 
-import com.app.config.UserInfoConfig;
+import com.app.auth.dto.AuthUserDetails;
 import com.app.entites.Customer;
-import com.app.repositories.CustomerRepo;
+import com.app.exceptions.APIErrorCode;
+import com.app.exceptions.APIException;
+import com.app.repositories.RepositoryManager;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    @Autowired
-    private CustomerRepo userRepo;
+    private final RepositoryManager repositoryManager;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) {
         log.debug("Load user details for user is {}",username);
          Optional<Customer> user = null;
         try{
-            Long userId=Long.parseLong(username);
-             user = userRepo.findById(userId);
+            Long mobile=Long.parseLong(username);
+            user = repositoryManager.getCustomerRepo().findByMobile(mobile);
         }catch (Exception e) {
-             user = userRepo.findByEmail(username.toLowerCase());
+             throw new APIException(APIErrorCode.API_419,e.getMessage());
         }
-        if (!user.isPresent()) {
-            return null;
-           // throw new ResourceNotFoundException("Customer", "email", username);
+        if (user.isEmpty()) {
+             throw new APIException(APIErrorCode.API_401,"User not existed in system.");
         }
-        return user.map(UserInfoConfig::new).get();
+        return user.map(AuthUserDetails::new).get();
     }
+   
 }
