@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
-@Tag(name = "7. Product Service API")
+@Tag(name = "8. Product Management")
 @RestController
 @RequestMapping("/store/{store_id}")
 @SecurityRequirement(name = "E-Commerce Application")

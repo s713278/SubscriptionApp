@@ -1,6 +1,6 @@
 package com.app.event;
 
-import com.app.services.EmailService;
+import com.app.notification.services.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;

@@ -6,6 +6,7 @@ import com.app.auth.services.SignUpStrategyFactory;
 import com.app.entites.Customer;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
+import com.app.notification.services.EmailService;
 import com.app.payloads.request.EmailSignUpRequest;
 import com.app.payloads.request.ForgotPasswordRequest;
 import com.app.payloads.request.MobileSignInRequest;
@@ -20,7 +21,6 @@ import com.app.payloads.response.SignInResponse;
 import com.app.security.RefreshTokenService;
 import com.app.security.TokenService;
 import com.app.services.AuthService;
-import com.app.services.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -50,7 +50,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping("/auth")
-@Tag(name = "1. User SignUp & SignIn API")
+@Tag(name = "1. User Authentication")
 public class AuthController {
 
     private final AuthService authService;

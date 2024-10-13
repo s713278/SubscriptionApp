@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import java.io.Serializable;
 import java.time.Instant;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 /**
  * Base abstract class for entities which will hold definitions for created,
@@ -21,14 +21,14 @@ public abstract class AbstractAuditingEntity<T> implements Serializable {
     @Column(name = "created_by", nullable = false, length = 50, updatable = false)
     private String createdBy;
 
-    @CreatedDate
+    @CreationTimestamp
     @Column(name = "created_date", updatable = false)
     private Instant createdDate = Instant.now();
 
     @Column(name = "last_modified_by", length = 50)
     private String lastModifiedBy;
 
-    @LastModifiedDate
+    @UpdateTimestamp
     @Column(name = "last_modified_date")
     private Instant lastModifiedDate = Instant.now();
 

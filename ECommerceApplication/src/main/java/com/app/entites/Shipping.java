@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,7 +28,8 @@ public class Shipping {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(mappedBy = "shipping", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @Transient
+  //  @OneToOne(mappedBy = "shipping", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private Order order;
 
     // @NotBlank

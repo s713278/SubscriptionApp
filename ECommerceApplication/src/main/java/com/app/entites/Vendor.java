@@ -1,6 +1,7 @@
 package com.app.entites;
 
 import com.app.entites.type.MapTypeConverter;
+import com.app.entites.type.VendorStatus;
 import com.app.entites.type.VerificationStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -15,14 +16,13 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 @Entity
 @Data
@@ -32,6 +32,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 @EqualsAndHashCode(callSuper = false)
 public class Vendor extends AbstractAuditingEntity<Long> implements Serializable {
 
+    
     /**
      *
      */
@@ -60,6 +61,12 @@ public class Vendor extends AbstractAuditingEntity<Long> implements Serializable
     @NotBlank(message = "Contact email is required.")
     private String email;
 
+    @JdbcType(value = PostgreSQLEnumJdbcType.class)
+    @Column(name = "status", columnDefinition = "vendor_status_enum")
+    @Enumerated(EnumType.STRING)
+    private VendorStatus status;
+    
+    @JdbcType(value = PostgreSQLEnumJdbcType.class)
     @Enumerated(EnumType.STRING)
     private VerificationStatus verificationStatus;
 
@@ -70,12 +77,5 @@ public class Vendor extends AbstractAuditingEntity<Long> implements Serializable
     @Column(name = "service_area", columnDefinition = "jsonb")
     @Convert(converter = MapTypeConverter.class)
     private Map<String, Object> serviceAreas;
-
-    @CreatedDate
-    @Column(name = "created_date", updatable = false,insertable = false)
-    private Instant createdDate = Instant.now();
-
-    @LastModifiedDate
-    @Column(name = "last_modified_date")
-    private Instant lastModifiedDate = Instant.now();
+    
 }

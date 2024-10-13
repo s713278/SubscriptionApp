@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -110,6 +111,7 @@ public class Customer implements Serializable {
     @Column(name = "last_modified_date")
     private LocalDateTime lastModifiedDate;
     
+    @ColumnDefault(value = "false")
     @Column(name="email_verified")
     private Boolean emailVerified;
     
@@ -121,5 +123,8 @@ public class Customer implements Serializable {
     
     @Column(name="email_token_expiration")
     private LocalDateTime emailTokenExpiration;
+
+    @ColumnDefault(value = "true")
+    private boolean isActive;
 
 }

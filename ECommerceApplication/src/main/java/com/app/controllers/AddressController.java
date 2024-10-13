@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "8. Address Service API")
+@Tag(name = "9. Address Service API")
 @RestController
 @RequestMapping("/store/{store_id}/admin")
 @SecurityRequirement(name = "E-Commerce Application")

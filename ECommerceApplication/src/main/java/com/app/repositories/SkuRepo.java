@@ -10,5 +10,8 @@ import org.springframework.stereotype.Repository;
 public interface SkuRepo extends JpaRepository<Sku, Long> {
 
     @Query("SELECT s FROM Sku s WHERE s.id = ?1 ")
-    Optional<Sku> findByIdAndStoreId(Long skuId);
+    Optional<Sku> findByIdAndStoreId(final Long skuId);
+   
+    @Query("SELECT s FROM Sku s WHERE s.id = ?1 ")
+    Optional<Sku>  findByIdAndVendorId(final Long skuId,final Long vendorId);
 }

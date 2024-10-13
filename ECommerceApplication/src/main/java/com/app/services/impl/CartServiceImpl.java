@@ -18,6 +18,7 @@ import com.app.repositories.CustomerRepo;
 import com.app.repositories.SkuRepo;
 import com.app.repositories.VendorRepo;
 import com.app.services.CartService;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -99,7 +100,7 @@ public class CartServiceImpl implements CartService {
         Double totalAmount = shoppingCart.getCartItems().stream()
                 .map(cartItem1 -> cartItem1.getQuantity() * cartItem1.getUnitPrice()).mapToDouble(Double::doubleValue)
                 .sum();
-        shoppingCart.setTotalPrice(totalAmount);
+        shoppingCart.setTotalPrice(BigDecimal.valueOf(totalAmount));
         // shoppingCart.setTotalPrice(shoppingCart.getTotalPrice() +
         // (cartItem.getUnitPrice() *
         // quantity));
@@ -153,12 +154,12 @@ public class CartServiceImpl implements CartService {
                 .orElseThrow(() -> new ResourceNotFoundException("CartItem", "cartItemId", cartItemId));
         cartItemRepo.deleteBycartItemIdAndCartId(cartItemId, cartId);
         if (cart.getCartItems().isEmpty()) {
-            cart.setTotalPrice(0D);
+            cart.setTotalPrice(BigDecimal.valueOf(0));
         } else {
             Double totalAmount = cart.getCartItems().stream()
                     .map(cartItem1 -> cartItem1.getQuantity() * cartItem1.getUnitPrice())
                     .mapToDouble(Double::doubleValue).sum();
-            cart.setTotalPrice(totalAmount);
+            cart.setTotalPrice(BigDecimal.valueOf(totalAmount));
         }
         cartItemRepo.flush();
         return APIResponse.success(HttpStatus.OK.value(),

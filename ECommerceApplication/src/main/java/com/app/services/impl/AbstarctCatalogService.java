@@ -16,6 +16,7 @@ import com.app.repositories.OrderRepo;
 import com.app.repositories.PaymentRepo;
 import com.app.repositories.VendorRepo;
 import com.app.services.CartService;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -111,9 +112,9 @@ public abstract class AbstarctCatalogService {
             sku.setStock(sku.getStock() - quantity);
         });
         cart.getCartItems().clear();
-        cart.setTotalPrice(0D);
+        cart.setTotalPrice(BigDecimal.valueOf(0));
         cartItemRepo.deleteByCartId(cart.getId().longValue());
-        Assert.isTrue(cart.getTotalPrice().compareTo(0D) == 0,
+        Assert.isTrue(cart.getTotalPrice().compareTo(BigDecimal.valueOf(0)) == 0,
                 String.format("Cart %d total amount is not zero but expection is ZERO.", cart.getId()));
         Assert.isTrue(cart.getCartItems().isEmpty(), String.format("Cart %d have %d items and expectation is EMPTY",
                 cart.getId(), cart.getCartItems().size()));

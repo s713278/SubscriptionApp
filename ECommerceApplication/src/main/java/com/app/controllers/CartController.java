@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "3. Shopping Cart API")
+@Tag(name = "6. Cart Management")
 @RestController
 @RequestMapping("/store/{store_id}")
 @SecurityRequirement(name = "E-Commerce Application")

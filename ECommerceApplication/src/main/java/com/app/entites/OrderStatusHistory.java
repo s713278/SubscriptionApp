@@ -1,6 +1,6 @@
 package com.app.entites;
 
-import com.app.services.constants.OrderStatus;
+import com.app.entites.type.OrderStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

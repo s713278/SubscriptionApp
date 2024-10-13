@@ -1,6 +1,6 @@
 package com.app.entites;
 
-import com.app.services.constants.OrderStatus;
+import com.app.entites.type.OrderStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,10 +15,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 @Entity
 @Table(name = "tb_order")
@@ -30,34 +34,28 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
 
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
-
-    @OneToOne
-    @JoinColumn(name = "vendor_id")
-    private Vendor vendor;
+    private Long vendorId;
 
     @ManyToOne
     @JoinColumn(name = "subscription_id", nullable = false)
     private Subscription subscription;
 
-    @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE },fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_id")
     private Payment payment;
+    
+    private BigDecimal price;
+    private int quantity;
+    private BigDecimal centralTax;
+    private BigDecimal stateTax;
+    
+    @Transient
+    private BigDecimal totalAmount;
 
-    @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    @JoinColumn(name = "shipping_id")
-    private Shipping shipping;
-
-    private Double subTotal;
-    private Double federalTax;
-    private Double stateTax;
-    private Double totalAmount;
-
+    @JdbcType(value  = PostgreSQLEnumJdbcType.class)
     @Column(name = "order_status", columnDefinition = "order_status_enum")
     @Enumerated(EnumType.STRING)
-    private OrderStatus orderStatus;
+    private OrderStatus status;
 
     @OneToMany(mappedBy = "order", cascade = { CascadeType.PERSIST,
             CascadeType.MERGE }, orphanRemoval = true, fetch = FetchType.EAGER)

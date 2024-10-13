@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "6. Catalog Service API")
+@Tag(name = "7. Catalog Management")
 @RestController
 @RequestMapping("/store/{store_id}")
 @SecurityRequirement(name = "E-Commerce Application")

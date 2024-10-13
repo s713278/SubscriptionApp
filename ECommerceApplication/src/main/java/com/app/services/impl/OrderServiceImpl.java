@@ -10,6 +10,7 @@ import com.app.entites.Payment;
 import com.app.entites.Shipping;
 import com.app.entites.Subscription;
 import com.app.entites.Vendor;
+import com.app.entites.type.OrderStatus;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
@@ -29,9 +30,9 @@ import com.app.repositories.PaymentRepo;
 import com.app.repositories.VendorRepo;
 import com.app.services.CartService;
 import com.app.services.OrderService;
-import com.app.services.constants.OrderStatus;
 import com.app.services.constants.PaymentType;
 import com.app.services.constants.ShippingType;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,6 +55,9 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
 
     @Autowired
     private OrderStatusRepo orderStatusRepo;
+
+    private static final BigDecimal STATE_TAX = BigDecimal.valueOf(0.1);
+    private static final BigDecimal CENTRAL_TAX = BigDecimal.valueOf(0.1);
 
     public OrderServiceImpl(CustomerRepo userRepo, CartRepo cartRepo, OrderRepo orderRepo, PaymentRepo paymentRepo,
             OrderItemRepo orderItemRepo, CartItemRepo cartItemRepo, UserService userService, CartService cartService,
@@ -83,7 +87,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
 
     @Override
     public List<OrderDTO> getOrdersByUser(String emailId) {
-        List<Order> orders = orderRepo.findAllByCustomerEmail(emailId);
+        List<Order> orders = orderRepo.findAllBySubscriptionCustomerEmail(emailId);
 
         List<OrderDTO> orderDTOs = orders.stream().map(order -> modelMapper.map(order, OrderDTO.class))
                 .collect(Collectors.toList());
@@ -98,11 +102,8 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
     @Override
     public OrderDTO getOrder(String emailId, Long orderId) {
 
-        Order order = orderRepo.findOrderByEmailAndOrderId(emailId, orderId);
-
-        if (order == null) {
-            throw new ResourceNotFoundException("Order", "orderId", orderId);
-        }
+        Order order = orderRepo.findById(orderId)
+                .orElseThrow(() -> new APIException(APIErrorCode.API_400, "Order not found"));
 
         return modelMapper.map(order, OrderDTO.class);
     }
@@ -146,7 +147,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
         if (order == null) {
             throw new ResourceNotFoundException("Order", "orderId", orderId);
         }
-        switch (order.getOrderStatus()) {
+        switch (order.getStatus()) {
         case DELIVERED, CANCELED -> {
             throw new APIException(APIErrorCode.API_400, "Invalid Order Status..");
         }
@@ -155,9 +156,9 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
         // OrderStatus newOrderStatus = OrderStatus.valueOf(request.getNewSatus());
 
         OrderStatusHistory orderStatusHistory = createOrderStatusHistory(order);
-        orderStatusHistory.setOldStatus(order.getOrderStatus());
+        orderStatusHistory.setOldStatus(order.getStatus());
         orderStatusHistory.setNewStatus(request.getNewSatus());
-        order.setOrderStatus(request.getNewSatus());
+        order.setStatus(request.getNewSatus());
         orderStatusRepo.save(orderStatusHistory);
         return APIResponse.success(HttpStatus.OK.value(),
                 modelMapper.map(OrderStatusHistory.class, OrderUpdateResponse.class));
@@ -165,11 +166,9 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
 
     @Override
     public OrderDTO updateOrder(String emailId, Long orderId, OrderStatus orderStatus) {
-        Order order = orderRepo.findOrderByEmailAndOrderId(emailId, orderId);
-        if (order == null) {
-            throw new ResourceNotFoundException("Order", "orderId", orderId);
-        }
-        order.setOrderStatus(orderStatus);
+        Order order = orderRepo.findById(orderId)
+                .orElseThrow(()->new APIException(APIErrorCode.API_400, "Order not found"));
+        order.setStatus(orderStatus);
         return modelMapper.map(order, OrderDTO.class);
     }
 
@@ -186,14 +185,13 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
         Order order = new Order();
         // order.setEmail(user.getEmail());
         // order.setOrderTime(Instant.now());
-        order.setOrderStatus(OrderStatus.PENDING);
-        order.setFederalTax(cart.getTotalPrice() * 0.2);
-        order.setStateTax(cart.getTotalPrice() * 0.5);
-        order.setSubTotal(cart.getTotalPrice());
-        order.setTotalAmount(cart.getTotalPrice() + order.getFederalTax() + order.getStateTax());
+        order.setStatus(OrderStatus.PENDING);
+        order.setCentralTax(cart.getTotalPrice().multiply(CENTRAL_TAX));
+        order.setStateTax(cart.getTotalPrice().multiply(STATE_TAX));
+        order.setTotalAmount(order.getCentralTax().add(cart.getTotalPrice()).add(order.getStateTax()));
 
-        order.setCustomer(user);
-        order.setVendor(store);
+        // order.setCustomer(user);
+        // order.setVendor(store);
         createPayment(request, order);
         createShipping(request, order);
         return order;
@@ -233,13 +231,13 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
         shipping.setShippingMethod(shippingType);
         shipping.setOrder(order);
         // Shipping
-        order.setShipping(shipping);
+        // order.setShipping(shipping);
     }
 
     private OrderStatusHistory createOrderStatusHistory(Order order) {
         OrderStatusHistory orderStatusHistory = new OrderStatusHistory();
         orderStatusHistory.setOrder(order);
-        orderStatusHistory.setOldStatus(order.getOrderStatus());
+        orderStatusHistory.setOldStatus(order.getStatus());
         orderStatusHistory.setNewStatus(OrderStatus.PENDING);
         orderStatusHistory.setChangedAt(LocalDateTime.now());
         return orderStatusHistory;
@@ -268,6 +266,12 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
     public void createInitialOrder(Subscription subscription) {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public void createOrderFromSubscription(Subscription subscription) {
+        // TODO Auto-generated method stub
+        
     }
 
 }
