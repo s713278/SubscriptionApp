@@ -39,8 +39,8 @@ public class SecurityConfig {
     private final CustomAccessDeniedHandler  accessDeniedHandler;
 
     public SecurityConfig(UserDetailsService userDetailsService,
-    		CustomAuthenticationEntryPoint authenticationEntryPoint,
-    		 CustomAccessDeniedHandler  accessDeniedHandler) {
+            CustomAuthenticationEntryPoint authenticationEntryPoint,
+             CustomAccessDeniedHandler  accessDeniedHandler) {
         this.userDetailsService = userDetailsService;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.accessDeniedHandler = accessDeniedHandler;
@@ -87,11 +87,11 @@ public class SecurityConfig {
                             response.setStatus(HttpServletResponse.SC_OK);
                             response.getWriter().write("Signout out successfully");
                         }))
-				.exceptionHandling(t -> t.authenticationEntryPoint(authenticationEntryPoint/*
-																	 * (request, response, authException) -> response
-																	 * .sendError(HttpServletResponse.SC_UNAUTHORIZED,
-																	 * "Unauthorized Access")
-																	 */).accessDeniedHandler(accessDeniedHandler));
+                .exceptionHandling(t -> t.authenticationEntryPoint(authenticationEntryPoint/*
+                                                                     * (request, response, authException) -> response
+                                                                     * .sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                                                                     * "Unauthorized Access")
+                                                                     */).accessDeniedHandler(accessDeniedHandler));
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

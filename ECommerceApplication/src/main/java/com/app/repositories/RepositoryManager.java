@@ -9,10 +9,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor // Constructor Injection
 public class RepositoryManager {
 
-    private final SubscriptionRepository subscriptionRepo;
+    private final SubscriptionRepo subscriptionRepo;
     private final CustomerRepo customerRepo;
     private final VendorRepo vendorRepo;
     private final SkuRepo skuRepo;
     private final VendorSkuPriceRepo vendorSkuPriceRepo;
     private final RoleRepo roleRepo;
+    private final OrderRepo orderRepo;
 }

@@ -18,12 +18,15 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcType;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import org.hibernate.type.SqlTypes;
 
 @Getter
 @Setter
@@ -39,6 +42,11 @@ public class Subscription  implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY )
+    @JoinColumn(name = "vendor_id", nullable = false)
+    private Vendor vendor;
+    
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY )
     @JoinColumn(name = "customer_id", nullable = false)
@@ -71,6 +79,11 @@ public class Subscription  implements Serializable {
     
     @Column(name="next_delivery_date")
     private LocalDate nextDeliveryDate;
+    
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "delivery_address", columnDefinition = "jsonb")
+    private Map<String, String> deliveryAddress;
     
     @Column(name="update_version",updatable = true)
     private Integer updateVersion=0;

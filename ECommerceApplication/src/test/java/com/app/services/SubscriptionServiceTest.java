@@ -28,6 +28,9 @@ class SubscriptionServiceTest {
     private  SubscriptionService subscriptionService;
     
     @Autowired
+    private  AbstractCreateSubscriptionService createSubscriptionService;
+    
+    @Autowired
     private  RepositoryManager reposirotyManager;
 
     private Customer testCustomer;
@@ -65,7 +68,7 @@ class SubscriptionServiceTest {
         subscriptionRequest.setVendorId(testVendorId);
         subscriptionRequest.setQuantity(5);
         subscriptionRequest.setFromStartDate(LocalDate.now().plusDays(2));
-        var sub = subscriptionService.createSubscription(subscriptionRequest); 
+        var sub = createSubscriptionService.createSubscription(subscriptionRequest); 
         assertNotNull( sub.data());
         assertTrue(sub.success());
         testSubscriptionId = sub.data().id();

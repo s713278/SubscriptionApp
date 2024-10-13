@@ -8,7 +8,6 @@ import com.app.payloads.VendorDTO;
 import com.app.payloads.response.APIResponse;
 import com.app.payloads.response.StoreResponse;
 import com.app.repositories.VendorRepo;
-import com.app.services.VendorService;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -22,19 +21,17 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class VendorServiceImpl implements VendorService {
+public class VendorService  {
 
     private final ModelMapper modelMapper;
 
     private final VendorRepo storeRepo;
 
-    @Override
     public APIResponse<VendorDTO> createStore(VendorDTO storeDTO) {
         Vendor storeEntity = storeRepo.save(modelMapper.map(storeDTO, Vendor.class));
         return APIResponse.success(HttpStatus.CREATED.value(), modelMapper.map(storeEntity, VendorDTO.class));
     }
 
-    @Override
     public StoreResponse getStore(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
 
         Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending()
@@ -62,7 +59,6 @@ public class VendorServiceImpl implements VendorService {
         return storeResponse;
     }
 
-    @Override
     public APIResponse<VendorDTO> updateStore(VendorDTO storeDTO, Long storeId) {
         Vendor savedStore = storeRepo.findById(storeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Store", "storeId", storeId));
@@ -72,7 +68,6 @@ public class VendorServiceImpl implements VendorService {
         return APIResponse.success(HttpStatus.OK.value(), modelMapper.map(savedStore, VendorDTO.class));
     }
 
-    @Override
     public APIResponse<String> deleteStore(Long storeId) {
         Vendor store = storeRepo.findById(storeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Store", "storeId", storeId));
@@ -82,14 +77,18 @@ public class VendorServiceImpl implements VendorService {
         // return storeRepo.delete(storeId);
     }
 
-    @Override
-    public APIResponse<List<VendorDTO>> getStores() {
+    public List<VendorDTO> getAllVendors() {
         List<Vendor> stores = storeRepo.findAll();
         if (stores.size() == 0) {
             throw new APIException(APIErrorCode.API_404, "No stores is created till now");
         }
         List<VendorDTO> storeDTOs = stores.stream().map(store -> modelMapper.map(store, VendorDTO.class))
                 .collect(Collectors.toList());
-        return APIResponse.success(HttpStatus.OK.value(), storeDTOs);
+        return storeDTOs;
+    }
+    
+    public List<Vendor> getAllActiveVendors() {
+        return storeRepo.findAll();
+       
     }
 }

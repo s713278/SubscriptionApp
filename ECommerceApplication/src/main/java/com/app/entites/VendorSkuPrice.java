@@ -12,10 +12,10 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.Data;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-@Table(name="tb_vendor_sku_price")
+@Table(name = "tb_vendor_sku_price")
 @Data
 @Entity
 public class VendorSkuPrice {
@@ -32,17 +32,18 @@ public class VendorSkuPrice {
     private Sku sku;
 
     private Integer stock;
-    
+
     private BigDecimal listPrice;
     private BigDecimal salePrice;
+    private BigDecimal processingFee;
 
     private LocalDate effectiveDate;
-    
-    @CreatedDate
+
+    @CreationTimestamp
     @Column(name = "created_date", updatable = false)
     private LocalDateTime createdDate;
 
-    @LastModifiedDate
+    @UpdateTimestamp
     @Column(name = "last_modified_date")
     private LocalDateTime lastModifiedDate;
 

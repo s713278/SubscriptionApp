@@ -5,11 +5,13 @@ import com.app.payloads.request.SubscriptionRequest;
 import com.app.payloads.request.SubscriptionStatusRequest;
 import com.app.payloads.request.UpdateSubscriptionRequest;
 import com.app.payloads.response.SubscriptionResponse;
+import com.app.services.AbstractCreateSubscriptionService;
 import com.app.services.SubscriptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,15 +26,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
-@Tag(name = "8. Subscription Service API")
+@Tag(name = "3. Subscription Management")
 @RestController
 @RequestMapping("/vendor")
 @Slf4j
+@RequiredArgsConstructor
 public class SubscriptionController {
 
     @Autowired
-    private SubscriptionService subscriptionService;
+    private final SubscriptionService subscriptionService;
+    private final AbstractCreateSubscriptionService createSubscriptionService;
 
+    //@SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
     @Operation(description = "Create a new subscription")
     @PostMapping("/{vendorId}/subscription")
     public ResponseEntity<SubscriptionResponse> createSubscription(
@@ -40,7 +45,7 @@ public class SubscriptionController {
             @Valid @RequestBody SubscriptionRequest request) {
         request.setVendorId(vendorId);
         log.debug("Entered create subscription for customer {}",request.getCustomerId());
-        SubscriptionResponse subscription = subscriptionService.createSubscription(request);
+        SubscriptionResponse subscription = createSubscriptionService.createSubscription(request);
      // Return the response wrapped in ResponseEntity with HTTP status 201 (Created)
         return new ResponseEntity<>(subscription, HttpStatus.CREATED);
     }

@@ -13,8 +13,8 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI shopOpenAPI() {
-        return new OpenAPI().info(new Info().title("White label subscription servicesI")
-                .description("API documentation for the subscription services").version("1.0")
+        return new OpenAPI().info(new Info().title("White label subscription modelI")
+                .description("API documentation for the subscription model services").version("1.0")
                 .contact(new Contact().name("Swamy Kunta").url("https://github.com/s713278/ECommerceApp/tree/master")
                         .email("swamy.kunta@gmail.com"))
                 .license(new License().name("License").url("/")))

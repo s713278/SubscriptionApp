@@ -4,11 +4,10 @@ import com.app.config.AppConstants;
 import com.app.payloads.VendorDTO;
 import com.app.payloads.response.APIResponse;
 import com.app.payloads.response.StoreResponse;
-import com.app.services.VendorService;
+import com.app.services.impl.VendorService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "5. Vendor API")
+@Tag(name = "5. Vendor Management")
 @RestController
 @RequestMapping("/stores")
 @SecurityRequirement(name = "E-Commerce Application")
@@ -37,8 +36,8 @@ public class VendorController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<APIResponse<List<VendorDTO>>> getAllStores() {
-        return new ResponseEntity<>(storeService.getStores(), HttpStatus.FOUND);
+    public ResponseEntity<APIResponse<?>> getAllStores() {
+        return new ResponseEntity<>(APIResponse.success(storeService.getAllVendors()),HttpStatus.OK);
     }
 
     @GetMapping("/")
