@@ -1,12 +1,14 @@
 package com.app.services.impl;
 
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+
 import com.app.entites.Sku;
 import com.app.payloads.SkuDTO;
 import com.app.repositories.SkuRepo;
 import com.app.services.SkuService;
+
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor

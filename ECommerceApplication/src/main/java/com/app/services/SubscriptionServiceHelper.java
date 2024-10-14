@@ -1,11 +1,13 @@
 package com.app.services;
 
-import com.app.entites.Subscription;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
+
 import org.springframework.stereotype.Component;
+
+import com.app.entites.Subscription;
 
 @Component
 public class SubscriptionServiceHelper {

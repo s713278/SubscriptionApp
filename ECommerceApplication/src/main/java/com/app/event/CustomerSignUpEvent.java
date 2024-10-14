@@ -1,6 +1,7 @@
 package com.app.event;
-import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
+
+import lombok.Getter;
 
 @Getter
 public class CustomerSignUpEvent extends ApplicationEvent {

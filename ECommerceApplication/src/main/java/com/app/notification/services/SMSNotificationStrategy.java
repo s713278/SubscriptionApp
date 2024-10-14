@@ -1,10 +1,12 @@
 package com.app.notification.services;
 
-import com.app.entites.Customer;
-import com.app.entites.Order;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import com.app.entites.Customer;
+import com.app.entites.Order;
+
+import lombok.RequiredArgsConstructor;
 /**
  * SMS Service 
  */

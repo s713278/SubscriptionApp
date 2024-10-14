@@ -1,6 +1,10 @@
 package com.app.entites;
 
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+
 import com.app.services.constants.PaymentType;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,6 +36,7 @@ public class Payment {
 
     // @NotBlank
     // @Size(min = 4, message = "Payment method must contain atleast 4 characters")
+    @JdbcType(value = PostgreSQLEnumJdbcType.class)
     @Column(name = "payment_method", columnDefinition = "payment_type_enum")
     @Enumerated(EnumType.STRING)
     private PaymentType paymentMethod;

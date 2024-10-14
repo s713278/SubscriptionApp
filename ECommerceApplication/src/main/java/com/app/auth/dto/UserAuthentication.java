@@ -1,6 +1,7 @@
 package com.app.auth.dto;
 
 import java.util.Collection;
+
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 

@@ -1,11 +1,12 @@
 package com.app.auth.services;
 
-import com.app.config.GlobalConfig;
-import com.app.payloads.response.SignUpResponse;
-import com.app.repositories.RepositoryManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.app.config.GlobalConfig;
+import com.app.payloads.response.SignUpResponse;
+import com.app.repositories.RepositoryManager;
 
 public abstract class AbstractSignUp<T> {
 

@@ -40,7 +40,6 @@
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -121,7 +120,6 @@
             <url>https://repo.spring.io/snapshot</url>
         </pluginRepository>
     </pluginRepositories>
-
     <build>
         <plugins>
             <plugin>
@@ -136,22 +134,20 @@
                     </excludes>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
-
+                <version>2.43.0</version>
                 <configuration>
                     <java>
-                        <toggleOffOn/>
-                        <importOrder/>
+                        <importOrder>
+                            <order>java,javax,org,com</order>
+                        </importOrder>
                         <removeUnusedImports/>
-
                         <indent>
                             <spaces>true</spaces>
                             <spacesPerTab>4</spacesPerTab>
                         </indent>
-
                         <formatAnnotations/>
                     </java>
                     <markdown>
@@ -166,23 +162,25 @@
                         </includes>
                         <sortPom>
                             <encoding>UTF-8</encoding>
-                            <keepBlankLines>true</keepBlankLines>
+                            <keepBlankLines>false</keepBlankLines>
                             <nrOfIndentSpace>4</nrOfIndentSpace>
                             <indentBlankLines>false</indentBlankLines>
-                            <!--
-							<indentSchemaLocation>true</indentSchemaLocation> -->
                             <expandEmptyElements>false</expandEmptyElements>
                             <sortProperties>true</sortProperties>
                         </sortPom>
                     </pom>
                 </configuration>
-                <!-- Use the latest version -->
-
                 <executions>
                     <execution>
-                        <id>format</id>
+                        <id>spotless-check</id>
                         <goals>
                             <goal>check</goal>
+                        </goals>
+                        <phase>verify</phase>
+                    </execution>
+                    <execution>
+                        <id>spotless-apply</id>
+                        <goals>
                             <goal>apply</goal>
                         </goals>
                         <phase>process-sources</phase>
@@ -191,5 +189,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

@@ -1,16 +1,19 @@
 package com.app.services.impl;
 
+import java.util.Optional;
+
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Service;
+
 import com.app.auth.dto.AuthUserDetails;
 import com.app.entites.Customer;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.repositories.RepositoryManager;
-import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
