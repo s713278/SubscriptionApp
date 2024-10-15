@@ -23,6 +23,9 @@ logging:
     max-history: 10
 
 spring:
+  threads:
+    virtual:
+      enabled: true
   mail:
     host: sandbox.smtp.mailtrap.io
     port: 2525
