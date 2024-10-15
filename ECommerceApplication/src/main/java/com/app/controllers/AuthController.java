@@ -1,5 +1,20 @@
 package com.app.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.app.auth.dto.AuthUserDetails;
 import com.app.auth.services.SignUpStrategy;
 import com.app.auth.services.SignUpStrategyFactory;
@@ -21,6 +36,7 @@ import com.app.payloads.response.SignInResponse;
 import com.app.security.RefreshTokenService;
 import com.app.security.TokenService;
 import com.app.services.AuthService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -31,20 +47,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -64,7 +66,7 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
 
-    @Operation(description = "Customer Mobile SignIn")
+    @Operation(summary  = "SignIn with mobile")
     @PostMapping("/signin")
     public ResponseEntity<APIResponse<?>> signIn(@Valid @RequestBody MobileSignInRequest signInRequest) {
         log.info("Received sign-in request for mobile: {}", signInRequest.getMobile());
@@ -80,7 +82,7 @@ public class AuthController {
         return new ResponseEntity<>(APIResponse.success(signInResponse), HttpStatus.OK);
     }
 
-    @Operation(summary = "Customer Email Sign-up", description = "Registers a new user by providing their first name, email, and password.")
+    @Operation(summary = "Signup with Email", description = "Registers a new user by providing their first name, email, and password.")
     @ApiResponses(value = {
             
             @ApiResponse(responseCode = "201", description = "User registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = APIResponse.class))),
@@ -101,7 +103,7 @@ public class AuthController {
         }
     }
 
-    @Operation(summary = "Customer Mobile Sign-up", description = "Registers a new user by providing their first name, mobile number, and password.")
+    @Operation(summary = "Signup with Mobile", description = "Registers a new user by providing their first name, mobile number, and password.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Customer registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = APIResponse.class))),
             @ApiResponse(responseCode = "400", description = "Bad request due to validation errors", content = @Content(mediaType = "application/json", schema = @Schema(implementation = APIResponse.class))) })
@@ -120,7 +122,7 @@ public class AuthController {
         }
     }
 
-    @Operation(description = "Customer OTP Veriifcation")
+    @Operation(summary  = "Veriifcation with OTP")
     @PostMapping("/verify-otp")
     public ResponseEntity<?> verifyOtp(@Valid @RequestBody OtpVerificationRequest otpRequest) {
         try {
@@ -133,6 +135,7 @@ public class AuthController {
         }
     }
 
+    @Operation(summary  = "Re-Send OTP")
     @PostMapping("/resend-otp")
     public ResponseEntity<?> resendOtp(@RequestBody ResendOtpRequest resendOtpRequest) {
         return null;
@@ -140,7 +143,7 @@ public class AuthController {
     }
 
     // REST API to get authenticated user details (for testing session management)
-    @Operation(description = "Authenticated Profile Info")
+    @Operation(summary  = "Authenticated Profile Info")
     @GetMapping("/profile")
     @SecurityRequirement(name = "E-Commerce Application")
     public @ResponseBody String getAuthenticatedUser(@AuthenticationPrincipal Long userId) {
@@ -151,7 +154,7 @@ public class AuthController {
         }
     }
 
-    @Operation(description = "Refresh Token")
+    @Operation(summary = "Refresh Token")
     @PostMapping("/refresh")
     public @ResponseBody ResponseEntity<?> refreshAccessToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
         String refreshToken = refreshTokenRequest.getRefreshToken();
@@ -165,7 +168,7 @@ public class AuthController {
     }
 
     // Account activation endpoint
-    @Operation(description = "User signup actication")
+    @Operation(summary = "Actication with Token")
     @GetMapping("/activate/{token}")
     public ResponseEntity<?> activateAccount(@PathVariable String token) {
         boolean isActivated = authService.activateAccount(token);
@@ -177,7 +180,7 @@ public class AuthController {
     }
 
     // Forgot password endpoint
-    @Operation(description = " Forgot password endpoint")
+    @Operation(summary = "Forgot Password")
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
         Customer customer = authService.generateResetToken(request.getEmail());
@@ -189,7 +192,7 @@ public class AuthController {
     }
 
     // Reset password endpoint
-    @Operation(description = "Reset password endpoint")
+    @Operation(summary  = "Reset Password")
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
         boolean isReset = authService.resetPassword(request.getToken(), request.getNewPassword());

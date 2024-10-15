@@ -1,9 +1,11 @@
 package com.app.auth.services;
 
+import org.springframework.stereotype.Component;
+
 import com.app.payloads.request.EmailSignUpRequest;
 import com.app.payloads.response.SignUpResponse;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 @Component("emailSignUpStrategy")
 @RequiredArgsConstructor

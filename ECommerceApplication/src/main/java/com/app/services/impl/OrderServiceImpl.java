@@ -1,5 +1,22 @@
 package com.app.services.impl;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.app.entites.Cart;
 import com.app.entites.CartItem;
 import com.app.entites.Customer;
@@ -32,22 +49,8 @@ import com.app.services.CartService;
 import com.app.services.OrderService;
 import com.app.services.constants.PaymentType;
 import com.app.services.constants.ShippingType;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
+
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -188,7 +191,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
         order.setStatus(OrderStatus.PENDING);
         order.setCentralTax(cart.getTotalPrice().multiply(CENTRAL_TAX));
         order.setStateTax(cart.getTotalPrice().multiply(STATE_TAX));
-        order.setTotalAmount(order.getCentralTax().add(cart.getTotalPrice()).add(order.getStateTax()));
+        order.setTotalAmount(order.getCentralTax().add(cart.getTotalPrice()).add(order.getStateTax()).doubleValue());
 
         // order.setCustomer(user);
         // order.setVendor(store);

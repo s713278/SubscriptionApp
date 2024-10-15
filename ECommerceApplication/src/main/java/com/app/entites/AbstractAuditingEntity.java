@@ -1,16 +1,23 @@
 package com.app.entites;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.Column;
 import java.io.Serializable;
-import java.time.Instant;
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
+import lombok.Setter;
 
 /**
  * Base abstract class for entities which will hold definitions for created,
  * last modified, created by, last modified by attributes.
  */
+@MappedSuperclass
 @JsonIgnoreProperties(value = { "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate" }, allowGetters = true)
 public abstract class AbstractAuditingEntity<T> implements Serializable {
 
@@ -18,49 +25,22 @@ public abstract class AbstractAuditingEntity<T> implements Serializable {
 
     public abstract T getId();
 
-    @Column(name = "created_by", nullable = false, length = 50, updatable = false)
-    private String createdBy;
+    @Setter
+    @Column(name = "created_by", nullable = true, length = 50)
+    protected String createdBy;
 
+    @ColumnDefault("timestamptz(6) default CURRENT_TIMESTAMP")
     @CreationTimestamp
     @Column(name = "created_date", updatable = false)
-    private Instant createdDate = Instant.now();
+    protected LocalDateTime createdDate = LocalDateTime.now();
 
+    @ColumnDefault("varchar(50) default System")
     @Column(name = "last_modified_by", length = 50)
-    private String lastModifiedBy;
+    protected String lastModifiedBy;
 
+    @ColumnDefault("timestamptz(6) default CURRENT_TIMESTAMP")
     @UpdateTimestamp
     @Column(name = "last_modified_date")
-    private Instant lastModifiedDate = Instant.now();
+    protected LocalDateTime lastModifiedDate = LocalDateTime.now();
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public Instant getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Instant createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public String getLastModifiedBy() {
-        return lastModifiedBy;
-    }
-
-    public void setLastModifiedBy(String lastModifiedBy) {
-        this.lastModifiedBy = lastModifiedBy;
-    }
-
-    public Instant getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public void setLastModifiedDate(Instant lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
 }

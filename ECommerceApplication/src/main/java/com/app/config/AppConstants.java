@@ -23,10 +23,10 @@ public class AppConstants {
             "/api/store/*/products", "/api/stores/*" ,
              "/vendor/*/subscription/*","/vendor/*/customer/*"};
     
-    public static final String[] USER_URLS = {"/auth/profile", "/users/**", "/store/*/carts", "/store/*/carts/*",
-            "/store/*/orders" };
+    public static final String[] USER_PUT_URLS = {"/users/*" };
+    public static final String[] USER_PATCH_URLS = {"/users/*" };
+    public static final String[] USER_GET_URLS = {"/auth/profile","/users/*","/users/*/vendor/*" };
     
-    public static final String[] AUTH_PATCH_URLS = {"/users/*" };
     
     public static final String[] ADMIN_URLS = { "/api/store/*/admin/**" };
 

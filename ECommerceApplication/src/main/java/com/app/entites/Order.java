@@ -1,6 +1,15 @@
 package com.app.entites;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+
 import com.app.entites.type.OrderStatus;
+import com.app.entites.type.PaymentStatus;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,19 +25,19 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 @Entity
 @Table(name = "tb_order")
 @Data
 @NoArgsConstructor
-public class Order {
+public class Order extends AbstractAuditingEntity<Long> {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1529689654420291266L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,12 +59,18 @@ public class Order {
     private BigDecimal stateTax;
     
     @Transient
-    private BigDecimal totalAmount;
+    private double totalAmount;
 
-    @JdbcType(value  = PostgreSQLEnumJdbcType.class)
+    @JdbcType(value = PostgreSQLEnumJdbcType.class)
     @Column(name = "order_status", columnDefinition = "order_status_enum")
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
+    
+    @JdbcType(value = PostgreSQLEnumJdbcType.class)
+    @Column(name = "payment_status", columnDefinition = "payment_status_enum")
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
+    
 
     @OneToMany(mappedBy = "order", cascade = { CascadeType.PERSIST,
             CascadeType.MERGE }, orphanRemoval = true, fetch = FetchType.EAGER)
@@ -63,4 +78,9 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderStatusHistory> statusHistory = new ArrayList<>();
+
+    @Override
+    public Long getId() {
+        return orderId;
+    }
 }

@@ -1,15 +1,18 @@
 package com.app.services;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.app.entites.Customer;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.payloads.request.OtpVerificationRequest;
 import com.app.repositories.CustomerRepo;
-import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor

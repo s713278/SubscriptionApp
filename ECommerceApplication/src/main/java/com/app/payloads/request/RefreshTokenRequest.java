@@ -1,6 +1,7 @@
 package com.app.payloads.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
 
 @Data

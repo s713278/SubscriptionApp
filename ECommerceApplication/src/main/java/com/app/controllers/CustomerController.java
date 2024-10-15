@@ -1,20 +1,7 @@
 package com.app.controllers;
 
-import com.app.config.AppConstants;
-import com.app.payloads.CustomerDTO;
-import com.app.payloads.response.APIResponse;
-import com.app.payloads.response.GetUserResponse;
-import com.app.payloads.response.UserResponse;
-import com.app.services.impl.UserService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,49 +11,70 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.config.AppConstants;
+import com.app.payloads.CustomerDTO;
+import com.app.payloads.response.APIResponse;
+import com.app.payloads.response.UserResponse;
+import com.app.services.SubscriptionService;
+import com.app.services.impl.UserService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+
+
+@SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
 @RestController
 @Tag(name = "2. User Management")
+@RequestMapping("/users")
+@RequiredArgsConstructor
 public class CustomerController {
+        
+    private final UserService userService;
+    private final SubscriptionService subscriptionService;
 
-    @Autowired
-    private UserService userService;
-
-    @GetMapping("/admin/users")
+    @GetMapping("/admin")
     public ResponseEntity<UserResponse> getUsers(
             @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
             @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_USERS_BY, required = false) String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
-
         UserResponse userResponse = userService.getAllUsers(pageNumber, pageSize, sortBy, sortOrder);
-
         return new ResponseEntity<UserResponse>(userResponse, HttpStatus.FOUND);
     }
 
+    @Operation(summary = "User Information")
     @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
-    @GetMapping("/users/{userId}")
+    @GetMapping("/{userId}")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
-    public ResponseEntity<GetUserResponse> getUser(@PathVariable Long userId) {
-        return new ResponseEntity<GetUserResponse>(userService.getUserInfo(userId), HttpStatus.FOUND);
+    public ResponseEntity<APIResponse<?>> getUser(@PathVariable Long userId) {
+        return ResponseEntity.ok(APIResponse.success(userService.getUserInfo(userId)));
     }
 
-    @PutMapping("/users/{userId}")
+    @Operation(summary = "Update User Information")
+    @PutMapping("/{userId}")
     public ResponseEntity<CustomerDTO> updateUser(@RequestBody CustomerDTO userDTO, @PathVariable Long userId) {
         CustomerDTO updatedUser = userService.updateUser(userId, userDTO);
         return new ResponseEntity<CustomerDTO>(updatedUser, HttpStatus.OK);
     }
 
-    @DeleteMapping("/admin/users/{userId}")
+    @DeleteMapping("/{userId}")
     public ResponseEntity<String> deleteUser(@PathVariable Long userId) {
         String status = userService.deleteUser(userId);
 
         return new ResponseEntity<String>(status, HttpStatus.OK);
     }
 
-    @Operation(summary = "Update user delivery address", description = "Updates the delivery address for a specific user. Only valid keys (address1, address2, city, state, zipCode, country) are accepted.")
+    @Operation(summary = "Update Delivery Address", description = "Updates the delivery address for a specific user. Only valid keys (address1, address2, city, state, zipCode, country) are accepted.")
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Address updated successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid input keys or validation error", content = @Content(schema = @Schema(example = "{\"error\": \"Invalid keys found: [invalidKey]\"}"))),
             @ApiResponse(responseCode = "404", description = "User not found") })
@@ -81,11 +89,20 @@ public class CustomerController {
                 "country": "India"
             }
             """)))
-    @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
-    @PatchMapping("/users/{userId}")
+    @PatchMapping("/{userId}")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
-    public ResponseEntity<APIResponse<?>> updateAddress(@PathVariable Long userId, @RequestBody Map<String, String> address) {
+    public ResponseEntity<APIResponse<?>> updateAddress(@PathVariable Long userId,
+            @RequestBody Map<String, String> address) {
         userService.updateUserAddress(userId, address);
-        return new ResponseEntity<APIResponse<?>>(new APIResponse<>(), HttpStatus.OK);
+        return ResponseEntity.ok(APIResponse.success("Address updated succssfully."));
     }
+
+    @Operation(summary = "All Subscriptions By Vendor")
+    @GetMapping("/{userId}/vendor/{vendorId}")
+    public ResponseEntity<APIResponse<?>> fetchSubsByUserAndVendor(@PathVariable Long vendorId,
+            @PathVariable Long userId) {
+        var subscriptions = subscriptionService.fetchSubsByUserAndVendor(userId, vendorId);
+        return ResponseEntity.ok(APIResponse.success(subscriptions));
+    }
+
 }

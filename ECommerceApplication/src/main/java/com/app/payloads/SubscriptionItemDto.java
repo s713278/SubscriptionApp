@@ -1,7 +1,9 @@
 package com.app.payloads;
 
-import com.app.entites.SubscriptionFrequency;
 import java.util.List;
+
+import com.app.entites.SubscriptionFrequency;
+
 import lombok.Data;
 
 @Data

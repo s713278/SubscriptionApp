@@ -1,15 +1,18 @@
 package com.app.services.validator;
 
-import com.app.config.GlobalConfig;
-import com.app.exceptions.APIErrorCode;
-import com.app.exceptions.APIException;
-import jakarta.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Component;
+
+import com.app.config.GlobalConfig;
+import com.app.exceptions.APIErrorCode;
+import com.app.exceptions.APIException;
+
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
@@ -29,10 +32,11 @@ public class AddressValidator {
             throw new APIException(APIErrorCode.API_400, "Address map is empty/null!!");
         }
         // Filter the input to only keep valid keys
-        log.debug("Addres entries before cleanup {}", newDeliveryAddress);
+        log.debug("Address entries before cleanup {}", newDeliveryAddress);
         var invalidKeys = newDeliveryAddress.keySet().stream().filter(key -> !validAddressKyes.contains(key)).toList();
+        log.debug("Address Invalid Keys : {}",invalidKeys);
         if (!invalidKeys.isEmpty()) {
-            throw new APIException(APIErrorCode.API_400, "Invalid address kyes found ", invalidKeys);
+            throw new APIException(APIErrorCode.API_400, "Invalid address keys found ", invalidKeys);
         }
         return newDeliveryAddress.entrySet().stream().filter(entry -> validAddressKyes.contains(entry.getKey()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
