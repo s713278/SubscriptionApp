@@ -1,67 +1,66 @@
-# Mulit Tenant Subscription Model Application
 
-- The Multi Tenant E-Commerce Application is built using Java 21 and Spring Boot3.2.1, with security, scalability, and ease of maintenance. The backend uses Spring Data JPA to interact with a PostgraSQL database, making it easy to manage and store important entities such as stores, users, products, categories, orders, and more. User authentication is handled by Auth0, providing secure and reliable means of REST APIs.
+# Multi-Vendor Subscription Model App
 
-- The APIs are well-documented and easily accessible through Swagger UI, making it simple for developers to test and understand the various endpoints. Overall, this project provides secure Rest APIs to create a scalable platform for businesses to sell their products to customers.
+This is a **multi-vendor subscription-based application** designed for managing milk and vegetable subscriptions, supporting multiple vendors. The app allows users to sign up, select vendors, and create subscriptions with options for recurring orders. It includes OTP verification for secure access and utilizes access/refresh token mechanisms for session management.
 
-# Features
+## Features
 
-| Vendor Admin |  Customer  | 
-|:-----|:--------:|
-| Catalog Management   |  SignUp & SignIn |
-| Prommotions  |  Catalog Browse  |
-| New Product Notifications  | Subscription Management |
-| Order Updates| Order History|
-|Promotions|Account History|
-|Daily Reports| - |
+- **User Registration & Authentication**
+  - Sign up via mobile number
+  - OTP verification for secure sign-in
+  - Access and Refresh tokens for session management
+- **Multi-Vendor Support**
+  - Users can select from multiple vendors
+  - Each vendor can manage their own subscription items
+  - Support for various subscription items such as milk, vegetables, and more
+- **Subscription Management**
+  - Create, modify, and manage subscriptions
+  - Recurring subscription options available
+  - Vendor-specific subscription statuses
+- **Notifications**
+  - Users receive notifications when subscriptions are created or deliveries begin
+- **Tenant-Based Model**
+  - Multi-tenant architecture, allowing multiple vendors to operate independently
+  - Each tenant (vendor) manages their products, prices, and subscriptions
 
-# Security
-- Stateless SEssion Management
-- The API is secured using JSON Web Tokens (JWT) handled by Auth0. To access the API, you will need to obtain a JWT by authenticating with the /login endpoint. The JWT should then be passed in the Authorize option available in the Swagger-ui.
-- Access Token (Short Lived TOken)
-- Refresh Token (Long Lived Token)
-- Cusomer Roles
-- Vendor Roles
+## Technologies Used
 
-  ### Example:
-  - Authorization: <your_jwt>
+- **Backend**: Spring Boot 3.2 ,Java 21
+- **Database**: PostgreSQL (supports multi-tenant data management)
+- **Caching**: InMemory (used for tracking OTP attempts and other caching needs)
+- **Security**: Spring Security for managing authentication, token-based access control
+- **Messaging**: SMS-based OTP service for user verification
+- **API Documentation**: Swagger
 
-# Technologies:
-- Java 21
-- Spring Boot 3.2.1
-- Maven
-- PostgraSQL
-- Spring Data JPA
-- Spring Security
-- JSON Web Tokens (JWT)
-- Auth0
-- Swagger UI
-- Event Listner
+## Setup Instructions
 
-# Running the app
-1. Install Java21
-2. Install PostgreSQL and Create a schema with "multi_vendor_subs"
-3. Clone the repository: git clone https://github.com/s713278/ECommerceApp.git 
-4. Import the project into STS:
-  - Click File > Import...
-  - Select Maven > Existing Maven Projects and click Next
-  - Browse to the project directory and click Finish
-3. Update the values in application.properties with your PostgreSQL database connection details.
-4. Run the app: Right-click the project in the Package Explorer and click Run As > Spring Boot App.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/yourusername/multi-vendor-subscription-app.git
+   cd multi-vendor-subscription-app
+   ```
 
-# API documentation
-- API documentation is available via Swagger UI at http://localhost:8080/api/swagger-ui/index.html
+2. **Configure environment variables:**
+   - Set up database details, Cache configurations, and API keys for SMS/OTP services.
 
-# ER-Diagram
-![multi_ecommerce - public](https://github.com/user-attachments/assets/c7ef19b4-fe5d-4318-b277-40f4b4776cca)
+3. **Run the application:**
+   ```bash
+   ./mvnw spring-boot:run
+   ```
 
-# Swagger-ui
-<img width="947" alt="Swagger-UI" src="https://user-images.githubusercontent.com/101395494/216388614-f8eed33e-cbbb-4cfa-997e-b76674bbb465.png">
+4. **Access API documentation (Swagger UI):**
+   Navigate to `http://localhost:8080/api/swagger-ui.html` to explore available API endpoints.
 
-# Rest Services
-![image](https://github.com/s713278/ECommerceApp/assets/14287419/a9188676-3211-4eb3-8a3d-f13ed18536d7)
-![image](https://github.com/s713278/ECommerceApp/assets/14287419/ead9e229-37aa-4ee2-995d-15db39d9264a)
-![image](https://github.com/s713278/ECommerceApp/assets/14287419/c01491ba-ef2e-48ed-8ef6-7b019cb0965e)
-![image](https://github.com/s713278/ECommerceApp/assets/14287419/5c279941-59dd-492d-b7a1-067edd5a166b)
+## API Endpoints
 
-# Thank You
+- **User Sign Up**: `POST /api/v1/signup`
+- **OTP Verification**: `POST /api/v1/verify-otp`
+- **Vendor Listing**: `GET /api/v1/vendors`
+- **Create Subscription**: `POST /api/v1/subscriptions`
+
+## Future Enhancements
+
+- Integration with payment gateways
+- Advanced reporting for vendors
+- Mobile app support for users and vendors
+-  Redis can be used for tracking OTP attempts and other caching needs
