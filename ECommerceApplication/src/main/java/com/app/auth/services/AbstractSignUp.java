@@ -5,7 +5,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.app.config.GlobalConfig;
-import com.app.payloads.response.SignUpResponse;
+import com.app.payloads.response.SignUpDTO;
 import com.app.repositories.RepositoryManager;
 
 public abstract class AbstractSignUp<T> {
@@ -25,7 +25,7 @@ public abstract class AbstractSignUp<T> {
     @Autowired
     protected OTPService otpService;
 
-    public final SignUpResponse processSignUp(T user) {
+    public final SignUpDTO processSignUp(T user) {
         preSignUpOperations(user);
        var response= doSignUp(user);
         postSignUpOperations(user);
@@ -35,7 +35,7 @@ public abstract class AbstractSignUp<T> {
     protected void preSignUpOperations(T user) {
     }
 
-    protected abstract SignUpResponse doSignUp(T user);
+    protected abstract SignUpDTO doSignUp(T user);
 
     protected void postSignUpOperations(T user) {
         // Common post-sign-up operations like sending notifications

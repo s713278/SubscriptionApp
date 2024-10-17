@@ -14,27 +14,30 @@ public class AppConstants {
     public static final Long USER_ROLE_ID = 102L;
     public static final Long VENDOR_ROLE_ID = 103L;
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
-    public static final String[] PUBLIC_POST_URLS = { "/auth/signup/**" ,"/auth/signin","/auth/refresh",
-            "/vendor/*/subscription",
-            "/vendor/*/subscription/*","/vendor/*/customer/*"}; 
+    public static final String[] PUBLIC_POST_URLS = { "/v1/auth/signup/**" ,"/v1/auth/signin","/v1/auth/refresh",
+            "/v1/vendor/*/subscription",
+            "/v1/vendor/*/subscription/*","/v1/vendor/*/customer/*"};
     
     public static final String[] PUBLIC_GET_URLS = { "/v3/api-docs/**", "/swagger-ui/**", 
             "/api/store/*/categories", "/api/store/*/categories/*/products", 
             "/api/store/*/products", "/api/stores/*" ,
              "/vendor/*/subscription/*","/vendor/*/customer/*"};
     
-    public static final String[] USER_PUT_URLS = {"/users/*" };
-    public static final String[] USER_PATCH_URLS = {"/users/*" };
-    public static final String[] USER_GET_URLS = {"/auth/profile","/users/*","/users/*/vendor/*" };
-    
-    
-    public static final String[] ADMIN_URLS = { "/api/store/*/admin/**" };
+    public static final String[] USER_PUT_URLS = {"/v1/users/*" };
+    public static final String[] USER_PATCH_URLS = {"/v1/users/*" };
+    public static final String[] USER_GET_URLS = {"/v1/auth/profile","/v1/users/*","/v1/users/*/vendor/*" };
 
+    public static final String[] VENDOR_USER_SUB_POST_URLS = {"/v1/vendors/*/users/*/subs" };
+    public static final String[] VENDOR_USER_SUB_GET_URLS = {"/v1/vendors/*/users/*/subs/*" };
+    public static final String[] VENDOR_USER_SUB_DELETE_URLS = {"/v1/vendors/*/users/*/subs/*" };
+    public static final String[] VENDOR_USER_SUB_PATCH_URLS = {"/v1/vendors/*/users/*/subs/*" ,"/v1/vendors/*/users/*/subs/*/status" };
+
+    public static final String[] ADMIN_URLS = { "/api/store/*/admin/**" };
     public static final String[] VENDOR_URLS = { "/api/store/*" };
     
-    public static final String SIGN_UP_URL="/auth/signup/**";
-    public static final String SIGN_IN_URL="/auth/signin";
-    public static final String SIGN_OUT_URL="/auth/signout";
+    public static final String SIGN_UP_URL="/v1/auth/signup/**";
+    public static final String SIGN_IN_URL="/v1/auth/signin";
+    public static final String SIGN_OUT_URL="/v1/auth/signout";
     public static final String JSESSION_ID = "JSESSIONID";
     public static final String AUTHORIZATION_HEADER="Authorization";
     public static final String SECURITY_CONTEXT_PARAM="E-Commerce Application";

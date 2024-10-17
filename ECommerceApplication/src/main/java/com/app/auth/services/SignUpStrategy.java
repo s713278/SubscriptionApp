@@ -1,9 +1,9 @@
 package com.app.auth.services;
 
-import com.app.payloads.response.SignUpResponse;
+import com.app.payloads.response.SignUpDTO;
 
 public interface SignUpStrategy<T> {
 
-    SignUpResponse signUp(T signUpRequest);
+    SignUpDTO signUp(T signUpRequest);
 
 }

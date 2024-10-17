@@ -13,7 +13,8 @@ public class SubscriptionStatusRequest {
     private Long vendorId;
     @JsonIgnore
     private Long subscriptionId;
-    @NotNull(message = "Customer ID is required") private Long customerId;
+    @JsonIgnore
+    private Long customerId;
     @NotNull(message = "Customer ID is required") private SubscriptionStatus status;
     // Getters and Setters
 }

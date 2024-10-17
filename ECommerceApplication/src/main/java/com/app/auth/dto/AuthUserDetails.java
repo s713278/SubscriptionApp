@@ -2,6 +2,7 @@ package com.app.auth.dto;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -29,6 +30,8 @@ public class AuthUserDetails implements UserDetails {
     private String email;
     private Long mobile;
     private String password;
+    private boolean isMobileVerified;
+    private boolean isEmailVerified;
     private List<GrantedAuthority> authorities;
 
     public AuthUserDetails(Customer user) {
@@ -36,6 +39,8 @@ public class AuthUserDetails implements UserDetails {
         this.password = user.getPassword();
         this.mobile= user.getMobile();
         this.id=user.getId();
+        isMobileVerified = !Objects.isNull(user.getMobileVerified()) && user.getMobileVerified();
+        isEmailVerified = !Objects.isNull(user.getEmail()) && user.getEmailVerified();
         log.info("User mobile {} and role {}", user.getMobile(), user.getRoles());
         this.authorities = user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getRoleName()))
                 .collect(Collectors.toList());

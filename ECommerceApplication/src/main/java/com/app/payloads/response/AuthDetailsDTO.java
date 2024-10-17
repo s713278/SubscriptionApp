@@ -1,12 +1,14 @@
 package com.app.payloads.response;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 @Builder
-public class SignInResponse {
+public class AuthDetailsDTO {
 
     @JsonProperty("user_id")
     private Long userId;
@@ -26,4 +28,9 @@ public class SignInResponse {
     @JsonProperty("refresh_token")
     @Schema(description = "Long lived refresh Token", example = "sdfasdAAASDF.SDFSDFSAFADFSFD.JKOJIJH")
     private String refreshToken;
+
+    private String message;
+
+    @JsonProperty("active_subscriptions")
+    private List<?> activeSubscriptions;
 }

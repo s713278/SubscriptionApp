@@ -4,19 +4,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-@Schema(description = "Request object for customer registration")
+@Schema(description = "Request for user registration")
 public class SignUpRequest {
 
     @NotBlank(message = "First name is required.")
     @JsonProperty("first_name")
-    @Schema(description = "Customer's first name", example = "Rama")
+    @Schema(description = "First name", example = "Rama")
     private String firstName;
 
-    @Schema(description = "Customer's password", example = "StrongP@ssword123")
-    @NotBlank(message = "First name is required.")
+    @Schema(description = "Password", example = "P@ssword123")
+    @Size(min = 4,max = 20,message = "Password should be in the range of 4 to 20 characters.")
+    @NotBlank(message = "Password is required.")
     @JsonProperty("password")
     private String password;
 }

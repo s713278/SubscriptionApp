@@ -3,7 +3,7 @@ package com.app.auth.services;
 import org.springframework.stereotype.Component;
 
 import com.app.payloads.request.EmailSignUpRequest;
-import com.app.payloads.response.SignUpResponse;
+import com.app.payloads.response.SignUpDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -13,7 +13,7 @@ public class EmailSignUpStrategy implements SignUpStrategy<EmailSignUpRequest> {
     
     private final EmailSignUpService emailSignUpService;
     @Override
-    public SignUpResponse signUp(EmailSignUpRequest request) {
+    public SignUpDTO signUp(EmailSignUpRequest request) {
         return emailSignUpService.processSignUp(request);
     }
 

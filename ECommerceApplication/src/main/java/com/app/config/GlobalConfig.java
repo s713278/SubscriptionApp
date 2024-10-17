@@ -16,6 +16,7 @@ public class GlobalConfig {
 
     private JwtConfig jwtConfig;
     private CustomerConfig customerConfig;
+    private SmsApiConfig smsApiConfig;
     
     @Getter
     @Setter
@@ -23,7 +24,7 @@ public class GlobalConfig {
         private Long otpExpTime;
         private Long emailTokenExp;
         private List<String> addressValidKeys;
-
+        private boolean otpVerificationEnabled;
     }
 
     public static class VendorConfig {
@@ -37,5 +38,14 @@ public class GlobalConfig {
         private String secret;
         private Long accessExpTime;
         private Long refreshExpTime;
+    }
+
+    @Setter
+    @Getter
+    public static class SmsApiConfig{
+        private String apiKey;
+        private String route;
+        private String url;
+        private String flash;
     }
 }

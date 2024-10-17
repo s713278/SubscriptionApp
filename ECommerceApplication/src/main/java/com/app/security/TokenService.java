@@ -20,9 +20,11 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Component
+@Slf4j
 public class TokenService {
 
     private static final String NSR_STORES = "NSR Stores";
@@ -31,18 +33,24 @@ public class TokenService {
     
     private final RepositoryManager repositoryManager;
 
-    public String generateToken(AuthUserDetails authUserDetails) throws IllegalArgumentException, JWTCreationException {
-        String token = JWT.create()
-                .withSubject(String.valueOf(authUserDetails.getId())) // User ID
-                .withIssuedAt(Instant.now())
-                .withExpiresAt(Instant.now()
-                        .plusSeconds(globalConfig.getJwtConfig().getRefreshExpTime()))
-                .withClaim("roles",
-                        authUserDetails.getAuthorities().stream().map(auth -> auth.getAuthority())
-                                .collect(Collectors.joining(String.valueOf(authUserDetails.getId()),"[", "]")))
-                .withIssuer(NSR_STORES)
-                .sign(Algorithm.HMAC256(globalConfig.getJwtConfig().getSecret()));
-        return token;
+    public String generateToken(AuthUserDetails authUserDetails) {
+        try{
+            String token = JWT.create()
+                    .withSubject(String.valueOf(authUserDetails.getId())) // User ID
+                    .withIssuedAt(Instant.now())
+                    .withExpiresAt(Instant.now()
+                            .plusSeconds(globalConfig.getJwtConfig().getRefreshExpTime()))
+                    .withClaim("roles",
+                            authUserDetails.getAuthorities().stream().map(auth -> auth.getAuthority())
+                                    .collect(Collectors.joining(String.valueOf(authUserDetails.getId()),"[", "]")))
+                    .withIssuer(NSR_STORES)
+                    .sign(Algorithm.HMAC256(globalConfig.getJwtConfig().getSecret()));
+            return token;
+        }catch (Exception e){
+            log.error("Unable to generate access token for user: {}",authUserDetails.getId(),e);
+            throw new APIException(APIErrorCode.API_401,String.format("Unable to generate access token for user :%s",authUserDetails.getId()));
+        }
+
     }
     
     /**

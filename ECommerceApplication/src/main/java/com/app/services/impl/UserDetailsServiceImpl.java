@@ -33,7 +33,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
              throw new APIException(APIErrorCode.API_419,e.getMessage());
         }
         if (user.isEmpty()) {
-             throw new APIException(APIErrorCode.API_401,"User not existed in system.");
+             throw new APIException(APIErrorCode.API_401,"Incorrect Login Details!");
         }
         return user.map(AuthUserDetails::new).get();
     }

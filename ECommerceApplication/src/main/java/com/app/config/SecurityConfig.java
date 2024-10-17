@@ -63,7 +63,13 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.PATCH, AppConstants.USER_PATCH_URLS).hasAnyAuthority("USER")
                             .requestMatchers(HttpMethod.PUT, AppConstants.USER_PUT_URLS).hasAnyAuthority("USER")
                             .requestMatchers(HttpMethod.GET, AppConstants.USER_GET_URLS)
-                            .hasAnyAuthority("USER", "VENDOR", "ADMIN")
+                            .hasAnyAuthority("USER", "ADMIN")
+
+                            // User and Vendor level access
+                            .requestMatchers(HttpMethod.PATCH, AppConstants.VENDOR_USER_SUB_PATCH_URLS).hasAnyAuthority("USER", "VENDOR")
+                            .requestMatchers(HttpMethod.POST, AppConstants.VENDOR_USER_SUB_POST_URLS).hasAnyAuthority("USER", "VENDOR")
+                            .requestMatchers(HttpMethod.DELETE, AppConstants.VENDOR_USER_SUB_DELETE_URLS).hasAnyAuthority("USER", "VENDOR")
+                            .requestMatchers(HttpMethod.GET, AppConstants.VENDOR_USER_SUB_GET_URLS).hasAnyAuthority("USER", "VENDOR")
 
                             // Admin level access
                             .requestMatchers(HttpMethod.POST, AppConstants.VENDOR_URLS)

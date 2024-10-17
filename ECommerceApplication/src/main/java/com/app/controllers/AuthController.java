@@ -32,7 +32,7 @@ import com.app.payloads.request.ResendOtpRequest;
 import com.app.payloads.request.ResetPasswordRequest;
 import com.app.payloads.request.SignUpRequest;
 import com.app.payloads.response.APIResponse;
-import com.app.payloads.response.SignInResponse;
+import com.app.payloads.response.AuthDetailsDTO;
 import com.app.security.RefreshTokenService;
 import com.app.security.TokenService;
 import com.app.services.AuthService;
@@ -51,7 +51,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/v1/auth")
 @Tag(name = "1. User Authentication")
 public class AuthController {
 
@@ -65,8 +65,21 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Operation(summary = "Signup with mobile number", description = "Registers a new user by providing their first name, mobile number, and password.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Customer registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = APIResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request due to validation errors", content = @Content(mediaType = "application/json", schema = @Schema(implementation = APIResponse.class))) })
+    @PostMapping("/signup/mobile")
+    public ResponseEntity<APIResponse<?>> mobileSignUp(@Valid @RequestBody MobileSignUpRequest signUpRequest) {
+            log.info("Received sign-up request for mobile: {}", signUpRequest.getMobile());
+            SignUpStrategy<MobileSignUpRequest> signUpStrategy = signUpStrategyFactory
+                    .getStrategy("mobileSignUpStrategy");
+            var response = signUpStrategy.signUp(signUpRequest);
+            var appResponse = APIResponse.success(HttpStatus.CREATED.value(), response);
+            return new ResponseEntity<>(appResponse, HttpStatus.CREATED);
+    }
 
-    @Operation(summary  = "SignIn with mobile")
+    @Operation(summary  = "SignIn with mobile number")
     @PostMapping("/signin")
     public ResponseEntity<APIResponse<?>> signIn(@Valid @RequestBody MobileSignInRequest signInRequest) {
         log.info("Received sign-in request for mobile: {}", signInRequest.getMobile());
@@ -74,10 +87,7 @@ public class AuthController {
                 signInRequest.getMobile(), signInRequest.getPassword());
         var authentication = authenticationManager.authenticate(authCredentials);
         var userDetails = (AuthUserDetails) authentication.getPrincipal();
-        String accessToken = tokenService.generateToken(userDetails);
-        String refreshToken = refreshTokenService.createRefreshToken(userDetails);
-        SignInResponse signInResponse = SignInResponse.builder().userToken(accessToken).refreshToken(refreshToken)
-                .userId(userDetails.getId()).build();
+        AuthDetailsDTO signInResponse =authService.getSignInResponse(userDetails);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return new ResponseEntity<>(APIResponse.success(signInResponse), HttpStatus.OK);
     }
@@ -103,26 +113,9 @@ public class AuthController {
         }
     }
 
-    @Operation(summary = "Signup with Mobile", description = "Registers a new user by providing their first name, mobile number, and password.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Customer registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = APIResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Bad request due to validation errors", content = @Content(mediaType = "application/json", schema = @Schema(implementation = APIResponse.class))) })
-    @PostMapping("/signup/mobile")
-    public ResponseEntity<APIResponse<?>> mobileSignUp(@Valid @RequestBody MobileSignUpRequest signUpRequest) {
-        try {
-            log.info("Received sign-up request for mobile: {}", signUpRequest.getMobile());
-            SignUpStrategy<MobileSignUpRequest> signUpStrategy = signUpStrategyFactory
-                    .getStrategy("mobileSignUpStrategy");
-            var response = signUpStrategy.signUp(signUpRequest);
-            var appResponse = APIResponse.success(HttpStatus.CREATED.value(), response);
-            return new ResponseEntity<>(appResponse, HttpStatus.CREATED);
-        } catch (Exception e) {
-            log.error("Error during sign-up for email: {}: {}", signUpRequest.getMobile(), e.getMessage());
-            throw new APIException(APIErrorCode.API_417,e.getMessage());
-        }
-    }
 
-    @Operation(summary  = "Veriifcation with OTP")
+
+    @Operation(summary  = "Verification with OTP")
     @PostMapping("/verify-otp")
     public ResponseEntity<?> verifyOtp(@Valid @RequestBody OtpVerificationRequest otpRequest) {
         try {
@@ -168,7 +161,7 @@ public class AuthController {
     }
 
     // Account activation endpoint
-    @Operation(summary = "Actication with Token")
+    @Operation(summary = "Activation with Token")
     @GetMapping("/activate/{token}")
     public ResponseEntity<?> activateAccount(@PathVariable String token) {
         boolean isActivated = authService.activateAccount(token);

@@ -35,13 +35,14 @@ import lombok.RequiredArgsConstructor;
 @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
 @RestController
 @Tag(name = "2. User Management")
-@RequestMapping("/users")
+@RequestMapping("/v1/users")
 @RequiredArgsConstructor
 public class CustomerController {
         
     private final UserService userService;
     private final SubscriptionService subscriptionService;
 
+    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN'))")
     @GetMapping("/admin")
     public ResponseEntity<UserResponse> getUsers(
             @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
@@ -52,14 +53,15 @@ public class CustomerController {
         return new ResponseEntity<UserResponse>(userResponse, HttpStatus.FOUND);
     }
 
+    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
     @Operation(summary = "User Information")
-    @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
     @GetMapping("/{userId}")
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
     public ResponseEntity<APIResponse<?>> getUser(@PathVariable Long userId) {
         return ResponseEntity.ok(APIResponse.success(userService.getUserInfo(userId)));
     }
 
+
+    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
     @Operation(summary = "Update User Information")
     @PutMapping("/{userId}")
     public ResponseEntity<CustomerDTO> updateUser(@RequestBody CustomerDTO userDTO, @PathVariable Long userId) {
@@ -67,10 +69,10 @@ public class CustomerController {
         return new ResponseEntity<CustomerDTO>(updatedUser, HttpStatus.OK);
     }
 
+    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
     @DeleteMapping("/{userId}")
     public ResponseEntity<String> deleteUser(@PathVariable Long userId) {
         String status = userService.deleteUser(userId);
-
         return new ResponseEntity<String>(status, HttpStatus.OK);
     }
 
@@ -90,7 +92,7 @@ public class CustomerController {
             }
             """)))
     @PatchMapping("/{userId}")
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
+    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
     public ResponseEntity<APIResponse<?>> updateAddress(@PathVariable Long userId,
             @RequestBody Map<String, String> address) {
         userService.updateUserAddress(userId, address);
@@ -99,7 +101,8 @@ public class CustomerController {
 
     @Operation(summary = "All Subscriptions By Vendor")
     @GetMapping("/{userId}/vendor/{vendorId}")
-    public ResponseEntity<APIResponse<?>> fetchSubsByUserAndVendor(@PathVariable Long vendorId,
+    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
+    public ResponseEntity<APIResponse<?>> fetchSubsByUserAndVendor( @PathVariable Long vendorId,
             @PathVariable Long userId) {
         var subscriptions = subscriptionService.fetchSubsByUserAndVendor(userId, vendorId);
         return ResponseEntity.ok(APIResponse.success(subscriptions));

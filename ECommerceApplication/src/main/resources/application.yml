@@ -42,8 +42,10 @@ application:
     refresh_exp_time: 7776000000  #Stored securely on the client.
   vendor_config:
   customer_config:
-    otp_exp_time: 60  #In secods
-    otp_no_of_retry: 3  #In secods
+    otp_verification_enabled: false
+    verify_otp: false
+    otp_exp_time: 60  #In seconds
+    otp_no_of_retry: 3  #In seconds
     email_token_exp: 3600
     address_valid_keys:
       - address1
@@ -53,3 +55,8 @@ application:
       - zipCode
       - state
       - country
+  sms_api_config:
+    api_key:
+    route: q #otp q-->Quick SMS
+    url:
+    flash: 1

@@ -9,9 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
 import jakarta.persistence.CascadeType;
@@ -37,25 +35,26 @@ import lombok.Setter;
 @Table(name = "tb_customer")
 @Getter
 @Setter
-public class Customer implements Serializable {
+public class Customer  extends  AbstractAuditingEntity<Long> implements Serializable {
 
     private static final long serialVersionUID = -8493127251609026343L;
 
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Size(min = 4, max = 20, message = "First Name must be between 4 and 20 characters long")
-    @Pattern(regexp = "^[a-zA-Z]*$", message = "First Name must not contain numbers or special characters")
+    @Pattern(regexp = "^[a-zA-Z\\s]*$", message = "First Name must not contain numbers or special characters")
     private String firstName;
 
     private String lastName;
 
     @Email
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = true)
     private String email;
 
-    @Column(name = "", unique = true, nullable = false)
+    @Column(name = "mobile", unique = true, nullable = false)
     private Long mobile;
 
     private String password;
@@ -70,10 +69,6 @@ public class Customer implements Serializable {
 
     @OneToOne(mappedBy = "user", cascade = { CascadeType.ALL },fetch = FetchType.LAZY)
     private Cart cart;
-
-    public Long getId() {
-        return this.id;
-    }
 
     // One user can manage many stores
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -94,8 +89,8 @@ public class Customer implements Serializable {
 
     private LocalDateTime otpExpiration;
 
-    @Column(name="mobile_verifed")
-    public Boolean mobileVerifed;
+    @Column(name="mobile_verified")
+    public Boolean mobileVerified = false;
 
     public void setEmail(String email) {
         this.email = email.trim().toLowerCase();
@@ -105,17 +100,10 @@ public class Customer implements Serializable {
         return this.email;
     }
 
-    @CreationTimestamp
-    @Column(name = "created_date", updatable = false)
-    private LocalDateTime createdDate;
-
-    @UpdateTimestamp
-    @Column(name = "last_modified_date")
-    private LocalDateTime lastModifiedDate;
     
     @ColumnDefault(value = "false")
     @Column(name="email_verified")
-    private Boolean emailVerified;
+    private Boolean emailVerified = false;
     
     @Column(name="email_activation_token")
     private String emailActivationToken;

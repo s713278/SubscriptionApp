@@ -19,7 +19,7 @@ import com.app.event.EmailActivationEvent;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.payloads.request.EmailSignUpRequest;
-import com.app.payloads.response.SignUpResponse;
+import com.app.payloads.response.SignUpDTO;
 import com.app.repositories.RepositoryManager;
 
 @Transactional
@@ -62,7 +62,7 @@ public class EmailSignUpService extends AbstractSignUp<EmailSignUpRequest> {
 
     @Transactional
     @Override
-    protected SignUpResponse doSignUp(EmailSignUpRequest request) {
+    protected SignUpDTO doSignUp(EmailSignUpRequest request) {
         // Create a new user
         Customer customer = new Customer();
         customer.setFirstName(request.getFirstName());
@@ -87,7 +87,7 @@ public class EmailSignUpService extends AbstractSignUp<EmailSignUpRequest> {
         customer = repoManager.getCustomerRepo().save(customer);
         request.setEmailActivationtoken(activationToken);
         request.setOtp(otp);
-        return new SignUpResponse(customer.getId(),"Email registered successdully!");
+        return new SignUpDTO(customer.getId(),"Email registered successdully!");
     }
 
     private boolean isValidEmail(String email) {

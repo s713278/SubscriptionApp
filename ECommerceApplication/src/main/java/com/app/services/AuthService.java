@@ -1,16 +1,22 @@
 package com.app.services;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.app.auth.dto.AuthUserDetails;
+import com.app.config.GlobalConfig;
 import com.app.entites.Customer;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.payloads.request.OtpVerificationRequest;
+import com.app.payloads.response.AuthDetailsDTO;
 import com.app.repositories.CustomerRepo;
+import com.app.security.RefreshTokenService;
+import com.app.security.TokenService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +27,10 @@ public class AuthService {
     private final CustomerRepo customerRepo;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final TokenService tokenService;
+    private final RefreshTokenService refreshTokenService;
+    private final GlobalConfig globalConfig;
 
     public String verifyOtp(OtpVerificationRequest request) {
         // Find the user by email
@@ -82,5 +92,21 @@ public class AuthService {
             return true;
         }
         return false;
+    }
+
+    public AuthDetailsDTO getSignInResponse(AuthUserDetails userDetails){
+        var responseBuilder = AuthDetailsDTO.builder();
+        if(!globalConfig.getCustomerConfig().isOtpVerificationEnabled() || userDetails.isMobileVerified()){
+            String accessToken = tokenService.generateToken(userDetails);
+            String refreshToken = refreshTokenService.createRefreshToken(userDetails);
+            return responseBuilder.userToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .activeSubscriptions(List.of())
+                    .userId(userDetails.getId()).build();
+        }else{
+            return responseBuilder.message("Mobile number is not verified,Please verify")
+                    .userId(userDetails.getId()).build();
+        }
+
     }
 }

@@ -16,7 +16,8 @@ public class UpdateSubscriptionRequest {
     @JsonIgnore
     private Long subscriptionId;
 
-     @NotNull(message = "Customer ID is required") private Long customerId;
+    @JsonIgnore
+   private Long customerId;
 
     @JsonIgnore
     private Long vendorId;

@@ -12,8 +12,8 @@ import lombok.Data;
 
 @Data
 public class SubscriptionRequest {
-    
-     @NotNull(message = "Customer ID is required") @JsonProperty("customer_id")
+
+    @JsonIgnore
     private Long customerId;
 
     @JsonIgnore

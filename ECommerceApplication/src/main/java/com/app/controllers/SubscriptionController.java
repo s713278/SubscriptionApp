@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.config.AppConstants;
 import com.app.entites.Subscription;
 import com.app.payloads.request.SubscriptionRequest;
 import com.app.payloads.request.SubscriptionStatusRequest;
@@ -20,15 +21,17 @@ import com.app.services.AbstractCreateSubscriptionService;
 import com.app.services.SubscriptionService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 
+@SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
 @Tag(name = "3. Subscription Management")
 @RestController
-@RequestMapping("/vendor/{vendorId}/subscription")
+@RequestMapping("/v1/vendors/{vendorId}/users/{userId}/subs")
 @Slf4j
 @RequiredArgsConstructor
 public class SubscriptionController {
@@ -36,13 +39,14 @@ public class SubscriptionController {
     private final SubscriptionService subscriptionService;
     private final AbstractCreateSubscriptionService createSubscriptionService;
 
-    //@SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
-    @Operation(description = "Create a new subscription")
+    @Operation(summary = "Create Subscription")
     @PostMapping("/")
     public ResponseEntity<SubscriptionResponse> createSubscription(
             @PathVariable Long vendorId,
+            @PathVariable Long userId,
             @Valid @RequestBody SubscriptionRequest request) {
         request.setVendorId(vendorId);
+        request.setCustomerId(userId);
         log.debug("Entered create subscription for customer {}",request.getCustomerId());
         SubscriptionResponse subscription = createSubscriptionService.createSubscription(request);
      // Return the response wrapped in ResponseEntity with HTTP status 201 (Created)
@@ -51,11 +55,12 @@ public class SubscriptionController {
 
 
     @PatchMapping("/{subId}")
-    @Operation(description  = "Update an existing subscription")
-    public ResponseEntity<SubscriptionResponse> updateSubscription(@PathVariable Long vendorId,@PathVariable Long subId,
+    @Operation(summary  = "Update Subscription")
+    public ResponseEntity<SubscriptionResponse> updateSubscription(@PathVariable Long vendorId, @PathVariable Long userId,@PathVariable Long subId,
             @Valid @RequestBody UpdateSubscriptionRequest request) {
         request.setSubscriptionId(subId);
         request.setVendorId(vendorId);
+        request.setCustomerId(userId);
         SubscriptionResponse subscription =subscriptionService.updateSubscription(request);
         return new ResponseEntity<>(subscription,HttpStatus.OK);
     }
@@ -63,24 +68,26 @@ public class SubscriptionController {
     @PatchMapping("/{subId}/status")
     @Operation(description  = "Update subscription status")
     public ResponseEntity<SubscriptionResponse> updateSubscriptionStatus(@PathVariable Long vendorId,
+                                                                         @PathVariable Long userId,
             @PathVariable Long subId,
             @Valid @RequestBody SubscriptionStatusRequest request) {
         request.setSubscriptionId(subId);
         request.setVendorId(vendorId);
+        request.setCustomerId(userId);
         SubscriptionResponse subscription =subscriptionService.updateSubscriptionStatus(request);
         return new ResponseEntity<>(subscription,HttpStatus.OK);
     }
 
     
     @GetMapping("/{subId}")
-    @Operation(description  = "Fetch subscription details")
-    public ResponseEntity<Subscription> fetchSubscription(@PathVariable Long subId) {
+    @Operation(summary  = "Fetch Subscription Details")
+    public ResponseEntity<Subscription> fetchSubscription(@PathVariable Long subId,@PathVariable Long userId) {
         var sub = subscriptionService.fetchSubscription(subId);
         return ResponseEntity.ok(sub);
     }
     
     @DeleteMapping("/{subId}")
-    @Operation(description  = "Delete a subscription by ID")
+    @Operation(summary  = "Delete a subscription")
     public ResponseEntity<String> deleteSubscription(@PathVariable Long subId) {
         subscriptionService.deleteSubscription(subId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Subscription deleted successfully");
