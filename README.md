@@ -39,16 +39,18 @@
 - Event Listner
 
 # Running the app
-1. Clone the repository: git clone https://github.com/s713278/ECommerceApp.git 
-2. Import the project into STS:
+1. Install Java21
+2. Install PostgreSQL and Create a schema with "multi_vendor_subs"
+3. Clone the repository: git clone https://github.com/s713278/ECommerceApp.git 
+4. Import the project into STS:
   - Click File > Import...
   - Select Maven > Existing Maven Projects and click Next
   - Browse to the project directory and click Finish
-3. Update the values in application.properties with your MySQL database connection details.
+3. Update the values in application.properties with your PostgreSQL database connection details.
 4. Run the app: Right-click the project in the Package Explorer and click Run As > Spring Boot App.
 
 # API documentation
-- API documentation is available via Swagger UI at http://localhost:8080/swagger-ui/index.html
+- API documentation is available via Swagger UI at http://localhost:8080/api/swagger-ui/index.html
 
 # ER-Diagram
 ![multi_ecommerce - public](https://github.com/user-attachments/assets/c7ef19b4-fe5d-4318-b277-40f4b4776cca)
