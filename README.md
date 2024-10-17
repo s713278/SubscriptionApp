@@ -36,8 +36,8 @@ This is a **multi-vendor subscription-based application** designed for managing 
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/multi-vendor-subscription-app.git
-   cd multi-vendor-subscription-app
+   git clone https://github.com/s713278/ECommerceApp.git
+   cd ECommerceApp
    ```
 
 2. **Configure environment variables:**
