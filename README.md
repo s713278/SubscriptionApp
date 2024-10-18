@@ -64,3 +64,20 @@ This is a **multi-vendor subscription-based application** designed for managing 
 - Advanced reporting for vendors
 - Mobile app support for users and vendors
 -  Redis can be used for tracking OTP attempts and other caching needs
+## Swagger API Reference
+
+![image](https://github.com/user-attachments/assets/1b34ff24-e681-441e-8161-6ccf0c7752e7)
+
+![image](https://github.com/user-attachments/assets/c3b0e3ae-29c7-413d-bad2-1b18b84e1cf1)
+
+
+![image](https://github.com/user-attachments/assets/badbe07f-73db-4974-8a7f-31544a795240)
+
+![image](https://github.com/user-attachments/assets/424a1bce-d234-4869-b049-2903816d4bbb)
+
+![image](https://github.com/user-attachments/assets/b18df813-4423-4d1d-9755-b082b5e021fe)
+
+
+
+
+
