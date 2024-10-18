@@ -27,7 +27,7 @@ This is a **multi-vendor subscription-based application** designed for managing 
 
 - **Backend**: Spring Boot 3.2 ,Java 21
 - **Database**: PostgreSQL (supports multi-tenant data management)
-- **Caching**: InMemory (used for tracking OTP attempts and other caching needs)
+- **Caching**: InMemory/Redis (used for tracking OTP attempts and other caching needs)
 - **Security**: Spring Security for managing authentication, token-based access control
 - **Messaging**: SMS-based OTP service for user verification
 - **API Documentation**: Swagger
@@ -53,17 +53,18 @@ This is a **multi-vendor subscription-based application** designed for managing 
 
 ## API Endpoints
 
-- **User Sign Up**: `POST /api/v1/signup`
-- **OTP Verification**: `POST /api/v1/verify-otp`
-- **Vendor Listing**: `GET /api/v1/vendors`
+- **User Sign Up**: `POST /api/v1/auth/signup`
+- **OTP Verification**: `POST /api/v1/auth/verify-otp`
+- **Vendor Listing**: `GET /api/v1/auth/vendors`
 - **Create Subscription**: `POST /api/v1/subscriptions`
 
 ## Future Enhancements
-
+- Integrae with Social Login
 - Integration with payment gateways
 - Advanced reporting for vendors
 - Mobile app support for users and vendors
--  Redis can be used for tracking OTP attempts and other caching needs
+- Promotions and Discounts
+- Cross Selling
 ## Swagger API Reference
 
 ![image](https://github.com/user-attachments/assets/1b34ff24-e681-441e-8161-6ccf0c7752e7)
