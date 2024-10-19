@@ -1,6 +1,12 @@
 package com.app.config;
 
+
 public class AppConstants {
+
+    // Regular expression to validate a mobile number (Indian mobile number format example)
+    public static final String MOBILE_REGEX = "^\\d{10}$";
+    // Updated regular expression to validate an email format, preventing consecutive dots anywhere in the domain
+    public static final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*\\.[a-zA-Z]{2,}$";
 
     public static final String PAGE_NUMBER = "0";
     public static final String PAGE_SIZE = "2";
@@ -14,7 +20,7 @@ public class AppConstants {
     public static final Long USER_ROLE_ID = 102L;
     public static final Long VENDOR_ROLE_ID = 103L;
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
-    public static final String[] PUBLIC_POST_URLS = { "/v1/auth/signup/**" ,"/v1/auth/signin","/v1/auth/refresh",
+    public static final String[] PUBLIC_POST_URLS = { "/v1/auth/**",
             "/v1/vendor/*/subscription",
             "/v1/vendor/*/subscription/*","/v1/vendor/*/customer/*"};
     

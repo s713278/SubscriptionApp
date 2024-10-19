@@ -14,7 +14,8 @@ public enum APIErrorCode {
     API_418(HttpStatus.EXPECTATION_FAILED, "Customer subscription creation failed"),
     API_419(HttpStatus.EXPECTATION_FAILED, "Unable to process the request at this time,Please try after sometime."),
     API_420(HttpStatus.EXPECTATION_FAILED, "Unable to verify OTP."),
-    API_421(HttpStatus.EXPECTATION_FAILED, "Unable to update address");
+    API_421(HttpStatus.EXPECTATION_FAILED, "Unable to update address"),
+    API_429(HttpStatus.TOO_MANY_REQUESTS, " Maximum attempts exceeded. Please try again later.");
 
     private final HttpStatus httpStatus;
     private final String userMessage;

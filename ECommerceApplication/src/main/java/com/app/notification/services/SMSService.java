@@ -26,7 +26,7 @@ public class SMSService {
     private final ObjectMapper objectMapper;
     @Async
     public void sendOrderNotification(Long mobile, Order order) {
-        log.info("User order :#{} notification will be sent to mobile number : {}",order.getOrderId(),mobile);
+        log.info("User order :#{} notification will be sent to mobile number : {}",order.getId(),mobile);
     }
 
     @Async

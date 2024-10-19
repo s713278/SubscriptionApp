@@ -20,9 +20,9 @@ import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.payloads.CartDTO;
-import com.app.payloads.CustomerDTO;
 import com.app.payloads.SkuDTO;
 import com.app.payloads.UserDTO;
+import com.app.payloads.request.UpdateUserRequest;
 import com.app.payloads.response.UserResponse;
 import com.app.repositories.RepositoryManager;
 import com.app.services.validator.AddressValidator;
@@ -60,8 +60,8 @@ public class UserService {
             throw new APIException(APIErrorCode.API_400, "No User exists !!!");
         }
 
-        List<CustomerDTO> userDTOs = users.stream().map(user -> {
-            CustomerDTO dto = modelMapper.map(user, CustomerDTO.class);
+        List<UpdateUserRequest> userDTOs = users.stream().map(user -> {
+            UpdateUserRequest dto = modelMapper.map(user, UpdateUserRequest.class);
             /*
              * if (user.getAddresses().size() != 0) { dto.setAddress(modelMapper.map(
              * user.getAddresses().stream().findFirst().get(), AddressDTO.class)); }
@@ -69,7 +69,6 @@ public class UserService {
             CartDTO cart = modelMapper.map(user.getCart(), CartDTO.class);
             List<SkuDTO> skuDTOs = user.getCart().getCartItems().stream()
                     .map(item -> modelMapper.map(item.getSku(), SkuDTO.class)).collect(Collectors.toList());
-            dto.setCart(cart);
             // dto.getCart().setSkus(skuDTOs);
             return dto;
         }).collect(Collectors.toList());
@@ -85,10 +84,10 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public CustomerDTO getUserById(final Long userId) {
+    public UpdateUserRequest getUserById(final Long userId) {
         Customer user = repositoryManager.getCustomerRepo().findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
-        CustomerDTO userDTO = modelMapper.map(user, CustomerDTO.class);
+        UpdateUserRequest userDTO = modelMapper.map(user, UpdateUserRequest.class);
         /*
          * userDTO.setAddress(
          * modelMapper.map(user.getAddresses().stream().findFirst().get(),
@@ -98,48 +97,18 @@ public class UserService {
             CartDTO cart = modelMapper.map(user.getCart(), CartDTO.class);
             List<SkuDTO> skuDTOs = user.getCart().getCartItems().stream()
                     .map(item -> modelMapper.map(item.getSku(), SkuDTO.class)).collect(Collectors.toList());
-            userDTO.setCart(cart);
-
             // userDTO.getCart().setSkus(skuDTOs);
         }
         return userDTO;
     }
 
     @Transactional
-    public CustomerDTO updateUser(Long userId, CustomerDTO userDTO) {
+    public UpdateUserRequest updateUser(Long userId, UpdateUserRequest userDTO) {
         Customer user = repositoryManager.getCustomerRepo().findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
-        String encodedPass = passwordEncoder.encode(userDTO.getPassword());
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
-        /*
-         * if (userDTO.getAddress() != null) { String country =
-         * userDTO.getAddress().getCountry(); String state =
-         * userDTO.getAddress().getState(); String city =
-         * userDTO.getAddress().getCity(); String pincode =
-         * userDTO.getAddress().getPincode(); String street =
-         * userDTO.getAddress().getAddress1(); String buildingName =
-         * userDTO.getAddress().getAddress2();
-         * 
-         * Address address =
-         * addressRepo.findByCountryAndStateAndCityAndPincodeAndAddress1AndAddress2(
-         * country, state, city, pincode, street, buildingName);
-         * 
-         * if (address == null) { address = new Address(street, buildingName, city,
-         * state, country, pincode); address = addressRepo.save(address);
-         * user.setAddresses(List.of(address)); } }
-         */
-        userDTO = modelMapper.map(user, CustomerDTO.class);
-        /*
-         * userDTO.setAddress(
-         * modelMapper.map(user.getAddresses().stream().findFirst().get(),
-         * AddressDTO.class));
-         */
-        CartDTO cart = modelMapper.map(user.getCart(), CartDTO.class);
-        List<SkuDTO> skuDTOs = user.getCart().getCartItems().stream()
-                .map(item -> modelMapper.map(item.getSku(), SkuDTO.class)).collect(Collectors.toList());
-        userDTO.setCart(cart);
-        // userDTO.getCart().setSkus(skuDTOs);
+        userDTO = modelMapper.map(user, UpdateUserRequest.class);
         return userDTO;
     }
 

@@ -1,5 +1,6 @@
 package com.app.entites;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -36,9 +37,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "tb_subscription")
 public class Subscription  implements Serializable {
-    /**
-     * 
-     */
+    @Serial
     private static final long serialVersionUID = 2038580641079721330L;
 
     @Id

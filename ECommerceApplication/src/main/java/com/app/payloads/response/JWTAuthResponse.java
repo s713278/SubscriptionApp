@@ -1,6 +1,6 @@
 package com.app.payloads.response;
 
-import com.app.payloads.CustomerDTO;
+import com.app.payloads.request.UpdateUserRequest;
 
 import lombok.Data;
 
@@ -8,5 +8,5 @@ import lombok.Data;
 public class JWTAuthResponse {
     private String token;
 
-    private CustomerDTO user;
+    private UpdateUserRequest user;
 }

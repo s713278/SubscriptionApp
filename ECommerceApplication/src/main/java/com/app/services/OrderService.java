@@ -32,4 +32,6 @@ public interface OrderService {
     void createInitialOrder(Subscription subscription);
 
     void createOrderFromSubscription(Subscription subscription);
+
+    List<OrderDTO> getOrdersByUserId(final Long userId);
 }

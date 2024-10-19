@@ -17,6 +17,7 @@ public class GlobalConfig {
     private JwtConfig jwtConfig;
     private CustomerConfig customerConfig;
     private SmsApiConfig smsApiConfig;
+    private CacheConfig cacheConfig;
     
     @Getter
     @Setter
@@ -47,5 +48,14 @@ public class GlobalConfig {
         private String route;
         private String url;
         private String flash;
+    }
+
+    @Setter
+    @Getter
+    public static class CacheConfig{
+        private Long dbDataTTL;
+        private long dbDataMaxSize;
+        private Long otpTTL;
+        private long otpMax;
     }
 }

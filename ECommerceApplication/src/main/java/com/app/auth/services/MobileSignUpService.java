@@ -72,7 +72,7 @@ public class MobileSignUpService extends AbstractSignUp<MobileSignUpRequest> {
             customer.getRoles().add(role);
 
             // Generate OTP
-            String otp = otpService.generateOtp();
+            String otp = otpService.generateOtp(""+request.getMobile());
             customer.setOtp(otp);
             customer.setActive(true);
             if(globalConfig.getCustomerConfig().isOtpVerificationEnabled()) {

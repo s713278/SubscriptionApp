@@ -60,3 +60,8 @@ application:
     route: q #otp q-->Quick SMS
     url:
     flash: 1
+  cache_config: #In minutes
+    db_data_TTL: 360
+    db_data_max_size: 5000
+    otp_TTL: 5
+    otp_max_size: 2500

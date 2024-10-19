@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,12 +31,12 @@ public class VendorService  {
 
     private final VendorRepo storeRepo;
 
-    public APIResponse<VendorDTO> createStore(VendorDTO storeDTO) {
+    public APIResponse<VendorDTO> createVendor(VendorDTO storeDTO) {
         Vendor storeEntity = storeRepo.save(modelMapper.map(storeDTO, Vendor.class));
         return APIResponse.success(HttpStatus.CREATED.value(), modelMapper.map(storeEntity, VendorDTO.class));
     }
 
-    public StoreResponse getStore(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+    public StoreResponse fetchAllVendors(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
 
         Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
@@ -82,7 +83,7 @@ public class VendorService  {
 
     public List<VendorDTO> getAllVendors() {
         List<Vendor> stores = storeRepo.findAll();
-        if (stores.size() == 0) {
+        if (stores.isEmpty()) {
             throw new APIException(APIErrorCode.API_404, "No stores is created till now");
         }
         List<VendorDTO> storeDTOs = stores.stream().map(store -> modelMapper.map(store, VendorDTO.class))
@@ -92,6 +93,13 @@ public class VendorService  {
     
     public List<Vendor> getAllActiveVendors() {
         return storeRepo.findAll();
-       
+    }
+
+
+    @Cacheable(value = "vendors",key = "#vendorId")
+    public VendorDTO fetchVendorById(Long vendorId) {
+        var vendor = storeRepo.findById(vendorId)
+                .orElseThrow(()-> new APIException(APIErrorCode.API_404,"Vendor not existed!!"));
+        return modelMapper.map(vendor,VendorDTO.class);
     }
 }

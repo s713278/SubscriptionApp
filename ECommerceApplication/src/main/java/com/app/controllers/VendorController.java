@@ -25,8 +25,8 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "5. Vendor Management")
 @RestController
-@RequestMapping("/stores")
-@SecurityRequirement(name = "E-Commerce Application")
+@RequestMapping("/v1/vendors")
+@SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
 @RequiredArgsConstructor
 public class VendorController {
 
@@ -34,10 +34,10 @@ public class VendorController {
 
     @PostMapping("/")
     public ResponseEntity<APIResponse<VendorDTO>> createStore(@Valid @RequestBody VendorDTO storeDTO) {
-        return new ResponseEntity<>(storeService.createStore(storeDTO), HttpStatus.CREATED);
+        return new ResponseEntity<>(storeService.createVendor(storeDTO), HttpStatus.CREATED);
     }
 
-    @GetMapping("/all")
+    @GetMapping("/list")
     public ResponseEntity<APIResponse<?>> getAllStores() {
         return new ResponseEntity<>(APIResponse.success(storeService.getAllVendors()),HttpStatus.OK);
     }
@@ -49,7 +49,7 @@ public class VendorController {
             @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_STORE_BY, required = false) String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
 
-        StoreResponse storeResponse = storeService.getStore(pageNumber, pageSize, sortBy, sortOrder);
+        StoreResponse storeResponse = storeService.fetchAllVendors(pageNumber, pageSize, sortBy, sortOrder);
 
         return new ResponseEntity<StoreResponse>(storeResponse, HttpStatus.FOUND);
     }

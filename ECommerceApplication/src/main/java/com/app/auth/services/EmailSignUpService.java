@@ -75,7 +75,7 @@ public class EmailSignUpService extends AbstractSignUp<EmailSignUpRequest> {
         customer.getRoles().add(role);
 
         // Generate OTP
-        String otp = otpService.generateOtp();
+        String otp = otpService.generateOtp(request.getEmail());
         customer.setOtp(otp);
         customer.setOtpExpiration(LocalDateTime.now().plusMinutes(15)); // Set OTP expiration to 5 minutes
         customer.setOtpExpiration(LocalDateTime.now().plusMinutes(5)); // Set OTP expiration to 5 minutes

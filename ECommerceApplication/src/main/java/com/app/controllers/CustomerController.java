@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.config.AppConstants;
-import com.app.payloads.CustomerDTO;
+import com.app.payloads.request.UpdateMobileRequest;
+import com.app.payloads.request.UpdateUserRequest;
 import com.app.payloads.response.APIResponse;
 import com.app.payloads.response.UserResponse;
 import com.app.services.SubscriptionService;
@@ -64,13 +65,14 @@ public class CustomerController {
     @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
     @Operation(summary = "Update User Information")
     @PutMapping("/{userId}")
-    public ResponseEntity<CustomerDTO> updateUser(@RequestBody CustomerDTO userDTO, @PathVariable Long userId) {
-        CustomerDTO updatedUser = userService.updateUser(userId, userDTO);
-        return new ResponseEntity<CustomerDTO>(updatedUser, HttpStatus.OK);
+    public ResponseEntity<UpdateUserRequest> updateUser(@RequestBody UpdateUserRequest userDTO, @PathVariable Long userId) {
+        UpdateUserRequest updatedUser = userService.updateUser(userId, userDTO);
+        return new ResponseEntity<UpdateUserRequest>(updatedUser, HttpStatus.OK);
     }
 
     @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
     @DeleteMapping("/{userId}")
+    @Operation(summary = "Delete User")
     public ResponseEntity<String> deleteUser(@PathVariable Long userId) {
         String status = userService.deleteUser(userId);
         return new ResponseEntity<String>(status, HttpStatus.OK);
@@ -106,6 +108,14 @@ public class CustomerController {
             @PathVariable Long userId) {
         var subscriptions = subscriptionService.fetchSubsByUserAndVendor(userId, vendorId);
         return ResponseEntity.ok(APIResponse.success(subscriptions));
+    }
+
+    @PatchMapping("/{userId}/mobile")
+    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
+    public ResponseEntity<APIResponse<?>> updateMobileAddress(@PathVariable Long userId,
+                                                        @RequestBody UpdateMobileRequest request) {
+        //TODO : Implement
+        return ResponseEntity.ok(APIResponse.success("Mobile number updated successfully."));
     }
 
 }

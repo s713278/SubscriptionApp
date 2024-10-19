@@ -7,18 +7,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper=false)
-@Schema(description = "Request object for mobile registration")
-public class MobileSignUpRequest extends SignUpRequest{
+
+@Schema(description = "Update Mobile Request")
+public class UpdateMobileRequest {
 
     @NotNull @Schema(description = "Mobile number", example = "9876543210",pattern = AppConstants.MOBILE_REGEX)
-    @JsonProperty("mobile_number")
-    private Long mobile;
+    @JsonProperty("old_mobile_number")
+    private Long old_mobile;
     
     @JsonIgnore
+    @JsonProperty("otp_code")
     private String otp;
+
+    @NotNull @Schema(description = "Mobile number", example = "9090912345",pattern = AppConstants.MOBILE_REGEX)
+    @JsonProperty("new_mobile_number")
+    private Long new_mobile;
 
 }

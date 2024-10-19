@@ -9,10 +9,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.app.auth.dto.AuthUserDetails;
+import com.app.auth.services.OTPService;
 import com.app.config.GlobalConfig;
 import com.app.entites.Customer;
+import com.app.exceptions.APIErrorCode;
+import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
-import com.app.payloads.request.OtpVerificationRequest;
+import com.app.payloads.request.OTPVerificationRequest;
 import com.app.payloads.response.AuthDetailsDTO;
 import com.app.repositories.CustomerRepo;
 import com.app.security.RefreshTokenService;
@@ -23,18 +26,36 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-
     private final CustomerRepo customerRepo;
-
     private final PasswordEncoder passwordEncoder;
-
     private final TokenService tokenService;
     private final RefreshTokenService refreshTokenService;
     private final GlobalConfig globalConfig;
-
-    public String verifyOtp(OtpVerificationRequest request) {
+    private final OTPService otpService;
+    public String verifyMobileOtp(OTPVerificationRequest request) {
         // Find the user by email
-        Optional<Customer> userOptional = customerRepo.findByEmail(request.getEmail());
+        Customer user = customerRepo.findByEmail(request.getEmailOrMobile()).orElseThrow(() -> new APIException(APIErrorCode.API_401,"User not found in system"));
+
+        otpService.verifyOtp(request.getEmailOrMobile(),request.getOtp());
+        // Check OTP and expiration
+        if (!user.getOtp().equals(request.getOtp())) {
+            throw new IllegalArgumentException("Invalid OTP");
+        }
+        if (user.getOtpExpiration().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("OTP has expired");
+        }
+
+        // Mark user as verified
+        // user.setVerified(true);
+        user.setMobileVerified(true); // Clear the OTP
+        user.setOtpExpiration(null);
+        customerRepo.save(user);
+        return "Mobile OTP verification is success.";
+    }
+
+    public String verifyOtp(OTPVerificationRequest request) {
+        // Find the user by email
+        Optional<Customer> userOptional = customerRepo.findByEmail(request.getEmailOrMobile());
         if (!userOptional.isPresent()) {
             throw new IllegalArgumentException("User not found");
         }

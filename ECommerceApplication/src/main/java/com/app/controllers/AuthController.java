@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.auth.dto.AuthUserDetails;
+import com.app.auth.services.OTPService;
 import com.app.auth.services.SignUpStrategy;
 import com.app.auth.services.SignUpStrategyFactory;
 import com.app.entites.Customer;
@@ -26,9 +27,9 @@ import com.app.payloads.request.EmailSignUpRequest;
 import com.app.payloads.request.ForgotPasswordRequest;
 import com.app.payloads.request.MobileSignInRequest;
 import com.app.payloads.request.MobileSignUpRequest;
-import com.app.payloads.request.OtpVerificationRequest;
+import com.app.payloads.request.OTPVerificationRequest;
 import com.app.payloads.request.RefreshTokenRequest;
-import com.app.payloads.request.ResendOtpRequest;
+import com.app.payloads.request.ResendOTPRequest;
 import com.app.payloads.request.ResetPasswordRequest;
 import com.app.payloads.request.SignUpRequest;
 import com.app.payloads.response.APIResponse;
@@ -61,7 +62,7 @@ public class AuthController {
 
     private final RefreshTokenService refreshTokenService;
     private final SignUpStrategyFactory signUpStrategyFactory;
-
+    private final OTPService otpService;
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -69,7 +70,7 @@ public class AuthController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Customer registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = APIResponse.class))),
             @ApiResponse(responseCode = "400", description = "Bad request due to validation errors", content = @Content(mediaType = "application/json", schema = @Schema(implementation = APIResponse.class))) })
-    @PostMapping("/signup/mobile")
+    @PostMapping("/signup")
     public ResponseEntity<APIResponse<?>> mobileSignUp(@Valid @RequestBody MobileSignUpRequest signUpRequest) {
             log.info("Received sign-up request for mobile: {}", signUpRequest.getMobile());
             SignUpStrategy<MobileSignUpRequest> signUpStrategy = signUpStrategyFactory
@@ -97,7 +98,7 @@ public class AuthController {
             
             @ApiResponse(responseCode = "201", description = "User registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = APIResponse.class))),
             @ApiResponse(responseCode = "400", description = "Bad request due to validation errors", content = @Content(mediaType = "application/json", schema = @Schema(implementation = APIResponse.class))) })
-    @PostMapping("/signup/email")
+    //@PostMapping("/signup/email")
     public ResponseEntity<APIResponse<?>> signUp(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Customer registration request", required = true, content = @Content(schema = @Schema(implementation = SignUpRequest.class))) @Valid @RequestBody EmailSignUpRequest signUpRequest) {
         try {
@@ -115,23 +116,32 @@ public class AuthController {
 
 
 
-    @Operation(summary  = "Verification with OTP")
+    @Operation(summary  = "Verify Mobile OTP")
     @PostMapping("/verify-otp")
-    public ResponseEntity<?> verifyOtp(@Valid @RequestBody OtpVerificationRequest otpRequest) {
+    public ResponseEntity<?> verifyMobileOtp(@Valid @RequestBody OTPVerificationRequest otpRequest) {
+            String response = authService.verifyMobileOtp(otpRequest);
+            var apiResponse = APIResponse.success(HttpStatus.OK.value(), response);
+            return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+
+    @Operation(summary  = "Verify Email OTP")
+    //TODO:  @PostMapping("/email/verify-otp")
+    public ResponseEntity<?> verifyEmailOtp(@Valid @RequestBody OTPVerificationRequest otpRequest) {
         try {
             String response = authService.verifyOtp(otpRequest);
             var apiResponse = APIResponse.success(HttpStatus.OK.value(), response);
             return new ResponseEntity<>(apiResponse, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
-            log.error("Error during otp-verification for email: {}: {}", otpRequest.getEmail(), e.getMessage());
+            log.error("Error during otp-verification for email: {}: {}", otpRequest.getEmailOrMobile(), e.getMessage());
             throw new APIException(APIErrorCode.API_420,e.getMessage());
         }
     }
 
-    @Operation(summary  = "Re-Send OTP")
-    @PostMapping("/resend-otp")
-    public ResponseEntity<?> resendOtp(@RequestBody ResendOtpRequest resendOtpRequest) {
-        return null;
+    @Operation(summary  = "Request OTP")
+    @PostMapping("/request-otp")
+    public ResponseEntity<?> resendOtp(@RequestBody ResendOTPRequest resendOtpRequest) {
+        otpService.generateOtp(resendOtpRequest.emailOrMobile());
+        return  ResponseEntity.ok(APIResponse.success("OTP Sent successfully"));
         // Logic to resend OTP, similar to signUp OTP generation
     }
 
@@ -162,7 +172,7 @@ public class AuthController {
 
     // Account activation endpoint
     @Operation(summary = "Activation with Token")
-    @GetMapping("/activate/{token}")
+   //TODO:  @GetMapping("/activate/{token}")
     public ResponseEntity<?> activateAccount(@PathVariable String token) {
         boolean isActivated = authService.activateAccount(token);
         if (isActivated) {

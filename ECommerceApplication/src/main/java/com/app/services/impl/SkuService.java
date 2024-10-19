@@ -1,30 +1,31 @@
 package com.app.services.impl;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.app.entites.Sku;
+import com.app.exceptions.APIErrorCode;
+import com.app.exceptions.APIException;
 import com.app.payloads.SkuDTO;
 import com.app.repositories.SkuRepo;
-import com.app.services.SkuService;
 
 import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
-public class SkuServiceImpl implements SkuService {
+public class SkuService {
 
     final ModelMapper modelMapper;
     final SkuRepo skuRepo;
 
-    @Override
     public SkuDTO addSku(SkuDTO skuDTO) {
         Sku sku = modelMapper.map(skuDTO, Sku.class);
         skuRepo.save(sku);
         return modelMapper.map(sku, SkuDTO.class);
     }
 
-    @Override
     public SkuDTO updateSku(Long skuId, SkuDTO skuDTO) {
         Sku sku = modelMapper.map(skuDTO, Sku.class);
         // sku.setSkuId(skuId);
@@ -32,9 +33,16 @@ public class SkuServiceImpl implements SkuService {
         return modelMapper.map(sku, SkuDTO.class);
     }
 
-    @Override
+    @CacheEvict(key ="#skuId")
     public String deleteSku(Long skuId) {
         skuRepo.deleteById(skuId);
         return "Sku " + skuId + " deleted successfully !!!";
+    }
+
+    @Cacheable(value="skus",key ="#skuId")
+    public SkuDTO fetchSkuById(Long skuId){
+        var sku = skuRepo.findById(skuId)
+                .orElseThrow(()->new APIException(APIErrorCode.API_404,"SKU not existed in system."));
+        return modelMapper.map(sku,SkuDTO.class);
     }
 }

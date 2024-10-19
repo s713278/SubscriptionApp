@@ -84,6 +84,10 @@ public class Customer  extends  AbstractAuditingEntity<Long> implements Serializ
     @Column(name = "delivery_address", columnDefinition = "jsonb")
     private Map<String, String> deliveryAddress;
 
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "delivery_instructions", columnDefinition = "jsonb")
+    private Map<String,String> deliveryInstructions;
+
     @Column(name="otp_code")
     private String otp;
 
