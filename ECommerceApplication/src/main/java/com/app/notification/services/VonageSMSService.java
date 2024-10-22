@@ -35,7 +35,7 @@ public class VonageSMSService extends SMSService{
         // Body (form data)
         Map<String, String> formData = new HashMap<>();
         formData.put("from", smsConfig.getFromBrand());
-        formData.put("to", String.valueOf(mobileNo));
+        formData.put("to", 91+mobileNo);
         formData.put("text","This is OTP :"+message);
         formData.put("api_key",smsConfig.getApiKey());
         formData.put("api_secret",smsConfig.getApiSecret());

@@ -11,6 +11,6 @@ import lombok.RequiredArgsConstructor;
 public class SMSSendOTPService extends AbstractSendOTPService {
     @Override
     protected void sendOtp(OTPRequest otpRequest, String otp) {
-        serviceManager.getSmsService().sendTextMessage("91"+otpRequest.mobile(),otp);
+        serviceManager.getSmsService().sendTextMessage(""+otpRequest.mobile(),otp);
     }
 }

@@ -36,7 +36,10 @@ public class OTPService {
     public void verifyOtp(final String key, final String otp) {
         String cachedOtp = otpCacheManager.getOtp(key);
         if(cachedOtp == null){
-            throw new APIException(APIErrorCode.API_401, "OTP Invalid or Expired");
+            throw new APIException(APIErrorCode.API_401, "OTP is already expired!!");
+        }
+        if(!cachedOtp.equals(otp)){
+            throw new APIException(APIErrorCode.API_401, "Invalid OTP!!");
         }
         otpCacheManager.evictOtp(key);
        /* int attempts = otpCacheManager.getAttempts(userId);
