@@ -1,13 +1,11 @@
 package com.app.services.impl;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.util.Assert;
 
 import com.app.entites.Cart;
-import com.app.entites.CartItem;
 import com.app.entites.Customer;
 import com.app.entites.Sku;
 import com.app.entites.Vendor;
@@ -73,7 +71,7 @@ public abstract class AbstarctCatalogService {
 
     protected Cart validateCart(Long cartId, Customer user) {
         log.debug("Validate Cart {} for User {} ", cartId, user.getId());
-        Cart cart = user.getCart();
+       /* Cart cart = user.getCart();
         if (cart.getId().compareTo(cartId) != 0) {
             throw new APIException(APIErrorCode.API_400, String.format(
                     "Malformed request while placing the order where cartId: %d is not belongs to userId : %d", cartId,
@@ -83,7 +81,8 @@ public abstract class AbstarctCatalogService {
         if (cartItems.size() == 0) {
             throw new APIException(APIErrorCode.API_400,"Cart is empty");
         }
-        return cart;
+        return cart;*/
+        return null;
     }
 
     protected Vendor validateCartItemsAndStore(Long storeId, Cart cart) {

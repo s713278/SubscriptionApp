@@ -1,6 +1,7 @@
 package com.app.config;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -13,11 +14,10 @@ import lombok.Setter;
 @ConfigurationProperties(prefix = "application")
 @Component
 public class GlobalConfig {
-
     private JwtConfig jwtConfig;
     private CustomerConfig customerConfig;
-    private SmsApiConfig smsApiConfig;
     private CacheConfig cacheConfig;
+    private Map<String,ProviderConfig> smsProviders;
     
     @Getter
     @Setter
@@ -28,6 +28,8 @@ public class GlobalConfig {
         private boolean otpVerificationEnabled;
     }
 
+    @Getter
+    @Setter
     public static class VendorConfig {
 
     }
@@ -43,11 +45,13 @@ public class GlobalConfig {
 
     @Setter
     @Getter
-    public static class SmsApiConfig{
-        private String apiKey;
-        private String route;
+    public static class ProviderConfig{
         private String url;
+        private String apiKey;
+        private String apiSecret;
+        private String route;
         private String flash;
+        private String fromBrand;
     }
 
     @Setter

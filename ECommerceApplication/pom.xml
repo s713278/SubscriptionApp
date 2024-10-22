@@ -11,7 +11,7 @@
     <groupId>com.app</groupId>
     <artifactId>ECommerceApplication</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ECommerceApplication</name>
+    <name>SubNRenewals</name>
     <description>Demo project for Spring Boot</description>
     <properties>
         <java.version>21</java.version>

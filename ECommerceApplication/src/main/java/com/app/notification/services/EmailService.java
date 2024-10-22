@@ -7,23 +7,19 @@ import org.springframework.stereotype.Component;
 
 import com.app.entites.Order;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class EmailService {
 
+    private final JavaMailSender mailSender;
     public void sendOtp(String email, String otp) {
         // Logic to send email with OTP
         // You can use JavaMailSender or third-party services like SendGrid or AWS SES
     }
-
-    private final JavaMailSender mailSender;
-
-    public EmailService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
-
     // Send activation email
 
     public void sendActivationEmail(String email, String activationToken) {
@@ -49,7 +45,7 @@ public class EmailService {
         mailSender.send(message);
     }
 
-    //We can applu retry mechnism
+    //We can apply retry mechanism
     @Async
     public void sendOrderNotification(String email, Order order) {
         String emailBody =  String.format("Order Created", "Your order # %s is created.",order.getId());

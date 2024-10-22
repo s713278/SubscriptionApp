@@ -1,22 +1,24 @@
 
 {
-  "success": false,
-  "status": 401,
-  "timestamp": "2024-10-19T06:36:32.7372589",
-  "failure_reason": "Bad credentials",
-  "user_message": "User authentication failed!!",
-  "api_details": []
-},
-{
-"timestamp": "2024-10-19T06:38:38.0027661",
-"success": true,
-"status": 200,
-"data": {
-"user_id": 753,
-"access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI3NTMiLCJyb2xlcyI6IltVU0VSXSIsImlzcyI6Ik5TUiBTdG9yZXMiLCJleHAiOjE3MjkzMDE5MTgsImlhdCI6MTcyOTMwMDExOH0.LFW1Kkf-l_Kfa-_VcUcK-Jc7bkwEqQ1h2Nk4_Sj-3bE",
-"first_name": null,
-"last_name": null,
-"refresh_token": "e04eb699-2152-4c3e-b9d8-d1f29f020325",
-"active_subscriptions": []
-}
+  "Resp_Authentication_Failed": {
+    "success": false,
+    "status": 401,
+    "timestamp": "2024-10-19T06:36:32.7372589",
+    "failure_reason": "Bad credentials",
+    "user_message": "User authentication failed!!",
+    "api_details": []
+  },
+  "Resp_SignIn_Success": {
+    "timestamp": "2024-10-19T06:38:38.0027661",
+    "success": true,
+    "status": 200,
+    "data": {
+      "user_id": 753,
+      "access_token": "header.body.signature",
+      "first_name": "Swamy",
+      "last_name": "Kunta",
+      "refresh_token": "<<12345-2152-4c3e-b9d8-898989>>",
+      "active_subscriptions": []
+    }
+  }
 }

@@ -34,29 +34,20 @@ public class AuthService {
     private final OTPService otpService;
     public String verifyMobileOtp(OTPVerificationRequest request) {
         // Find the user by email
-        Customer user = customerRepo.findByEmail(request.getEmailOrMobile()).orElseThrow(() -> new APIException(APIErrorCode.API_401,"User not found in system"));
-
-        otpService.verifyOtp(request.getEmailOrMobile(),request.getOtp());
-        // Check OTP and expiration
-        if (!user.getOtp().equals(request.getOtp())) {
-            throw new IllegalArgumentException("Invalid OTP");
-        }
-        if (user.getOtpExpiration().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("OTP has expired");
-        }
-
+        Customer user = customerRepo.findByMobile(request.getMobile()).orElseThrow(() -> new APIException(APIErrorCode.API_401,"User not found in system"));
+        otpService.verifyOtp(String.valueOf(request.getMobile()),request.getOtp());
         // Mark user as verified
         // user.setVerified(true);
         user.setMobileVerified(true); // Clear the OTP
-        user.setOtpExpiration(null);
+        //user.setOtpExpiration(null);
         customerRepo.save(user);
         return "Mobile OTP verification is success.";
     }
 
-    public String verifyOtp(OTPVerificationRequest request) {
+    public String verifyEmailOtp(OTPVerificationRequest request) {
         // Find the user by email
-        Optional<Customer> userOptional = customerRepo.findByEmail(request.getEmailOrMobile());
-        if (!userOptional.isPresent()) {
+        Optional<Customer> userOptional = customerRepo.findByEmail(request.getEmail());
+        if (userOptional.isEmpty()) {
             throw new IllegalArgumentException("User not found");
         }
 

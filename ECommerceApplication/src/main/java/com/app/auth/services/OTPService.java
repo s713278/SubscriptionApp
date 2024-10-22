@@ -2,52 +2,57 @@ package com.app.auth.services;
 
 import java.util.Random;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
+import com.app.constants.CacheType;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.services.cache.OTPCacheManager;
 
-@Service
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@Component
 public class OTPService {
 
     private final Random random = new Random();
 
-    @Autowired
-    private OTPCacheManager otpCacheManager; // Reference to the cache manager
+    private final OTPCacheManager otpCacheManager;
 
     private static final int MAX_ATTEMPTS = 3; // Maximum attempts
     private static final int ATTEMPT_EXPIRY_MINUTES = 5; // Attempts expire after 5 minutes
 
-    public String generateOtp(String mobileNumber) {
-        String otp = String.format("%06d", random.nextInt(1000000)); // Generate a 6-digit OTP
-        otpCacheManager.putOtp(mobileNumber, otp); // Store the OTP in the cache
-        otpCacheManager.resetAttempts(mobileNumber); // Reset attempts on successful OTP generation
-        return otp; // Return the generated OTP
+    private String getRandomNumber(){
+        return  String.format("%06d", random.nextInt(1000000));
     }
 
-    @Cacheable(value = "otpCache", key = "#mobileNumber")
-    public String getOtp(String mobileNumber) {
-        return generateOtp(mobileNumber); // If OTP is not found, this method will return null
+    @Cacheable(value = CacheType.CACHE_TYPE_OTP,key = "#key")
+    public String generateOtp(String key) {
+       // Generate a 6-digit OTP
+        return getRandomNumber(); // Return the generated OTP
     }
 
-    public void verifyOtp(String mobileNumber, String otp) {
-        String cachedOtp = getOtp(mobileNumber);
-        int attempts = otpCacheManager.getAttempts(mobileNumber);
+    public void verifyOtp(final String key, final String otp) {
+        String cachedOtp = otpCacheManager.getOtp(key);
+        if(cachedOtp == null){
+            throw new APIException(APIErrorCode.API_401, "OTP Invalid or Expired");
+        }
+        otpCacheManager.evictOtp(key);
+       /* int attempts = otpCacheManager.getAttempts(userId);
 
         if (attempts >= MAX_ATTEMPTS) {
             throw new APIException(APIErrorCode.API_429, "Maximum attempts exceeded. Please try again later.");
         }
 
-        if (cachedOtp != null && cachedOtp.equals(otp)) {
+        if (cachedOtp.equals(otp)) {
             // OTP is valid; reset attempts on success
-            otpCacheManager.evictAttempts(mobileNumber);
+            otpCacheManager.resetAttempts(userId);
+            otpCacheManager.evictAttempts(userId);
         } else {
             // Increment the attempt count
-            otpCacheManager.incrementAttempts(mobileNumber);
+            otpCacheManager.incrementAttempts(userId);
             throw new APIException(APIErrorCode.API_401, "OTP Invalid or Expired");
-        }
+        }*/
     }
 }

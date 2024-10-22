@@ -47,5 +47,8 @@ public class AppConstants {
     public static final String JSESSION_ID = "JSESSIONID";
     public static final String AUTHORIZATION_HEADER="Authorization";
     public static final String SECURITY_CONTEXT_PARAM="E-Commerce Application";
+
+    public static final String SMS_FAST2SMS_PROVIDER="fast2sms";
+    public static final String SMS_VONAGE_PROVIDER="vonage";
     
 }

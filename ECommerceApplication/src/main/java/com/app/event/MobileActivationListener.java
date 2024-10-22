@@ -19,7 +19,7 @@ public class MobileActivationListener {
             // Simulate sending an email
            log.info("Sending OTP : {}  to: {}" , event.getOtp(),event.getMobileNumber());
             // Actual email sending logic goes here
-
-           smsService.sendOTP(event.getMobileNumber(),event.getOtp());
+          //TODO: UnComment
+            // smsService.sendTextMessage(event.getMobileNumber(),event.getOtp());
         }
 }

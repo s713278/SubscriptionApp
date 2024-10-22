@@ -1,15 +1,20 @@
-package com.app.auth.services;
+package com.app.auth.services.signup;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.app.auth.services.OTPService;
 import com.app.config.GlobalConfig;
+import com.app.payloads.request.SignUpRequest;
 import com.app.payloads.response.SignUpDTO;
 import com.app.repositories.RepositoryManager;
 
-public abstract class AbstractSignUp<T> {
+public abstract class AbstractSignUpService<T extends SignUpRequest> {
 
+    private static final Logger log = LoggerFactory.getLogger(AbstractSignUpService.class);
     @Autowired
     protected RepositoryManager repoManager;
 
@@ -28,7 +33,7 @@ public abstract class AbstractSignUp<T> {
     public final SignUpDTO processSignUp(T user) {
         preSignUpOperations(user);
        var response= doSignUp(user);
-        postSignUpOperations(user);
+        postSignUpOperations(response);
         return response;
     }
 
@@ -37,7 +42,7 @@ public abstract class AbstractSignUp<T> {
 
     protected abstract SignUpDTO doSignUp(T user);
 
-    protected void postSignUpOperations(T user) {
-        // Common post-sign-up operations like sending notifications
+    protected void postSignUpOperations(SignUpDTO signUpDTO) {
+      //TODO: Add generating OTP
     }
 }
