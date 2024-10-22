@@ -84,7 +84,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
         updateCartAndSkuQuantities(cart);
         OrderDTO orderDTO = modelMapper.map(order, OrderDTO.class);
         order = orderRepo.saveAndFlush(order);
-        orderDTO.setOrderId(order.getOrderId());
+        orderDTO.setOrderId(order.getId());
         return APIResponse.success(HttpStatus.OK.value(), orderDTO);
     }
 
@@ -178,7 +178,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
     /**
      * Create and populate the Order entity
      *
-     * @param storeId
+     * @param store
      * @param request
      * @param user
      * @param cart
@@ -203,7 +203,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
     private void processOrderItems(Cart cart, Order order) {
         List<OrderItem> orderItems = cart.getCartItems().stream().map(cartItem -> createOrderItem(cartItem, order))
                 .collect(Collectors.toList());
-        order.setItems(orderItems);
+        //order.setItems(orderItems);
     }
 
     private OrderItem createOrderItem(CartItem cartItem, Order order) {
@@ -275,6 +275,12 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
     public void createOrderFromSubscription(Subscription subscription) {
         // TODO Auto-generated method stub
         
+    }
+
+    @Override
+    public List<OrderDTO> getOrdersByUserId(Long userId) {
+
+        return List.of();
     }
 
 }

@@ -21,8 +21,14 @@ logging:
     name: logs/application.log
     max-size: 10MB
     max-history: 10
-
 spring:
+  cache:
+    cache-names: "skus,products,otp,otpAttempts"
+    caffeine:
+      skus: "maximumSize=500,expireAfterAccess=600s"
+      products: "maximumSize=500,expireAfterAccess=600s"
+      otpCache: "maximumSize=200,expireAfterAccess=600s"
+      attemptsCache: "maximumSize=200,expireAfterAccess=600s"
   threads:
     virtual:
       enabled: true
@@ -36,13 +42,13 @@ spring:
       starttls.enable: true
 application:
   jwt_config:
-    issuer: MyStores
+    issuer: SubNRenewal
     secret: 
     access_exp_time: 1800 #Short-lived (e.g., 15 minutes, 1 hour).
     refresh_exp_time: 7776000000  #Stored securely on the client.
   vendor_config:
   customer_config:
-    otp_verification_enabled: false
+    otp_verification_enabled: true
     verify_otp: false
     otp_exp_time: 60  #In seconds
     otp_no_of_retry: 3  #In seconds
@@ -55,8 +61,19 @@ application:
       - zipCode
       - state
       - country
-  sms_api_config:
-    api_key:
-    route: q #otp q-->Quick SMS
-    url:
-    flash: 1
+  sms_providers:
+    fast2sms:
+      api_key:
+      route: q #otp q-->Quick SMS
+      url: https://www.fast2sms.com/dev/bulkV2
+      flash: 1
+    vonage:
+      url: https://rest.nexmo.com/sms/json
+      api_key:
+      api_secret:
+      from_brand: SubNRenewal
+  cache_config: #In minutes
+    db_data_TTL: 360
+    db_data_max_size: 5000
+    otp_TTL: 5
+    otp_max_size: 2500

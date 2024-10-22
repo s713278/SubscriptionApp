@@ -1,5 +1,6 @@
 package com.app.entites;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -20,6 +21,7 @@ import lombok.Setter;
 @JsonIgnoreProperties(value = { "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate" }, allowGetters = true)
 public abstract class AbstractAuditingEntity<T> implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public abstract T getId();

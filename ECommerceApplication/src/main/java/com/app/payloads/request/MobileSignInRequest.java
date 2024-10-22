@@ -14,12 +14,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MobileSignInRequest {
 
-    @Schema(description = "Customer's password", example = "StrongP@ssword123")
-    @NotBlank(message = "First name is required.")
+    @Schema(description = "Customer's password", example = "P@ssword123")
+    @NotBlank(message = "Password is required.")
     @JsonProperty("password")
     private String password;
 
-    @NotNull @Schema(description = "Customer's mobile number", example = "9876543210")
+    @NotNull @Schema(description = "Mobile number", example = "9876543210")
     @JsonProperty("mobile_number")
     private Long mobile;
     

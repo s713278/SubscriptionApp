@@ -1,5 +1,6 @@
 package com.app.entites;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,7 +31,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Product {
+public class Product implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -60,7 +61,7 @@ public class Product {
     private Category category;
 
     private ObjectNode features;
-    
+
     @CreatedDate
     @Column(name = "created_date", updatable = false)
     private LocalDateTime createdDate;

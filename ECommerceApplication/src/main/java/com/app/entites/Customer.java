@@ -12,19 +12,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -67,7 +55,8 @@ public class Customer  extends  AbstractAuditingEntity<Long> implements Serializ
     )
     private Set<Role> roles = new HashSet<>();
 
-    @OneToOne(mappedBy = "user", cascade = { CascadeType.ALL },fetch = FetchType.LAZY)
+    @Transient
+   @OneToOne(mappedBy = "user", cascade = { CascadeType.ALL },fetch = FetchType.LAZY)
     private Cart cart;
 
     // One user can manage many stores
@@ -84,6 +73,10 @@ public class Customer  extends  AbstractAuditingEntity<Long> implements Serializ
     @Column(name = "delivery_address", columnDefinition = "jsonb")
     private Map<String, String> deliveryAddress;
 
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "delivery_instructions", columnDefinition = "jsonb")
+    private Map<String,String> deliveryInstructions;
+
     @Column(name="otp_code")
     private String otp;
 
@@ -99,6 +92,7 @@ public class Customer  extends  AbstractAuditingEntity<Long> implements Serializ
     public String getEmail(String email) {
         return this.email;
     }
+
 
     
     @ColumnDefault(value = "false")

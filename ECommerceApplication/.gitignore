@@ -33,3 +33,4 @@ build/
 .vscode/
 /hs_err_pid23032.log
 /logs/
+/src/main/resources/vonage_messages.json

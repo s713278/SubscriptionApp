@@ -1,0 +1,4 @@
+spring:
+  cache:
+    type: caffeine
+   # type: "none"

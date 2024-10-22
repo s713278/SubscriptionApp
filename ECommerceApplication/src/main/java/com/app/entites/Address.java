@@ -27,7 +27,7 @@ public class Address {
     private Long addressId;
 
     @NotBlank
-    @Size(min = 10, message = "Address1 must contain atleast 10 characters")
+    @Size(min = 10, message = "Address1 must contain at least 10 characters")
     private String address1;
 
     private String address2;

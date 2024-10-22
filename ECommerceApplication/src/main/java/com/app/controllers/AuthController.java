@@ -1,6 +1,5 @@
 package com.app.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,19 +15,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.auth.dto.AuthUserDetails;
-import com.app.auth.services.SignUpStrategy;
-import com.app.auth.services.SignUpStrategyFactory;
+import com.app.auth.services.otp.SendOTPStrategy;
+import com.app.auth.services.signup.UserSignUpStrategy;
 import com.app.entites.Customer;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
-import com.app.notification.services.EmailService;
 import com.app.payloads.request.EmailSignUpRequest;
 import com.app.payloads.request.ForgotPasswordRequest;
 import com.app.payloads.request.MobileSignInRequest;
 import com.app.payloads.request.MobileSignUpRequest;
-import com.app.payloads.request.OtpVerificationRequest;
+import com.app.payloads.request.OTPRequest;
+import com.app.payloads.request.OTPVerificationRequest;
 import com.app.payloads.request.RefreshTokenRequest;
-import com.app.payloads.request.ResendOtpRequest;
 import com.app.payloads.request.ResetPasswordRequest;
 import com.app.payloads.request.SignUpRequest;
 import com.app.payloads.response.APIResponse;
@@ -36,6 +34,7 @@ import com.app.payloads.response.AuthDetailsDTO;
 import com.app.security.RefreshTokenService;
 import com.app.security.TokenService;
 import com.app.services.AuthService;
+import com.app.services.ServiceManager;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -57,24 +56,25 @@ public class AuthController {
 
     private final AuthService authService;
     private final TokenService tokenService;
-    private final EmailService emailService;
-
     private final RefreshTokenService refreshTokenService;
-    private final SignUpStrategyFactory signUpStrategyFactory;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
+   // private final SignUpStrategyFactory signUpStrategyFactory;
+    private final ServiceManager serviceManager;
+    private final AuthenticationManager authenticationManager;
+    private final SendOTPStrategy otpStrategy;
+    private final UserSignUpStrategy signUpStrategy;
 
     @Operation(summary = "Signup with mobile number", description = "Registers a new user by providing their first name, mobile number, and password.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Customer registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = APIResponse.class))),
             @ApiResponse(responseCode = "400", description = "Bad request due to validation errors", content = @Content(mediaType = "application/json", schema = @Schema(implementation = APIResponse.class))) })
-    @PostMapping("/signup/mobile")
+    @PostMapping("/signup")
     public ResponseEntity<APIResponse<?>> mobileSignUp(@Valid @RequestBody MobileSignUpRequest signUpRequest) {
             log.info("Received sign-up request for mobile: {}", signUpRequest.getMobile());
-            SignUpStrategy<MobileSignUpRequest> signUpStrategy = signUpStrategyFactory
+           /* SignUpStrategy<MobileSignUpRequest> signUpStrategy = signUpStrategyFactory
                     .getStrategy("mobileSignUpStrategy");
-            var response = signUpStrategy.signUp(signUpRequest);
+
+            var response = signUpStrategy.signUp(signUpRequest);*/
+        var response = signUpStrategy.processUserSignUp(signUpRequest);
             var appResponse = APIResponse.success(HttpStatus.CREATED.value(), response);
             return new ResponseEntity<>(appResponse, HttpStatus.CREATED);
     }
@@ -94,17 +94,17 @@ public class AuthController {
 
     @Operation(summary = "Signup with Email", description = "Registers a new user by providing their first name, email, and password.")
     @ApiResponses(value = {
-            
+
             @ApiResponse(responseCode = "201", description = "User registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = APIResponse.class))),
             @ApiResponse(responseCode = "400", description = "Bad request due to validation errors", content = @Content(mediaType = "application/json", schema = @Schema(implementation = APIResponse.class))) })
-    @PostMapping("/signup/email")
+    //@PostMapping("/signup/email")
     public ResponseEntity<APIResponse<?>> signUp(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Customer registration request", required = true, content = @Content(schema = @Schema(implementation = SignUpRequest.class))) @Valid @RequestBody EmailSignUpRequest signUpRequest) {
         try {
             log.info("Received sign-up request for email: {}", signUpRequest.getEmail());
-            SignUpStrategy<EmailSignUpRequest> signUpStrategy = signUpStrategyFactory
-                    .getStrategy("emailSignUpStrategy");
-            var response = signUpStrategy.signUp(signUpRequest);
+          //  SignUpStrategy<EmailSignUpRequest> signUpStrategy = signUpStrategyFactory
+            //        .getStrategy("emailSignUpStrategy");
+            var response = signUpStrategy.processUserSignUp(signUpRequest);
             var apiResponse = APIResponse.success(HttpStatus.CREATED.value(), response);
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
@@ -113,13 +113,19 @@ public class AuthController {
         }
     }
 
-
-
-    @Operation(summary  = "Verification with OTP")
+    @Operation(summary  = "Verify Mobile OTP")
     @PostMapping("/verify-otp")
-    public ResponseEntity<?> verifyOtp(@Valid @RequestBody OtpVerificationRequest otpRequest) {
+    public ResponseEntity<?> verifyMobileOtp(@Valid @RequestBody OTPVerificationRequest otpRequest) {
+            String response = authService.verifyMobileOtp(otpRequest);
+            var apiResponse = APIResponse.success(HttpStatus.OK.value(), response);
+            return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+
+    @Operation(summary  = "Verify Email OTP")
+    //TODO:  @PostMapping("/email/verify-otp")
+    public ResponseEntity<?> verifyEmailOtp(@Valid @RequestBody OTPVerificationRequest otpRequest) {
         try {
-            String response = authService.verifyOtp(otpRequest);
+            String response = authService.verifyEmailOtp(otpRequest);
             var apiResponse = APIResponse.success(HttpStatus.OK.value(), response);
             return new ResponseEntity<>(apiResponse, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
@@ -128,11 +134,12 @@ public class AuthController {
         }
     }
 
-    @Operation(summary  = "Re-Send OTP")
-    @PostMapping("/resend-otp")
-    public ResponseEntity<?> resendOtp(@RequestBody ResendOtpRequest resendOtpRequest) {
-        return null;
-        // Logic to resend OTP, similar to signUp OTP generation
+    @Operation(summary  = "Request OTP")
+    @PostMapping("/request-otp")
+    public ResponseEntity<?> requestOTP(@RequestBody OTPRequest request) {
+        log.info("Received OTP request for mobile: {}", request.mobile());
+        otpStrategy.sendOTP(request);
+        return  ResponseEntity.ok(APIResponse.success("OTP Sent successfully"));
     }
 
     // REST API to get authenticated user details (for testing session management)
@@ -162,7 +169,7 @@ public class AuthController {
 
     // Account activation endpoint
     @Operation(summary = "Activation with Token")
-    @GetMapping("/activate/{token}")
+   //TODO:  @GetMapping("/activate/{token}")
     public ResponseEntity<?> activateAccount(@PathVariable String token) {
         boolean isActivated = authService.activateAccount(token);
         if (isActivated) {
@@ -178,7 +185,7 @@ public class AuthController {
     public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
         Customer customer = authService.generateResetToken(request.getEmail());
         if (customer != null) {
-            emailService.sendResetPasswordEmail(customer.getEmail(), customer.getResetPasswordToken());
+            serviceManager.getEmailService().sendResetPasswordEmail(customer.getEmail(), customer.getResetPasswordToken());
             return ResponseEntity.ok("Password reset link has been sent to your email.");
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found.");

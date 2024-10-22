@@ -14,10 +14,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Qualifier("smsNotificationStrategy") public class SMSNotificationStrategy implements NotificationStrategy {
 
-    private SMSService smsService;
+    private final SMSService smsService;
     @Override
     public void sendNotification(Customer customer, Order order) {
         // Logic to send SMS
-        smsService.sendOrderNotification(customer.getMobile(), order);
+        smsService.sendOrderNotification(String.valueOf(customer.getMobile()), order);
     }
 }

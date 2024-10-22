@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor // Constructor Injection
 public class RepositoryManager {
-
     private final SubscriptionRepo subscriptionRepo;
     private final CustomerRepo customerRepo;
     private final VendorRepo vendorRepo;

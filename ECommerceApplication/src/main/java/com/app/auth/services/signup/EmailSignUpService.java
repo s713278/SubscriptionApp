@@ -1,4 +1,4 @@
-package com.app.auth.services;
+package com.app.auth.services.signup;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -11,11 +11,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.app.auth.services.OTPService;
 import com.app.config.AppConstants;
 import com.app.config.GlobalConfig;
 import com.app.entites.Customer;
 import com.app.entites.Role;
-import com.app.event.EmailActivationEvent;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.payloads.request.EmailSignUpRequest;
@@ -23,8 +23,8 @@ import com.app.payloads.response.SignUpDTO;
 import com.app.repositories.RepositoryManager;
 
 @Transactional
-@Service
-public class EmailSignUpService extends AbstractSignUp<EmailSignUpRequest> {
+@Service(value = "emailSignUpService")
+public class EmailSignUpService extends AbstractSignUpService<EmailSignUpRequest> {
     // Email validation regex pattern
     private static final String EMAIL_PATTERN = "^(?!.*\\.\\.)(?!.*\\.$)(?!^\\.)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
 
@@ -53,11 +53,11 @@ public class EmailSignUpService extends AbstractSignUp<EmailSignUpRequest> {
     }
 
     @Override
-    protected void postSignUpOperations(EmailSignUpRequest request) {
+    protected void postSignUpOperations(SignUpDTO request) {
         super.postSignUpOperations(request);
         // Publish a sign-up event asynchronously
-        EmailActivationEvent activationEvent = new EmailActivationEvent(this, request.getEmail(), request.getEmailActivationtoken(),request.getOtp());
-        eventPublisher.publishEvent(activationEvent);
+        //EmailActivationEvent activationEvent = new EmailActivationEvent(this, request.getEmail(), request.getEmailActivationtoken(),request.getOtp());
+        //eventPublisher.publishEvent(activationEvent);
     }
 
     @Transactional
@@ -75,8 +75,8 @@ public class EmailSignUpService extends AbstractSignUp<EmailSignUpRequest> {
         customer.getRoles().add(role);
 
         // Generate OTP
-        String otp = otpService.generateOtp();
-        customer.setOtp(otp);
+        //String otp = otpService.generateOtp(request.getEmail());
+        //customer.setOtp(otp);
         customer.setOtpExpiration(LocalDateTime.now().plusMinutes(15)); // Set OTP expiration to 5 minutes
         customer.setOtpExpiration(LocalDateTime.now().plusMinutes(5)); // Set OTP expiration to 5 minutes
         customer.setDeliveryAddress(Collections.emptyMap());
@@ -86,7 +86,7 @@ public class EmailSignUpService extends AbstractSignUp<EmailSignUpRequest> {
         customer.setEmailTokenExpiration(LocalDateTime.now().plusSeconds(globalConfig.getCustomerConfig().getEmailTokenExp())); // Set token expiration time
         customer = repoManager.getCustomerRepo().save(customer);
         request.setEmailActivationtoken(activationToken);
-        request.setOtp(otp);
+       // request.setOtp(otp);
         return new SignUpDTO(customer.getId(),"Email registered successdully!");
     }
 

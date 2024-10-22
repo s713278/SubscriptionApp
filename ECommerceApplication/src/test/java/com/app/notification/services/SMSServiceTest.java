@@ -3,16 +3,15 @@ package com.app.notification.services;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Profile;
+import org.springframework.test.context.ActiveProfiles;
 
 import lombok.extern.slf4j.Slf4j;
 
 @SpringBootTest
-@Profile("dev")
+@ActiveProfiles({"dev"})
 @Slf4j
 class SMSServiceTest {
 
@@ -22,9 +21,10 @@ class SMSServiceTest {
     void setUp() {
     }
 
-    @Disabled
+   // @Disabled
     @Test
     void sendOTP() {
-        smsService.sendOTP(9912149049L,"909090");
+        smsService.sendTextMessage("919912149049L","Welcome message from - SnR");
+        smsService.sendTextMessage("12019206694L","Welcome message from - SnR");
     }
 }

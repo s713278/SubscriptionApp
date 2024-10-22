@@ -1,0 +1,45 @@
+
+{
+  "Resp_SignUp_Success": {
+  "timestamp": "2024-10-22T09:05:58.140309",
+  "success": true,
+  "status": 201,
+  "data": {
+    "customer_id": 2852,
+    "mobile": 9848336190,
+    "mobile_verified": false,
+    "email_verified": false,
+    "message": "Mobile registered successfully!"
+}
+  },
+  "Resp_Authentication_Failed_1":{
+  "success": false,
+  "status": 401,
+  "timestamp": "2024-10-22T09:09:04.6311632",
+  "failure_reason": "OTP is already expired!!",
+  "user_message": "User authentication failed!!",
+  "api_details": []
+},
+
+  "Resp_Authentication_Failed_2": {
+    "success": false,
+    "status": 401,
+    "timestamp": "2024-10-19T06:36:32.7372589",
+    "failure_reason": "Bad credentials",
+    "user_message": "User authentication failed!!",
+    "api_details": []
+  },
+  "Resp_SignIn_Success": {
+    "timestamp": "2024-10-19T06:38:38.0027661",
+    "success": true,
+    "status": 200,
+    "data": {
+      "user_id": 753,
+      "access_token": "header.body.signature",
+      "first_name": "Swamy",
+      "last_name": "Kunta",
+      "refresh_token": "<<12345-2152-4c3e-b9d8-898989>>",
+      "active_subscriptions": []
+    }
+  }
+}
