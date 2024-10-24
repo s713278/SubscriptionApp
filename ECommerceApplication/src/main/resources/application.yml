@@ -41,6 +41,9 @@ spring:
       auth: true
       starttls.enable: true
 application:
+  snr:
+    local_url: http://localhost:8080/api
+    dev_url: https://snr.ngrok.dev/api
   jwt_config:
     issuer: SubNRenewal
     secret: 
