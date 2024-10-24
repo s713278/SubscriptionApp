@@ -5,16 +5,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.app.auth.dto.AuthUserDetails;
-import com.app.auth.services.OTPService;
 import com.app.config.GlobalConfig;
+import com.app.constants.NotificationType;
 import com.app.entites.Customer;
-import com.app.exceptions.APIErrorCode;
-import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
+import com.app.payloads.request.OTPRequest;
 import com.app.payloads.request.OTPVerificationRequest;
 import com.app.payloads.response.AuthDetailsDTO;
 import com.app.repositories.CustomerRepo;
@@ -22,7 +22,9 @@ import com.app.security.RefreshTokenService;
 import com.app.security.TokenService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -31,11 +33,25 @@ public class AuthService {
     private final TokenService tokenService;
     private final RefreshTokenService refreshTokenService;
     private final GlobalConfig globalConfig;
-    private final OTPService otpService;
+    private final ServiceManager serviceManager;
+
+    private Customer preRequestOTP(final Long mobileNo){
+        return serviceManager.getUserService().isMobileNumberRegistered(mobileNo);
+    }
+    private void postRequestOTP( Customer user){
+
+    }
+    public void requestOTP(final OTPRequest request){
+        Customer user = preRequestOTP(request.mobile());
+        serviceManager.getNotificationService().sendOTPMessage(NotificationType.SMS,
+                ""+request.mobile());
+        postRequestOTP(user);
+    }
+
     public String verifyMobileOtp(OTPVerificationRequest request) {
         // Find the user by email
-        Customer user = customerRepo.findByMobile(request.getMobile()).orElseThrow(() -> new APIException(APIErrorCode.API_401,"User not found in system"));
-        otpService.verifyOtp(String.valueOf(request.getMobile()),request.getOtp());
+        Customer user = serviceManager.getUserService().isMobileNumberRegistered(request.getMobile());
+        serviceManager.getOtpService().verifyOtp(String.valueOf(request.getMobile()),request.getOtp());
         // Mark user as verified
         // user.setVerified(true);
         user.setMobileVerified(true); // Clear the OTP
@@ -107,18 +123,35 @@ public class AuthService {
     }
 
     public AuthDetailsDTO getSignInResponse(AuthUserDetails userDetails){
-        var responseBuilder = AuthDetailsDTO.builder();
+        var responseBuilder = AuthDetailsDTO.builder()
+                .emailVerified(userDetails.isEmailVerified())
+                        .mobileVerified(userDetails.isMobileVerified())
+                .userId(userDetails.getId());
         if(!globalConfig.getCustomerConfig().isOtpVerificationEnabled() || userDetails.isMobileVerified()){
             String accessToken = tokenService.generateToken(userDetails);
             String refreshToken = refreshTokenService.createRefreshToken(userDetails);
             return responseBuilder.userToken(accessToken)
                     .refreshToken(refreshToken)
                     .activeSubscriptions(List.of())
-                    .userId(userDetails.getId()).build();
+                    .build();
         }else{
-            return responseBuilder.message("Mobile number is not verified,Please verify")
-                    .userId(userDetails.getId()).build();
+            return responseBuilder
+                    .message("OTP sent to your registered mobile number,Please verify")
+                    .build();
         }
 
     }
+
+   @Async
+    private void postSignIn(AuthUserDetails userDetails){
+    if(userDetails.isMobileVerified()){
+        //TODO : Last Logged In
+    }else{
+        log.debug("Sending OTP to mobile :{} for User : {}",userDetails.getMobile(),userDetails.getId());
+        serviceManager.getNotificationService().sendOTPMessage(NotificationType.SMS,
+                ""+userDetails.getMobile()
+                ,serviceManager.getOtpService().generateOtp(""+userDetails.getId()));
+    }
+    }
+
 }

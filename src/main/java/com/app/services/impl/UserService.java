@@ -152,4 +152,8 @@ public class UserService {
         repositoryManager.getCustomerRepo().updateDeliveryAddress(userId, newDeliveryAddress);
     }
 
+
+    public Customer isMobileNumberRegistered(final Long mobile) {
+        return repositoryManager.getCustomerRepo().findByMobile(mobile).orElseThrow(()->new APIException(APIErrorCode.API_404,"User not found in system"))
+;    }
 }

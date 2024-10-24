@@ -2,9 +2,9 @@ package com.app.notification.services;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import com.app.entites.Customer;
 import com.app.entites.Order;
 
 import lombok.RequiredArgsConstructor;
@@ -15,9 +15,26 @@ import lombok.RequiredArgsConstructor;
 @Qualifier("emailNotificationStrategy") public class EmailNotificationStrategy implements NotificationStrategy {
 
     private final EmailService emailService;
+
+
     @Override
-    public void sendNotification(Customer customer, Order order) {
-        // Logic to send email
-        emailService.sendOrderNotification(customer.getEmail(),order);
+    public void sendOTP(String email, String otp) {
+
     }
+
+    public void sendActivationEmail(String email, String activationToken) {
+        emailService.sendActivationEmail(email,activationToken);
+    }
+
+    // Send reset password email
+    public void sendResetPasswordEmail(String email, String resetToken) {
+        emailService.sendResetPasswordEmail(email,resetToken);
+    }
+
+    //We can apply retry mechanism
+    @Async
+    public void sendOrderNotification(String email, Order order) {
+        emailService.sendOrderNotification(email,order);
+          }
+
 }

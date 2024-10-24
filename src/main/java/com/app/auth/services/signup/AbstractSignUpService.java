@@ -6,11 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.app.auth.services.OTPService;
 import com.app.config.GlobalConfig;
+import com.app.constants.NotificationType;
 import com.app.payloads.request.SignUpRequest;
 import com.app.payloads.response.SignUpDTO;
 import com.app.repositories.RepositoryManager;
+import com.app.services.ServiceManager;
 
 public abstract class AbstractSignUpService<T extends SignUpRequest> {
 
@@ -26,9 +27,9 @@ public abstract class AbstractSignUpService<T extends SignUpRequest> {
 
     @Autowired
     protected ApplicationEventPublisher eventPublisher;
-    
+
     @Autowired
-    protected OTPService otpService;
+    protected ServiceManager serviceManager;
 
     public final SignUpDTO processSignUp(T user) {
         preSignUpOperations(user);
@@ -43,6 +44,6 @@ public abstract class AbstractSignUpService<T extends SignUpRequest> {
     protected abstract SignUpDTO doSignUp(T user);
 
     protected void postSignUpOperations(SignUpDTO signUpDTO) {
-      //TODO: Add generating OTP
+        serviceManager.getNotificationService().sendOTPMessage(NotificationType.SMS,""+signUpDTO.mobile());
     }
 }
