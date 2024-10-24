@@ -7,17 +7,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.app.auth.services.OTPService;
 import com.app.config.AppConstants;
 import com.app.config.GlobalConfig;
 import com.app.entites.Customer;
 import com.app.entites.Role;
-import com.app.event.MobileActivationEvent;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.payloads.request.MobileSignUpRequest;
 import com.app.payloads.response.SignUpDTO;
 import com.app.repositories.RepositoryManager;
+import com.app.services.ServiceManager;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,12 +24,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MobileSignUpService extends AbstractSignUpService<MobileSignUpRequest> {
     public MobileSignUpService(RepositoryManager repoManager, PasswordEncoder passwordEncoder,
-            GlobalConfig globalConfig, ApplicationEventPublisher eventPublisher, OTPService otpService) {
+            GlobalConfig globalConfig, ApplicationEventPublisher eventPublisher, ServiceManager serviceManager) {
         this.globalConfig = globalConfig;
         this.repoManager = repoManager;
         this.passwordEncoder = passwordEncoder;
         this.eventPublisher = eventPublisher;
-        this.otpService = otpService;
+        this.serviceManager = serviceManager;
     }
 
     @Override
@@ -42,7 +41,7 @@ public class MobileSignUpService extends AbstractSignUpService<MobileSignUpReque
         }
         // Optionally check if mobile number already exists
         if (isMobileNumberRegistered(request.getMobile())) {
-            throw new APIException(APIErrorCode.API_400, "Mobile number is already registered!");
+            throw new APIException(APIErrorCode.API_409, "Mobile number is already registered!");
         }
     }
 
@@ -51,12 +50,12 @@ public class MobileSignUpService extends AbstractSignUpService<MobileSignUpReque
     protected void postSignUpOperations(SignUpDTO signUpDTO) {
         super.postSignUpOperations(signUpDTO);
         // Publish a sign-up event asynchronously
-        String otp =otpService.generateOtp(String.valueOf(signUpDTO.mobile()));
-        MobileActivationEvent signUpEvent = new MobileActivationEvent(this, signUpDTO.mobile(), otp);
-        eventPublisher.publishEvent(signUpEvent);
-        log.debug("OTP is generated for user : {}"
-                ,signUpDTO.userId()
-        );
+       // String otp =otpService.generateOtp(String.valueOf(signUpDTO.mobile()));
+       // MobileActivationEvent signUpEvent = new MobileActivationEvent(this, signUpDTO.mobile(), otp);
+        //eventPublisher.publishEvent(signUpEvent);
+        //log.debug("OTP is generated for user : {}"
+          //      ,signUpDTO.userId()
+        //);
     }
 
     @Transactional

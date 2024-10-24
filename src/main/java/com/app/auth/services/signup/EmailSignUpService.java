@@ -11,7 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.app.auth.services.OTPService;
 import com.app.config.AppConstants;
 import com.app.config.GlobalConfig;
 import com.app.entites.Customer;
@@ -21,6 +20,7 @@ import com.app.exceptions.APIException;
 import com.app.payloads.request.EmailSignUpRequest;
 import com.app.payloads.response.SignUpDTO;
 import com.app.repositories.RepositoryManager;
+import com.app.services.ServiceManager;
 
 @Transactional
 @Service(value = "emailSignUpService")
@@ -30,12 +30,12 @@ public class EmailSignUpService extends AbstractSignUpService<EmailSignUpRequest
 
 
     public EmailSignUpService(RepositoryManager repoManager, PasswordEncoder passwordEncoder,
-            GlobalConfig globalConfig, ApplicationEventPublisher eventPublisher, OTPService otpService) {
+            GlobalConfig globalConfig, ApplicationEventPublisher eventPublisher, ServiceManager serviceManager) {
         this.globalConfig = globalConfig;
         this.repoManager = repoManager;
         this.passwordEncoder = passwordEncoder;
         this.eventPublisher = eventPublisher;
-        this.otpService = otpService;
+        this.serviceManager = serviceManager;
     }
 
     @Override

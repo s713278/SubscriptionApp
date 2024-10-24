@@ -12,7 +12,15 @@
     "message": "Mobile registered successfully!"
 }
   },
-  "Resp_Authentication_Failed_1":{
+  "Resp_SignUp_Duplicate": {
+    "success": false,
+    "status": 409,
+    "timestamp": "2024-10-24T10:03:20.1192753",
+    "failure_reason": "Mobile number is already registered!",
+    "user_message": "Please check the request and try again!!",
+    "api_details": []
+  },
+  "Resp_SignIn_Auth_Failed_1":{
   "success": false,
   "status": 401,
   "timestamp": "2024-10-22T09:09:04.6311632",
@@ -21,7 +29,7 @@
   "api_details": []
 },
 
-  "Resp_Authentication_Failed_2": {
+  "Resp_SignIn_Auth_Failed_2": {
     "success": false,
     "status": 401,
     "timestamp": "2024-10-19T06:36:32.7372589",

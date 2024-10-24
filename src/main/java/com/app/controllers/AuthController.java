@@ -9,8 +9,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import com.app.auth.dto.AuthUserDetails;
-import com.app.auth.services.otp.SendOTPStrategy;
 import com.app.auth.services.signup.UserSignUpStrategy;
+import com.app.constants.NotificationType;
 import com.app.entites.Customer;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
@@ -54,7 +54,7 @@ public class AuthController {
    // private final SignUpStrategyFactory signUpStrategyFactory;
     private final ServiceManager serviceManager;
     private final AuthenticationManager authenticationManager;
-    private final SendOTPStrategy otpStrategy;
+   // private final SendOTPStrategy otpStrategy;
     private final UserSignUpStrategy signUpStrategy;
 
     @Operation(summary = "Signup with mobile number", description = "Registers a new user by providing their first name, mobile number, and password.")
@@ -82,7 +82,9 @@ public class AuthController {
         var authentication = authenticationManager.authenticate(authCredentials);
         var userDetails = (AuthUserDetails) authentication.getPrincipal();
         AuthDetailsDTO signInResponse =authService.getSignInResponse(userDetails);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        if(signInResponse.isMobileVerified()){
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
         return new ResponseEntity<>(APIResponse.success(signInResponse), HttpStatus.OK);
     }
 
@@ -132,7 +134,8 @@ public class AuthController {
     @PostMapping("/request-otp")
     public ResponseEntity<?> requestOTP(@RequestBody OTPRequest request) {
         log.info("Received OTP request for mobile: {}", request.mobile());
-        otpStrategy.sendOTP(request);
+        authService.requestOTP(request);
+
         return  ResponseEntity.ok(APIResponse.success("OTP Sent successfully"));
     }
 
@@ -179,7 +182,7 @@ public class AuthController {
     public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
         Customer customer = authService.generateResetToken(request.getEmail());
         if (customer != null) {
-            serviceManager.getEmailService().sendResetPasswordEmail(customer.getEmail(), customer.getResetPasswordToken());
+            serviceManager.getNotificationService().sendResetPasswordEmail(NotificationType.EMAIL,customer.getEmail(), customer.getResetPasswordToken());
             return ResponseEntity.ok("Password reset link has been sent to your email.");
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found.");

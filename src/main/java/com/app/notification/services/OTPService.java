@@ -1,4 +1,4 @@
-package com.app.auth.services;
+package com.app.notification.services;
 
 import java.util.Random;
 
