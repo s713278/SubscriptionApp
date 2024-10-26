@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
@@ -17,6 +18,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.servers.Server;
 
+@PropertySource("classpath:swagger/swagger.properties")
 @Configuration
 @SecurityScheme(name = AppConstants.SECURITY_CONTEXT_PARAM, scheme = "bearer",
         type = SecuritySchemeType.HTTP, in = SecuritySchemeIn.HEADER)
@@ -30,7 +32,7 @@ public class SwaggerConfig {
    // @Value("#{${servers}}")
 //    private Map<String,String> map;
 
-  //  @Value("classpath:swagger/sample_responses.json")
+   // @Value("classpath:swagger/sample_responses.json")
     //private Resource sampleResponses;
 
     @Bean

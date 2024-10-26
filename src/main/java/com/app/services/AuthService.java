@@ -1,7 +1,6 @@
 package com.app.services;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -9,17 +8,16 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.app.auth.dto.AuthUserDetails;
 import com.app.config.GlobalConfig;
 import com.app.constants.NotificationType;
 import com.app.entites.Customer;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.payloads.request.OTPRequest;
 import com.app.payloads.request.OTPVerificationRequest;
-import com.app.payloads.response.AuthDetailsDTO;
 import com.app.repositories.CustomerRepo;
 import com.app.security.RefreshTokenService;
 import com.app.security.TokenService;
+import com.app.services.auth.dto.AuthUserDetails;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,17 +46,7 @@ public class AuthService {
         postRequestOTP(user);
     }
 
-    public String verifyMobileOtp(OTPVerificationRequest request) {
-        // Find the user by email
-        Customer user = serviceManager.getUserService().isMobileNumberRegistered(request.getMobile());
-        serviceManager.getOtpService().verifyOtp(String.valueOf(request.getMobile()),request.getOtp());
-        // Mark user as verified
-        // user.setVerified(true);
-        user.setMobileVerified(true); // Clear the OTP
-        //user.setOtpExpiration(null);
-        customerRepo.save(user);
-        return "Mobile OTP verification is success.";
-    }
+
 
     public String verifyEmailOtp(OTPVerificationRequest request) {
         // Find the user by email
@@ -122,25 +110,6 @@ public class AuthService {
         return false;
     }
 
-    public AuthDetailsDTO getSignInResponse(AuthUserDetails userDetails){
-        var responseBuilder = AuthDetailsDTO.builder()
-                .emailVerified(userDetails.isEmailVerified())
-                        .mobileVerified(userDetails.isMobileVerified())
-                .userId(userDetails.getId());
-        if(!globalConfig.getCustomerConfig().isOtpVerificationEnabled() || userDetails.isMobileVerified()){
-            String accessToken = tokenService.generateToken(userDetails);
-            String refreshToken = refreshTokenService.createRefreshToken(userDetails);
-            return responseBuilder.userToken(accessToken)
-                    .refreshToken(refreshToken)
-                    .activeSubscriptions(List.of())
-                    .build();
-        }else{
-            return responseBuilder
-                    .message("OTP sent to your registered mobile number,Please verify")
-                    .build();
-        }
-
-    }
 
    @Async
     private void postSignIn(AuthUserDetails userDetails){

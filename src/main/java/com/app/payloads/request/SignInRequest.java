@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,15 +16,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SignInRequest {
 
-    @Schema(description = "Customer's Email", example = "ram.ayodhya@example.com")
+    @Schema(description = "Email", example = "ram.seetha@ayodhya.com")
     @Email
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Schema(description = "Customer's password", example = "StrongP@ssword123")
+    @Schema(description = "Password", example = "P@ssword123")
+    @NotBlank(message = "Password is required.")
+    @JsonProperty("password")
     private String password;
 
+    @NotNull @Schema(description = "Mobile number", example = "9876543210")
     @JsonProperty("mobile_number")
-    private String mobile;
+    private Long mobile;
 
 }

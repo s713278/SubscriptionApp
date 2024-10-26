@@ -9,13 +9,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.app.entites.CartItem;
 import com.app.entites.Customer;
-import com.app.entites.type.AddressTypeConverter;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
@@ -34,15 +33,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class UserService {
-
     private final RepositoryManager repositoryManager;
-
-    private final PasswordEncoder passwordEncoder;
-
     private final ModelMapper modelMapper;
-
-    private final AddressTypeConverter addressTypeConverter;
-
     private final AddressValidator addressValidator;
 
     @Transactional(readOnly = true)
@@ -154,6 +146,17 @@ public class UserService {
 
 
     public Customer isMobileNumberRegistered(final Long mobile) {
-        return repositoryManager.getCustomerRepo().findByMobile(mobile).orElseThrow(()->new APIException(APIErrorCode.API_404,"User not found in system"))
+        return repositoryManager.getCustomerRepo().findByMobile(mobile).orElseThrow(()->new APIException(APIErrorCode.API_404,"User is registered in system"))
 ;    }
+
+    @Transactional
+    public Customer createUser(Customer user){
+        return repositoryManager.getCustomerRepo().save(user);
+    }
+
+    @Async
+    @Transactional
+    public void updateMobileVerifiedStatus(Long userId,boolean verified){
+         repositoryManager.getCustomerRepo().updateMobileVerifiedStatus(userId,verified);
+    }
 }

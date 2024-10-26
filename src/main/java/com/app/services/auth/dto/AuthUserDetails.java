@@ -1,5 +1,6 @@
-package com.app.auth.dto;
+package com.app.services.auth.dto;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AuthUserDetails implements UserDetails {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Getter

@@ -1,4 +1,4 @@
-package com.app.notification.services;
+package com.app.services.notification;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;

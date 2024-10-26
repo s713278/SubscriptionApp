@@ -1,4 +1,4 @@
-package com.app.notification.services;
+package com.app.services.notification;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;

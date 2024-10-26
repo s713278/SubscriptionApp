@@ -1,4 +1,4 @@
-package com.app.auth.services.signup;
+package com.app.services.auth.signup;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

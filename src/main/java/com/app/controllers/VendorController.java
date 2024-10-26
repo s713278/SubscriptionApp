@@ -26,20 +26,27 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "5. Vendor Management")
 @RestController
 @RequestMapping("/v1/vendors")
-@SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
+
 @RequiredArgsConstructor
 public class VendorController {
 
     private final VendorService storeService;
 
+    @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
     @PostMapping("/")
     public ResponseEntity<APIResponse<VendorDTO>> createStore(@Valid @RequestBody VendorDTO storeDTO) {
         return new ResponseEntity<>(storeService.createVendor(storeDTO), HttpStatus.CREATED);
     }
 
+
+    @GetMapping("/{status}")
+    public ResponseEntity<APIResponse<?>> fetchVendorsByStatus(@PathVariable  String status) {
+        return new ResponseEntity<>(APIResponse.success(storeService.fetchVendorsByStatus(status)),HttpStatus.OK);
+    }
+
     @GetMapping("/list")
-    public ResponseEntity<APIResponse<?>> getAllStores() {
-        return new ResponseEntity<>(APIResponse.success(storeService.getAllVendors()),HttpStatus.OK);
+    public ResponseEntity<APIResponse<?>> fetchAllVendors() {
+        return new ResponseEntity<>(APIResponse.success(storeService.fetchAllVendors()),HttpStatus.OK);
     }
 
     @GetMapping("/")
@@ -54,14 +61,16 @@ public class VendorController {
         return new ResponseEntity<StoreResponse>(storeResponse, HttpStatus.FOUND);
     }
 
+    @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
     @PutMapping("/{storeId}")
     public ResponseEntity<APIResponse<VendorDTO>> updateStore(@RequestBody VendorDTO storeDTO,
             @PathVariable Long storeId) {
         return new ResponseEntity<>(storeService.updateStore(storeDTO, storeId), HttpStatus.OK);
     }
 
+    @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
     @DeleteMapping("/{storeId}")
     public ResponseEntity<APIResponse<String>> deleteStore(@PathVariable Long storeId) {
-        return new ResponseEntity<>(storeService.deleteStore(storeId), HttpStatus.OK);
+        return new ResponseEntity<>(storeService.deleteVendor(storeId), HttpStatus.OK);
     }
 }

@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 public class OTPVerificationRequest {
-    @JsonProperty("mobile")
+    @JsonProperty("mobile_number")
     private Long mobile;
 
     @NotBlank(message="OTP is required!")

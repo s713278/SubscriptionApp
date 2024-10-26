@@ -1,4 +1,4 @@
-package com.app.auth.services.signup;
+package com.app.services.auth.signup;
 
 import java.time.LocalDateTime;
 import java.util.Collections;

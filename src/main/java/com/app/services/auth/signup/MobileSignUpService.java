@@ -1,4 +1,4 @@
-package com.app.auth.services.signup;
+package com.app.services.auth.signup;
 
 import java.time.LocalDateTime;
 
@@ -76,16 +76,11 @@ public class MobileSignUpService extends AbstractSignUpService<MobileSignUpReque
            // String otp = otpService.generateOtp(100L);
             //customer.setOtp(otp);
             customer.setActive(true);
-            if(globalConfig.getCustomerConfig().isOtpVerificationEnabled()) {
-                customer.setMobileVerified(false);
-            }
-            else{
-                customer.setMobileVerified(true);
-            }
+            customer.setMobileVerified(false);
             customer.setOtpExpiration(LocalDateTime.now().plusMinutes(15)); // Set OTP expiration to 5 minutes
-          //  request.setOtp(otp);
             customer = repoManager.getCustomerRepo().save(customer);
-            return new SignUpDTO(customer.getId(),customer.getMobile(),customer.getMobileVerified(),customer.getEmailVerified(), "Mobile registered successfully!");
+            return new SignUpDTO(customer.getId(),customer.getMobile(),customer.getMobileVerified(),customer.getEmailVerified(),
+                    "OTP Sent to mobile number , Please verify with it!");
         }catch (Exception e){
             log.error("Error occurred while creating new user with mobile number : {}",request.getMobile(),e);
             throw new APIException(APIErrorCode.API_417, e.getMessage());

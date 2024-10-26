@@ -1,10 +1,11 @@
-package com.app.notification.services;
+package com.app.services.notification;
 
 import java.util.Random;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
+import com.app.config.GlobalConfig;
 import com.app.constants.CacheType;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 public class OTPService {
 
+    private final GlobalConfig globalConfig;
     private final Random random = new Random();
 
     private final OTPCacheManager otpCacheManager;
@@ -29,6 +31,10 @@ public class OTPService {
 
     @Cacheable(value = CacheType.CACHE_TYPE_OTP,key = "#key")
     public String generateOtp(String key) {
+        //TODO : Clean up
+        if(!globalConfig.getCustomerConfig().isOtpVerificationEnabled()){
+            return "909090";
+        }
        // Generate a 6-digit OTP
         return getRandomNumber(); // Return the generated OTP
     }

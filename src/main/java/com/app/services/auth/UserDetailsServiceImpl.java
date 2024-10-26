@@ -1,4 +1,4 @@
-package com.app.services.impl;
+package com.app.services.auth;
 
 import java.util.Optional;
 
@@ -6,11 +6,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-import com.app.auth.dto.AuthUserDetails;
 import com.app.entites.Customer;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.repositories.RepositoryManager;
+import com.app.services.auth.dto.AuthUserDetails;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) {
         log.debug("Load user details for user is {}",username);
-         Optional<Customer> user = null;
+         Optional<Customer> user;
         try{
             Long mobile=Long.parseLong(username);
             user = repositoryManager.getCustomerRepo().findByMobile(mobile);
