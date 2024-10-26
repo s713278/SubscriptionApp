@@ -32,13 +32,13 @@ public abstract class AbstractAuditingEntity<T> implements Serializable {
 
     @CreationTimestamp
     @Column(name = "created_date", updatable = false)
-    protected LocalDateTime createdDate = LocalDateTime.now();
+    protected LocalDateTime createdDate ;
 
     @Column(name = "last_modified_by", length = 50)
     protected String lastModifiedBy;
 
     @UpdateTimestamp
     @Column(name = "last_modified_date")
-    protected LocalDateTime lastModifiedDate = LocalDateTime.now();
+    protected LocalDateTime lastModifiedDate ;
 
 }

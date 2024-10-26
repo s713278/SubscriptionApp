@@ -6,12 +6,12 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.app.auth.dto.AuthUserDetails;
 import com.app.config.GlobalConfig;
 import com.app.entites.Customer;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.repositories.RepositoryManager;
+import com.app.services.auth.dto.AuthUserDetails;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;

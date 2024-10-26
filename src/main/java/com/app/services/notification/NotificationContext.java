@@ -1,4 +1,4 @@
-package com.app.notification.services;
+package com.app.services.notification;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Component
 @Slf4j
-public class NotificationService {
+public class NotificationContext {
     private final Map<String, NotificationStrategy> notificationStrategies;
 
     private final OTPService otpService;

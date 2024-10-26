@@ -1,12 +1,12 @@
 package com.app.notification.services;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+
+import com.app.services.notification.SMSService;
 
 import lombok.extern.slf4j.Slf4j;
 

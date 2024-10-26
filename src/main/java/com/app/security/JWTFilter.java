@@ -10,7 +10,7 @@ import com.app.config.AppConstants;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIErrorResponse;
 import com.app.exceptions.APIException;
-import com.app.services.ApiAuthValidator;
+import com.app.services.auth.UserAuthService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class JWTFilter extends OncePerRequestFilter {
     private final TokenService jwtUtil;
-    private final ApiAuthValidator apiAuthValidator;
+    private final UserAuthService apiAuthValidator;
     private final ObjectMapper mapper;
     
     @Override

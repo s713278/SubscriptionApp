@@ -1,4 +1,4 @@
-package com.app.services;
+package com.app.services.auth;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,11 +9,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.app.auth.dto.UserAuthentication;
 import com.app.entites.Customer;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.repositories.RepositoryManager;
+import com.app.services.auth.dto.UserAuthentication;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,14 +21,14 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class ApiAuthValidator {
+public class UserAuthService {
 
     private final RepositoryManager repositoryManager;
     
     @Transactional(readOnly = false)
     public Optional<UserAuthentication> authenticateUser(Long userId) {
         log.debug("Load user details by user id :{}",userId);
-         Optional<Customer> user = null;
+         Optional<Customer> user;
         try{
             user = repositoryManager.getCustomerRepo().findById(userId);
         }catch (Exception e) {

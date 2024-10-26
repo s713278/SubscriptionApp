@@ -6,8 +6,8 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.app.auth.dto.AuthUserDetails;
 import com.app.config.GlobalConfig;
+import com.app.services.auth.dto.AuthUserDetails;
 
 import lombok.RequiredArgsConstructor;
 

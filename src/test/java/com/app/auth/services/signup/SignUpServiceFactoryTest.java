@@ -8,10 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.app.services.auth.signup.SignUpServiceFactory;
+
 @SpringBootTest
 @ActiveProfiles("dev")
 class SignUpServiceFactoryTest {
-private @Autowired  SignUpServiceFactory signUpServiceFactory;
+private @Autowired SignUpServiceFactory signUpServiceFactory;
     @Test
     void testSingUpServiceInitialization() {
         assertAll(()->{

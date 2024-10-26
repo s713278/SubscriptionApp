@@ -85,6 +85,9 @@ public class Customer  extends  AbstractAuditingEntity<Long> implements Serializ
     @Column(name="mobile_verified")
     public Boolean mobileVerified = false;
 
+    @Column(name="mobile_verified_timestamp")
+    public LocalDateTime mobileVerifiedTime;
+
     public void setEmail(String email) {
         this.email = email.trim().toLowerCase();
     }
@@ -93,8 +96,6 @@ public class Customer  extends  AbstractAuditingEntity<Long> implements Serializ
         return this.email;
     }
 
-
-    
     @ColumnDefault(value = "false")
     @Column(name="email_verified")
     private Boolean emailVerified = false;
@@ -110,5 +111,12 @@ public class Customer  extends  AbstractAuditingEntity<Long> implements Serializ
 
     @ColumnDefault(value = "true")
     private boolean isActive;
+
+ /*   @PreUpdate
+    public void onUpdate() {
+        if (this.mobileVerified) {
+            this.mobileVerifiedTime = LocalDateTime.now();
+        }
+    }*/
 
 }

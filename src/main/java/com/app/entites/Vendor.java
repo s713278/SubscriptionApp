@@ -5,14 +5,14 @@ import java.io.Serializable;
 import java.util.Map;
 
 import org.hibernate.annotations.JdbcType;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import org.hibernate.type.SqlTypes;
 
-import com.app.entites.type.MapTypeConverter;
 import com.app.entites.type.VendorStatus;
 import com.app.entites.type.VerificationStatus;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -67,17 +67,21 @@ public class Vendor extends AbstractAuditingEntity<Long> implements Serializable
     @Column(name = "status", columnDefinition = "vendor_status_enum")
     @Enumerated(EnumType.STRING)
     private VendorStatus status;
-    
+
+    @Column(name = "verification_status", columnDefinition = "verification_status_enum")
     @JdbcType(value = PostgreSQLEnumJdbcType.class)
     @Enumerated(EnumType.STRING)
     private VerificationStatus verificationStatus;
 
+
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "business_address", columnDefinition = "jsonb")
     //@Convert(converter = AddressTypeConverter.class)
     private  Map<String, String> businessAddress;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "service_area", columnDefinition = "jsonb")
-    @Convert(converter = MapTypeConverter.class)
+  //  @Convert(converter = MapTypeConverter.class)
     private Map<String, Object> serviceAreas;
     
 }

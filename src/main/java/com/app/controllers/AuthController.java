@@ -3,32 +3,25 @@ package com.app.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import com.app.auth.dto.AuthUserDetails;
-import com.app.auth.services.signup.UserSignUpStrategy;
 import com.app.constants.NotificationType;
+import com.app.constants.SignInType;
 import com.app.entites.Customer;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
-import com.app.payloads.request.EmailSignUpRequest;
-import com.app.payloads.request.ForgotPasswordRequest;
-import com.app.payloads.request.MobileSignInRequest;
-import com.app.payloads.request.MobileSignUpRequest;
-import com.app.payloads.request.OTPRequest;
-import com.app.payloads.request.OTPVerificationRequest;
-import com.app.payloads.request.RefreshTokenRequest;
-import com.app.payloads.request.ResetPasswordRequest;
-import com.app.payloads.request.SignUpRequest;
+import com.app.payloads.request.*;
 import com.app.payloads.response.APIResponse;
 import com.app.payloads.response.AuthDetailsDTO;
 import com.app.security.RefreshTokenService;
 import com.app.security.TokenService;
 import com.app.services.AuthService;
 import com.app.services.ServiceManager;
+import com.app.services.auth.signin.OTPSignInService;
+import com.app.services.auth.signin.PasswordSignInService;
+import com.app.services.auth.signin.SignInContext;
+import com.app.services.auth.signup.UserSignUpStrategy;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -51,11 +44,12 @@ public class AuthController {
     private final AuthService authService;
     private final TokenService tokenService;
     private final RefreshTokenService refreshTokenService;
-   // private final SignUpStrategyFactory signUpStrategyFactory;
     private final ServiceManager serviceManager;
     private final AuthenticationManager authenticationManager;
-   // private final SendOTPStrategy otpStrategy;
     private final UserSignUpStrategy signUpStrategy;
+    private final PasswordSignInService passwordSignInService;
+    private final OTPSignInService otpSignInService;
+    private final SignInContext signInContext;
 
     @Operation(summary = "Signup with mobile number", description = "Registers a new user by providing their first name, mobile number, and password.")
     @ApiResponses(value = {
@@ -75,17 +69,21 @@ public class AuthController {
 
     @Operation(summary  = "SignIn with mobile number")
     @PostMapping("/signin")
-    public ResponseEntity<APIResponse<?>> signIn(@Valid @RequestBody MobileSignInRequest signInRequest) {
+    public ResponseEntity<APIResponse<?>> signIn(@Valid @RequestBody SignInRequest signInRequest) {
         log.info("Received sign-in request for mobile: {}", signInRequest.getMobile());
-        UsernamePasswordAuthenticationToken authCredentials = new UsernamePasswordAuthenticationToken(
-                signInRequest.getMobile(), signInRequest.getPassword());
-        var authentication = authenticationManager.authenticate(authCredentials);
-        var userDetails = (AuthUserDetails) authentication.getPrincipal();
-        AuthDetailsDTO signInResponse =authService.getSignInResponse(userDetails);
+
+        //UsernamePasswordAuthenticationToken authCredentials = new UsernamePasswordAuthenticationToken(
+               // signInRequest.getMobile(), signInRequest.getPassword());
+       // var authentication = authenticationManager.authenticate(authCredentials);
+       // var userDetails = (AuthUserDetails) authentication.getPrincipal();
+        AuthDetailsDTO signInResponse = signInContext.processSignIn(SignInType.WITH_PASSWORD,signInRequest);
         if(signInResponse.isMobileVerified()){
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+          //  SecurityContextHolder.getContext().setAuthentication(authentication);
+            return new ResponseEntity<>(APIResponse.success(signInResponse), HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(APIResponse.success("OTP sent on registered mobile,Please verify with it!"), HttpStatus.OK);
         }
-        return new ResponseEntity<>(APIResponse.success(signInResponse), HttpStatus.OK);
+
     }
 
     @Operation(summary = "Signup with Email", description = "Registers a new user by providing their first name, email, and password.")
@@ -112,9 +110,14 @@ public class AuthController {
     @Operation(summary  = "Verify Mobile OTP")
     @PostMapping("/verify-otp")
     public ResponseEntity<?> verifyMobileOtp(@Valid @RequestBody OTPVerificationRequest otpRequest) {
-            String response = authService.verifyMobileOtp(otpRequest);
-            var apiResponse = APIResponse.success(HttpStatus.OK.value(), response);
-            return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        SignInRequest request = new SignInRequest();
+        request.setMobile(otpRequest.getMobile());
+        request.setPassword(otpRequest.getOtp());
+        AuthDetailsDTO signInResponse= signInContext.processSignIn(SignInType.WITH_OTP,request);
+       // otpSignInService.processSignIn(request);
+    //    String response = authService.verifyMobileOtp(otpRequest);
+        var apiResponse = APIResponse.success(HttpStatus.OK.value(), signInResponse);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     @Operation(summary  = "Verify Email OTP")
@@ -135,7 +138,6 @@ public class AuthController {
     public ResponseEntity<?> requestOTP(@RequestBody OTPRequest request) {
         log.info("Received OTP request for mobile: {}", request.mobile());
         authService.requestOTP(request);
-
         return  ResponseEntity.ok(APIResponse.success("OTP Sent successfully"));
     }
 
