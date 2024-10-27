@@ -33,7 +33,8 @@ public class NotificationContext {
         }
     }
     @Async
-    public void sendOTPMessage(NotificationType type,String to,String otp){
+    public void sendOTPMessage(NotificationType type,String to,String key){
+        var otp=otpService.generateOtp(key);
          switch (type){
             case SMS -> notificationStrategies.get("smsNotificationStrategy").sendOTP(to,otp);
             case EMAIL -> notificationStrategies.get("emailNotificationStrategy").sendOTP(to,otp);

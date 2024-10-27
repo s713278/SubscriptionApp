@@ -1,5 +1,6 @@
 package com.app.entites;
 
+import java.io.Serializable;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -22,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "tb_category")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Category {
+public class Category implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,17 +1,12 @@
 package com.app.entites;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.List;
-
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,14 +19,16 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+@EqualsAndHashCode(callSuper = false)
 @Entity
 @Table(name = "tb_product")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Product implements Serializable {
+public class Product extends AbstractAuditingEntity<Long> implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -44,7 +41,7 @@ public class Product implements Serializable {
     private String imagePath;
 
     @NotBlank
-    @Size(min = 25, message = "Product description must contain atleast 25 characters")
+    @Size(min = 25, message = "Product description must contain at least 25 characters")
     private String description;
 
     @JsonIgnore
@@ -62,11 +59,8 @@ public class Product implements Serializable {
 
     private ObjectNode features;
 
-    @CreatedDate
-    @Column(name = "created_date", updatable = false)
-    private LocalDateTime createdDate;
-
-    @LastModifiedDate
-    @Column(name = "last_modified_date")
-    private LocalDateTime lastModifiedDate;
+    @Override
+    public Long getId() {
+        return this.productId;
+    }
 }

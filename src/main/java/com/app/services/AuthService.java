@@ -4,20 +4,13 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.app.config.GlobalConfig;
-import com.app.constants.NotificationType;
 import com.app.entites.Customer;
 import com.app.exceptions.ResourceNotFoundException;
-import com.app.payloads.request.OTPRequest;
 import com.app.payloads.request.OTPVerificationRequest;
 import com.app.repositories.CustomerRepo;
-import com.app.security.RefreshTokenService;
-import com.app.security.TokenService;
-import com.app.services.auth.dto.AuthUserDetails;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,25 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthService {
     private final CustomerRepo customerRepo;
     private final PasswordEncoder passwordEncoder;
-    private final TokenService tokenService;
-    private final RefreshTokenService refreshTokenService;
-    private final GlobalConfig globalConfig;
-    private final ServiceManager serviceManager;
-
-    private Customer preRequestOTP(final Long mobileNo){
-        return serviceManager.getUserService().isMobileNumberRegistered(mobileNo);
-    }
-    private void postRequestOTP( Customer user){
-
-    }
-    public void requestOTP(final OTPRequest request){
-        Customer user = preRequestOTP(request.mobile());
-        serviceManager.getNotificationService().sendOTPMessage(NotificationType.SMS,
-                ""+request.mobile());
-        postRequestOTP(user);
-    }
-
-
 
     public String verifyEmailOtp(OTPVerificationRequest request) {
         // Find the user by email
@@ -88,7 +62,7 @@ public class AuthService {
 
     // Generate reset password token
     public Customer generateResetToken(String email) {
-        Customer customer = customerRepo.findByEmail(email).orElseThrow(()->new ResourceNotFoundException());
+        Customer customer = customerRepo.findByEmail(email).orElseThrow(ResourceNotFoundException::new);
         if (customer!=null) {
             customer.setResetPasswordToken(UUID.randomUUID().toString());
             customer.setEmailTokenExpiration(LocalDateTime.now().plusHours(1)); // Token expires in 1 hour
@@ -108,19 +82,6 @@ public class AuthService {
             return true;
         }
         return false;
-    }
-
-
-   @Async
-    private void postSignIn(AuthUserDetails userDetails){
-    if(userDetails.isMobileVerified()){
-        //TODO : Last Logged In
-    }else{
-        log.debug("Sending OTP to mobile :{} for User : {}",userDetails.getMobile(),userDetails.getId());
-        serviceManager.getNotificationService().sendOTPMessage(NotificationType.SMS,
-                ""+userDetails.getMobile()
-                ,serviceManager.getOtpService().generateOtp(""+userDetails.getId()));
-    }
     }
 
 }

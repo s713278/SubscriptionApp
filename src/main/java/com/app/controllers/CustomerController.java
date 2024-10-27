@@ -65,17 +65,17 @@ public class CustomerController {
     @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
     @Operation(summary = "Update User Information")
     @PutMapping("/{userId}")
-    public ResponseEntity<UpdateUserRequest> updateUser(@RequestBody UpdateUserRequest userDTO, @PathVariable Long userId) {
-        UpdateUserRequest updatedUser = userService.updateUser(userId, userDTO);
-        return new ResponseEntity<UpdateUserRequest>(updatedUser, HttpStatus.OK);
+    public ResponseEntity<APIResponse<?>> updateUser(@RequestBody UpdateUserRequest userDTO, @PathVariable Long userId) {
+        userService.updateUser(userId, userDTO);
+        return new ResponseEntity<>(APIResponse.success("User information updated successfully."), HttpStatus.OK);
     }
 
     @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
     @DeleteMapping("/{userId}")
     @Operation(summary = "Delete User")
-    public ResponseEntity<String> deleteUser(@PathVariable Long userId) {
+    public ResponseEntity<APIResponse<?>> deleteUser(@PathVariable Long userId) {
         String status = userService.deleteUser(userId);
-        return new ResponseEntity<String>(status, HttpStatus.OK);
+        return new ResponseEntity<>(APIResponse.success("User is deleted successfully."), HttpStatus.OK);
     }
 
     @Operation(summary = "Update Delivery Address", description = "Updates the delivery address for a specific user. Only valid keys (address1, address2, city, state, zipCode, country) are accepted.")
@@ -99,6 +99,14 @@ public class CustomerController {
             @RequestBody Map<String, String> address) {
         userService.updateUserAddress(userId, address);
         return ResponseEntity.ok(APIResponse.success("Address updated succssfully."));
+    }
+
+    @PatchMapping("/{userId}/del_instructions")
+    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
+    public ResponseEntity<APIResponse<?>> updateDeliveryInstructions(@PathVariable Long userId,
+                                                        @RequestBody Map<String, String> deliveryInstructions) {
+        userService.updateDeliveryInstructions(userId, deliveryInstructions);
+        return ResponseEntity.ok(APIResponse.success("Address updated successfully."));
     }
 
     @Operation(summary = "All Subscriptions By Vendor")

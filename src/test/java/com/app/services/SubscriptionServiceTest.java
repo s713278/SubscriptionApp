@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.LocalDate;
 
+import com.app.AbstractBaseConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,10 +23,8 @@ import com.app.repositories.RepositoryManager;
 
 import jakarta.transaction.Transactional;
 
-@SpringBootTest
 @Transactional
-@Profile("dev")
-class SubscriptionServiceTest {
+class SubscriptionServiceTest extends AbstractBaseConfig {
     
     @Autowired
     private  SubscriptionService subscriptionService;
@@ -95,7 +94,7 @@ class SubscriptionServiceTest {
          assertNotEquals(oldSub.getQuantity(), updateSub.getQuantity(),"Quantity changes looks good!!");
          assertNotEquals(oldSub.getFromStartDate(), updateSub.getFromStartDate(),"Startdate changes looks good!!");
          assertNotEquals(oldSub.getNextDeliveryDate(), updateSub.getNextDeliveryDate(),"Next delivery changes looks good!!");
-         assertNotEquals(oldSub.getFrequency(), updateSub.getFrequency(),"Frequence changes looks good!!");
+         assertNotEquals(oldSub.getFrequency(), updateSub.getFrequency(),"Frequency changes looks good!!");
     }
 
     //@Test

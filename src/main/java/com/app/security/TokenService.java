@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.app.config.GlobalConfig;
 import com.app.entites.Customer;
+import com.app.entites.Role;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.repositories.RepositoryManager;
@@ -27,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TokenService {
 
-    private static final String NSR_STORES = "NSR Stores";
+    private static final String NSR_STORES = "SubNRenewals";
     
     private final GlobalConfig globalConfig;
     
@@ -71,7 +72,7 @@ public class TokenService {
                //.withClaim("email", user.getEmail())
                 //.withClaim("cart_id", user.getCart().getId())
                 .withClaim("roles",
-                        user.getRoles().stream().map(role -> role.getRoleName())
+                        user.getRoles().stream().map(Role::getRoleName)
                                 .collect(Collectors.joining(String.valueOf(id),"[", "]")))
                 .withIssuer(NSR_STORES)
                 .sign(Algorithm.HMAC256(globalConfig.getJwtConfig().getSecret()));

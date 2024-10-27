@@ -31,7 +31,7 @@ public class Sku implements Serializable {
 
     private String imagePath;
   
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.REFRESH)
     @JoinColumn(name = "product_id")
     private Product product;
     

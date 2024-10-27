@@ -1,5 +1,6 @@
 package com.app.entites;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,13 +21,14 @@ import lombok.Data;
 @Table(name = "tb_vendor_sku_price")
 @Data
 @Entity
-public class VendorSkuPrice {
+public class VendorSkuPrice implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "tenant_id", nullable = false)
+    @JoinColumn(name = "vendor_id", nullable = false)
     private Vendor vendor;
 
     @ManyToOne

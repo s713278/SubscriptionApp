@@ -1,6 +1,7 @@
 package com.app.entites;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -9,8 +10,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.hibernate.type.SqlTypes;
+
+import com.app.entites.type.Gender;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -44,6 +49,13 @@ public class Customer  extends  AbstractAuditingEntity<Long> implements Serializ
 
     @Column(name = "mobile", unique = true, nullable = false)
     private Long mobile;
+
+    @JdbcType(value = PostgreSQLEnumJdbcType.class)
+    @Column(name = "gender", columnDefinition = "gender_enum")
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
+    private LocalDate dateOfBirth;
 
     private String password;
 

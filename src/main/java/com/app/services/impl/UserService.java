@@ -95,13 +95,13 @@ public class UserService {
     }
 
     @Transactional
-    public UpdateUserRequest updateUser(Long userId, UpdateUserRequest userDTO) {
-        Customer user = repositoryManager.getCustomerRepo().findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
+    public void updateUser(Long userId, UpdateUserRequest userDTO) {
+        var user =fetchUserById(userId);
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
-        userDTO = modelMapper.map(user, UpdateUserRequest.class);
-        return userDTO;
+        user.setEmail(userDTO.getEmail());
+        user.setGender(userDTO.getGender());
+        repositoryManager.getCustomerRepo().save(user);
     }
 
     @Transactional
@@ -111,7 +111,7 @@ public class UserService {
 
         List<CartItem> cartItems = user.getCart().getCartItems();
         Long cartId = user.getCart().getId();
-
+        //Check if any active subscriptions
         /*
          * cartItems.forEach(item -> {
          *
@@ -119,7 +119,6 @@ public class UserService {
          *
          * cartService.deleteProductFromCart(cartId, skuId); });
          */
-
         repositoryManager.getCustomerRepo().delete(user);
 
         return "User with userId " + userId + " deleted successfully!!!";
@@ -138,8 +137,7 @@ public class UserService {
 
     @Transactional
     public void updateUserAddress(Long userId, Map<String, String> newDeliveryAddress) {
-        repositoryManager.getCustomerRepo().findById(userId)
-                .orElseThrow(() -> new APIException(APIErrorCode.API_404, "User not Found!!"));
+        fetchUserById(userId);
         addressValidator.validateAddress(userId, newDeliveryAddress);
         repositoryManager.getCustomerRepo().updateDeliveryAddress(userId, newDeliveryAddress);
     }
@@ -158,5 +156,18 @@ public class UserService {
     @Transactional
     public void updateMobileVerifiedStatus(Long userId,boolean verified){
          repositoryManager.getCustomerRepo().updateMobileVerifiedStatus(userId,verified);
+    }
+
+    @Transactional(readOnly = true)
+    public Customer fetchUserById(final Long userId) {
+       return repositoryManager.getCustomerRepo().findById(userId)
+                .orElseThrow(()->new  APIException(APIErrorCode.API_404,"User not existed in system."));
+    }
+
+    @Transactional
+    public void updateDeliveryInstructions(Long userId, Map<String, String> newDeliveryAddress) {
+        fetchUserById(userId);
+      //  addressValidator.validateAddress(userId, newDeliveryAddress);
+        repositoryManager.getCustomerRepo().updateDeliveryInstructions(userId, newDeliveryAddress);
     }
 }
