@@ -1,18 +1,17 @@
 package com.app.exceptions;
 
+import java.io.Serializable;
 import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
+@ToString
 @Getter
 @Setter
-public class APIException extends RuntimeException {
-
+public class APIException extends RuntimeException implements Serializable {
     private APIErrorCode apiErrorCode;
-
-    private static final long serialVersionUID = 1L;
-
     private int status;
     private String failureReason;
     private String userMessage;

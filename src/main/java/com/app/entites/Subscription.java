@@ -59,7 +59,7 @@ public class Subscription  implements Serializable {
     @JoinColumn(name = "sku_id")
     private Sku sku;
 
-    private int quantity;
+    private Integer quantity;
 
     @Enumerated(EnumType.STRING)
     @JdbcType(value  = PostgreSQLEnumJdbcType.class)

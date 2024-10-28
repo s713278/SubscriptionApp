@@ -3,12 +3,7 @@ package com.app.entites;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,7 +16,7 @@ import lombok.Data;
 @Table(name = "tb_vendor_sku_price")
 @Data
 @Entity
-public class VendorSkuPrice implements Serializable {
+public class VendorSkuPrice extends AbstractAuditingEntity<Long> implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -43,13 +38,6 @@ public class VendorSkuPrice implements Serializable {
 
     private LocalDate effectiveDate;
 
-    @CreationTimestamp
-    @Column(name = "created_date", updatable = false)
-    private LocalDateTime createdDate;
-
-    @UpdateTimestamp
-    @Column(name = "last_modified_date")
-    private LocalDateTime lastModifiedDate;
 
     // Getters and Setters
 }

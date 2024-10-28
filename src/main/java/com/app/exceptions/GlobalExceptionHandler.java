@@ -61,12 +61,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(APIException.class)
     public ResponseEntity<APIErrorResponse> handleAPIErrorResponse(APIException apiError) {
+        log.error("APIException Details",apiError);
          APIErrorResponse apiErrorResponse = new APIErrorResponse(apiError.getApiErrorCode(), apiError.getFailureReason(), apiError.getDetails());
         return new ResponseEntity<>(apiErrorResponse, HttpStatus.valueOf(apiError.getStatus()));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<APIErrorResponse> myConstraintsVoilationException(ConstraintViolationException e) {
+    public ResponseEntity<APIErrorResponse> myConstraintsViolationException(ConstraintViolationException e) {
         var errors = e.getConstraintViolations().stream().map(v -> v.getPropertyPath() + "==>" + v.getMessage())
                 .collect(Collectors.toList());
         APIErrorResponse apiError = new APIErrorResponse(APIErrorCode.API_400, e.getMessage(), errors);

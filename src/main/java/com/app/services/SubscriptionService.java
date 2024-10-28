@@ -2,6 +2,7 @@ package com.app.services;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +42,7 @@ public class SubscriptionService {
         var subscription = repoManager.getSubscriptionRepo().findById(request.getSubscriptionId())
                 .orElseThrow(() -> new APIException(APIErrorCode.API_400, "Subscription not found"));
         
-        if(request.getCustomerId()!=subscription.getCustomer().getId()) {
+        if(!Objects.equals(request.getCustomerId(), subscription.getCustomer().getId())) {
             throw new APIException(APIErrorCode.API_401, "Invalid customer id!!"); 
         }
         boolean changedFound= false;
@@ -162,4 +163,39 @@ public class SubscriptionService {
        log.debug("End 'fetchByCustomerIdAndVendorId' for user :{} and vendor:{}",userId,vendorId);
        return result;
     }
+
+    /**
+     *
+     * @param vendorId
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public List<SubscriptionDTO> fetchSubsByUserAndVendor(final Long userId,final Long vendorId,Long skuId){
+        log.debug("Start 'fetchByCustomerIdAndVendorId' for user :{} and vendor:{}",userId,vendorId);
+        var subs =repoManager .getSubscriptionRepo().findByCustomerIdAndVendorId(userId,vendorId);
+        if(subs==null || subs.isEmpty()) {
+            return Collections.emptyList();
+        }
+        log.info("No of subscriptions:{} found for user :{} and vendor:{}",subs.size() , userId,vendorId);
+        var result=  subs.stream().map(sub->
+                        new SubscriptionDTO(
+                                sub.getId(),
+                                sub.getSku().getName(),
+                                0,
+                                sub.getSku().getSize(),
+                                sub.getStatus(),
+                                sub.getQuantity(),
+                                sub.getFrequency(),
+                                sub.getCustomDays(),
+                                sub.getFromStartDate(),
+                                sub.getNextDeliveryDate()))
+                .toList();
+        log.debug("End 'fetchByCustomerIdAndVendorId' for user :{} and vendor:{}",userId,vendorId);
+        return result;
+    }
+
+    public boolean fetchByCustomerIdAndVendorIdAndSkuId(final Long userId, final Long vendorId, final Long skuId){
+        return repoManager.getSubscriptionRepo().findByCustomerIdAndVendorIdAndSkuId(userId,vendorId,skuId).isPresent();
+    }
+
 }

@@ -118,5 +118,9 @@ public class VendorService  {
         return vendorsList.stream().map(vendor->modelMapper.map(vendor,VendorDTO.class)).toList();
     }
 
+    public Vendor fetchVendor(final Long vendorId){
+        return repoManager.getVendorRepo().findById(vendorId).orElseThrow(() -> new APIException(APIErrorCode.API_400, "Vendor not exited in the system."));
+
+    }
 
 }

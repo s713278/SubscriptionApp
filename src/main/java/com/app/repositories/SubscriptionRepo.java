@@ -19,4 +19,6 @@ public interface SubscriptionRepo extends JpaRepository<Subscription, Long> {
     List<Subscription> findByVendorIdAndStatus(final Long vendorId,SubscriptionStatus status);
     
     List<Subscription> findByVendorId(final Long vendorId);
+
+    Optional<Subscription> findByCustomerIdAndVendorIdAndSkuId(final Long userId,final Long vendorId,final Long skuId);
 }

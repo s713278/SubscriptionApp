@@ -8,10 +8,11 @@ import com.app.repositories.RepositoryManager;
 
 @Service
 @Primary
+
 public class VendorCreateSubscriptionService extends AbstractCreateSubscriptionService {
 
-    public VendorCreateSubscriptionService(RepositoryManager repoManager, SubscriptionServiceHelper serviceHelper) {
-        super(repoManager, serviceHelper);
+    public VendorCreateSubscriptionService(ServiceManager serviceManager,RepositoryManager repoManager, SubscriptionServiceHelper serviceHelper) {
+        super(serviceManager,repoManager, serviceHelper);
     }
 
     @Override

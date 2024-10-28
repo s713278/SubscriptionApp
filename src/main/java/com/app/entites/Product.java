@@ -1,19 +1,15 @@
 package com.app.entites;
 
 import java.io.Serializable;
-import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -44,15 +40,7 @@ public class Product extends AbstractAuditingEntity<Long> implements Serializabl
     @Size(min = 25, message = "Product description must contain at least 25 characters")
     private String description;
 
-    @JsonIgnore
-    /*
-     * private Integer quantity; private double price; private double discount;
-     * private double specialPrice;
-     */
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<Sku> skus;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
