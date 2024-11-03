@@ -1,5 +1,6 @@
 package com.app.entites;
 
+import java.io.Serializable;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -16,7 +17,7 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name = "tb_catalog")
-public class Catalog {
+public class Catalog implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long catalogId;

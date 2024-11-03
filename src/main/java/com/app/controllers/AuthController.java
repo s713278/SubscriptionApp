@@ -2,7 +2,6 @@ package com.app.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,14 +13,10 @@ import com.app.exceptions.APIException;
 import com.app.payloads.request.*;
 import com.app.payloads.response.APIResponse;
 import com.app.payloads.response.AuthDetailsDTO;
-import com.app.security.RefreshTokenService;
-import com.app.security.TokenService;
-import com.app.services.AuthService;
 import com.app.services.ServiceManager;
-import com.app.services.auth.signin.OTPSignInService;
-import com.app.services.auth.signin.PasswordSignInService;
 import com.app.services.auth.signin.SignInContext;
 import com.app.services.auth.signup.UserSignUpStrategy;
+import com.app.services.notification.NotificationContext;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -41,15 +36,10 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "1. User Authentication")
 public class AuthController {
 
-    private final AuthService authService;
-    private final TokenService tokenService;
-    private final RefreshTokenService refreshTokenService;
     private final ServiceManager serviceManager;
-    private final AuthenticationManager authenticationManager;
     private final UserSignUpStrategy signUpStrategy;
-    private final PasswordSignInService passwordSignInService;
-    private final OTPSignInService otpSignInService;
     private final SignInContext signInContext;
+    private final NotificationContext notificationContext;
 
     @Operation(summary = "Signup with mobile number", description = "Registers a new user by providing their first name, mobile number, and password.")
     @ApiResponses(value = {
@@ -124,7 +114,7 @@ public class AuthController {
     //TODO:  @PostMapping("/email/verify-otp")
     public ResponseEntity<?> verifyEmailOtp(@Valid @RequestBody OTPVerificationRequest otpRequest) {
         try {
-            String response = authService.verifyEmailOtp(otpRequest);
+            String response = serviceManager.getAuthService().verifyEmailOtp(otpRequest);
             var apiResponse = APIResponse.success(HttpStatus.OK.value(), response);
             return new ResponseEntity<>(apiResponse, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
@@ -137,7 +127,13 @@ public class AuthController {
     @PostMapping("/request-otp")
     public ResponseEntity<?> requestOTP(@RequestBody OTPRequest request) {
         log.info("Received OTP request for mobile: {}", request.mobile());
-        authService.requestOTP(request);
+        if(request.mobile()!=null){
+            notificationContext.sendOTPMessage(NotificationType.SMS,
+                    ""+request.mobile());
+        }else{
+            notificationContext.sendOTPMessage(NotificationType.EMAIL,
+                    request.email());
+        }
         return  ResponseEntity.ok(APIResponse.success("OTP Sent successfully"));
     }
 
@@ -155,22 +151,22 @@ public class AuthController {
 
     @Operation(summary = "Refresh Token")
     @PostMapping("/refresh")
-    public @ResponseBody ResponseEntity<?> refreshAccessToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+    public @ResponseBody ResponseEntity<APIResponse<?>> refreshAccessToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
         String refreshToken = refreshTokenRequest.getRefreshToken();
-        if (refreshTokenService.validateRefreshToken(refreshToken)) {
-            String newAccessToken = tokenService
-                    .generateToken(refreshTokenService.getUserIdFromRefreshToken(refreshToken));
-            return new ResponseEntity<>(APIResponse.success(HttpStatus.OK.value(), newAccessToken), HttpStatus.OK);
-        } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid refresh token");
+        var refreshTokenService= serviceManager.getRefreshTokenService();
+        if (!refreshTokenService.validateRefreshToken(refreshToken)) {
+            throw new APIException(APIErrorCode.API_400, "Invalid refresh token");
         }
+            String newAccessToken = serviceManager.getTokenService()
+                    .generateToken(refreshTokenService.getUserIdFromRefreshToken(refreshToken));
+            return new ResponseEntity<>(APIResponse.success(newAccessToken), HttpStatus.OK);
     }
 
     // Account activation endpoint
     @Operation(summary = "Activation with Token")
    //TODO:  @GetMapping("/activate/{token}")
     public ResponseEntity<?> activateAccount(@PathVariable String token) {
-        boolean isActivated = authService.activateAccount(token);
+        boolean isActivated = serviceManager.getAuthService().activateAccount(token);
         if (isActivated) {
             return ResponseEntity.ok("Account activated successfully.");
         } else {
@@ -182,9 +178,9 @@ public class AuthController {
     @Operation(summary = "Forgot Password")
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
-        Customer customer = authService.generateResetToken(request.getEmail());
+        Customer customer = serviceManager.getAuthService().generateResetToken(request.getEmail());
         if (customer != null) {
-            serviceManager.getNotificationService().sendResetPasswordEmail(NotificationType.EMAIL,customer.getEmail(), customer.getResetPasswordToken());
+            serviceManager.getNotificationContext().sendResetPasswordEmail(NotificationType.EMAIL,customer.getEmail(), customer.getResetPasswordToken());
             return ResponseEntity.ok("Password reset link has been sent to your email.");
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found.");
@@ -194,7 +190,7 @@ public class AuthController {
     @Operation(summary  = "Reset Password")
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
-        boolean isReset = authService.resetPassword(request.getToken(), request.getNewPassword());
+        boolean isReset = serviceManager.getAuthService().resetPassword(request.getToken(), request.getNewPassword());
         if (isReset) {
             return ResponseEntity.ok("Password reset successful.");
         }

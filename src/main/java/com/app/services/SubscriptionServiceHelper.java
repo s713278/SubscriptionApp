@@ -13,25 +13,18 @@ import com.app.entites.Subscription;
 public class SubscriptionServiceHelper {
 
     public LocalDate calculateNextDeliveryDate(Subscription item) {
-        switch (item.getFrequency()) {
-        case ONE_TIME:
-            return item.getFromStartDate();
-        case DAILY:
-            return item.getFromStartDate().plusDays(1);
-        case ALTERNATE_DAY:
-            return item.getFromStartDate().plusDays(2);
-        case WEEKLY:
-            return item.getFromStartDate().plusWeeks(1);
-        case CUSTOM:
-            return findNextCustomDeliveryDate(item);
-        default:
-            return item.getFromStartDate();
-        }
+        return switch (item.getFrequency()) {
+            case DAILY -> item.getStartDate().plusDays(1);
+            case ALTERNATE_DAY -> item.getStartDate().plusDays(2);
+            case WEEKLY -> item.getStartDate().plusWeeks(1);
+            case CUSTOM -> findNextCustomDeliveryDate(item);
+            default -> item.getStartDate();
+        };
     }
     private LocalDate findNextCustomDeliveryDate(Subscription subscription) {
         // Logic to find the next custom day in the week (e.g., Mon, Wed, Fri)
         List<Integer> customDays = subscription.getCustomDays();
-        LocalDate today = subscription.getFromStartDate();
+        LocalDate today = subscription.getStartDate();
         int todayDayOfWeek = today.getDayOfWeek().getValue();
 
         for (Integer day : customDays) {

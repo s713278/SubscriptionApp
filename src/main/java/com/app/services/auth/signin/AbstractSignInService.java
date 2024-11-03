@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.app.config.GlobalConfig;
+import com.app.constants.NotificationType;
 import com.app.entites.Customer;
-import com.app.payloads.request.OTPRequest;
 import com.app.payloads.request.SignInRequest;
 import com.app.payloads.response.AuthDetailsDTO;
 import com.app.services.ServiceManager;
@@ -52,8 +52,7 @@ public abstract class AbstractSignInService {
                     .activeSubscriptions(List.of())
                     .build();
         }else{
-            OTPRequest request =new OTPRequest("",userDetails.getMobile());
-            serviceManager.getAuthService().requestOTP(request);
+            serviceManager.getNotificationContext().sendOTPMessage(NotificationType.SMS,""+userDetails.getMobile());
             return responseBuilder
                     .message("OTP sent to your registered mobile number,Please verify")
                     .build();

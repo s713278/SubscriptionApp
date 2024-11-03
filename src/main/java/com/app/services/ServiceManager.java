@@ -20,9 +20,11 @@ public class ServiceManager {
     private final UserService userService;
     private final SkuService skuService;
     private final VendorService vendorService;
+    private final VendorSkuPriceService vendorSkuPriceService;
     private final OTPService otpService;
-    private final NotificationContext notificationService;
+    private final NotificationContext notificationContext;
     private final TokenService tokenService;
     private final RefreshTokenService refreshTokenService;
     private final AuthService authService;
+    private final SubscriptionService subscriptionService;
 }

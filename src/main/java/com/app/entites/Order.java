@@ -23,7 +23,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -59,7 +58,7 @@ public class Order extends AbstractAuditingEntity<Long> {
     private BigDecimal centralTax;
     private BigDecimal stateTax;
     
-    @Transient
+    @JoinColumn
     private double totalAmount;
 
     @JdbcType(value = PostgreSQLEnumJdbcType.class)

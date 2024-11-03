@@ -1,6 +1,8 @@
 package com.app.payloads.request;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.time.LocalDate;
+
+import com.app.entites.type.Gender;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,9 +19,6 @@ import lombok.Setter;
 @Schema(name = "User Update Request")
 public class UpdateUserRequest {
 
-    @JsonIgnore
-    private Long userId;
-
     @NotBlank(message = "First name is required.")
     @JsonProperty("first_name")
     private String firstName;
@@ -29,5 +28,11 @@ public class UpdateUserRequest {
 
     @JsonProperty("email")
     private String email;
+
+    @JsonProperty("date_of_birth")
+    private LocalDate dateOfBirth;
+
+    private Gender gender;
+
 
 }

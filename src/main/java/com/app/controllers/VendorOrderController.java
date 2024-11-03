@@ -74,9 +74,9 @@ public class VendorOrderController {
         return new ResponseEntity<OrderResponse>(orderResponse, HttpStatus.FOUND);
     }
 
-    @GetMapping("public/users/{emailId}/orders")
-    public ResponseEntity<List<OrderDTO>> getOrdersByUser(@PathVariable String emailId) {
-        List<OrderDTO> orders = orderService.getOrdersByUser(emailId);
+    @GetMapping("public/users/{userId}/orders")
+    public ResponseEntity<List<OrderDTO>> getOrdersByUser(@PathVariable Long userId) {
+        List<OrderDTO> orders = orderService.getOrdersByUser(userId);
 
         return new ResponseEntity<List<OrderDTO>>(orders, HttpStatus.FOUND);
     }

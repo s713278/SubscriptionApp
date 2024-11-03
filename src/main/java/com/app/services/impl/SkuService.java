@@ -40,9 +40,14 @@ public class SkuService {
     }
 
     @Cacheable(value="skus",key ="#skuId")
-    public SkuDTO fetchSkuById(Long skuId){
+    public SkuDTO fetchSkuById(final Long skuId){
         var sku = skuRepo.findById(skuId)
                 .orElseThrow(()->new APIException(APIErrorCode.API_404,"SKU not existed in system."));
         return modelMapper.map(sku,SkuDTO.class);
+    }
+
+    public Sku fetchSkuEntityById(final Long skuId){
+       return  skuRepo.findById(skuId)
+                .orElseThrow(()->new APIException(APIErrorCode.API_404,"SKU not existed in system."));
     }
 }

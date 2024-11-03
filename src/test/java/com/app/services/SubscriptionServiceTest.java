@@ -1,9 +1,6 @@
 package com.app.services;
 
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
 
@@ -11,9 +8,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Profile;
 
+import com.app.AbstractBaseConfig;
 import com.app.entites.Customer;
 import com.app.entites.SubscriptionFrequency;
 import com.app.payloads.request.SubscriptionRequest;
@@ -22,10 +18,8 @@ import com.app.repositories.RepositoryManager;
 
 import jakarta.transaction.Transactional;
 
-@SpringBootTest
 @Transactional
-@Profile("dev")
-class SubscriptionServiceTest {
+class SubscriptionServiceTest extends AbstractBaseConfig {
     
     @Autowired
     private  SubscriptionService subscriptionService;
@@ -53,7 +47,7 @@ class SubscriptionServiceTest {
         testCustomer.setMobile(9912149048L);
         customerId = reposirotyManager.getCustomerRepo().save(testCustomer).getId();
         System.out.println("It should be only one time --setUp");
-      //  testCreateSubscription();   
+       testCreateSubscription();
     }
 
     @AfterEach
@@ -66,12 +60,12 @@ class SubscriptionServiceTest {
     @Test
     void testCreateSubscription() {
         SubscriptionRequest subscriptionRequest = new SubscriptionRequest();
-        subscriptionRequest.setSkuId(testSkuId);
-        subscriptionRequest.setCustomerId(customerId);
-        subscriptionRequest.setVendorId(testVendorId);
+        subscriptionRequest.setVendorPriceId(testVendorId);
         subscriptionRequest.setQuantity(5);
-        subscriptionRequest.setFromStartDate(LocalDate.now().plusDays(2));
-        var sub = createSubscriptionService.createSubscription(subscriptionRequest); 
+        subscriptionRequest.setStartDate(LocalDate.now().plusDays(2));
+        subscriptionRequest.setFrequency(SubscriptionFrequency.DAILY);
+        subscriptionRequest.setEndDate(LocalDate.now().plusDays(30));
+        var sub = createSubscriptionService.createSubscription(customerId,testVendorId,subscriptionRequest);
         assertNotNull( sub.data());
         assertTrue(sub.success());
         testSubscriptionId = sub.data().id();
@@ -81,31 +75,24 @@ class SubscriptionServiceTest {
     @Test()
     void testUpdateSubscription() {
         var oldSub=subscriptionService.fetchSubscription(testSubscriptionId);
-        
         UpdateSubscriptionRequest request = new UpdateSubscriptionRequest();
-        request.setSubscriptionId(testSubscriptionId);
-        request.setCustomerId(customerId);
-        
         request.setQuantity(9);
         request.setStartDate(LocalDate.now().plusDays(10));
         request.setFrequency(SubscriptionFrequency.ALTERNATE_DAY);
-         var response = subscriptionService.updateSubscription(request); 
+         var response = subscriptionService.updateSubscription(testSubscriptionId,customerId, request);
          assertTrue(response.success());
          var updateSub=subscriptionService.fetchSubscription(testSubscriptionId);
          assertNotEquals(oldSub.getQuantity(), updateSub.getQuantity(),"Quantity changes looks good!!");
-         assertNotEquals(oldSub.getFromStartDate(), updateSub.getFromStartDate(),"Startdate changes looks good!!");
+         assertNotEquals(oldSub.getStartDate(), updateSub.getStartDate(),"Startdate changes looks good!!");
          assertNotEquals(oldSub.getNextDeliveryDate(), updateSub.getNextDeliveryDate(),"Next delivery changes looks good!!");
-         assertNotEquals(oldSub.getFrequency(), updateSub.getFrequency(),"Frequence changes looks good!!");
+         assertNotEquals(oldSub.getFrequency(), updateSub.getFrequency(),"Frequency changes looks good!!");
     }
 
-    //@Test
-    void testUpdateSubscriptionStatus() {
-        fail("Not yet implemented");
-    }
 
-    //@Test
-    void testDeleteSubscription() {
-        fail("Not yet implemented");
-    }
+   @Test
+    void testFetchUserSubscriptionsForSpecificVendor(){
+      var subs= subscriptionService.fetchSubsByUserAndVendor(customerId,testVendorId);
+      assertFalse(subs.isEmpty());
+   }
 
 }

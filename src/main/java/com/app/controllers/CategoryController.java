@@ -25,43 +25,41 @@ import jakarta.validation.Valid;
 
 @Tag(name = "7. Catalog Management")
 @RestController
-@RequestMapping("/store/{store_id}")
-@SecurityRequirement(name = "E-Commerce Application")
+@RequestMapping("/vendor/{vendor_id}/categories")
+@SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
 public class CategoryController {
 
     @Autowired
     private CategoryService categoryService;
 
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('STORE')")
-    @PostMapping("/categories")
+    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('VENDOR'))")
+    @PostMapping("/")
     public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO category) {
         CategoryDTO savedCategoryDTO = categoryService.createCategory(category);
         return new ResponseEntity<CategoryDTO>(savedCategoryDTO, HttpStatus.CREATED);
     }
 
-    @GetMapping("/categories")
+    @GetMapping("/")
     public ResponseEntity<CategoryResponse> getCategories(
             @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
             @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_CATEGORIES_BY, required = false) String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
-
         CategoryResponse categoryResponse = categoryService.getCategories(pageNumber, pageSize, sortBy, sortOrder);
-
         return new ResponseEntity<CategoryResponse>(categoryResponse, HttpStatus.FOUND);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('STORE')")
-    @PutMapping("/categories/{categoryId}")
+    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('VENDOR'))")
+    @PutMapping("/{categoryId}")
     public ResponseEntity<CategoryDTO> updateCategory(@RequestBody CategoryDTO category,
             @PathVariable Long categoryId) {
         CategoryDTO categoryDTO = categoryService.updateCategory(category, categoryId);
-
         return new ResponseEntity<CategoryDTO>(categoryDTO, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("/categories/{categoryId}")
+
+    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN'))")
+    @DeleteMapping("/{categoryId}")
     public ResponseEntity<String> deleteCategory(@PathVariable Long categoryId) {
         String status = categoryService.deleteCategory(categoryId);
 

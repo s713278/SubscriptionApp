@@ -16,7 +16,7 @@ import com.app.config.AppConstants;
 import com.app.payloads.VendorDTO;
 import com.app.payloads.response.APIResponse;
 import com.app.payloads.response.StoreResponse;
-import com.app.services.impl.VendorService;
+import com.app.services.ServiceManager;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,23 +30,29 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class VendorController {
 
-    private final VendorService storeService;
+    private final ServiceManager serviceManager;
 
     @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
     @PostMapping("/")
     public ResponseEntity<APIResponse<VendorDTO>> createStore(@Valid @RequestBody VendorDTO storeDTO) {
-        return new ResponseEntity<>(storeService.createVendor(storeDTO), HttpStatus.CREATED);
+        return new ResponseEntity<>(serviceManager.getVendorService().createVendor(storeDTO), HttpStatus.CREATED);
     }
 
 
     @GetMapping("/{status}")
     public ResponseEntity<APIResponse<?>> fetchVendorsByStatus(@PathVariable  String status) {
-        return new ResponseEntity<>(APIResponse.success(storeService.fetchVendorsByStatus(status)),HttpStatus.OK);
+        return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService().fetchVendorsByStatus(status)),HttpStatus.OK);
+    }
+
+    @GetMapping("/{vendorId}/products")
+    public ResponseEntity<APIResponse<?>> fetchVendorProducts(@PathVariable  Long vendorId) {
+        var response =serviceManager.getVendorSkuPriceService().fetchProductsByVendorId(vendorId);
+        return new ResponseEntity<>(APIResponse.success(response),HttpStatus.OK);
     }
 
     @GetMapping("/list")
     public ResponseEntity<APIResponse<?>> fetchAllVendors() {
-        return new ResponseEntity<>(APIResponse.success(storeService.fetchAllVendors()),HttpStatus.OK);
+        return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService().fetchAllVendors()),HttpStatus.OK);
     }
 
     @GetMapping("/")
@@ -56,7 +62,7 @@ public class VendorController {
             @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_STORE_BY, required = false) String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
 
-        StoreResponse storeResponse = storeService.fetchAllVendors(pageNumber, pageSize, sortBy, sortOrder);
+        StoreResponse storeResponse = serviceManager.getVendorService().fetchAllVendors(pageNumber, pageSize, sortBy, sortOrder);
 
         return new ResponseEntity<StoreResponse>(storeResponse, HttpStatus.FOUND);
     }
@@ -65,12 +71,12 @@ public class VendorController {
     @PutMapping("/{storeId}")
     public ResponseEntity<APIResponse<VendorDTO>> updateStore(@RequestBody VendorDTO storeDTO,
             @PathVariable Long storeId) {
-        return new ResponseEntity<>(storeService.updateStore(storeDTO, storeId), HttpStatus.OK);
+        return new ResponseEntity<>(serviceManager.getVendorService().updateStore(storeDTO, storeId), HttpStatus.OK);
     }
 
     @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
     @DeleteMapping("/{storeId}")
     public ResponseEntity<APIResponse<String>> deleteStore(@PathVariable Long storeId) {
-        return new ResponseEntity<>(storeService.deleteVendor(storeId), HttpStatus.OK);
+        return new ResponseEntity<>(serviceManager.getVendorService().deleteVendor(storeId), HttpStatus.OK);
     }
 }

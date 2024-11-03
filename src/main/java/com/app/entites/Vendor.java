@@ -1,6 +1,5 @@
 package com.app.entites;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -35,10 +34,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class Vendor extends AbstractAuditingEntity<Long> implements Serializable {
-
-
-    @Serial
-    private static final long serialVersionUID = -1023982518500140805L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

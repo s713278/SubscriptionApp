@@ -99,7 +99,7 @@ public class UserOrderController {
     @Operation(summary = "Get all orders")
    // @GetMapping("/")
     public ResponseEntity<?> getAllOrders(@PathVariable Long userId) {
-        var orders = orderService.getOrdersByUser(""); //TODO:getAllOrders()
+        var orders = orderService.getOrdersByUser(userId);
         return ResponseEntity.ok(APIResponse.success(orders));
     }
 

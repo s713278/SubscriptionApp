@@ -1,5 +1,7 @@
 package com.app.services;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -7,10 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.app.entites.Subscription;
+import com.app.entites.SubscriptionStatus;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
-import com.app.payloads.SubscriptionDTO;
-import com.app.payloads.request.SubscriptionStatusRequest;
+import com.app.payloads.SubscriptionDetailDTO;
 import com.app.payloads.request.UpdateSubscriptionRequest;
 import com.app.payloads.response.SubscriptionResponse;
 import com.app.repositories.RepositoryManager;
@@ -36,29 +38,31 @@ public class SubscriptionService {
     }
 
     @Transactional
-    public SubscriptionResponse updateSubscription(@Valid UpdateSubscriptionRequest request) {
-        log.info("Start - Update subscription request for customer {}",request.getCustomerId());
-        var subscription = repoManager.getSubscriptionRepo().findById(request.getSubscriptionId())
-                .orElseThrow(() -> new APIException(APIErrorCode.API_400, "Subscription not found"));
-        
-        if(request.getCustomerId()!=subscription.getCustomer().getId()) {
-            throw new APIException(APIErrorCode.API_401, "Invalid customer id!!"); 
-        }
+    public SubscriptionResponse updateSubscription(Long subId,Long userId, @Valid UpdateSubscriptionRequest request) {
+        log.debug("Start - Update subscription request for user {} and sub id {}",userId,subId);
+        var subscription = repoManager.getSubscriptionRepo().findByIdAndUserId(subId,userId)
+                .orElseThrow(() -> new APIException(APIErrorCode.API_400, subId+" Subscription not existed for user "+userId));
+
         boolean changedFound= false;
         if(request.getFrequency()!=null && request.getFrequency()!=subscription.getFrequency()) {
             log.info("Change found in frequency from {} ==>> {} ",subscription.getFrequency(),request.getFrequency());
             subscription.setFrequency(request.getFrequency());
             changedFound = true;
         }
-        if(request.getQuantity()!=null && request.getQuantity()!=subscription.getQuantity()) {
+        if(request.getQuantity()!=null && !request.getQuantity().equals(subscription.getQuantity())) {
             log.info("Change found in quantity from {} ==>> {} ",subscription.getQuantity(),request.getQuantity());
             subscription.setQuantity(request.getQuantity());
             changedFound = true;
         }
-        if(request.getStartDate()!=null && !request.getStartDate().equals(subscription.getFromStartDate())) {
-            log.info("Change found in start date from {} ==> {} ",subscription.getFromStartDate(),request.getStartDate());
-            subscription.setFromStartDate(request.getStartDate());
+        if(request.getStartDate()!=null && !request.getStartDate().equals(subscription.getStartDate())) {
+            log.info("Change found in start date from {} ==> {} ",subscription.getStartDate(),request.getStartDate());
+            subscription.setStartDate(request.getStartDate());
             subscription.setNextDeliveryDate(serviceHelper.calculateNextDeliveryDate(subscription));
+            changedFound = true;
+        }
+        if(request.getEndDate()!=null && !request.getEndDate().equals(subscription.getEndDate())) {
+            log.info("Change found in end date from {} ==> {} ",subscription.getStartDate(),request.getStartDate());
+            subscription.setEndDate(request.getEndDate());
             changedFound = true;
         }
         SubscriptionResponse response =new SubscriptionResponse(true, "No subscription changes found!!");
@@ -67,34 +71,54 @@ public class SubscriptionService {
             repoManager.getSubscriptionRepo().save(subscription);
             response=new SubscriptionResponse(true, "Subscription updated successfully");
         }
-        log.info("End - Update subscription request for customer {}",request.getCustomerId());
+        log.info("End - Update subscription request for customer {}",userId);
         return response;
     }
     
     @Transactional
-    public SubscriptionResponse updateSubscriptionStatus(SubscriptionStatusRequest request) {
-        log.info("Start - Update subscription_status request for customer {}",request.getCustomerId());
-        var subscription = repoManager.getSubscriptionRepo().findById(request.getSubscriptionId())
+    public SubscriptionResponse updateSubscriptionStatus(Long userId,Long subId,SubscriptionStatus status) {
+        log.info("Start - Update subscription_status request for customer {}",userId);
+        var subscription = repoManager.getSubscriptionRepo().findById(subId)
                 .orElseThrow(() -> new APIException(APIErrorCode.API_400, "Subscription not found"));
-        
-        if(request.getCustomerId()!=subscription.getCustomer().getId()) {
-            throw new APIException(APIErrorCode.API_401, "Invalid customer id!!"); 
-        }
         SubscriptionResponse response = new SubscriptionResponse(true, "No subscription status changes found!!");
-        if(request.getStatus()!=null && request.getStatus()!=subscription.getStatus()) {
-            log.info("Change found in frequency from {} ==>> {} ",subscription.getStatus(),request.getStatus());
-            subscription.setStatus(request.getStatus());
+        boolean changeEligible= false;
+        switch (subscription.getStatus()){
+            case NEW, ACTIVE -> {
+                //It can be changed to PAUSED
+                if(!status.equals(SubscriptionStatus.NEW) && !status.equals(SubscriptionStatus.ACTIVE)){
+                    changeEligible = true;
+                }
+            }
+            case PAUSED -> {
+                if(!status.equals(SubscriptionStatus.PAUSED) ){
+                    changeEligible = true;
+                }
+                //It can be changed to ACTIVE
+            }
+            case CANCELLED -> {
+                throw new APIException(APIErrorCode.API_400,"Subscription already cancelled.");
+            }
+            case EXPIRED -> {
+                throw new APIException(APIErrorCode.API_400,"Subscription already expired.");
+            }case null, default -> {
+                throw new APIException(APIErrorCode.API_400,"Invalid subscription status.");
+            }
+        }
+        if(changeEligible) {
+            log.info("Change found in status from {} ==>> {} ",subscription.getStatus(),status);
+            subscription.setStatus(status);
             subscription.setUpdateVersion(subscription.getUpdateVersion()+1);
             repoManager.getSubscriptionRepo().save(subscription);
             response = new SubscriptionResponse(true, "Subscription status updated successfully");
         }
-        log.info("End - Update subscription_status request for customer {}",request.getCustomerId());
+        log.info("End - Update subscription_status request for customer {}",userId);
         return response;
         
     }
 
+    @Transactional
     public void deleteSubscription(Long subscriptionId) {
-        // TODO Auto-generated method stub
+        repoManager.getSubscriptionRepo().deleteById(subscriptionId);
 
     }
     
@@ -110,56 +134,66 @@ public class SubscriptionService {
      * @return
      */
     @Transactional(readOnly = true)
-    public List<SubscriptionDTO> fetchSubsByVendor(final Long vendorId){
+    public List<SubscriptionDetailDTO> fetchSubsByVendor(final Long vendorId){
         log.debug("Start 'fetchSubscriptionsByVendorId' for vendor:{}",vendorId);
         var subs =repoManager .getSubscriptionRepo().findByVendorId(vendorId);
         if(subs==null || subs.isEmpty()) {
             return Collections.emptyList();
         }
-       var result=  subs.stream().map(sub->
-       new SubscriptionDTO(
-                sub.getId(),
-                sub.getSku().getName(),
-                0,
-                sub.getSku().getSize(),
-                sub.getStatus(), 
-                sub.getQuantity(), 
-                sub.getFrequency(),
-                sub.getCustomDays(), 
-                sub.getFromStartDate(),
-                sub.getNextDeliveryDate()))
-               .toList();
-       log.debug("End 'fetchSubscriptionsByVendorId' for vendor:{}",vendorId);
-       return result;
+        return subs.stream().map(this::convertToDTO).toList();
     }
-    
+
+
     /**
-     * 
+     *
      * @param vendorId
      * @return
      */
     @Transactional(readOnly = true)
-    public List<SubscriptionDTO> fetchSubsByUserAndVendor(final Long userId,final Long vendorId){
+    public List<SubscriptionDetailDTO> fetchSubsByUserAndVendor(final Long userId,final Long vendorId){
         log.debug("Start 'fetchByCustomerIdAndVendorId' for user :{} and vendor:{}",userId,vendorId);
-        var subs =repoManager .getSubscriptionRepo().findByCustomerIdAndVendorId(userId,vendorId);
-        if(subs==null || subs.isEmpty()) {
+        var subs =repoManager .getSubscriptionRepo().findByUserIdAndVendorId(userId,vendorId);
+        log.debug("No of subscription  {} for user :{} and vendor {}",subs.size(),userId,vendorId);
+        if(subs.isEmpty()) {
             return Collections.emptyList();
         }
-        log.info("No of subscriptions:{} found for user :{} and vendor:{}",subs.size() , userId,vendorId);
-       var result=  subs.stream().map(sub->
-       new SubscriptionDTO(
-                sub.getId(),
-                sub.getSku().getName(),
-                0,
-                sub.getSku().getSize(),
-                sub.getStatus(), 
-                sub.getQuantity(), 
-                sub.getFrequency(),
-                sub.getCustomDays(), 
-                sub.getFromStartDate(),
-                sub.getNextDeliveryDate()))
-               .toList();
-       log.debug("End 'fetchByCustomerIdAndVendorId' for user :{} and vendor:{}",userId,vendorId);
-       return result;
+        return subs.stream().map(this::convertToDTO).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public boolean fetchByUserIdAndVendorPriceId(final Long userId, final Long vendorPriceId){
+        return repoManager.getSubscriptionRepo().findByUserIdAndVendorPriceId(userId,vendorPriceId).isPresent();
+    }
+
+    @Transactional(readOnly = true)
+    public Object fetchSubsByUserId(Long userId) {
+        var subs =repoManager .getSubscriptionRepo().findByUserId(userId);
+        log.debug("No of subscription  {} for user :{}",subs.size(),userId);
+        if(subs.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return subs.stream().map(this::convertToDTO).toList();
+    }
+
+    private SubscriptionDetailDTO convertToDTO(Object[] record) {
+        return new SubscriptionDetailDTO(
+                (Long) record[0],                    // subscriptionId
+                (Long) record[1],                    // userId
+                (Long) record[2],                    // vendorId
+                (String) record[3],                  // vendorName
+                (BigDecimal) record[4],              // listPrice
+                (BigDecimal) record[5],              // salePrice
+                (Integer) record[6],                 // quantity
+                (BigDecimal) record[7],              // amount
+                (String) record[8],                  // skuName
+                convertToLocalDate( record[9]),               // startDate
+                (String) record[10],                 // frequency
+                (String) record[11],                 // status
+                convertToLocalDate( record[12] )              // nextDeliveryDate
+        );
+    }
+
+    private LocalDate convertToLocalDate(Object sqlDate) {
+        return sqlDate != null ? ((java.sql.Date) sqlDate).toLocalDate() : null;
     }
 }

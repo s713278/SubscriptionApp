@@ -1,5 +1,5 @@
 package com.app.entites;
 public enum SubscriptionStatus {
-    ACTIVE, PAUSED, CANCELLED,EXPIRED
+    NEW,ACTIVE, PAUSED, CANCELLED,EXPIRED
     
 }

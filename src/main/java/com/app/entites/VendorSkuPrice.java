@@ -1,13 +1,9 @@
 package com.app.entites;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,17 +12,20 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = false)
 @Table(name = "tb_vendor_sku_price")
 @Data
 @Entity
-public class VendorSkuPrice {
+public class VendorSkuPrice extends AbstractAuditingEntity<Long> implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "tenant_id", nullable = false)
+    @JoinColumn(name = "vendor_id", nullable = false)
     private Vendor vendor;
 
     @ManyToOne
@@ -41,13 +40,6 @@ public class VendorSkuPrice {
 
     private LocalDate effectiveDate;
 
-    @CreationTimestamp
-    @Column(name = "created_date", updatable = false)
-    private LocalDateTime createdDate;
-
-    @UpdateTimestamp
-    @Column(name = "last_modified_date")
-    private LocalDateTime lastModifiedDate;
 
     // Getters and Setters
 }

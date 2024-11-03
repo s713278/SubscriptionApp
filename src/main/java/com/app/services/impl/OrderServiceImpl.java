@@ -89,14 +89,14 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
     }
 
     @Override
-    public List<OrderDTO> getOrdersByUser(String emailId) {
-        List<Order> orders = orderRepo.findAllBySubscriptionCustomerEmail(emailId);
+    public List<OrderDTO> getOrdersByUser(Long userId) {
+        List<Order> orders = orderRepo.findAllBySubscriptionUserId(userId);
 
         List<OrderDTO> orderDTOs = orders.stream().map(order -> modelMapper.map(order, OrderDTO.class))
                 .collect(Collectors.toList());
 
         if (orderDTOs.size() == 0) {
-            throw new APIException(APIErrorCode.API_400, "No orders placed yet by the user with email: " + emailId);
+            throw new APIException(APIErrorCode.API_400, "No orders placed yet by the user with email: " + userId);
         }
 
         return orderDTOs;
