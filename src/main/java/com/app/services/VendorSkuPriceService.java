@@ -61,4 +61,10 @@ public class VendorSkuPriceService {
                         .groupingBy(ProductSkuDTO::productId));
     }
 
+    @Cacheable(value = CacheType.CACHE_TYPE_VENDORS,key = "#priceId")
+    public VendorSkuPrice fetchVendorSkuPrice(Long priceId){
+        return  repositoryManager.getVendorSkuPriceRepo()
+                .findById(priceId).orElseThrow(()->new APIException(APIErrorCode.API_400,"No Price ID Found for vendor/sku with id "+priceId));
+    }
+
 }

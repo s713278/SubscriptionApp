@@ -22,10 +22,10 @@ public abstract class AbstractCreateSubscriptionService {
     private final RepositoryManager repoManager;
     private final SubscriptionServiceHelper serviceHelper;
 
-    protected void preSubscription(SubscriptionRequest request) {
+    protected void preSubscription(Long userId,SubscriptionRequest request) {
         if(serviceManager.getSubscriptionService().
-                fetchByCustomerIdAndVendorIdAndSkuId(request.getCustomerId(),
-                        request.getVendorId(),request.getSkuId())){
+                fetchByUserIdAndVendorPriceId(userId,
+                        request.getVendorPriceId())){
             throw new APIException(APIErrorCode.API_409,"Subscription already existed.Please update the subscription..");
         }
     }
@@ -35,25 +35,26 @@ public abstract class AbstractCreateSubscriptionService {
         notifyCustomer(subscription);
     }
     @Transactional
-    public SubscriptionResponse createSubscription(SubscriptionRequest request) {
-        log.info("Start - Create subscription request for customer {}",request.getCustomerId());
+    public SubscriptionResponse createSubscription(Long userId,Long vendorId,SubscriptionRequest request) {
+        log.info("Start - Create subscription request for customer {}",userId);
         Subscription subscription = new Subscription();
-            preSubscription(request);
+            preSubscription(userId,request);
             // Fetch customer and tenant info
-            Customer customer = serviceManager.getUserService().fetchUserById(request.getCustomerId());
+            Customer customer = serviceManager.getUserService().fetchUserById(userId);
             // Set SKU, quantity, and frequency
-            var sku = serviceManager.getSkuService().fetchSkuEntityById(request.getSkuId());
-            Vendor vendor=serviceManager.getVendorService().fetchVendor(request.getVendorId());
-            subscription.setCustomer(customer);
+            Vendor vendor=serviceManager.getVendorService().fetchVendor(request.getVendorPriceId());
+          //  subscription.setCustomer(customer);
+        subscription.setUserId(userId);
+        subscription.setVendorPriceId(request.getVendorPriceId());
             subscription.setStatus(SubscriptionStatus.NEW);
-            subscription.setSku(sku);
+          //  subscription.setSku(sku);
             subscription.setQuantity(request.getQuantity());
             subscription.setFrequency(request.getFrequency());
-            subscription.setVendor(vendor);
+          //  subscription.setVendor(vendor);
             if (request.getFrequency() == SubscriptionFrequency.CUSTOM) {
                 subscription.setCustomDays(request.getCustomDays());
             }
-            subscription.setFromStartDate(request.getFromStartDate());
+            subscription.setStartDate(request.getStartDate());
             subscription.setNextDeliveryDate(serviceHelper.calculateNextDeliveryDate(subscription));
             subscription.setUpdateVersion(1); //Created First Time
             subscription = repoManager.getSubscriptionRepo().save(subscription);
@@ -61,7 +62,7 @@ public abstract class AbstractCreateSubscriptionService {
         // Create the Data object with subscription_id and next_delivery_date
         SubscriptionResponse.Data data = new SubscriptionResponse.Data(subscription.getId(),
                 subscription.getNextDeliveryDate());
-        log.info("End - Create subscription request for customer {}",request.getCustomerId());
+        log.info("End - Create subscription request for customer {}",vendorId);
         return new SubscriptionResponse(true, "Subscription created successfully", data);
     }
 

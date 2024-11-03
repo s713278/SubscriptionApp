@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.app.entites.Address;
 import com.app.payloads.AddressDTO;
@@ -23,7 +22,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @Tag(name = "9. Address Service API")
-@RestController
+//@RestController
 @RequestMapping("/store/{store_id}/admin")
 @SecurityRequirement(name = "E-Commerce Application")
 public class AddressController {

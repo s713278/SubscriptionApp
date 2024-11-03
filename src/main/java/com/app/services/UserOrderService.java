@@ -18,6 +18,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import com.app.entites.Order;
+import com.app.entites.VendorSkuPrice;
 import com.app.payloads.OrderDetailsDTO;
 import com.app.repositories.RepositoryManager;
 import com.app.services.impl.SkuService;
@@ -45,11 +46,11 @@ public class UserOrderService {
     private final SkuService skuService;
     private final ServiceManager serviceManager;
     public List<OrderDetailsDTO> getUserOrderHistory(Long userId) {
-     return get(repositoryManager.getOrderRepo().findAllBySubscriptionCustomerId(userId));
+     return get(repositoryManager.getOrderRepo().findAllBySubscriptionUserId(userId));
     }
 
     public List<OrderDetailsDTO> getOrderHistoryByDateRange(Long userId, LocalDate startDate, LocalDate endDate) {
-        var  orders=repositoryManager.getOrderRepo().findBySubscriptionCustomerIdAndDateRange(userId, startDate, endDate);
+        var  orders=repositoryManager.getOrderRepo().findBySubscriptionUserIdAndDateRange(userId, startDate, endDate);
        return  get(orders);
     }
 
@@ -177,8 +178,10 @@ public class UserOrderService {
         }
         var result= orders.stream().map(
                 order ->{
-                    var skuId=order.getSubscription().getSku().getId();
-                    var sku = skuService.fetchSkuById(skuId);
+                    var vendorPriceId=order.getSubscription().getVendorPriceId();
+                    VendorSkuPrice vendorSkuPrice = serviceManager
+                            .getVendorSkuPriceService().fetchVendorSkuPrice(vendorPriceId);
+                    var sku = vendorSkuPrice.getSku();
                     var vendor = serviceManager.getVendorService().fetchVendorById(order.getVendorId());
                     return OrderDetailsDTO.builder()
                             .orderId(order.getId())

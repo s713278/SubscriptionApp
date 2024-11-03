@@ -23,7 +23,7 @@ public interface OrderService {
 
     OrderDTO getOrder(String emailId, Long orderId);
 
-    List<OrderDTO> getOrdersByUser(String emailId);
+    List<OrderDTO> getOrdersByUser(Long userId);
 
     OrderResponse getAllOrders(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 

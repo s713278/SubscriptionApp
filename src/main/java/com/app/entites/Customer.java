@@ -16,6 +16,7 @@ import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.hibernate.type.SqlTypes;
 
 import com.app.entites.type.Gender;
+import com.app.entites.type.UserType;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -42,6 +43,11 @@ public class Customer  extends  AbstractAuditingEntity<Long> implements Serializ
     private String firstName;
 
     private String lastName;
+
+    @Column(name = "type", columnDefinition = "user_type")
+    @JdbcType(value = PostgreSQLEnumJdbcType.class)
+    @Enumerated(EnumType.STRING)
+    private UserType type;
 
     @Email
     @Column(unique = true, nullable = true)

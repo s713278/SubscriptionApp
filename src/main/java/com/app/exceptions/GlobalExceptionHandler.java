@@ -61,7 +61,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(APIException.class)
     public ResponseEntity<APIErrorResponse> handleAPIErrorResponse(APIException apiError) {
-        log.error("APIException Details",apiError);
+        log.error("APIException Details: "+apiError);
          APIErrorResponse apiErrorResponse = new APIErrorResponse(apiError.getApiErrorCode(), apiError.getFailureReason(), apiError.getDetails());
         return new ResponseEntity<>(apiErrorResponse, HttpStatus.valueOf(apiError.getStatus()));
     }

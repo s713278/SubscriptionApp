@@ -151,16 +151,15 @@ public class AuthController {
 
     @Operation(summary = "Refresh Token")
     @PostMapping("/refresh")
-    public @ResponseBody ResponseEntity<?> refreshAccessToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+    public @ResponseBody ResponseEntity<APIResponse<?>> refreshAccessToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
         String refreshToken = refreshTokenRequest.getRefreshToken();
         var refreshTokenService= serviceManager.getRefreshTokenService();
-        if (refreshTokenService.validateRefreshToken(refreshToken)) {
+        if (!refreshTokenService.validateRefreshToken(refreshToken)) {
+            throw new APIException(APIErrorCode.API_400, "Invalid refresh token");
+        }
             String newAccessToken = serviceManager.getTokenService()
                     .generateToken(refreshTokenService.getUserIdFromRefreshToken(refreshToken));
-            return new ResponseEntity<>(APIResponse.success(HttpStatus.OK.value(), newAccessToken), HttpStatus.OK);
-        } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid refresh token");
-        }
+            return new ResponseEntity<>(APIResponse.success(newAccessToken), HttpStatus.OK);
     }
 
     // Account activation endpoint

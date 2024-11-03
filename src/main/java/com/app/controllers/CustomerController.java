@@ -110,6 +110,14 @@ public class CustomerController {
     }
 
     @Operation(summary = "All Subscriptions By Vendor")
+    @GetMapping("/{userId}/subs")
+    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
+    public ResponseEntity<APIResponse<?>> fetchAllSubsByUser( @PathVariable Long userId) {
+        var subscriptions = subscriptionService.fetchSubsByUserId(userId);
+        return ResponseEntity.ok(APIResponse.success(subscriptions));
+    }
+
+    @Operation(summary = "All Subscriptions By Vendor")
     @GetMapping("/{userId}/vendor/{vendorId}")
     @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
     public ResponseEntity<APIResponse<?>> fetchSubsByUserAndVendor( @PathVariable Long vendorId,

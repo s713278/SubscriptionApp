@@ -4,30 +4,34 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.app.entites.SubscriptionFrequency;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class SubscriptionRequest {
 
-    @JsonIgnore
-    private Long customerId;
+    @Min(value = 0, message = "Invalid price id.")
+    @NotNull(message = "Vendor Product Id is required.") @JsonProperty("vendor_price_id")
+    private Long vendorPriceId;
 
-    @JsonIgnore
-    private Long vendorId;
-
-    @NotNull(message = "SKU ID is required") @JsonProperty("sku_id")
-    private Long skuId;
-
+    @Min(value = 1, message = "Invalid quantity.")
+    @Max(value = 10, message = "Quantity must be less than or equal to 10")
     @NotNull(message = "Quantity is required") private Integer quantity;
 
     @NotNull(message = "Frequency is required") private SubscriptionFrequency frequency;
     
     @NotNull(message = "Start Date is required") @JsonProperty("start_date")
-    private LocalDate fromStartDate;
+    @Future(message = "Start date must be in the future")
+    private LocalDate startDate;
+
+    @NotNull(message = "End Date is required") @JsonProperty("end_date")
+    @Future(message = "End date must be in the future")
+    private LocalDate endDate;
     
     @JsonProperty("custom_days")
     private List<Integer> customDays; // Optional: Applicable if frequency is CUSTOM

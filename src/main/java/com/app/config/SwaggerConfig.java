@@ -37,7 +37,6 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI shopOpenAPI() {
-
         Server localServer = new Server();
         localServer.setUrl(localUrl);
         localServer.setDescription("Local Env");
@@ -52,6 +51,8 @@ public class SwaggerConfig {
                         .email("swamy.kunta@gmail.com"))
                 .license(new License().name("License").url("/")))
                 .externalDocs(new ExternalDocumentation().description("Multi Vendor Subscription App")
-                        .url("http://localhost:8080/api/swagger-ui/index.html")).servers(List.of(localServer,devServer));
+                        .url("http://localhost:8080/api/swagger-ui/index.html"))
+                .servers(List.of(localServer,devServer));
+
     }
 }
