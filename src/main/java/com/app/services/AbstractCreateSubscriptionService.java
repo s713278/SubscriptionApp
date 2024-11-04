@@ -35,7 +35,7 @@ public abstract class AbstractCreateSubscriptionService {
         notifyCustomer(subscription);
     }
     @Transactional
-    public SubscriptionResponse createSubscription(Long userId,Long vendorId,SubscriptionRequest request) {
+    public SubscriptionResponse createSubscription(Long userId,SubscriptionRequest request) {
         log.info("Start - Create subscription request for customer {}",userId);
         Subscription subscription = new Subscription();
             preSubscription(userId,request);
@@ -62,7 +62,7 @@ public abstract class AbstractCreateSubscriptionService {
         // Create the Data object with subscription_id and next_delivery_date
         SubscriptionResponse.Data data = new SubscriptionResponse.Data(subscription.getId(),
                 subscription.getNextDeliveryDate());
-        log.info("End - Create subscription request for customer {}",vendorId);
+        log.info("End - Create subscription request for user {}",userId);
         return new SubscriptionResponse(true, "Subscription created successfully", data);
     }
 

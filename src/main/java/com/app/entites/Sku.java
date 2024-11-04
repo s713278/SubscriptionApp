@@ -40,6 +40,5 @@ public class Sku extends AbstractAuditingEntity<Long> implements Serializable {
     @OneToMany(mappedBy = "sku",fetch = FetchType.LAZY)
     private List<VendorSkuPrice> vendorSkuPrices;
     
-    private Integer stock;
 
 }

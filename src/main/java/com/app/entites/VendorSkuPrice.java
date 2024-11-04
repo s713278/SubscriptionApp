@@ -3,14 +3,9 @@ package com.app.entites;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -40,6 +35,9 @@ public class VendorSkuPrice extends AbstractAuditingEntity<Long> implements Seri
 
     private LocalDate effectiveDate;
 
-
+    @CollectionTable(name = "tb_sku_eligible_frequency",joinColumns = @JoinColumn(name = "id"))
+    @Enumerated(EnumType.STRING)
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<SubscriptionFrequency> eligibleFrequency; // For custom date range
     // Getters and Setters
 }

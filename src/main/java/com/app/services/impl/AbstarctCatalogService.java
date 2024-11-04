@@ -111,7 +111,7 @@ public abstract class AbstarctCatalogService {
         cart.getCartItems().forEach(cartItem -> {
             int quantity = cartItem.getQuantity();
             Sku sku = cartItem.getSku();
-            sku.setStock(sku.getStock() - quantity);
+           // sku.setStock(sku.getStock() - quantity);
         });
         cart.getCartItems().clear();
         cart.setTotalPrice(BigDecimal.valueOf(0));

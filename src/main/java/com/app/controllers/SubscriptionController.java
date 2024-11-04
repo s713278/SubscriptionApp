@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.config.AppConstants;
 import com.app.entites.Subscription;
+import com.app.entites.SubscriptionStatus;
 import com.app.payloads.request.SubscriptionRequest;
 import com.app.payloads.request.SubscriptionStatusRequest;
 import com.app.payloads.request.UpdateSubscriptionRequest;
@@ -34,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
 @Tag(name = "3. Subscription Management")
 @RestController
-@RequestMapping("/v1/vendors/{vendorId}/users/{userId}/subs")
+@RequestMapping("/v1/users/{userId}/subs")
 @Slf4j
 @RequiredArgsConstructor
 public class SubscriptionController extends AbstractRequestValidation{
@@ -46,13 +47,11 @@ public class SubscriptionController extends AbstractRequestValidation{
     @Operation(summary = "Create Subscription")
     @PostMapping("/")
     public ResponseEntity<SubscriptionResponse> createSubscription(
-            @PathVariable Long vendorId,
             @PathVariable Long userId,
             @Valid @RequestBody SubscriptionRequest request, BindingResult bindingResult) {
         validateRequest(bindingResult);
-        request.setVendorPriceId(vendorId);
         log.debug("Entered create subscription for customer {}",userId);
-        SubscriptionResponse subscription = createSubscriptionService.createSubscription(userId,vendorId,request);
+        SubscriptionResponse subscription = createSubscriptionService.createSubscription(userId,request);
      // Return the response wrapped in ResponseEntity with HTTP status 201 (Created)
         return new ResponseEntity<>(subscription, HttpStatus.CREATED);
     }
@@ -61,7 +60,7 @@ public class SubscriptionController extends AbstractRequestValidation{
     @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER') or hasAuthority('VENDOR'))")
     @PatchMapping("/{subId}")
     @Operation(summary  = "Update Subscription")
-    public ResponseEntity<APIResponse<?>> updateSubscription(@PathVariable Long vendorId, @PathVariable Long userId, @PathVariable Long subId,
+    public ResponseEntity<APIResponse<?>> updateSubscription(@PathVariable Long userId, @PathVariable Long subId,
                                                           @Valid @RequestBody UpdateSubscriptionRequest request, BindingResult bindingResult) {
         validateRequest(bindingResult);
         SubscriptionResponse subscription =subscriptionService.updateSubscription(userId,subId,request);
@@ -71,11 +70,9 @@ public class SubscriptionController extends AbstractRequestValidation{
     @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER') or hasAuthority('VENDOR'))")
     @PatchMapping("/{subId}/status")
     @Operation(description  = "Update subscription status")
-    public ResponseEntity<APIResponse<?>> updateSubscriptionStatus(@PathVariable Long vendorId,
-                                                                         @PathVariable Long userId,
+    public ResponseEntity<APIResponse<?>> updateSubscriptionStatus(@PathVariable Long userId,
             @PathVariable Long subId,
             @Valid @RequestBody SubscriptionStatusRequest request) {
-        request.setVendorId(vendorId);
         SubscriptionResponse subscription =subscriptionService.updateSubscriptionStatus(userId,subId,request.getStatus());
         return new ResponseEntity<>(APIResponse.success(subscription),HttpStatus.NO_CONTENT);
     }
@@ -91,10 +88,9 @@ public class SubscriptionController extends AbstractRequestValidation{
     @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER') or hasAuthority('VENDOR'))")
     @DeleteMapping("/{subId}")
     @Operation(summary  = "Delete Subscription")
-    public ResponseEntity<APIResponse<String>> deleteSubscription( @PathVariable Long vendorId,
-                                                      @PathVariable Long userId,
-                                                      @PathVariable Long subId) {
-        subscriptionService.deleteSubscription(subId);
+    public ResponseEntity<APIResponse<String>> deleteSubscription( @PathVariable Long subId,@PathVariable Long userId) {
+         subscriptionService.updateSubscriptionStatus(subId, userId,SubscriptionStatus.DELETED);
+        //subscriptionService.deleteSubscription(subId);
         return new ResponseEntity<>(APIResponse.success(HttpStatus.NO_CONTENT.value(),"Subscription deleted successfully"),HttpStatus.NO_CONTENT);
     }
 }

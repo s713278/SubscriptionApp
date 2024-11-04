@@ -18,6 +18,7 @@ import com.app.payloads.response.APIResponse;
 import com.app.payloads.response.StoreResponse;
 import com.app.services.ServiceManager;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -38,45 +39,46 @@ public class VendorController {
         return new ResponseEntity<>(serviceManager.getVendorService().createVendor(storeDTO), HttpStatus.CREATED);
     }
 
-
+    @Operation(summary = "Fetch vendors with a given status")
     @GetMapping("/{status}")
     public ResponseEntity<APIResponse<?>> fetchVendorsByStatus(@PathVariable  String status) {
         return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService().fetchVendorsByStatus(status)),HttpStatus.OK);
     }
 
+    @Operation(summary = "Fetch vendor specific products")
     @GetMapping("/{vendorId}/products")
     public ResponseEntity<APIResponse<?>> fetchVendorProducts(@PathVariable  Long vendorId) {
         var response =serviceManager.getVendorSkuPriceService().fetchProductsByVendorId(vendorId);
         return new ResponseEntity<>(APIResponse.success(response),HttpStatus.OK);
     }
 
+    @Operation(summary = "Fetch all vendors without pagination")
     @GetMapping("/list")
     public ResponseEntity<APIResponse<?>> fetchAllVendors() {
         return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService().fetchAllVendors()),HttpStatus.OK);
     }
 
+    @Operation(summary = "Fetch all vendors with pagination")
     @GetMapping("/")
-    public ResponseEntity<StoreResponse> getStores(
+    public ResponseEntity<StoreResponse> getAllVendors(
             @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
             @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_STORE_BY, required = false) String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
-
         StoreResponse storeResponse = serviceManager.getVendorService().fetchAllVendors(pageNumber, pageSize, sortBy, sortOrder);
-
         return new ResponseEntity<StoreResponse>(storeResponse, HttpStatus.FOUND);
     }
 
     @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
-    @PutMapping("/{storeId}")
+    @PutMapping("/{vendorId}")
     public ResponseEntity<APIResponse<VendorDTO>> updateStore(@RequestBody VendorDTO storeDTO,
-            @PathVariable Long storeId) {
-        return new ResponseEntity<>(serviceManager.getVendorService().updateStore(storeDTO, storeId), HttpStatus.OK);
+            @PathVariable Long vendorId) {
+        return new ResponseEntity<>(serviceManager.getVendorService().updateStore(storeDTO, vendorId), HttpStatus.OK);
     }
 
     @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
-    @DeleteMapping("/{storeId}")
-    public ResponseEntity<APIResponse<String>> deleteStore(@PathVariable Long storeId) {
-        return new ResponseEntity<>(serviceManager.getVendorService().deleteVendor(storeId), HttpStatus.OK);
+    @DeleteMapping("/{vendorId}")
+    public ResponseEntity<APIResponse<String>> deleteStore(@PathVariable Long vendorId) {
+        return new ResponseEntity<>(serviceManager.getVendorService().deleteVendor(vendorId), HttpStatus.OK);
     }
 }
