@@ -1,15 +1,23 @@
 package com.app.services.impl;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.app.constants.CacheType;
 import com.app.entites.Sku;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
+import com.app.payloads.ProductSkuDTO;
 import com.app.payloads.SkuDTO;
-import com.app.repositories.SkuRepo;
+import com.app.repositories.RepositoryManager;
 
 import lombok.AllArgsConstructor;
 
@@ -17,37 +25,66 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class SkuService {
 
+    final RepositoryManager repositoryManager;
     final ModelMapper modelMapper;
-    final SkuRepo skuRepo;
 
     public SkuDTO addSku(SkuDTO skuDTO) {
         Sku sku = modelMapper.map(skuDTO, Sku.class);
-        skuRepo.save(sku);
+        repositoryManager.getSkuRepo().save(sku);
         return modelMapper.map(sku, SkuDTO.class);
     }
 
     public SkuDTO updateSku(Long skuId, SkuDTO skuDTO) {
         Sku sku = modelMapper.map(skuDTO, Sku.class);
         // sku.setSkuId(skuId);
-        skuRepo.save(sku);
+        repositoryManager.getSkuRepo().save(sku);
         return modelMapper.map(sku, SkuDTO.class);
     }
 
-    @CacheEvict(key ="#skuId")
+    @CacheEvict(key = "#skuId")
     public String deleteSku(Long skuId) {
-        skuRepo.deleteById(skuId);
+        repositoryManager.getSkuRepo().deleteById(skuId);
         return "Sku " + skuId + " deleted successfully !!!";
     }
 
-    @Cacheable(value="skus",key ="#skuId")
-    public SkuDTO fetchSkuById(final Long skuId){
-        var sku = skuRepo.findById(skuId)
-                .orElseThrow(()->new APIException(APIErrorCode.API_404,"SKU not existed in system."));
-        return modelMapper.map(sku,SkuDTO.class);
+    @Cacheable(value = "skus", key = "#skuId")
+    public SkuDTO fetchSkuById(final Long skuId) {
+        var sku = repositoryManager.getSkuRepo().findById(skuId)
+                .orElseThrow(() -> new APIException(APIErrorCode.API_404, "SKU not existed in system."));
+        return modelMapper.map(sku, SkuDTO.class);
     }
 
-    public Sku fetchSkuEntityById(final Long skuId){
-       return  skuRepo.findById(skuId)
-                .orElseThrow(()->new APIException(APIErrorCode.API_404,"SKU not existed in system."));
+    public Sku fetchSkuEntityById(final Long skuId) {
+        return repositoryManager.getSkuRepo().findById(skuId)
+                .orElseThrow(() -> new APIException(APIErrorCode.API_404, "SKU not existed in system."));
     }
+
+
+
+    @Cacheable(value = CacheType.CACHE_TYPE_VENDORS,key = "'vendor::product::' + #vendorId")
+    @Transactional(readOnly = true)
+    public Map<Long, List<ProductSkuDTO>> fetchProductSkusByVendorId(Long vendorId){
+        var queryResults = repositoryManager.getSkuRepo().findVendorProductSkus(vendorId);
+        List<ProductSkuDTO> productSkus = queryResults.stream().map(result ->
+                new ProductSkuDTO(
+                        (Long) result[0],         // productId
+                        (String) result[1],       // productName
+                        (Long) result[2],         // skuId
+                        (String) result[3],       // imagePath
+                        (String) result[4],       // skuName
+                        (String) result[5],       // skuSize
+                        (Long) result[6],         // vendorSkuPriceId
+                        (Integer) result[7],      // stock
+                        ((BigDecimal) result[8]).doubleValue(),       // listPrice
+                        (result[9])!=null?((BigDecimal) result[9]).doubleValue():0,     // salePrice
+                        null
+                )
+        ).toList();
+
+        // Group the ProductSku objects by productId
+        return productSkus.stream()
+                .collect(Collectors
+                        .groupingBy(ProductSkuDTO::productId));
+    }
+
 }

@@ -60,7 +60,7 @@ class SubscriptionServiceTest extends AbstractBaseConfig {
     @Test
     void testCreateSubscription() {
         SubscriptionRequest subscriptionRequest = new SubscriptionRequest();
-        subscriptionRequest.setVendorPriceId(testVendorId);
+        subscriptionRequest.setSkuId(testVendorId);
         subscriptionRequest.setQuantity(5);
         subscriptionRequest.setStartDate(LocalDate.now().plusDays(2));
         subscriptionRequest.setFrequency(SubscriptionFrequency.DAILY);

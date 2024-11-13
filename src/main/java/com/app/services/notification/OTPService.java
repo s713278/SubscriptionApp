@@ -26,14 +26,14 @@ public class OTPService {
     private static final int ATTEMPT_EXPIRY_MINUTES = 5; // Attempts expire after 5 minutes
 
     private String getRandomNumber(){
-        return  String.format("%06d", random.nextInt(1000000));
+        return  String.format("%04d", random.nextInt(1000000));
     }
 
     @Cacheable(value = CacheType.CACHE_TYPE_OTP,key = "#key")
     public String generateOtp(String key) {
         //TODO : Clean up
         if(!globalConfig.getCustomerConfig().isOtpVerificationEnabled()){
-            return "909090";
+            return "9090";
         }
        // Generate a 6-digit OTP
         return getRandomNumber(); // Return the generated OTP

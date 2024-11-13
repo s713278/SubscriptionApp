@@ -59,6 +59,7 @@ application:
     otp_no_of_retry: 3  #In seconds
     email_token_exp: 3600
     address_valid_keys:
+      - name
       - address1
       - address2
       - city    

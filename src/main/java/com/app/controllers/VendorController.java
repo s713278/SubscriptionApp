@@ -45,28 +45,28 @@ public class VendorController {
         return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService().fetchVendorsByStatus(status)),HttpStatus.OK);
     }
 
-    @Operation(summary = "Fetch vendor specific products")
+    @Operation(summary = "Vendor's products listing")
     @GetMapping("/{vendorId}/products")
-    public ResponseEntity<APIResponse<?>> fetchVendorProducts(@PathVariable  Long vendorId) {
-        var response =serviceManager.getVendorSkuPriceService().fetchProductsByVendorId(vendorId);
+    public ResponseEntity<APIResponse<?>> fetchVendorProductSkus(@PathVariable  Long vendorId) {
+        var response =serviceManager.getSkuService().fetchProductSkusByVendorId(vendorId);
         return new ResponseEntity<>(APIResponse.success(response),HttpStatus.OK);
     }
 
-    @Operation(summary = "Fetch all vendors without pagination")
+    @Operation(summary = "All vendors without pagination")
     @GetMapping("/list")
     public ResponseEntity<APIResponse<?>> fetchAllVendors() {
         return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService().fetchAllVendors()),HttpStatus.OK);
     }
 
-    @Operation(summary = "Fetch all vendors with pagination")
+    @Operation(summary = "All vendors with pagination")
     @GetMapping("/")
-    public ResponseEntity<StoreResponse> getAllVendors(
+    public ResponseEntity<APIResponse<?>> getAllVendors(
             @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
             @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_STORE_BY, required = false) String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
         StoreResponse storeResponse = serviceManager.getVendorService().fetchAllVendors(pageNumber, pageSize, sortBy, sortOrder);
-        return new ResponseEntity<StoreResponse>(storeResponse, HttpStatus.FOUND);
+        return new ResponseEntity<>(APIResponse.success(storeResponse),HttpStatus.OK);
     }
 
     @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)

@@ -18,7 +18,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import com.app.entites.Order;
-import com.app.entites.VendorSkuPrice;
 import com.app.payloads.OrderDetailsDTO;
 import com.app.repositories.RepositoryManager;
 import com.app.services.impl.SkuService;
@@ -178,21 +177,22 @@ public class UserOrderService {
         }
         var result= orders.stream().map(
                 order ->{
-                    var vendorPriceId=order.getSubscription().getVendorPriceId();
-                    VendorSkuPrice vendorSkuPrice = serviceManager
-                            .getVendorSkuPriceService().fetchVendorSkuPrice(vendorPriceId);
-                    var sku = vendorSkuPrice.getSku();
+                    var skuId=order.getSubscription().getSkuId();
+                    //PriceList priceList = serviceManager
+                       //     .getPriceListService().fetchVendorSkuPrice(skuId);
+                   // var sku = priceList.getSku();
+                    var skuDto = serviceManager.getSkuService().fetchSkuById(skuId);
                     var vendor = serviceManager.getVendorService().fetchVendorById(order.getVendorId());
                     return OrderDetailsDTO.builder()
                             .orderId(order.getId())
                             .deliveryDate(order.getDeliveryDate())
-                            .size(sku.getSize())
+                            .size(skuDto.getSize())
                             .discount(BigDecimal.valueOf(0)) //TODO
-                            .itemName(sku.getName())
+                            .itemName(skuDto.getName())
                             .quantity(order.getQuantity())
                             .unitPrice(order.getPrice().doubleValue())
                             .amount(BigDecimal.valueOf(order.getQuantity()).multiply(order.getPrice()))
-                            // .totalAmount(order.getTotalAmount()) //TODO
+                            //.totalAmount(order.getTotalAmount()) //TODO
                             //.totalDiscount(0.0) //TODO
                             .vendorName(vendor.getBusinessName())
                             .build();

@@ -24,8 +24,8 @@ public abstract class AbstractCreateSubscriptionService {
 
     protected void preSubscription(Long userId,SubscriptionRequest request) {
         if(serviceManager.getSubscriptionService().
-                fetchByUserIdAndVendorPriceId(userId,
-                        request.getVendorPriceId())){
+                fetchByUserIdAndSkuId(userId,
+                        request.getSkuId())){
             throw new APIException(APIErrorCode.API_409,"Subscription already existed.Please update the subscription..");
         }
     }
@@ -42,10 +42,10 @@ public abstract class AbstractCreateSubscriptionService {
             // Fetch customer and tenant info
             Customer customer = serviceManager.getUserService().fetchUserById(userId);
             // Set SKU, quantity, and frequency
-            Vendor vendor=serviceManager.getVendorService().fetchVendor(request.getVendorPriceId());
+            Vendor vendor=serviceManager.getVendorService().fetchVendor(request.getSkuId());
           //  subscription.setCustomer(customer);
         subscription.setUserId(userId);
-        subscription.setVendorPriceId(request.getVendorPriceId());
+        subscription.setSkuId(request.getSkuId());
             subscription.setStatus(SubscriptionStatus.NEW);
           //  subscription.setSku(sku);
             subscription.setQuantity(request.getQuantity());

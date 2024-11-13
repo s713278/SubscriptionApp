@@ -16,8 +16,8 @@ import lombok.Data;
 public class SubscriptionRequest {
 
     @Min(value = 0, message = "Invalid price id.")
-    @NotNull(message = "Vendor Product Id is required.") @JsonProperty("vendor_price_id")
-    private Long vendorPriceId;
+    @NotNull(message = "Sku Id is required.") @JsonProperty("sku_id")
+    private Long skuId;
 
     @Min(value = 1, message = "Invalid quantity.")
     @Max(value = 10, message = "Quantity must be less than or equal to 10")

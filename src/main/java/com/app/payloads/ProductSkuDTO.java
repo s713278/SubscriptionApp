@@ -1,6 +1,7 @@
 package com.app.payloads;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -14,7 +15,8 @@ public record ProductSkuDTO(@JsonProperty("product_id") Long productId,
                             @JsonProperty("price_id") Long vendorSkuPriceId,
                             @JsonProperty("stock") Integer stock,
                             @JsonProperty("list_price") Double listPrice,
-                            @JsonProperty("sale_price") Double salePrice
+                            @JsonProperty("sale_price") Double salePrice,
+                            @JsonProperty("effective_date")LocalDate effectiveDate
                           ) implements Serializable {
 
     @JsonProperty("discount")

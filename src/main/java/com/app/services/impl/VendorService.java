@@ -50,7 +50,7 @@ public class VendorService  {
         Page<Vendor> pageStores =  repoManager.getVendorRepo().findAll(pageDetails);
         List<Vendor> stores = pageStores.getContent();
 
-        if (stores.size() == 0) {
+        if (stores.isEmpty()) {
             throw new APIException(APIErrorCode.API_400,"No stores is created!!");
         }
 

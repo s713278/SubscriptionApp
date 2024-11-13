@@ -9,19 +9,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Profile;
 
+import com.app.AbstractBaseConfig;
 import com.app.entites.Customer;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@SpringBootTest
-@Profile("dev")
 @Transactional
-class CustomerRepoTest {
+class CustomerRepoTest extends AbstractBaseConfig {
 
     @Autowired
     private CustomerRepo customerRepository;

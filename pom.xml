@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.app</groupId>
     <artifactId>SubNRenewals</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <name>SubNRenewals</name>
     <description>Multi Vendor Subscription and Renewals</description>
     <properties>

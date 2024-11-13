@@ -136,6 +136,13 @@ public class UserService {
     }
 
     @Transactional
+    public void addNameAndAddress(Long userId, String name,Map<String, String> newDeliveryAddress) {
+        fetchUserById(userId);
+        addressValidator.validateAddress(userId, newDeliveryAddress);
+        repositoryManager.getCustomerRepo().addNameAddress(userId, name,newDeliveryAddress);
+    }
+
+    @Transactional
     public void updateUserAddress(Long userId, Map<String, String> newDeliveryAddress) {
         fetchUserById(userId);
         addressValidator.validateAddress(userId, newDeliveryAddress);

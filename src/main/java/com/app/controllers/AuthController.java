@@ -48,27 +48,17 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<APIResponse<?>> mobileSignUp(@Valid @RequestBody MobileSignUpRequest signUpRequest) {
             log.info("Received sign-up request for mobile: {}", signUpRequest.getMobile());
-           /* SignUpStrategy<MobileSignUpRequest> signUpStrategy = signUpStrategyFactory
-                    .getStrategy("mobileSignUpStrategy");
-
-            var response = signUpStrategy.signUp(signUpRequest);*/
         var response = signUpStrategy.processUserSignUp(signUpRequest);
             var appResponse = APIResponse.success(HttpStatus.CREATED.value(), response);
             return new ResponseEntity<>(appResponse, HttpStatus.CREATED);
     }
 
     @Operation(summary  = "SignIn with mobile number")
-    @PostMapping("/signin")
+   // @PostMapping("/signin")
     public ResponseEntity<APIResponse<?>> signIn(@Valid @RequestBody SignInRequest signInRequest) {
         log.info("Received sign-in request for mobile: {}", signInRequest.getMobile());
-
-        //UsernamePasswordAuthenticationToken authCredentials = new UsernamePasswordAuthenticationToken(
-               // signInRequest.getMobile(), signInRequest.getPassword());
-       // var authentication = authenticationManager.authenticate(authCredentials);
-       // var userDetails = (AuthUserDetails) authentication.getPrincipal();
         AuthDetailsDTO signInResponse = signInContext.processSignIn(SignInType.WITH_PASSWORD,signInRequest);
         if(signInResponse.isMobileVerified()){
-          //  SecurityContextHolder.getContext().setAuthentication(authentication);
             return new ResponseEntity<>(APIResponse.success(signInResponse), HttpStatus.OK);
         }else{
             return new ResponseEntity<>(APIResponse.success("OTP sent on registered mobile,Please verify with it!"), HttpStatus.OK);
@@ -78,7 +68,6 @@ public class AuthController {
 
     @Operation(summary = "Signup with Email", description = "Registers a new user by providing their first name, email, and password.")
     @ApiResponses(value = {
-
             @ApiResponse(responseCode = "201", description = "User registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = APIResponse.class))),
             @ApiResponse(responseCode = "400", description = "Bad request due to validation errors", content = @Content(mediaType = "application/json", schema = @Schema(implementation = APIResponse.class))) })
     //@PostMapping("/signup/email")
@@ -97,15 +86,13 @@ public class AuthController {
         }
     }
 
-    @Operation(summary  = "Verify Mobile OTP")
+    @Operation(summary  = "Verify OTP")
     @PostMapping("/verify-otp")
     public ResponseEntity<?> verifyMobileOtp(@Valid @RequestBody OTPVerificationRequest otpRequest) {
         SignInRequest request = new SignInRequest();
         request.setMobile(otpRequest.getMobile());
         request.setPassword(otpRequest.getOtp());
         AuthDetailsDTO signInResponse= signInContext.processSignIn(SignInType.WITH_OTP,request);
-       // otpSignInService.processSignIn(request);
-    //    String response = authService.verifyMobileOtp(otpRequest);
         var apiResponse = APIResponse.success(HttpStatus.OK.value(), signInResponse);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
@@ -176,7 +163,7 @@ public class AuthController {
 
     // Forgot password endpoint
     @Operation(summary = "Forgot Password")
-    @PostMapping("/forgot-password")
+    //@PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
         Customer customer = serviceManager.getAuthService().generateResetToken(request.getEmail());
         if (customer != null) {
@@ -188,7 +175,7 @@ public class AuthController {
 
     // Reset password endpoint
     @Operation(summary  = "Reset Password")
-    @PostMapping("/reset-password")
+    //@PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
         boolean isReset = serviceManager.getAuthService().resetPassword(request.getToken(), request.getNewPassword());
         if (isReset) {
