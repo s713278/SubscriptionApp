@@ -8,25 +8,31 @@ This is a **multi-vendor subscription-based application** designed for managing 
   - Sign up via mobile number
   - OTP verification for secure sign-in
   - Access and Refresh tokens for session management
-- **Multi-Vendor Support**
-  - Users can select from multiple vendors
+- **Multi-Vendor Catalog**
+  - Location based vendors listing
+  - Preferred vendor's product listing
   - Each vendor can manage their own subscription items
-  - Support for various subscription items such as milk, vegetables, and more
+  - Support for ITEM develivery and SERVICE delivery
 - **Subscription Management**
   - Create, modify, and manage subscriptions
   - Recurring subscription options available
   - Vendor-specific subscription statuses
+  - Dynamic Pricing
 - **Notifications**
   - Users receive notifications when subscriptions are created or deliveries begin
+  - Billing notiifications
+  - Order notifications
+  - Price Change notifications
 - **Tenant-Based Model**
   - Multi-tenant architecture, allowing multiple vendors to operate independently
   - Each tenant (vendor) manages their products, prices, and subscriptions
 
 ## Technologies Used
 
-- **Backend**: Spring Boot 3.2 ,Java 21
+- **Backend**: Spring Boot 3.2.11 ,Java 21
 - **Database**: PostgreSQL (supports multi-tenant data management)
-- **Caching**: InMemory (used for tracking OTP attempts and other caching needs)
+- **Caching**: Redis, InMemory (used for tracking OTP attempts and other caching needs)
+- **Async Communication**: SQS,SNS,Apache Nifi
 - **Security**: Spring Security for managing authentication, token-based access control
 - **Messaging**: SMS-based OTP service for user verification
 - **API Documentation**: Swagger
@@ -60,6 +66,5 @@ This is a **multi-vendor subscription-based application** designed for managing 
 
 - Integration with payment gateways
 - Advanced reporting for vendors
-- Mobile app support for users and vendors
 - Redis can be used for tracking OTP attempts and other caching needs
 
