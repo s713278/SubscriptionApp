@@ -1,6 +1,7 @@
 package com.app.services.impl;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -11,7 +12,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.app.constants.CacheType;
 import com.app.entites.Sku;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
@@ -61,9 +61,9 @@ public class SkuService {
 
 
 
-    @Cacheable(value = CacheType.CACHE_TYPE_VENDORS,key = "'vendor::product::' + #vendorId")
+   // @Cacheable(value = CacheType.CACHE_TYPE_VENDORS,key = "'vendor::product::' + #vendorId")
     @Transactional(readOnly = true)
-    public Map<Long, List<ProductSkuDTO>> fetchProductSkusByVendorId(Long vendorId){
+    public Map<String, List<ProductSkuDTO>> fetchProductSkusByVendorId(Long vendorId){
         var queryResults = repositoryManager.getSkuRepo().findVendorProductSkus(vendorId);
         List<ProductSkuDTO> productSkus = queryResults.stream().map(result ->
                 new ProductSkuDTO(
@@ -73,18 +73,22 @@ public class SkuService {
                         (String) result[3],       // imagePath
                         (String) result[4],       // skuName
                         (String) result[5],       // skuSize
-                        (Long) result[6],         // vendorSkuPriceId
-                        (Integer) result[7],      // stock
-                        ((BigDecimal) result[8]).doubleValue(),       // listPrice
-                        (result[9])!=null?((BigDecimal) result[9]).doubleValue():0,     // salePrice
-                        null
+                        (Integer) result[6],      // stock
+                        (String)result[7],          //type
+                        (Integer)result[8],         //valid_service_days,
+                        (Long) result[9],         // vendorSkuPriceId
+                         ((BigDecimal) result[10]).doubleValue(),       // listPrice
+                        (result[11])!=null?((BigDecimal) result[11]).doubleValue():0,     // salePrice
+                        ((Date)result[12]).toLocalDate() //effective_date
                 )
         ).toList();
 
         // Group the ProductSku objects by productId
         return productSkus.stream()
                 .collect(Collectors
-                        .groupingBy(ProductSkuDTO::productId));
+                        .groupingBy(ProductSkuDTO::productName));
     }
+
+
 
 }

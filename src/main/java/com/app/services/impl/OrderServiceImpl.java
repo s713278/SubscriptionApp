@@ -219,8 +219,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
     }
 
     private void createPayment(final OrderRequest request, Order order) {
-        Payment payment = new Payment();
-        payment = modelMapper.map(request.getPaymentDetails(), Payment.class);
+        Payment payment = modelMapper.map(request.getPaymentDetails(), Payment.class);
         payment.setOrder(order);
         PaymentType paymentType = PaymentType.valueOf(request.getPaymentDetails().getPaymentMethod());
         payment.setPaymentMethod(paymentType);

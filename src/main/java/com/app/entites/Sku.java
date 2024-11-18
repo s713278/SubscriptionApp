@@ -1,8 +1,6 @@
 package com.app.entites;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 
 import org.hibernate.annotations.JdbcType;
@@ -58,12 +56,12 @@ public class Sku extends AbstractAuditingEntity<Long> implements Serializable {
 
     private Integer stock;
 
-    private BigDecimal listPrice;
-    private BigDecimal salePrice;
-    private BigDecimal processingFee;
-    private BigDecimal shippingPrice;
+   // private BigDecimal listPrice;
+    //private BigDecimal salePrice;
+    //private BigDecimal processingFee;
+   // private BigDecimal shippingPrice;
 
-    private LocalDate effectiveDate;//Start date when this price is effective
+   // private LocalDate effectiveDate;//Start date when this price is effective
     private Integer serviceValidDays; //This is primarily for SERVICE type skus and Determine how many days the service is active.
 
     @CollectionTable(name = "tb_sku_eligible_frequency",joinColumns = @JoinColumn(name = "sku_id"))

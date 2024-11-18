@@ -50,6 +50,7 @@ public abstract class AbstractSignInService {
             return responseBuilder.userToken(accessToken)
                     .refreshToken(refreshToken)
                     .activeSubscriptions(List.of())
+                    .address(userDetails.getAddress())
                     .build();
         }else{
             serviceManager.getNotificationContext().sendOTPMessage(NotificationType.SMS,""+userDetails.getMobile());

@@ -1,6 +1,7 @@
 package com.app.payloads.response;
 
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -22,11 +23,8 @@ public class AuthDetailsDTO{
     @Schema(description = "Short lived access token", example = "sdfasdAAASDF.SDFSDFSAFADFSFD.JKOJIJH")
     private String userToken;
 
-    @JsonProperty("first_name")
+    @JsonProperty("name")
     private String firstName;
-
-    @JsonProperty("last_name")
-    private String lastName;
 
     @JsonProperty("mobile_verified")
     boolean mobileVerified;
@@ -42,4 +40,9 @@ public class AuthDetailsDTO{
 
     @JsonProperty("active_subscriptions")
     private List<?> activeSubscriptions;
+
+    @JsonProperty("preferred_vendor_id")
+    private Long preferredVendorId;
+
+    private Map<String,String> address;
 }

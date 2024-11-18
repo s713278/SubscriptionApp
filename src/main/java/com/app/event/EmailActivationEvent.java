@@ -1,4 +1,6 @@
 package com.app.event;
+import java.io.Serial;
+
 import org.springframework.context.ApplicationEvent;
 
 import lombok.Getter;
@@ -9,6 +11,7 @@ public class EmailActivationEvent extends ApplicationEvent {
     /**
      * 
      */
+    @Serial
     private static final long serialVersionUID = -6324921889128216197L;
     private String email;
     private String otp;

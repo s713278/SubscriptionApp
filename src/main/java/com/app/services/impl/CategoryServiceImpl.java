@@ -96,7 +96,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = categoryRepo.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
 
-        List<Product> products = category.getProducts();
+        List<Product> products = null;//category.getProducts();
 
         products.forEach(product -> {
             productService.deleteProduct(product.getProductId());

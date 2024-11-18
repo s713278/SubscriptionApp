@@ -36,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 
 @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
 @RestController
-@Tag(name = "2. User Management")
+@Tag(name = "5. User Management")
 @RequestMapping("/v1/users")
 @RequiredArgsConstructor
 public class CustomerController {

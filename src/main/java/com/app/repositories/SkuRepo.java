@@ -19,11 +19,47 @@ public interface SkuRepo extends JpaRepository<Sku, Long> {
     @Query("SELECT s FROM Sku s WHERE s.id = ?1 ")
     Optional<Sku>  findByIdAndVendorId(final Long skuId,final Long vendorId);
 
-    @Query(value = " SELECT  ts.product_id,tp.name as product_name, ts.id as sku_id,ts.image_path,ts.name as sku_name,ts.size as sku_size,"+
-            "ts.id as sku_id, ts.stock ,ts.list_price,ts.sale_price,ts.effective_date "+
-            "FROM tb_sku ts "+
-            "JOIN tb_product tp ON ts.product_id = tp.product_id "+
-            "WHERE ts.vendor_id = :vendorId",nativeQuery = true)
+    @Query(value = """ 
+            WITH LatestEffectiveDates AS (
+              SELECT
+                  id AS price_id,
+                  sku_id,
+                  list_price,
+                  sale_price,
+                  effective_date,
+                  ROW_NUMBER() OVER (PARTITION BY sku_id ORDER BY effective_date DESC) AS rn
+              FROM
+                  tb_sku_price
+              WHERE
+                  effective_date <= CURRENT_DATE
+          )
+          SELECT
+              ts.product_id,
+              tp.name AS product_name,
+              ts.id AS sku_id,
+              ts.image_path,
+              ts.name AS sku_name,
+              ts.size AS sku_size,
+              ts.stock,
+              ts.type,
+              ts.service_valid_days,
+              led.price_id,
+              led.list_price AS latest_list_price,
+              led.sale_price AS latest_sale_price,
+              led.effective_date AS latest_effective_date
+          FROM
+              tb_sku ts
+          JOIN
+              tb_product tp
+          ON
+              ts.vendor_id = :vendorId AND  ts.product_id = tp.product_id
+          JOIN
+              LatestEffectiveDates led
+          ON
+              ts.id = led.sku_id
+          WHERE
+              led.rn = 1
+            """,nativeQuery = true)
     List<Object[]> findVendorProductSkus(@Param("vendorId") Long vendorId);
 
 }

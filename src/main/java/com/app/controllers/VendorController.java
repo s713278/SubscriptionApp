@@ -2,6 +2,7 @@ package com.app.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.config.AppConstants;
-import com.app.payloads.VendorDTO;
+import com.app.entites.type.VendorStatus;
+import com.app.payloads.VendorDetailsDTO;
 import com.app.payloads.response.APIResponse;
 import com.app.payloads.response.StoreResponse;
 import com.app.services.ServiceManager;
@@ -23,11 +25,13 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-@Tag(name = "5. Vendor Management")
+@Tag(name = "2. Vendors/Product Listing")
 @RestController
 @RequestMapping("/v1/vendors")
 
+@Slf4j
 @RequiredArgsConstructor
 public class VendorController {
 
@@ -35,14 +39,23 @@ public class VendorController {
 
     @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
     @PostMapping("/")
-    public ResponseEntity<APIResponse<VendorDTO>> createStore(@Valid @RequestBody VendorDTO storeDTO) {
+    public ResponseEntity<APIResponse<VendorDetailsDTO>> createStore(@Valid @RequestBody VendorDetailsDTO storeDTO) {
         return new ResponseEntity<>(serviceManager.getVendorService().createVendor(storeDTO), HttpStatus.CREATED);
     }
 
-    @Operation(summary = "Fetch vendors with a given status")
-    @GetMapping("/{status}")
-    public ResponseEntity<APIResponse<?>> fetchVendorsByStatus(@PathVariable  String status) {
-        return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService().fetchVendorsByStatus(status)),HttpStatus.OK);
+
+    @Operation(summary = "All vendors listing")
+    @GetMapping("/")
+    public ResponseEntity<APIResponse<?>> fetchAllActiveVendors() {
+        log.debug("Request received for all vendors");
+        return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService().fetchVendorsAndGroupedByCategory()),HttpStatus.OK);
+    }
+
+    @Operation(summary = "Vendors listing by zipcode")
+    @GetMapping("/{zipCode}")
+    public ResponseEntity<APIResponse<?>> fetchAllActiveVendorsByZipCode(@PathVariable String zipCode) {
+        log.debug("Request received fetching vendors for zipcode : {}",zipCode);
+        return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService().fetchVendorsAndGroupedByCategory(zipCode)),HttpStatus.OK);
     }
 
     @Operation(summary = "Vendor's products listing")
@@ -52,14 +65,16 @@ public class VendorController {
         return new ResponseEntity<>(APIResponse.success(response),HttpStatus.OK);
     }
 
-    @Operation(summary = "All vendors without pagination")
-    @GetMapping("/list")
-    public ResponseEntity<APIResponse<?>> fetchAllVendors() {
-        return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService().fetchAllVendors()),HttpStatus.OK);
+    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN'))")
+    @Operation(summary = "Fetch vendors with a given status")
+    @GetMapping("/status/{status}")
+    public ResponseEntity<APIResponse<?>> fetchVendorsByStatus(@PathVariable VendorStatus status) {
+        return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService().fetchVendorsByStatus(status)),HttpStatus.OK);
     }
 
-    @Operation(summary = "All vendors with pagination")
-    @GetMapping("/")
+    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN'))")
+    @Operation(summary = "All active vendors with pagination")
+    @GetMapping("/all")
     public ResponseEntity<APIResponse<?>> getAllVendors(
             @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
@@ -71,8 +86,8 @@ public class VendorController {
 
     @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
     @PutMapping("/{vendorId}")
-    public ResponseEntity<APIResponse<VendorDTO>> updateStore(@RequestBody VendorDTO storeDTO,
-            @PathVariable Long vendorId) {
+    public ResponseEntity<APIResponse<VendorDetailsDTO>> updateStore(@RequestBody VendorDetailsDTO storeDTO,
+                                                                     @PathVariable Long vendorId) {
         return new ResponseEntity<>(serviceManager.getVendorService().updateStore(storeDTO, vendorId), HttpStatus.OK);
     }
 

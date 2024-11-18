@@ -2,6 +2,7 @@ package com.app.config;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,7 @@ public class GlobalConfig {
         private Long otpExpTime;
         private Long emailTokenExp;
         private List<String> addressValidKeys;
+        private Set<String> preferenceValidKeys;
         private boolean otpVerificationEnabled;
     }
 

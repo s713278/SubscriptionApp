@@ -35,25 +35,10 @@ public class Subscription  extends  AbstractAuditingEntity<Long> implements Seri
     //Foreign column to tb_vendor_sku table
     private Long skuId;
 
-    /*
-    @Transient
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY )
-    @JoinColumn(name = "vendor_id", nullable = false)
-    private Vendor vendor;
+    @Column(name = "price_id",nullable = false)
+    //Foreign column to tb_sku_price table
+    private Long priceId;
 
-    @Transient
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY )
-    @JoinColumn(name = "customer_id", nullable = false)
-    private Customer customer;
-
-    @Transient
-    @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sku_id")
-    private Sku sku;
-*/
     private Integer quantity;
 
     @Column(name="start_date")

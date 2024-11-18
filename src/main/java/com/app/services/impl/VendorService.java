@@ -1,6 +1,6 @@
 package com.app.services.impl;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -19,7 +19,8 @@ import com.app.entites.type.VendorStatus;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
-import com.app.payloads.VendorDTO;
+import com.app.payloads.VendorBasicDTO;
+import com.app.payloads.VendorDetailsDTO;
 import com.app.payloads.response.APIResponse;
 import com.app.payloads.response.StoreResponse;
 import com.app.repositories.RepositoryManager;
@@ -36,9 +37,9 @@ public class VendorService  {
     private final RepositoryManager repoManager;
 
     @Transactional
-    public APIResponse<VendorDTO> createVendor(VendorDTO storeDTO) {
+    public APIResponse<VendorDetailsDTO> createVendor(VendorDetailsDTO storeDTO) {
         Vendor storeEntity = repoManager.getVendorRepo().save(modelMapper.map(storeDTO, Vendor.class));
-        return APIResponse.success(HttpStatus.CREATED.value(), modelMapper.map(storeEntity, VendorDTO.class));
+        return APIResponse.success(HttpStatus.CREATED.value(), modelMapper.map(storeEntity, VendorDetailsDTO.class));
     }
 
     public StoreResponse fetchAllVendors(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
@@ -54,7 +55,7 @@ public class VendorService  {
             throw new APIException(APIErrorCode.API_400,"No stores is created!!");
         }
 
-        List<VendorDTO> storeDTOs = stores.stream().map(store -> modelMapper.map(store, VendorDTO.class))
+        List<VendorDetailsDTO> storeDTOs = stores.stream().map(store -> modelMapper.map(store, VendorDetailsDTO.class))
                 .collect(Collectors.toList());
 
         StoreResponse storeResponse = new StoreResponse();
@@ -69,13 +70,13 @@ public class VendorService  {
     }
 
     @Transactional
-    public APIResponse<VendorDTO> updateStore(VendorDTO storeDTO, Long storeId) {
+    public APIResponse<VendorDetailsDTO> updateStore(VendorDetailsDTO storeDTO, Long storeId) {
         Vendor savedStore =  repoManager.getVendorRepo().findById(storeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Store", "storeId", storeId));
         modelMapper.map(storeDTO, savedStore);
         savedStore.setId(storeId);
         savedStore =  repoManager.getVendorRepo().save(savedStore);
-        return APIResponse.success(HttpStatus.OK.value(), modelMapper.map(savedStore, VendorDTO.class));
+        return APIResponse.success(HttpStatus.OK.value(), modelMapper.map(savedStore, VendorDetailsDTO.class));
     }
 
     @Transactional
@@ -88,34 +89,34 @@ public class VendorService  {
         // return storeRepo.delete(storeId);
     }
 
-    public List<VendorDTO> fetchAllVendors() {
+    public List<VendorDetailsDTO> fetchAllVendors() {
         List<Vendor> stores =  repoManager.getVendorRepo().findAll();
         if(stores.isEmpty()){
             return List.of();
         }
-        return stores.stream().map(store -> modelMapper.map(store, VendorDTO.class))
+        return stores.stream().map(store -> modelMapper.map(store, VendorDetailsDTO.class))
                 .collect(Collectors.toList());
     }
 
 
     @Cacheable(value = CacheType.CACHE_TYPE_VENDORS,key = "#status")
-    public List<Vendor> fetchVendorsByStatus(final String status) {
-        var statusEnum = VendorStatus.valueFromString(status.toUpperCase());
-        return  repoManager.getVendorRepo().findAllByStatus(statusEnum);
+    public List<VendorBasicDTO> fetchVendorsByStatus(VendorStatus status) {
+        var vendors=repoManager.getVendorRepo().findAllByStatus(status);
+        return vendors.stream().map(vendor -> modelMapper.map(vendor, VendorBasicDTO.class)).toList();
     }
 
 
     @Cacheable(value = CacheType.CACHE_TYPE_VENDORS,key = "#vendorId")
-    public VendorDTO fetchVendorById(Long vendorId) {
+    public VendorDetailsDTO fetchVendorById(Long vendorId) {
         var vendor =  repoManager.getVendorRepo().findById(vendorId)
                 .orElseThrow(()-> new APIException(APIErrorCode.API_404,"Vendor not existed!!"));
-        return modelMapper.map(vendor,VendorDTO.class);
+        return modelMapper.map(vendor, VendorDetailsDTO.class);
     }
 
     @Cacheable(value =CacheType.CACHE_TYPE_VENDORS,key = "#serviceArea")
-    public List<VendorDTO> fetchVendorsByServiceArea(String serviceArea) {
+    public List<VendorDetailsDTO> fetchVendorsByServiceArea(String serviceArea) {
        var vendorsList =   repoManager.getVendorRepo().findByServiceArea(serviceArea);
-        return vendorsList.stream().map(vendor->modelMapper.map(vendor,VendorDTO.class)).toList();
+        return vendorsList.stream().map(vendor->modelMapper.map(vendor, VendorDetailsDTO.class)).toList();
     }
 
     public Vendor fetchVendor(final Long vendorId){
@@ -123,4 +124,53 @@ public class VendorService  {
 
     }
 
+    @Cacheable(value =CacheType.CACHE_TYPE_VENDORS,key = "#zipCode")
+    public Map<String, Object> fetchVendorsAndGroupedByCategory(String zipCode) {
+        log.debug("Fetch vendors for zipcode : {}",zipCode);
+        return  fetchVendorsByCategory(repoManager.getVendorRepo().findAllUniqueVendorsWithCategories(zipCode));
+    }
+
+    @Cacheable(value =CacheType.CACHE_TYPE_VENDORS,key = "'ALL_VENDORS'")
+    public Map<String, Object> fetchVendorsAndGroupedByCategory() {
+        log.debug("Fetch all vendors ");
+        return fetchVendorsByCategory(repoManager.getVendorRepo().findAllUniqueVendorsWithCategories());
+    }
+
+
+    private Map<String,Object> fetchVendorsByCategory(List<Object[]> rawResults){
+       if(rawResults==null || rawResults.isEmpty()){
+           log.info("No vendors found");
+           return Collections.emptyMap();
+       }
+        List<VendorBasicDTO> vendorList = new ArrayList<>();
+        Map<String, List<VendorBasicDTO>> categoryMap = new HashMap<>();
+
+        for (Object[] result : rawResults) {
+            Long vendorId = ((Number) result[0]).longValue();
+            String businessName = (String) result[1];
+            String bannerImage = (String) result[2];
+            String serviceArea = (String) result[3];
+
+            // Cast the category array to a list
+            String[] categoriesArray = (String[]) result[4];
+            List<String> categories = Arrays.asList(categoriesArray);
+
+            // Create VendorCategoryDTO
+            VendorBasicDTO vendor = new VendorBasicDTO(vendorId, businessName, bannerImage, serviceArea, categories);
+            vendorList.add(vendor);
+
+            // Add to map grouped by category
+            for (String category : categories) {
+                categoryMap
+                        .computeIfAbsent(category, k -> new ArrayList<>())
+                        .add(vendor);
+            }
+        }
+
+        // Create response map with both formats
+        Map<String, Object> response = new HashMap<>();
+        response.put("all_vendors", vendorList);
+        response.put("vendors_by_category", categoryMap);
+        return response;
+    }
 }

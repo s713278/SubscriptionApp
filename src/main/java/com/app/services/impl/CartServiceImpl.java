@@ -2,6 +2,7 @@ package com.app.services.impl;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -95,7 +96,7 @@ public class CartServiceImpl implements CartService {
         //TODO:  existingItem.setDiscount(existingItem.getQuantity() * (sku.getListPrice() - sku.getSalePrice()));
         cartItemRepo.saveAndFlush(existingItem);
 
-        Double totalAmount = shoppingCart.getCartItems().stream()
+        double totalAmount = shoppingCart.getCartItems().stream()
                 .map(cartItem1 -> cartItem1.getQuantity() * cartItem1.getUnitPrice()).mapToDouble(Double::doubleValue)
                 .sum();
         shoppingCart.setTotalPrice(BigDecimal.valueOf(totalAmount));
@@ -148,13 +149,13 @@ public class CartServiceImpl implements CartService {
         Cart cart = cartRepo.findById(cartId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart", "cartId", cartId));
 
-        CartItem matchedCartITem = cart.getCartItems().stream().filter(t -> t.getId() == cartItemId).findFirst()
+        CartItem matchedCartITem = cart.getCartItems().stream().filter(t -> Objects.equals(t.getId(), cartItemId)).findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("CartItem", "cartItemId", cartItemId));
         cartItemRepo.deleteBycartItemIdAndCartId(cartItemId, cartId);
         if (cart.getCartItems().isEmpty()) {
             cart.setTotalPrice(BigDecimal.valueOf(0));
         } else {
-            Double totalAmount = cart.getCartItems().stream()
+            double totalAmount = cart.getCartItems().stream()
                     .map(cartItem1 -> cartItem1.getQuantity() * cartItem1.getUnitPrice())
                     .mapToDouble(Double::doubleValue).sum();
             cart.setTotalPrice(BigDecimal.valueOf(totalAmount));

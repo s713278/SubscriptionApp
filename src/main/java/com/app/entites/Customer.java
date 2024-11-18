@@ -1,5 +1,6 @@
 package com.app.entites;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,6 +32,7 @@ import lombok.Setter;
 @Setter
 public class Customer  extends  AbstractAuditingEntity<Long> implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -8493127251609026343L;
 
     @Getter
@@ -130,11 +132,8 @@ public class Customer  extends  AbstractAuditingEntity<Long> implements Serializ
     @ColumnDefault(value = "true")
     private boolean isActive;
 
- /*   @PreUpdate
-    public void onUpdate() {
-        if (this.mobileVerified) {
-            this.mobileVerifiedTime = LocalDateTime.now();
-        }
-    }*/
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "preferences", columnDefinition = "jsonb")
+    private Map<String, String> preferences;
 
 }
