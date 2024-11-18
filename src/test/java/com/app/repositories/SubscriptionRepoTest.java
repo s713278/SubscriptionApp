@@ -3,14 +3,12 @@ package com.app.repositories;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
+import com.app.AbstractBaseConfig;
+
 @Transactional
-@ActiveProfiles("dev")
-class SubscriptionRepoTest {
+class SubscriptionRepoTest extends AbstractBaseConfig {
 
     @Test
     void testFindVendorIdAndStatus() {

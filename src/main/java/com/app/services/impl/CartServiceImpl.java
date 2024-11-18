@@ -2,6 +2,7 @@ package com.app.services.impl;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -74,12 +75,7 @@ public class CartServiceImpl implements CartService {
                     sku.getName() + " is not out of stack at " + sku.getStore().getBusinessName());
         }*/
 
-        if (quantity > sku.getStock() ) {
-            throw new APIException(APIErrorCode.API_400,"Please, make an order of the " + sku.getName()
-                    + " less than or equal to the quantity " + sku.getStock() + ".");
-        }
-
-        // Retrieve Existing Cart if any
+              // Retrieve Existing Cart if any
         Cart shoppingCart = cartRepo.findById(cartId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart", "cartId", cartId));
 
@@ -100,7 +96,7 @@ public class CartServiceImpl implements CartService {
         //TODO:  existingItem.setDiscount(existingItem.getQuantity() * (sku.getListPrice() - sku.getSalePrice()));
         cartItemRepo.saveAndFlush(existingItem);
 
-        Double totalAmount = shoppingCart.getCartItems().stream()
+        double totalAmount = shoppingCart.getCartItems().stream()
                 .map(cartItem1 -> cartItem1.getQuantity() * cartItem1.getUnitPrice()).mapToDouble(Double::doubleValue)
                 .sum();
         shoppingCart.setTotalPrice(BigDecimal.valueOf(totalAmount));
@@ -153,13 +149,13 @@ public class CartServiceImpl implements CartService {
         Cart cart = cartRepo.findById(cartId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart", "cartId", cartId));
 
-        CartItem matchedCartITem = cart.getCartItems().stream().filter(t -> t.getId() == cartItemId).findFirst()
+        CartItem matchedCartITem = cart.getCartItems().stream().filter(t -> Objects.equals(t.getId(), cartItemId)).findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("CartItem", "cartItemId", cartItemId));
         cartItemRepo.deleteBycartItemIdAndCartId(cartItemId, cartId);
         if (cart.getCartItems().isEmpty()) {
             cart.setTotalPrice(BigDecimal.valueOf(0));
         } else {
-            Double totalAmount = cart.getCartItems().stream()
+            double totalAmount = cart.getCartItems().stream()
                     .map(cartItem1 -> cartItem1.getQuantity() * cartItem1.getUnitPrice())
                     .mapToDouble(Double::doubleValue).sum();
             cart.setTotalPrice(BigDecimal.valueOf(totalAmount));
@@ -180,13 +176,14 @@ public class CartServiceImpl implements CartService {
         if (cartItem != null) {
             throw new APIException(APIErrorCode.API_400,"Sku " + sku.getName() + " already exists in the cart");
         }
+        /*
         if (sku.getStock() == 0) {
             throw new APIException(APIErrorCode.API_400, sku.getName() + " is out of stock and not available");
         }
         if (sku.getStock() < quantity) {
             throw new APIException(APIErrorCode.API_400,"Please, make an order of the " + sku.getName()
                     + " less than or equal to the quantity " + sku.getStock() + ".");
-        }
+        }*/
         CartItem newCartItem = new CartItem();
         newCartItem.setSku(sku);
         // newCartItem.setCart(cart);

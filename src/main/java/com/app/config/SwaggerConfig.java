@@ -45,7 +45,7 @@ public class SwaggerConfig {
         devServer.setUrl(devUrl);
         devServer.setDescription("Dev Env");
 
-        return new OpenAPI().info(new Info().title("White label multi vendor subscription app")
+        return new OpenAPI().info(new Info().title("Mithra App- ")
                 .description("API documentation for the subscription model services").version("v1")
                 .contact(new Contact().name("Swamy Kunta").url("https://github.com/s713278/ECommerceApp/tree/master")
                         .email("swamy.kunta@gmail.com"))

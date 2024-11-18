@@ -1,6 +1,7 @@
 package com.app.services.impl;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,7 +66,7 @@ public class ProductServiceImpl implements ProductService {
 
         boolean isProductNotPresent = true;
 
-        List<Product> products = category.getProducts();
+        List<Product> products = Collections.emptyList(); // category.getProducts();
 
         for (int i = 0; i < products.size(); i++) {
             if (products.get(i).getName().equals(product.getName())

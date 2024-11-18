@@ -40,7 +40,6 @@ public class Product extends AbstractAuditingEntity<Long> implements Serializabl
     @Size(min = 25, message = "Product description must contain at least 25 characters")
     private String description;
 
-
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;

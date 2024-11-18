@@ -11,8 +11,6 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.hibernate.type.SqlTypes;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,29 +31,14 @@ public class Subscription  extends  AbstractAuditingEntity<Long> implements Seri
     //Foreign column to tb_user table
     private Long userId;
 
-    @Column(name = "vendor_price_id",nullable = false)
+    @Column(name = "sku_id",nullable = false)
     //Foreign column to tb_vendor_sku table
-    private Long vendorPriceId;
+    private Long skuId;
 
-    /*
-    @Transient
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY )
-    @JoinColumn(name = "vendor_id", nullable = false)
-    private Vendor vendor;
+    @Column(name = "price_id",nullable = false)
+    //Foreign column to tb_sku_price table
+    private Long priceId;
 
-    @Transient
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY )
-    @JoinColumn(name = "customer_id", nullable = false)
-    private Customer customer;
-
-    @Transient
-    @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sku_id")
-    private Sku sku;
-*/
     private Integer quantity;
 
     @Column(name="start_date")
@@ -74,7 +57,7 @@ public class Subscription  extends  AbstractAuditingEntity<Long> implements Seri
     @Column(name = "status", columnDefinition = "subscription_status")
     private SubscriptionStatus status;
 
-    @JsonIgnore
+    @CollectionTable(name = "tb_subscription_custom_days",joinColumns = @JoinColumn(name = "subscription_id"))
     @ElementCollection(fetch = FetchType.EAGER)
     private List<Integer> customDays; // For custom date range
     //1 - Monday

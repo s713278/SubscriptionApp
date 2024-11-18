@@ -9,8 +9,6 @@ import com.app.entites.Cart;
 import com.app.entites.Customer;
 import com.app.entites.Sku;
 import com.app.entites.Vendor;
-import com.app.exceptions.APIErrorCode;
-import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.repositories.CartItemRepo;
 import com.app.repositories.CartRepo;
@@ -89,13 +87,13 @@ public abstract class AbstarctCatalogService {
         log.debug("Validate CartItems {} against the store {}  ", cart.getId(), storeId);
         Vendor store = storeRepo.findById(storeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Store", "storeId", storeId));
-        boolean allItemsStoreMatched = cart.getCartItems().stream()
+        /*boolean allItemsStoreMatched = cart.getCartItems().stream()
                 .allMatch(t -> t.getSku().getProduct().getCategory().getCatalog().getVendor().getId() == storeId);
 
         if (!allItemsStoreMatched) {
             throw new APIException(APIErrorCode.API_400,
                     String.format("Not all order items have store id % in the cart % ", storeId, cart.getId()));
-        }
+        }*/
         return store;
     }
 
@@ -111,7 +109,7 @@ public abstract class AbstarctCatalogService {
         cart.getCartItems().forEach(cartItem -> {
             int quantity = cartItem.getQuantity();
             Sku sku = cartItem.getSku();
-            sku.setStock(sku.getStock() - quantity);
+           // sku.setStock(sku.getStock() - quantity);
         });
         cart.getCartItems().clear();
         cart.setTotalPrice(BigDecimal.valueOf(0));

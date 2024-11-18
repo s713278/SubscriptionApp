@@ -78,5 +78,9 @@ public class Vendor extends AbstractAuditingEntity<Long> implements Serializable
     @Column(name = "service_area", columnDefinition = "jsonb")
   //  @Convert(converter = MapTypeConverter.class)
     private Map<String, Object> serviceAreas;
-    
+
+    @Column(name="banner_image")
+    private String bannerImage;
+
+
 }

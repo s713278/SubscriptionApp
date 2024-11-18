@@ -18,12 +18,12 @@ public interface SubscriptionRepo extends JpaRepository<Subscription, Long> {
         SELECT 
             sub.id,
             sub.customer_id,
-            price.vendor_id,
+            sku.vendor_id,
             vendor.business_name,
-            price.list_price,
-            price.sale_price,
+            sku.list_price,
+            sku.sale_price,
             sub.quantity,
-            price.list_price * sub.quantity,
+            sku.list_price * sub.quantity,
             sku.size,
             sub.start_date,
             sub.frequency,
@@ -31,12 +31,10 @@ public interface SubscriptionRepo extends JpaRepository<Subscription, Long> {
             sub.next_delivery_date
         FROM 
             tb_subscription sub
-        JOIN 
-            tb_vendor_sku_price price ON sub.vendor_price_id = price.id
+        JOIN
+            tb_sku sku ON sub.sku_id= sku.id
         JOIN 
             tb_vendor vendor ON vendor.id = :vendorId
-        JOIN 
-            tb_sku sku ON sku.id = price.sku_id
         WHERE 
             sub.customer_id = :userId
         """, nativeQuery = true)
@@ -49,12 +47,12 @@ public interface SubscriptionRepo extends JpaRepository<Subscription, Long> {
         SELECT 
             sub.id,
             sub.customer_id,
-            price.vendor_id,
+            sku.vendor_id,
             vendor.business_name,
-            price.list_price,
-            price.sale_price,
+            sku.list_price,
+            sku.sale_price,
             sub.quantity,
-            price.list_price * sub.quantity,
+            sku.list_price * sub.quantity,
             sku.size,
             sub.start_date,
             sub.frequency,
@@ -62,28 +60,26 @@ public interface SubscriptionRepo extends JpaRepository<Subscription, Long> {
             sub.next_delivery_date
         FROM 
             tb_subscription sub
-        JOIN 
-            tb_vendor_sku_price price ON sub.vendor_price_id = price.id
+        JOIN
+            tb_sku sku ON sub.sku_id=sku.id
         JOIN 
             tb_vendor vendor ON vendor.id = :vendorId
-        JOIN 
-            tb_sku sku ON sku.id = price.sku_id
         """, nativeQuery = true)
     List<Object[]> findByVendorId(@Param("vendorId") Long vendorId);
 
-    Optional<Subscription> findByUserIdAndVendorPriceId(final Long userId,final Long vendorId);
+    Optional<Subscription> findByUserIdAndSkuId(final Long userId, final Long vendorId);
 
 
     @Query(value = """
         SELECT 
             sub.id,
             sub.customer_id,
-            price.vendor_id,
+            sku.vendor_id,
             vendor.business_name,
-            price.list_price,
-            price.sale_price,
+            sku.list_price,
+            sku.sale_price,
             sub.quantity,
-            price.list_price * sub.quantity,
+            sku.list_price * sub.quantity,
             sku.size,
             sub.start_date,
             sub.frequency,
@@ -91,12 +87,10 @@ public interface SubscriptionRepo extends JpaRepository<Subscription, Long> {
             sub.next_delivery_date
         FROM 
             tb_subscription sub
+        JOIN
+            tb_sku sku ON sub.sku_id=sku.id
         JOIN 
-            tb_vendor_sku_price price ON sub.vendor_price_id = price.id
-        JOIN 
-            tb_vendor vendor ON vendor.id = price.vendor_id
-        JOIN 
-            tb_sku sku ON sku.id = price.sku_id
+            tb_vendor vendor ON vendor.id = sku.vendor_id
         WHERE 
             sub.customer_id = :userId
         """, nativeQuery = true)

@@ -13,7 +13,7 @@ public class AuditLogListener {
     @EventListener
     public void handleUserSignUp(CustomerSignUpEvent event) {
         // Simulate logging user registration event
-       log.debug("Logging audit for user: " + event.getEmail());
+       log.debug("Logging audit for user: {}" , event.getEmail());
         // Actual audit logging logic goes here
     }
 }

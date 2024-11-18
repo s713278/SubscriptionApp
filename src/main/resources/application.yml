@@ -31,6 +31,7 @@ spring:
       products: "maximumSize=500,expireAfterAccess=600s"
       otpCache: "maximumSize=200,expireAfterAccess=600s"
       attemptsCache: "maximumSize=200,expireAfterAccess=600s"
+      prices: "maximumSize=200,expireAfterAccess=600s"
   threads:
     virtual:
       enabled: true
@@ -59,6 +60,7 @@ application:
     otp_no_of_retry: 3  #In seconds
     email_token_exp: 3600
     address_valid_keys:
+      - name
       - address1
       - address2
       - city    
@@ -66,6 +68,8 @@ application:
       - zipCode
       - state
       - country
+    preference_valid_keys:
+      - vendor_id
   sms_providers:
     fast2sms:
       api_key:

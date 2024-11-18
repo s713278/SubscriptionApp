@@ -1,6 +1,7 @@
 package com.app.services.notification;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,7 +20,7 @@ class SMSServiceTest {
     void setUp() {
     }
 
-   // @Disabled
+    @Disabled
     @Test
     void sendOTP() {
         smsService.sendTextMessage("919912149049L","Welcome message from - SnR");

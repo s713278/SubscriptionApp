@@ -24,8 +24,8 @@ public abstract class AbstractCreateSubscriptionService {
 
     protected void preSubscription(Long userId,SubscriptionRequest request) {
         if(serviceManager.getSubscriptionService().
-                fetchByUserIdAndVendorPriceId(userId,
-                        request.getVendorPriceId())){
+                fetchByUserIdAndSkuId(userId,
+                        request.getSkuId())){
             throw new APIException(APIErrorCode.API_409,"Subscription already existed.Please update the subscription..");
         }
     }
@@ -35,17 +35,17 @@ public abstract class AbstractCreateSubscriptionService {
         notifyCustomer(subscription);
     }
     @Transactional
-    public SubscriptionResponse createSubscription(Long userId,Long vendorId,SubscriptionRequest request) {
+    public SubscriptionResponse createSubscription(Long userId,SubscriptionRequest request) {
         log.info("Start - Create subscription request for customer {}",userId);
         Subscription subscription = new Subscription();
             preSubscription(userId,request);
             // Fetch customer and tenant info
             Customer customer = serviceManager.getUserService().fetchUserById(userId);
             // Set SKU, quantity, and frequency
-            Vendor vendor=serviceManager.getVendorService().fetchVendor(request.getVendorPriceId());
+            Vendor vendor=serviceManager.getVendorService().fetchVendor(request.getSkuId());
           //  subscription.setCustomer(customer);
         subscription.setUserId(userId);
-        subscription.setVendorPriceId(request.getVendorPriceId());
+        subscription.setSkuId(request.getSkuId());
             subscription.setStatus(SubscriptionStatus.NEW);
           //  subscription.setSku(sku);
             subscription.setQuantity(request.getQuantity());
@@ -62,7 +62,7 @@ public abstract class AbstractCreateSubscriptionService {
         // Create the Data object with subscription_id and next_delivery_date
         SubscriptionResponse.Data data = new SubscriptionResponse.Data(subscription.getId(),
                 subscription.getNextDeliveryDate());
-        log.info("End - Create subscription request for customer {}",vendorId);
+        log.info("End - Create subscription request for user {}",userId);
         return new SubscriptionResponse(true, "Subscription created successfully", data);
     }
 

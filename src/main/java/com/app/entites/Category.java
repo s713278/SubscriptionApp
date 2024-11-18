@@ -1,7 +1,6 @@
 package com.app.entites;
 
 import java.io.Serializable;
-import java.util.List;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -20,10 +19,6 @@ public class Category implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @ManyToOne
-    @JoinColumn(name = "catalog_id")
-    private Catalog catalog;
 
     @NotBlank
     @Size(min = 5, message = "Category name must contain atleast 5 characters")
@@ -31,8 +26,8 @@ public class Category implements Serializable {
     
     private String description;
 
-    @Transient
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private List<Product> products;
+    @ManyToOne
+    @JoinColumn(name = "vendor_id")
+    private Vendor vendor;
 
    }

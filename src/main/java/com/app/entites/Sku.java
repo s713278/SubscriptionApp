@@ -3,6 +3,11 @@ package com.app.entites;
 import java.io.Serializable;
 import java.util.List;
 
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+
+import com.app.entites.type.SkuType;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -27,19 +32,41 @@ public class Sku extends AbstractAuditingEntity<Long> implements Serializable {
     @Size(min = 3, message = "Name must contain at least 3 characters")
     private String name;
 
+    private String description;
+
+    @Column(name = "type", columnDefinition = "sku_type")
+    @JdbcType(value = PostgreSQLEnumJdbcType.class)
+    @Enumerated(EnumType.STRING)
+    private SkuType skuType; // Indicates if this SKU is an ITEM or SERVICE
+
     private String imagePath;
   
     @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "product_id")
     private Product product;
-    
+
+    @Column(name="sku_code")
     private String skuCode;
 
-    private String size;
- 
-    @OneToMany(mappedBy = "sku",fetch = FetchType.LAZY)
-    private List<VendorSkuPrice> vendorSkuPrices;
-    
+    private String size; //500 Grams, 1 Service,5 Service or 5 Sessions
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vendor_id", nullable = false)
+    private Vendor vendor;
+
     private Integer stock;
+
+   // private BigDecimal listPrice;
+    //private BigDecimal salePrice;
+    //private BigDecimal processingFee;
+   // private BigDecimal shippingPrice;
+
+   // private LocalDate effectiveDate;//Start date when this price is effective
+    private Integer serviceValidDays; //This is primarily for SERVICE type skus and Determine how many days the service is active.
+
+    @CollectionTable(name = "tb_sku_eligible_frequency",joinColumns = @JoinColumn(name = "sku_id"))
+    @Enumerated(EnumType.STRING)
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<SubscriptionFrequency> eligibleFrequency; // For custom date range
 
 }

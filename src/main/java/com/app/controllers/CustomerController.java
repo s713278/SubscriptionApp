@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.config.AppConstants;
+import com.app.payloads.request.NameAndAddressRequest;
 import com.app.payloads.request.UpdateMobileRequest;
 import com.app.payloads.request.UpdateUserRequest;
 import com.app.payloads.response.APIResponse;
@@ -35,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 
 @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
 @RestController
-@Tag(name = "2. User Management")
+@Tag(name = "5. User Management")
 @RequestMapping("/v1/users")
 @RequiredArgsConstructor
 public class CustomerController {
@@ -72,7 +73,7 @@ public class CustomerController {
 
     @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
     @DeleteMapping("/{userId}")
-    @Operation(summary = "Delete User")
+   // @Operation(summary = "Delete User")
     public ResponseEntity<APIResponse<?>> deleteUser(@PathVariable Long userId) {
         String status = userService.deleteUser(userId);
         return new ResponseEntity<>(APIResponse.success("User is deleted successfully."), HttpStatus.OK);
@@ -83,22 +84,15 @@ public class CustomerController {
             @ApiResponse(responseCode = "400", description = "Invalid input keys or validation error", content = @Content(schema = @Schema(example = "{\"error\": \"Invalid keys found: [invalidKey]\"}"))),
             @ApiResponse(responseCode = "404", description = "User not found") })
 
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "A map containing valid delivery address fields. Valid keys: address1, address2, city, state, zipCode, country.", required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class), examples = @io.swagger.v3.oas.annotations.media.ExampleObject(value = """
-            {
-                "address1": "123 Main St",
-                "address2": "Apt 4B",
-                "city": "Hyderabad",
-                "state": "Telangana",
-                "zipCode": "500001",
-                "country": "India"
-            }
-            """)))
+    @io.swagger.v3.oas.annotations.parameters.RequestBody
+            (description = "A map containing valid delivery address fields. Valid keys: address1, address2, city, state, zipCode, country.",
+                    required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = NameAndAddressRequest.class)))
     @PatchMapping("/{userId}")
     @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
-    public ResponseEntity<APIResponse<?>> updateAddress(@PathVariable Long userId,
-            @RequestBody Map<String, String> address) {
-        userService.updateUserAddress(userId, address);
-        return ResponseEntity.ok(APIResponse.success("Address updated succssfully."));
+    public ResponseEntity<APIResponse<?>> addNameAndAddress(@PathVariable Long userId,
+                                                            @RequestBody NameAndAddressRequest request) {
+        userService.addNameAndAddress(userId, request.name(),request.address());
+        return ResponseEntity.ok(APIResponse.success("Address updated successfully."));
     }
 
     @PatchMapping("/{userId}/del_instructions")

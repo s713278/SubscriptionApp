@@ -1,4 +1,6 @@
 package com.app.event;
+import java.io.Serial;
+
 import org.springframework.context.ApplicationEvent;
 
 import lombok.Getter;
@@ -9,6 +11,7 @@ public class MobileActivationEvent extends ApplicationEvent {
     /**
      * 
      */
+    @Serial
     private static final long serialVersionUID = 6344488216487370912L;
     private Long mobileNumber;
     private String otp;

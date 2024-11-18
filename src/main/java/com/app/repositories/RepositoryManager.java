@@ -13,7 +13,7 @@ public class RepositoryManager {
     private final CustomerRepo customerRepo;
     private final VendorRepo vendorRepo;
     private final SkuRepo skuRepo;
-    private final VendorSkuPriceRepo vendorSkuPriceRepo;
     private final RoleRepo roleRepo;
     private final OrderRepo orderRepo;
+    private final SkuPriceRepository priceRepository;
 }

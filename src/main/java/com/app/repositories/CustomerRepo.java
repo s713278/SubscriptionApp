@@ -44,4 +44,8 @@ public interface CustomerRepo extends JpaRepository<Customer, Long> {
     @Modifying
     @Query("UPDATE Customer u SET u.deliveryInstructions=:map WHERE u.id=:userId")
     void updateDeliveryInstructions(Long userId, Map<String,String> map);
+
+    @Modifying
+    @Query("UPDATE Customer u SET u.firstName = :name , u.deliveryAddress = :address WHERE u.id = :userId")
+    void addNameAddress(Long userId, String name, Map<String, String> address);
 }

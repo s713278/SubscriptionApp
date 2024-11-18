@@ -161,8 +161,8 @@ public class SubscriptionService {
     }
 
     @Transactional(readOnly = true)
-    public boolean fetchByUserIdAndVendorPriceId(final Long userId, final Long vendorPriceId){
-        return repoManager.getSubscriptionRepo().findByUserIdAndVendorPriceId(userId,vendorPriceId).isPresent();
+    public boolean fetchByUserIdAndSkuId(final Long userId, final Long skuId){
+        return repoManager.getSubscriptionRepo().findByUserIdAndSkuId(userId,skuId).isPresent();
     }
 
     @Transactional(readOnly = true)

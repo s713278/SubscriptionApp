@@ -48,7 +48,7 @@ public class EmailService {
     //We can apply retry mechanism
     @Async
     public void sendOrderNotification(String email, Order order) {
-        String emailBody =  String.format("Order Created", "Your order # %s is created.",order.getId());
+        String emailBody =  String.format( "Your order # %s is created.",order.getId());
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
         message.setSubject("Order Confirmation");
@@ -60,6 +60,6 @@ public class EmailService {
             log.error("Unable to send order email confirmation {}", email);
             
         }
-        log.info("Email notification is sending to ::{}, with the message ::{}",email, "Order Created", "Your order #" + order.getId() + " is created.");
+        log.info("Sending email notification to :{}, with the message ::{}",email, "Your order #" + order.getId() + " is created.");
     }
 }

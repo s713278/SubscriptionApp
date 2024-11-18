@@ -38,7 +38,7 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('VENDOR'))")
+    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('VENDOR_PRO'))")
     @PostMapping("/{categoryId}/products")
     public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody Product product, @PathVariable Long categoryId) {
         ProductDTO savedProduct = productService.addProduct(categoryId, product);

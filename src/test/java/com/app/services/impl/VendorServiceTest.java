@@ -11,22 +11,18 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.app.AbstractBaseConfig;
 import com.app.entites.Vendor;
 import com.app.entites.type.VendorStatus;
 import com.app.entites.type.VerificationStatus;
-import com.app.exceptions.APIException;
-import com.app.payloads.VendorDTO;
+import com.app.payloads.VendorDetailsDTO;
 
 @Transactional
-@SpringBootTest
-@ActiveProfiles("dev")
-class VendorServiceTest {
+class VendorServiceTest extends AbstractBaseConfig {
 
     @MockBean
     private JavaMailSender javaMailSender; // Mock the JavaMailSender
@@ -42,13 +38,13 @@ class VendorServiceTest {
         vendor.setBusinessName("Kunta's Natural Farm");
         vendor.setEmail("knf@example.com");
         vendor.setServiceAreas(Map.of("areas", List.of("502108","502103","Mirdoddi","Siddipet")));
-        vendor.setStatus(VendorStatus.ACTIVE);
+        vendor.setStatus(VendorStatus.NEW);
         vendor.setContactNumber("9912149048");
         vendor.setOwnerName("Swamy Kunta");
         vendor.setVerificationStatus(VerificationStatus.PENDING);
         vendor.setBusinessAddress(Map.of("address1","33 Acres Land",
                 "city","Mirdoddi","zipCode","502108"));
-        var vendorResponse=vendorService.createVendor(modelMapper.map(vendor, VendorDTO.class));
+        var vendorResponse=vendorService.createVendor(modelMapper.map(vendor, VendorDetailsDTO.class));
         vendorId=vendorResponse.getData().getId();
         assertNotNull(vendorId);
       //  assertEquals(VendorStatus.ACTIVE,vendorResponse.);
@@ -61,7 +57,7 @@ class VendorServiceTest {
 
     @Test
     void testFetchActiveVendors() {
-        var vendorsList= vendorService.fetchVendorsByStatus(VendorStatus.ACTIVE.name());
+        var vendorsList= vendorService.fetchVendorsByStatus(VendorStatus.ACTIVE);
         assertAll(()->{
             assertFalse(vendorsList.isEmpty());
             assertEquals(1,vendorsList.size());
@@ -69,13 +65,8 @@ class VendorServiceTest {
     }
     @Test
     void testFetchInActiveVendors() {
-        var vendorsList= vendorService.fetchVendorsByStatus(VendorStatus.SUSPENDED.name());
+        var vendorsList= vendorService.fetchVendorsByStatus(VendorStatus.NEW);
         assertTrue(vendorsList.isEmpty());
-    }
-    @Test
-    void testFetchInValidStatusQuery() {
-         assertThrows(APIException.class,()->vendorService.fetchVendorsByStatus("JunkStatus"));
-
     }
     @Test
     void fetchVendorById() {

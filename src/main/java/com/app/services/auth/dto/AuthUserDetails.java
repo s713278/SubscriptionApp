@@ -3,6 +3,7 @@ package com.app.services.auth.dto;
 import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -35,6 +36,7 @@ public class AuthUserDetails implements UserDetails {
     private boolean isMobileVerified;
     private boolean isEmailVerified;
     private List<GrantedAuthority> authorities;
+    private Map<String,String> address;
 
     public AuthUserDetails(Customer user) {
         this.email = user.getEmail();
@@ -46,6 +48,11 @@ public class AuthUserDetails implements UserDetails {
         log.info("User mobile {} and role {}", user.getMobile(), user.getRoles());
         this.authorities = user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getRoleName()))
                 .collect(Collectors.toList());
+        this.address=user.getDeliveryAddress();
+        if( this.address!=null) {
+            this.address.remove("address1");
+            this.address.remove("address2");
+        }
     }
 
     @Override

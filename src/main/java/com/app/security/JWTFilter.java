@@ -39,11 +39,10 @@ public class JWTFilter extends OncePerRequestFilter {
         if (authHeader != null && !authHeader.isBlank() && authHeader.startsWith("Bearer ")) {
             String jwt = authHeader.substring(7);
 
-            if (jwt == null || jwt.isBlank()) {
+            if (jwt.isBlank()) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 response.setContentType("application/json");
-                APIErrorResponse apiError = new APIErrorResponse();
-                apiError = new APIErrorResponse(APIErrorCode.API_401, "Invalid JWT token in Bearer Header");
+                APIErrorResponse apiError = new APIErrorResponse(APIErrorCode.API_401, "Invalid JWT token in Bearer Header");
                 String responseJson = mapper.writeValueAsString(apiError);
                 response.getWriter().write(responseJson);
                 return;  // Return here to stop further processing
@@ -78,10 +77,9 @@ public class JWTFilter extends OncePerRequestFilter {
         // Send a proper 401 response with JSON body
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
-        APIErrorResponse apiError = new APIErrorResponse();
-        if(exception instanceof APIException) {
-            APIException apiException = (APIException)exception;
-              apiError = new APIErrorResponse(apiException.getApiErrorCode(),apiException.getFailureReason());
+        APIErrorResponse apiError = null;
+        if(exception instanceof APIException apiException) {
+            apiError = new APIErrorResponse(apiException.getApiErrorCode(),apiException.getFailureReason());
         }else {
             apiError = new APIErrorResponse(APIErrorCode.API_401, exception.getMessage());
         }
