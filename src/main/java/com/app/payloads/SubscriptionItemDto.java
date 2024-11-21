@@ -2,7 +2,7 @@ package com.app.payloads;
 
 import java.util.List;
 
-import com.app.entites.SubscriptionFrequency;
+import com.app.entites.type.SubFrequency;
 
 import lombok.Data;
 
@@ -10,7 +10,7 @@ import lombok.Data;
 public class SubscriptionItemDto {
     private Long skuId;
     private int quantity;
-    private SubscriptionFrequency frequency;
+    private SubFrequency frequency;
     private List<Integer> customDays; // For custom date range
     
     // Getters and Setters

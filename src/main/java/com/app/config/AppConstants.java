@@ -50,5 +50,8 @@ public class AppConstants {
 
     public static final String SMS_FAST2SMS_PROVIDER="fast2sms";
     public static final String SMS_VONAGE_PROVIDER="vonage";
-    
+    public static final int SUB_MAX_ALLOWED_START_DATE_DAYS =15;
+    public static final int SUB_MAX_ALLOWED_END_DATE_DAYS =365;
+    public static final String SUB_ONE_TIME_DELIVERY_DAYS="delivery_days";
+    public static final String SUB_ONE_TIME_SUB_TYPE="type";
 }

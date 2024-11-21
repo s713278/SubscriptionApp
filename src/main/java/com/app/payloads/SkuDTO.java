@@ -6,9 +6,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.app.entites.SubscriptionFrequency;
+import com.app.entites.type.SubFrequency;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,5 +28,5 @@ public class SkuDTO implements Serializable {
     private BigDecimal shippingPrice;
     private LocalDate effectiveDate;//Start date when this price is effective
     private Integer serviceValidDays; //This is primarily for SERVICE type skus and Determine how many days the service is active.
-    private List<SubscriptionFrequency> eligibleFrequency; // For custom
+    private List<SubFrequency> eligibleFrequency; // For custom
 }

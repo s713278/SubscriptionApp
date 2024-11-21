@@ -46,13 +46,23 @@ public interface SkuRepo extends JpaRepository<Sku, Long> {
               led.price_id,
               led.list_price AS latest_list_price,
               led.sale_price AS latest_sale_price,
-              led.effective_date AS latest_effective_date
+              led.effective_date AS latest_effective_date,
+              tsp.frequency ,
+              tssp.eligible_delivery_days
           FROM
               tb_sku ts
           JOIN
               tb_product tp
           ON
               ts.vendor_id = :vendorId AND  ts.product_id = tp.product_id
+          JOIN
+              tb_sku_sub_plan tssp
+          ON
+              tssp.sku_id = ts.id
+          JOIN
+              tb_sub_plan tsp
+          ON
+              tsp.id  = tssp.sub_plan_id
           JOIN
               LatestEffectiveDates led
           ON

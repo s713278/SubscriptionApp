@@ -10,6 +10,8 @@ server:
         secure: false      # Send cookie only over HTTPS (enable in production)
         path: /           # Path for the session cookie
       timeout: 1m        # Session timeout set to 30 minutes
+#  profiles:
+#    active: docker
 logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%X{X-Request-ID}] %-5level %logger{36} - %msg%n"
@@ -70,6 +72,10 @@ application:
       - country
     preference_valid_keys:
       - vendor_id
+  subscription_config:
+    eligible_delivery_keys:
+      - type
+      - delivery_days
   sms_providers:
     fast2sms:
       api_key:

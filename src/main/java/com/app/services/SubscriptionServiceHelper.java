@@ -8,6 +8,8 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.app.entites.Subscription;
+import com.app.exceptions.APIErrorCode;
+import com.app.exceptions.APIException;
 
 @Component
 public class SubscriptionServiceHelper {
@@ -18,7 +20,8 @@ public class SubscriptionServiceHelper {
             case ALTERNATE_DAY -> item.getStartDate().plusDays(2);
             case WEEKLY -> item.getStartDate().plusWeeks(1);
             case CUSTOM -> findNextCustomDeliveryDate(item);
-            default -> item.getStartDate();
+            case ONE_TIME ->item.getStartDate();
+            default -> throw new APIException(APIErrorCode.API_400,"Invalid Subscription Frequency "+item.getFrequency());
         };
     }
     private LocalDate findNextCustomDeliveryDate(Subscription subscription) {

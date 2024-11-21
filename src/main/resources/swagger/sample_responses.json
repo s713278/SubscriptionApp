@@ -29,7 +29,7 @@
   "api_details": []
 },
 
-  "Resp_SignIn_Auth_Failed_2": {
+  "Resp_SignIn_Invalid_Credentials": {
     "success": false,
     "status": 401,
     "timestamp": "2024-10-19T06:36:32.7372589",
@@ -48,6 +48,54 @@
       "last_name": "Kunta",
       "refresh_token": "<<12345-2152-4c3e-b9d8-898989>>",
       "active_subscriptions": []
+    }
+  },
+  "Resp_Authentication_Failed": {
+  "success": false,
+  "status": 401,
+  "timestamp": "2024-11-20T07:29:50.573111213",
+  "failure_reason": "Full authentication is required to access this resource",
+  "user_message": "User authentication failed!!",
+  "api_details": []
+  },
+
+  "Req_Sub_OneTime_With_Fixed": {
+  "quantity": 2,
+  "frequency": "ONE_TIME",
+  "sku_id": 10003,
+  "price_id": 4,
+  "delivery_date": "2024-11-22"
+  },
+  "Res_Sub_OneTime_With_Fixed_Failed_1": {
+    "success": false,
+    "status": 400,
+    "timestamp": "2024-11-21T07:50:13.7165159",
+    "failure_reason": "Selected delivery date is not available for this vendor. Please select [WEDNESDAY, SUNDAY]",
+    "user_message": "Please check the request and try again!!",
+    "api_details": []
+  },
+  "Res_Sub_OneTime_With_Fixed_Failed_2": {
+    "success": false,
+    "status": 400,
+    "timestamp": "2024-11-21T07:50:13.7165159",
+    "failure_reason": "Selected delivery date is not available for this vendor. Please select [WEDNESDAY, SUNDAY]",
+    "user_message": "Please check the request and try again!!",
+    "api_details": []
+  },
+  "Res_Sub_OneTime_With_Fixed_Failed_4": {
+    "success": false,
+    "status": 409,
+    "timestamp": "2024-11-21T09:19:31.3623991",
+    "failure_reason": "Subscription already existed for sku id : 10004",
+    "user_message": "Data already existed in system.",
+    "api_details": []
+  },
+  "Res_Sub_OneTime_With_Fixed_Success": {
+    "success": true,
+    "message": "Subscription created successfully",
+    "data": {
+      "subcription_id": 2053,
+      "next_delivery_date": "2024-11-24"
     }
   }
 }

@@ -19,8 +19,9 @@ public abstract class AbstractRequestValidation {
             for (FieldError error : bindingResult.getFieldErrors()) {
                 errors.add(error.getField()+":"+error.getDefaultMessage());
             }
+            bindingResult.getAllErrors().forEach(objectError -> errors.add(objectError.getDefaultMessage()));
             // Return the error map as the response with BAD_REQUEST status
-           throw new APIException(APIErrorCode.API_400,"BAD_REQUEST",errors);
+           throw new APIException(APIErrorCode.API_400,errors.toString());
         }
     }
 }
