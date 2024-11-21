@@ -83,9 +83,9 @@ public class SubscriptionService {
         SubscriptionResponse response = new SubscriptionResponse(true, "No subscription status changes found!!");
         boolean changeEligible= false;
         switch (subscription.getStatus()){
-            case NEW, ACTIVE -> {
+            case PENDING, ACTIVE -> {
                 //It can be changed to PAUSED
-                if(!status.equals(SubscriptionStatus.NEW) && !status.equals(SubscriptionStatus.ACTIVE)){
+                if(!status.equals(SubscriptionStatus.PENDING) && !status.equals(SubscriptionStatus.ACTIVE)){
                     changeEligible = true;
                 }
             }

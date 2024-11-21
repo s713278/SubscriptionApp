@@ -8,7 +8,7 @@ public enum APIErrorCode {
     API_400(HttpStatus.BAD_REQUEST, "Please check the request and try again!!"),
     API_401(HttpStatus.UNAUTHORIZED, "User authentication failed!!"),
     API_403(HttpStatus.FORBIDDEN, "User authorization failed!!"),
-    API_409(HttpStatus.CONFLICT, "Resource already existed."),
+    API_409(HttpStatus.CONFLICT, "Data already existed in system."),
     API_500(HttpStatus.INTERNAL_SERVER_ERROR, "Technical issue occurred,Please try after sometime!!"),
     API_417(HttpStatus.EXPECTATION_FAILED, "Unable to create new signup."),
     API_418(HttpStatus.EXPECTATION_FAILED, "Customer subscription creation failed"),

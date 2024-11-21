@@ -19,6 +19,7 @@ public class GlobalConfig {
     private CustomerConfig customerConfig;
     private CacheConfig cacheConfig;
     private Map<String,ProviderConfig> smsProviders;
+    private SubscriptionConfig subscriptionConfig;
     
     @Getter
     @Setter
@@ -28,6 +29,11 @@ public class GlobalConfig {
         private List<String> addressValidKeys;
         private Set<String> preferenceValidKeys;
         private boolean otpVerificationEnabled;
+    }
+    @Getter
+    @Setter
+    public static class SubscriptionConfig {
+        private Set<String> eligibleDeliveryKeys;
     }
 
     @Getter

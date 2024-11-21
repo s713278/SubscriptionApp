@@ -11,6 +11,8 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.hibernate.type.SqlTypes;
 
+import com.app.entites.type.SubFrequency;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,7 +52,7 @@ public class Subscription  extends  AbstractAuditingEntity<Long> implements Seri
     @Enumerated(EnumType.STRING)
     @JdbcType(value  = PostgreSQLEnumJdbcType.class)
     @Column(name = "frequency", columnDefinition = "subscription_frequency")
-    private SubscriptionFrequency frequency; // one_time, daily, weekly, custom
+    private SubFrequency frequency; // one_time, daily, weekly, custom
 
     @JdbcType(value  = PostgreSQLEnumJdbcType.class)
     @Enumerated(EnumType.STRING)

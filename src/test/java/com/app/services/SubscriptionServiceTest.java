@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.app.AbstractBaseConfig;
 import com.app.entites.Customer;
-import com.app.entites.SubscriptionFrequency;
+import com.app.entites.type.SubFrequency;
 import com.app.payloads.request.SubscriptionRequest;
 import com.app.payloads.request.UpdateSubscriptionRequest;
 import com.app.repositories.RepositoryManager;
@@ -63,7 +63,7 @@ class SubscriptionServiceTest extends AbstractBaseConfig {
         subscriptionRequest.setSkuId(testVendorId);
         subscriptionRequest.setQuantity(5);
         subscriptionRequest.setStartDate(LocalDate.now().plusDays(2));
-        subscriptionRequest.setFrequency(SubscriptionFrequency.DAILY);
+        subscriptionRequest.setFrequency(SubFrequency.DAILY);
         subscriptionRequest.setEndDate(LocalDate.now().plusDays(30));
         var sub = createSubscriptionService.createSubscription(customerId,subscriptionRequest);
         assertNotNull( sub.data());
@@ -78,7 +78,7 @@ class SubscriptionServiceTest extends AbstractBaseConfig {
         UpdateSubscriptionRequest request = new UpdateSubscriptionRequest();
         request.setQuantity(9);
         request.setStartDate(LocalDate.now().plusDays(10));
-        request.setFrequency(SubscriptionFrequency.ALTERNATE_DAY);
+        request.setFrequency(SubFrequency.ALTERNATE_DAY);
          var response = subscriptionService.updateSubscription(testSubscriptionId,customerId, request);
          assertTrue(response.success());
          var updateSub=subscriptionService.fetchSubscription(testSubscriptionId);

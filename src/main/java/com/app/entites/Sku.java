@@ -7,6 +7,7 @@ import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import com.app.entites.type.SkuType;
+import com.app.entites.type.SubFrequency;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -56,17 +57,25 @@ public class Sku extends AbstractAuditingEntity<Long> implements Serializable {
 
     private Integer stock;
 
-   // private BigDecimal listPrice;
-    //private BigDecimal salePrice;
-    //private BigDecimal processingFee;
-   // private BigDecimal shippingPrice;
-
    // private LocalDate effectiveDate;//Start date when this price is effective
     private Integer serviceValidDays; //This is primarily for SERVICE type skus and Determine how many days the service is active.
 
-    @CollectionTable(name = "tb_sku_eligible_frequency",joinColumns = @JoinColumn(name = "sku_id"))
-    @Enumerated(EnumType.STRING)
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<SubscriptionFrequency> eligibleFrequency; // For custom date range
+    //@CollectionTable(name = "tb_sku_sub_plan",joinColumns = @JoinColumn(name = "sku_id"))
+    //@Enumerated(EnumType.STRING)
+    //@ElementCollection(fetch = FetchType.EAGER)
+    @Transient
+    private List<SubFrequency> eligibleSubPlan; // For custom date range
+
+    @Column(name = "subscription_eligible")
+    private boolean subscriptionEligible;
+
+    @Column(name = "cancel_eligible")
+    private boolean cancelEligible;
+
+    @Column(name = "return_eligible")
+    private boolean returnEligible;
+
+    @OneToMany(mappedBy = "sku", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+    private List<SkuSubscription> eligibleSubPlans;
 
 }
