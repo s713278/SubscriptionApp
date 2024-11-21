@@ -27,11 +27,25 @@ public abstract class AbstractCreateSubscriptionService {
     private final RepositoryManager repoManager;
     private final SubscriptionServiceHelper serviceHelper;
 
+    /**
+     * <ol>
+     *     <li>Verifying the duplicate subscription request</li>
+     *      <li>Verify the requested frequency is existed in DB or not</li>
+     *     <li>Delivery date validation for ONE_TIME frequency</li>
+     * </ol>
+     * @param userId
+     * @param request
+     */
     protected void preSubscription(Long userId,SubscriptionRequest request) {
+        if(serviceManager.getSubscriptionService().
+                fetchByUserIdAndSkuId(userId,
+                        request.getSkuId())){
+            throw new APIException(APIErrorCode.API_409,"Subscription already existed for sku id : "+request.getSkuId());
+        }
+        var skuSub= serviceManager.getSkuSubscriptionService().fetchBySkuIdAndFrequency(request.getSkuId(),request.getFrequency());
         if(request.getFrequency() == SubFrequency.ONE_TIME){
-            var skuSubPlan= serviceManager.getSkuSubscriptionService().fetchBySkuIdAndFrequency(request.getSkuId(),request.getFrequency());
             ObjectMapper objectMapper=new ObjectMapper();
-            Map<String,Object> map = skuSubPlan.getEligibleDeliveryDays();
+            Map<String,Object> map = skuSub.getEligibleDeliveryDays();
             List<String> deliveryDaysList = objectMapper.convertValue(map.get(AppConstants.SUB_ONE_TIME_DELIVERY_DAYS), new TypeReference<List<String>>(){});
             log.debug("Sku Eligible Delivery Options : {}",deliveryDaysList);
                 if(deliveryDaysList!=null && !deliveryDaysList.isEmpty() && "FIXED".equalsIgnoreCase((String)map.get(AppConstants.SUB_ONE_TIME_SUB_TYPE))){
@@ -39,16 +53,11 @@ public abstract class AbstractCreateSubscriptionService {
                     if(!deliveryDaysList
                             .contains(request.getDeliveryDate().getDayOfWeek().name())){
                         throw new APIException(APIErrorCode.API_400,"Selected delivery date is not available for this item : "+request.getSkuId() +
-                                ". Please select "+skuSubPlan.getEligibleDeliveryDays().get(AppConstants.SUB_ONE_TIME_DELIVERY_DAYS));
+                                ". Please select "+skuSub.getEligibleDeliveryDays().get(AppConstants.SUB_ONE_TIME_DELIVERY_DAYS));
 
                     }
 
                 }
-        }
-        if(serviceManager.getSubscriptionService().
-                fetchByUserIdAndSkuId(userId,
-                        request.getSkuId())){
-            throw new APIException(APIErrorCode.API_409,"Subscription already existed for sku id : "+request.getSkuId());
         }
     }
 
@@ -68,20 +77,22 @@ public abstract class AbstractCreateSubscriptionService {
           //  subscription.setCustomer(customer);
         subscription.setUserId(userId);
         subscription.setSkuId(request.getSkuId());
+        //Get Latest Price from the repository
         subscription.setPriceId(request.getPriceId());
             subscription.setStatus(SubscriptionStatus.PENDING);
-          //  subscription.setSku(sku);
             subscription.setQuantity(request.getQuantity());
             subscription.setFrequency(request.getFrequency());
-          //  subscription.setVendor(vendor);
-            if (request.getFrequency() == SubFrequency.CUSTOM) {
-                subscription.setCustomDays(request.getCustomDays());
-            }
-            if (request.getFrequency() == SubFrequency.ONE_TIME) {
-                subscription.setStartDate(request.getDeliveryDate());
-            }else{
-                subscription.setStartDate(request.getStartDate());
-                subscription.setEndDate(request.getEndDate());
+            switch (subscription.getFrequency()){
+                case ONE_TIME ->subscription.setStartDate(request.getDeliveryDate());
+                case CUSTOM -> {
+                    subscription.setCustomDays(request.getCustomDays());
+                    subscription.setStartDate(request.getStartDate());
+                    subscription.setEndDate(request.getEndDate());
+                }
+                 default -> {
+                    subscription.setStartDate(request.getStartDate());
+                    subscription.setEndDate(request.getEndDate());
+                }
             }
             subscription.setNextDeliveryDate(serviceHelper.calculateNextDeliveryDate(subscription));
             subscription.setUpdateVersion(1); //Created First Time

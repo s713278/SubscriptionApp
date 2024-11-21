@@ -82,12 +82,28 @@
     "user_message": "Please check the request and try again!!",
     "api_details": []
   },
+  "Res_Sub_OneTime_With_Fixed_Failed_3": {
+    "success": false,
+    "status": 400,
+    "timestamp": "2024-11-21T18:55:41.5212978",
+    "failure_reason": "No defined subscription plans found for skuId :10003 with frequency: CUSTOM",
+    "user_message": "Please check the request and try again!!",
+    "api_details": []
+  },
   "Res_Sub_OneTime_With_Fixed_Failed_4": {
     "success": false,
     "status": 409,
     "timestamp": "2024-11-21T09:19:31.3623991",
     "failure_reason": "Subscription already existed for sku id : 10004",
     "user_message": "Data already existed in system.",
+    "api_details": []
+  },
+  "Res_Sub_OneTime_With_Fixed_Failed_5": {
+    "success": false,
+    "status": 400,
+    "timestamp": "2024-11-21T18:56:46.0982331",
+    "failure_reason": "[Delivery date is required for ONE_TIME frequency]",
+    "user_message": "Please check the request and try again!!",
     "api_details": []
   },
   "Res_Sub_OneTime_With_Fixed_Success": {
