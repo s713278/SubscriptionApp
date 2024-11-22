@@ -46,6 +46,6 @@ public class SkuSubscriptionService {
     public SkuSubscription fetchBySkuIdAndFrequency(Long skuId, SubFrequency frequency){
         return repositoryManager.getSkuSubscriptionRepository()
                 .findBySkuIdAndSubscriptionPlanFrequency(skuId, frequency)
-                .orElseThrow(() -> new APIException(APIErrorCode.API_400,"No subscription plan existed for skuId :"+skuId +" frequency: "+frequency));
+                .orElseThrow(() -> new APIException(APIErrorCode.API_400,"No defined subscription plans found for skuId :"+skuId +" with frequency: "+frequency));
     }
 }
