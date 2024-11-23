@@ -4,15 +4,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+
+import com.app.AbstractBaseConfig;
 
 import lombok.extern.slf4j.Slf4j;
 
-@SpringBootTest
-@ActiveProfiles({"dev"})
 @Slf4j
-class SMSServiceTest {
+class SMSServiceTest extends AbstractBaseConfig {
 
     @Autowired
     private SMSService smsService;
@@ -23,7 +21,7 @@ class SMSServiceTest {
     @Disabled
     @Test
     void sendOTP() {
-        smsService.sendTextMessage("919912149049L","Welcome message from - SnR");
-        smsService.sendTextMessage("12019206694L","Welcome message from - SnR");
+        smsService.sendTextMessage("+919912149049","Welcome message from - SnR");
+       // smsService.sendTextMessage("12019206694L","Welcome message from - SnR");
     }
 }

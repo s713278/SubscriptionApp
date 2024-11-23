@@ -37,6 +37,7 @@ public class AuthUserDetails implements UserDetails {
     private boolean isEmailVerified;
     private List<GrantedAuthority> authorities;
     private Map<String,String> address;
+    private String fullMobileNumber;
 
     public AuthUserDetails(Customer user) {
         this.email = user.getEmail();
@@ -49,6 +50,7 @@ public class AuthUserDetails implements UserDetails {
         this.authorities = user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getRoleName()))
                 .collect(Collectors.toList());
         this.address=user.getDeliveryAddress();
+        this.fullMobileNumber=user.getFullMobileNumber();
         if( this.address!=null) {
             this.address.remove("address1");
             this.address.remove("address2");

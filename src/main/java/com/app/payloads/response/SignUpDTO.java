@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record SignUpDTO(
         @JsonProperty("user_id") Long userId,
-        @JsonProperty("mobile") Long mobile,
+        @JsonProperty("mobile_number") String mobile,
         @JsonProperty("mobile_verified")
         boolean mobileVerified,
         @JsonProperty("email_verified")

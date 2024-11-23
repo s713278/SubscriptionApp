@@ -45,7 +45,7 @@ public class AuthController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Customer registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = APIResponse.class))),
             @ApiResponse(responseCode = "400", description = "Bad request due to validation errors", content = @Content(mediaType = "application/json", schema = @Schema(implementation = APIResponse.class))) })
-    @PostMapping("/signup")
+    //@PostMapping("/signup")
     public ResponseEntity<APIResponse<?>> mobileSignUp(@Valid @RequestBody MobileSignUpRequest signUpRequest) {
             log.info("Received sign-up request for mobile: {}", signUpRequest.getMobile());
         var response = signUpStrategy.processUserSignUp(signUpRequest);
@@ -75,8 +75,6 @@ public class AuthController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Customer registration request", required = true, content = @Content(schema = @Schema(implementation = SignUpRequest.class))) @Valid @RequestBody EmailSignUpRequest signUpRequest) {
         try {
             log.info("Received sign-up request for email: {}", signUpRequest.getEmail());
-          //  SignUpStrategy<EmailSignUpRequest> signUpStrategy = signUpStrategyFactory
-            //        .getStrategy("emailSignUpStrategy");
             var response = signUpStrategy.processUserSignUp(signUpRequest);
             var apiResponse = APIResponse.success(HttpStatus.CREATED.value(), response);
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
@@ -86,16 +84,6 @@ public class AuthController {
         }
     }
 
-    @Operation(summary  = "Verify OTP")
-    @PostMapping("/verify-otp")
-    public ResponseEntity<?> verifyMobileOtp(@Valid @RequestBody OTPVerificationRequest otpRequest) {
-        SignInRequest request = new SignInRequest();
-        request.setMobile(otpRequest.getMobile());
-        request.setPassword(otpRequest.getOtp());
-        AuthDetailsDTO signInResponse= signInContext.processSignIn(SignInType.WITH_OTP,request);
-        var apiResponse = APIResponse.success(HttpStatus.OK.value(), signInResponse);
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
-    }
 
     @Operation(summary  = "Verify Email OTP")
     //TODO:  @PostMapping("/email/verify-otp")
@@ -113,15 +101,28 @@ public class AuthController {
     @Operation(summary  = "Request OTP")
     @PostMapping("/request-otp")
     public ResponseEntity<?> requestOTP(@RequestBody OTPRequest request) {
-        log.info("Received OTP request for mobile: {}", request.mobile());
-        if(request.mobile()!=null){
+        log.info("Received OTP request for mobile: {}", request.getMobile());
+        serviceManager.getUserService().createUserIfNotExisted(request);
+        if(request.getMobile()!=null){
             notificationContext.sendOTPMessage(NotificationType.SMS,
-                    ""+request.mobile());
+                    request.getFullPhoneNumber());
         }else{
             notificationContext.sendOTPMessage(NotificationType.EMAIL,
-                    request.email());
+                    request.getEmail());
         }
         return  ResponseEntity.ok(APIResponse.success("OTP Sent successfully"));
+    }
+
+    @Operation(summary  = "Verify OTP")
+    @PostMapping("/verify-otp")
+    public ResponseEntity<?> verifyMobileOtp(@Valid @RequestBody OTPVerificationRequest otpRequest) {
+        SignInRequest request = new SignInRequest();
+        request.setCountryCode(otpRequest.getCountryCode());
+        request.setMobile(otpRequest.getMobile());
+        request.setPassword(otpRequest.getOtp());
+        AuthDetailsDTO signInResponse= signInContext.processSignIn(SignInType.WITH_OTP,request);
+        var apiResponse = APIResponse.success(HttpStatus.OK.value(), signInResponse);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     // REST API to get authenticated user details (for testing session management)

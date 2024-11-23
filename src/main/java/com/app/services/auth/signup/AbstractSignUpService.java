@@ -44,6 +44,6 @@ public abstract class AbstractSignUpService<T extends SignUpRequest> {
     protected abstract SignUpDTO doSignUp(T user);
 
     protected void postSignUpOperations(SignUpDTO signUpDTO) {
-        serviceManager.getNotificationContext().sendOTPMessage(NotificationType.SMS,""+signUpDTO.mobile());
+        serviceManager.getNotificationContext().sendOTPMessage(NotificationType.SMS,signUpDTO.mobile());
     }
 }

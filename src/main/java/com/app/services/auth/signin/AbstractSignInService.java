@@ -1,6 +1,5 @@
 package com.app.services.auth.signin;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,7 +29,7 @@ public abstract class AbstractSignInService {
     }
 
     protected Customer preSignIn(SignInRequest request) {
-        return serviceManager.getUserService().isMobileNumberRegistered(request.getMobile());
+        return serviceManager.getUserService().fetchUserByMobileNumber(request.getMobile());
     }
 
     protected abstract AuthDetailsDTO doSignIn(SignInRequest request,Customer user);
@@ -49,13 +48,14 @@ public abstract class AbstractSignInService {
             String refreshToken = serviceManager.getRefreshTokenService().createRefreshToken(userDetails);
             return responseBuilder.userToken(accessToken)
                     .refreshToken(refreshToken)
-                    .activeSubscriptions(List.of())
+                    .defaultVendorId(1L)
+                    //.activeSubscriptions(List.of())
                     .address(userDetails.getAddress())
                     .build();
         }else{
-            serviceManager.getNotificationContext().sendOTPMessage(NotificationType.SMS,""+userDetails.getMobile());
+            serviceManager.getNotificationContext().sendOTPMessage(NotificationType.SMS,userDetails.getFullMobileNumber());
             return responseBuilder
-                    .message("OTP sent to your registered mobile number,Please verify")
+                    .message("OTP sent to your registered mobile number.")
                     .build();
         }
 

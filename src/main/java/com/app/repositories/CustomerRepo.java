@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,7 +15,7 @@ import org.springframework.stereotype.Repository;
 import com.app.entites.Customer;
 
 @Repository
-public interface CustomerRepo extends JpaRepository<Customer, Long> {
+public interface CustomerRepo extends JpaRepository<Customer, Long>, JpaSpecificationExecutor<Customer> {
 
     @Query("SELECT u FROM Customer u WHERE u.id = ?1")
     List<Customer> findByAddress(Long userId);
@@ -48,4 +50,12 @@ public interface CustomerRepo extends JpaRepository<Customer, Long> {
     @Modifying
     @Query("UPDATE Customer u SET u.firstName = :name , u.deliveryAddress = :address WHERE u.id = :userId")
     void addNameAddress(Long userId, String name, Map<String, String> address);
+
+    static Specification<Customer> hasMobileNumber(Long mobileNumber) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("mobile"), mobileNumber);
+    }
+
+    @Query("SELECT COUNT(u) > 0 FROM Customer u WHERE u.mobile = :mobileNumber")
+    boolean existsByMobile(Long mobileNumber);
 }

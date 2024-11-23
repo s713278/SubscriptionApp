@@ -24,12 +24,14 @@ public class OTPSignInService extends AbstractSignInService{
     @Override
     protected AuthDetailsDTO doSignIn(SignInRequest signInRequest,Customer user) {
         OTPVerificationRequest request=new OTPVerificationRequest();
+        request.setCountryCode(signInRequest.getCountryCode());
         request.setMobile(signInRequest.getMobile());
         request.setOtp(signInRequest.getPassword());
-        // Find the user by email
-        serviceManager.getOtpService().verifyOtp(String.valueOf(request.getMobile()),request.getOtp());
+        // Find the user by mobile number
+        serviceManager.getOtpService().verifyOtp(user.getFullMobileNumber(),request.getOtp());
         // Mark user as verified
         var userDetails= Optional.of(user).map(AuthUserDetails::new).get();
+        userDetails.setMobileVerified(true);
         UsernamePasswordAuthenticationToken authentication=
                 new UsernamePasswordAuthenticationToken(userDetails,userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);

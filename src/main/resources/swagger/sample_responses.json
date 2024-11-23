@@ -1,4 +1,5 @@
 
+
 {
   "Resp_SignUp_Success": {
   "timestamp": "2024-10-22T09:05:58.140309",
@@ -112,6 +113,27 @@
     "data": {
       "subcription_id": 2053,
       "next_delivery_date": "2024-11-24"
+    }
+  },
+  "Req_Request_OTP": {
+    "country_code": "+91",
+    "mobile_number": 1111111111,
+    "reg_source": "android"
+  },
+  "Req_Verify_OTP": {
+    "country_code": "+91",
+    "mobile_number": 1111111111,
+    "reg_source": "android"
+  },
+  "Req_Delivery_Address": {
+    "name": "John Doe",
+    "address": {
+      "address1": "123 Main Street",
+      "address2": "Apt 4B",
+      "city": "Hyderabad",
+      "state": "Telangana",
+      "zipCode": "500001",
+      "country": "India"
     }
   }
 }
