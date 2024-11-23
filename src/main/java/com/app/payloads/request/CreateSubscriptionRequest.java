@@ -15,7 +15,7 @@ import lombok.Data;
 
 @ValidateSubscriptionRequest
 @Data
-public class SubscriptionRequest {
+public class CreateSubscriptionRequest {
 
     @Min(value = 0, message = "Invalid sku id.")
     @NotNull(message = "Sku Id is required.") @JsonProperty("sku_id")

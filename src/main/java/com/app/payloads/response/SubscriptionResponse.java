@@ -11,7 +11,7 @@ public record SubscriptionResponse(boolean success, String message, Data data) {
         this(success, message, null); // 'data' is set to null by default
     }
 
-    public static record Data(@JsonProperty("subcription_id") Long id,
+    public static record Data(@JsonProperty("subscription_id") Long id,
             @JsonProperty("next_delivery_date") LocalDate nextDeliveryDate) {
 
     }

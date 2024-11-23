@@ -96,4 +96,12 @@ public class VendorController {
     public ResponseEntity<APIResponse<String>> deleteStore(@PathVariable Long vendorId) {
         return new ResponseEntity<>(serviceManager.getVendorService().deleteVendor(vendorId), HttpStatus.OK);
     }
+
+    @Operation(summary = "Fetch Subscriptions By Vendor ID")
+    @GetMapping("/{vendorId}/subs")
+    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('VENDOR'))")
+    public ResponseEntity<APIResponse<?>> fetchSubsByVendorId( @PathVariable Long vendorId) {
+       var subscriptions = serviceManager.getSubscriptionService().fetchSubsByVendor(vendorId);
+        return ResponseEntity.ok(APIResponse.success(subscriptions));
+    }
 }
