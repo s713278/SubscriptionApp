@@ -18,7 +18,9 @@ public record SubscriptionDetailDTO(
     LocalDate startDate,
     String frequency,
     String status,
-    LocalDate nextDeliveryDate
+    LocalDate nextDeliveryDate,
+    String name,
+    String imagePath
 ) {
     @JsonProperty("discount")
     public Double discount() {

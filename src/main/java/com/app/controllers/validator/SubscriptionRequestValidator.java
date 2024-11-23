@@ -4,16 +4,16 @@ import java.time.LocalDate;
 
 import com.app.config.AppConstants;
 import com.app.entites.type.SubFrequency;
-import com.app.payloads.request.SubscriptionRequest;
+import com.app.payloads.request.CreateSubscriptionRequest;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 
-public class SubscriptionRequestValidator implements ConstraintValidator<ValidateSubscriptionRequest, SubscriptionRequest> {
+public class SubscriptionRequestValidator implements ConstraintValidator<ValidateSubscriptionRequest, CreateSubscriptionRequest> {
 
     @Override
-    public boolean isValid(SubscriptionRequest value, ConstraintValidatorContext context) {
+    public boolean isValid(CreateSubscriptionRequest value, ConstraintValidatorContext context) {
         if (value == null) {
             return true; // You can handle null cases separately if needed
         }

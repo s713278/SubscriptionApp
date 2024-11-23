@@ -10,7 +10,7 @@ import com.app.entites.SubscriptionStatus;
 import com.app.entites.type.SubFrequency;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
-import com.app.payloads.request.SubscriptionRequest;
+import com.app.payloads.request.CreateSubscriptionRequest;
 import com.app.payloads.response.SubscriptionResponse;
 import com.app.repositories.RepositoryManager;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -36,7 +36,7 @@ public abstract class AbstractCreateSubscriptionService {
      * @param userId
      * @param request
      */
-    protected void preSubscription(Long userId,SubscriptionRequest request) {
+    protected void preSubscription(Long userId, CreateSubscriptionRequest request) {
         if(serviceManager.getSubscriptionService().
                 fetchByUserIdAndSkuId(userId,
                         request.getSkuId())){
@@ -66,7 +66,7 @@ public abstract class AbstractCreateSubscriptionService {
         notifyCustomer(subscription);
     }
     @Transactional
-    public SubscriptionResponse createSubscription(Long userId,SubscriptionRequest request) {
+    public SubscriptionResponse createSubscription(Long userId, CreateSubscriptionRequest request) {
         log.info("Start - Create subscription request for customer {}",userId);
         Subscription subscription = new Subscription();
             preSubscription(userId,request);

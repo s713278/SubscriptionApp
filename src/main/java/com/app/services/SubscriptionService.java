@@ -189,7 +189,9 @@ public class SubscriptionService {
                 convertToLocalDate( record[9]),               // startDate
                 (String) record[10],                 // frequency
                 (String) record[11],                 // status
-                convertToLocalDate( record[12] )              // nextDeliveryDate
+                convertToLocalDate( record[12] ),     // nextDeliveryDate
+                (String) record[13],                 //sku name
+                (String) record[14]                  //image_path
         );
     }
 

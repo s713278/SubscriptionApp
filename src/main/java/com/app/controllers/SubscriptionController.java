@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.app.config.AppConstants;
 import com.app.entites.Subscription;
 import com.app.entites.SubscriptionStatus;
-import com.app.payloads.request.SubscriptionRequest;
+import com.app.payloads.request.CreateSubscriptionRequest;
 import com.app.payloads.request.SubscriptionStatusRequest;
 import com.app.payloads.request.UpdateSubscriptionRequest;
 import com.app.payloads.response.APIResponse;
@@ -48,7 +48,7 @@ public class SubscriptionController extends AbstractRequestValidation{
     @PostMapping("/")
     public ResponseEntity<SubscriptionResponse> createSubscription(
             @PathVariable Long userId,
-            @Valid @RequestBody SubscriptionRequest request, BindingResult bindingResult) {
+            @Valid @RequestBody CreateSubscriptionRequest request, BindingResult bindingResult) {
         validateRequest(bindingResult);
         log.debug("Entered create subscription for customer {}",userId);
         SubscriptionResponse subscription = createSubscriptionService.createSubscription(userId,request);
