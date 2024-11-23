@@ -15,13 +15,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.app.entites.Sku;
-import com.app.entites.type.SubFrequency;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
+import com.app.payloads.EligibleSubscriptionDTO;
 import com.app.payloads.ProductSkuDTO;
 import com.app.payloads.SkuDTO;
 import com.app.repositories.RepositoryManager;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -88,12 +87,14 @@ public class SkuService {
                                 (Long) result[9],         // vendorSkuPriceId
                                  ((BigDecimal) result[10]).doubleValue(),       // listPrice
                                 (result[11])!=null?((BigDecimal) result[11]).doubleValue():0,     // salePrice
-                                ((Date)result[12]).toLocalDate() ,//effective_date,
-                                SubFrequency.valueOf((String)result[13]),
-                              new ObjectMapper().readValue((String)result[14], new TypeReference<Map<String, Object>>(){})
+                                ((Date)result[12]).toLocalDate(),//effective_date,
+                               // SubFrequency.valueOf((String)result[13]), //Frequency
+                            //  new ObjectMapper().readValue((String)result[14], new TypeReference<Map<String, Object>>(){}) //Eligible_Options
+                                new ObjectMapper().readValue((String) result[13], new TypeReference<List<EligibleSubscriptionDTO>>() {
+                                })
                         );
-                    } catch (JsonProcessingException e) {
-                        log.error("Unable to parse json data result[14]",e);
+                    } catch (Exception e) {
+                        log.error("Unable to parse SQL result into ProductSkuDTO  :",e);
                         throw new RuntimeException(e);
                     }
                 }
@@ -104,7 +105,4 @@ public class SkuService {
                 .collect(Collectors
                         .groupingBy(ProductSkuDTO::productName));
     }
-
-
-
 }

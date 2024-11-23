@@ -2,9 +2,8 @@ package com.app.payloads;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Map;
+import java.util.List;
 
-import com.app.entites.type.SubFrequency;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
@@ -21,9 +20,10 @@ public record ProductSkuDTO(@JsonProperty("product_id") Long productId,
                             @JsonProperty("list_price") Double listPrice,
                             @JsonProperty("sale_price") Double salePrice,
                             @JsonProperty("effective_date")LocalDate effectiveDate,
-                            @JsonProperty("sub_frequency")SubFrequency frequency,
-                            @JsonProperty("eligible_delivery_days")Map<String,Object> eligibleDeliveryDays
-                          ) implements Serializable {
+                           // @JsonProperty("sub_frequency")SubFrequency frequency,
+                           // @JsonProperty("eligible_delivery_days")Map<String,Object> eligibleDeliveryDays,
+                            @JsonProperty("eligible_subscription_options")List<EligibleSubscriptionDTO> eligibleSubscriptionOptions
+                            ) implements Serializable {
 
     @JsonProperty("discount")
     public Double discount() {

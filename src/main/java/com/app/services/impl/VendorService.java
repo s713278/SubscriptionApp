@@ -113,7 +113,7 @@ public class VendorService  {
         return modelMapper.map(vendor, VendorDetailsDTO.class);
     }
 
-    @Cacheable(value =CacheType.CACHE_TYPE_VENDORS,key = "#serviceArea")
+    //@Cacheable(value =CacheType.CACHE_TYPE_VENDORS,key = "#serviceArea")
     public List<VendorDetailsDTO> fetchVendorsByServiceArea(String serviceArea) {
        var vendorsList =   repoManager.getVendorRepo().findByServiceArea(serviceArea);
         return vendorsList.stream().map(vendor->modelMapper.map(vendor, VendorDetailsDTO.class)).toList();
