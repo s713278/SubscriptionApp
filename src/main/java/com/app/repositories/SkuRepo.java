@@ -33,42 +33,46 @@ public interface SkuRepo extends JpaRepository<Sku, Long> {
               WHERE
                   effective_date <= CURRENT_DATE
           )
-          SELECT
-              ts.product_id,
-              tp.name AS product_name,
-              ts.id AS sku_id,
-              ts.image_path,
-              ts.name AS sku_name,
-              ts.size AS sku_size,
-              ts.stock,
-              ts.type,
-              ts.service_valid_days,
-              led.price_id,
-              led.list_price AS latest_list_price,
-              led.sale_price AS latest_sale_price,
-              led.effective_date AS latest_effective_date,
-              tsp.frequency ,
-              tssp.eligible_delivery_days
-          FROM
-              tb_sku ts
-          JOIN
-              tb_product tp
-          ON
-              ts.vendor_id = :vendorId AND  ts.product_id = tp.product_id
-          JOIN
-              tb_sku_sub_plan tssp
-          ON
-              tssp.sku_id = ts.id
-          JOIN
-              tb_sub_plan tsp
-          ON
-              tsp.id  = tssp.sub_plan_id
-          JOIN
-              LatestEffectiveDates led
-          ON
-              ts.id = led.sku_id
-          WHERE
-              led.rn = 1
+            SELECT
+                ts.product_id,
+                tp.name AS product_name,
+                ts.id,
+                ts.image_path,
+                ts.name AS sku_name,
+                ts.size AS sku_size,
+                 ts.stock,
+                ts.type AS sku_type,
+                ts.service_valid_days AS service_valid_days,
+                led.price_id AS price_id,
+                led.list_price AS latest_list_price,
+                led.sale_price AS latest_sale_price,
+                led.effective_date AS latest_effective_date,
+                JSON_AGG(
+                    JSON_BUILD_OBJECT(
+                        'frequency', tsp.frequency,
+                        'eligible_delivery_days', tssp.eligible_delivery_days
+                    )
+                ) AS eligible_subscription_options
+            FROM
+                tb_sku ts
+            JOIN
+                tb_product tp
+                ON ts.product_id = tp.product_id
+            JOIN
+                tb_sku_sub_plan tssp
+                ON tssp.sku_id = ts.id
+            JOIN
+                tb_sub_plan tsp
+                ON tsp.id = tssp.sub_plan_id
+            JOIN
+                LatestEffectiveDates led
+                ON ts.id = led.sku_id
+            WHERE
+                ts.vendor_id = :vendorId
+                AND led.rn = 1
+            GROUP BY
+                ts.product_id, tp.name, ts.id, ts.image_path, ts.name, ts.size, ts.type, ts.service_valid_days,\s
+                led.price_id, led.list_price, led.sale_price, led.effective_date;
             """,nativeQuery = true)
     List<Object[]> findVendorProductSkus(@Param("vendorId") Long vendorId);
 
