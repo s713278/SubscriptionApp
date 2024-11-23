@@ -65,7 +65,9 @@ public class MobileSignUpService extends AbstractSignUpService<MobileSignUpReque
         try {
             Customer customer = new Customer();
             customer.setFirstName(request.getFirstName());
+            customer.setCountryCode(request.getCountryCode());
             customer.setMobile(request.getMobile());
+            customer.setRegSource(request.getRegSource());
             customer.setPassword(passwordEncoder.encode(request.getPassword())); // Use BCrypt for password encryption
 
             // Fetch the role and ensure it is managed
@@ -78,8 +80,9 @@ public class MobileSignUpService extends AbstractSignUpService<MobileSignUpReque
             customer.setActive(true);
             customer.setMobileVerified(false);
             customer.setOtpExpiration(LocalDateTime.now().plusMinutes(15)); // Set OTP expiration to 5 minutes
-            customer = repoManager.getCustomerRepo().save(customer);
-            return new SignUpDTO(customer.getId(),customer.getMobile(),customer.getMobileVerified(),customer.getEmailVerified(),
+            customer= serviceManager.getUserService().createUser(customer);
+           // customer = repoManager.getCustomerRepo().save(customer);
+            return new SignUpDTO(customer.getId(),customer.getFullMobileNumber(),customer.getMobileVerified(),customer.getEmailVerified(),
                     "OTP Sent to mobile number , Please verify with it!");
         }catch (Exception e){
             log.error("Error occurred while creating new user with mobile number : {}",request.getMobile(),e);

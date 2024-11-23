@@ -1,4 +1,4 @@
 spring:
   cache:
-    type: caffeine
-   # type: "none"
+    #type: caffeine
+    type: "none"

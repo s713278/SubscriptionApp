@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import com.app.config.AppConstants;
 import com.app.config.GlobalConfig;
+import com.app.exceptions.APIErrorCode;
+import com.app.exceptions.APIException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,7 @@ public class VonageSMSService extends SMSService{
     @Async
     @Override
     public void sendTextMessage(String mobileNo, String message) {
+        log.debug("Sending OTP to mobileNo : {}",mobileNo);
         log.info("Is OTP sending and verification is enabled ? {} ",globalConfig.getCustomerConfig().isOtpVerificationEnabled());
         if(!globalConfig.getCustomerConfig().isOtpVerificationEnabled()){
             return;
@@ -38,7 +41,6 @@ public class VonageSMSService extends SMSService{
         formData.put("text",String.format(otpMessage,message));
         formData.put("api_key",smsConfig.getApiKey());
         formData.put("api_secret",smsConfig.getApiSecret());
-
         try {
             // Use RestClient to send POST request
             ResponseEntity<String> response = restClient
@@ -52,7 +54,7 @@ public class VonageSMSService extends SMSService{
             log.info(">>>>>>>>> Response {}",response.getStatusCode());
         } catch (Exception e) {
             log.error("OTP failed to send for mobile number : {}",mobileNo);
-            //  throw new RestClientException("Exception occurred while sending SMS: " + e.getMessage(), e);
+            throw new APIException(APIErrorCode.API_500,"Unable to send OTP " +mobileNo);
         }
     }
 }

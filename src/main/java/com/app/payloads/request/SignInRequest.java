@@ -30,4 +30,8 @@ public class SignInRequest {
     @JsonProperty("mobile_number")
     private Long mobile;
 
+    @NotNull @Schema(description = "Country Code", example = "+91")
+    @JsonProperty("country_code")
+    private String  countryCode;
+
 }

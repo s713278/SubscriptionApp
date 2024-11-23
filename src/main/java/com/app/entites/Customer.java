@@ -22,7 +22,6 @@ import com.app.entites.type.UserType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -40,7 +39,7 @@ public class Customer  extends  AbstractAuditingEntity<Long> implements Serializ
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Size(min = 4, max = 20, message = "First Name must be between 4 and 20 characters long")
+   // @Size(min = 4, max = 20, message = "First Name must be between 4 and 20 characters long")
     @Pattern(regexp = "^[a-zA-Z\\s]*$", message = "First Name must not contain numbers or special characters")
     private String firstName;
 
@@ -54,6 +53,10 @@ public class Customer  extends  AbstractAuditingEntity<Long> implements Serializ
     @Email
     @Column(unique = true, nullable = true)
     private String email;
+
+
+    @Column(name = "country_code")
+    private String countryCode;
 
     @Column(name = "mobile", unique = true, nullable = false)
     private Long mobile;
@@ -136,4 +139,7 @@ public class Customer  extends  AbstractAuditingEntity<Long> implements Serializ
     @Column(name = "preferences", columnDefinition = "jsonb")
     private Map<String, String> preferences;
 
+    public String getFullMobileNumber(){
+        return countryCode+mobile;
+    }
 }

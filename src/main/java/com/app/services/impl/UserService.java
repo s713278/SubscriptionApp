@@ -1,9 +1,13 @@
 package com.app.services.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.app.config.AppConstants;
+import com.app.entites.Role;
+import com.app.payloads.request.OTPRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -150,7 +154,7 @@ public class UserService {
     }
 
 
-    public Customer isMobileNumberRegistered(final Long mobile) {
+    public Customer fetchUserByMobileNumber(final Long mobile) {
         return repositoryManager.getCustomerRepo().findByMobile(mobile).orElseThrow(()->new APIException(APIErrorCode.API_404,"User is registered in system"))
 ;    }
 
@@ -176,5 +180,26 @@ public class UserService {
         fetchUserById(userId);
       //  addressValidator.validateAddress(userId, newDeliveryAddress);
         repositoryManager.getCustomerRepo().updateDeliveryInstructions(userId, newDeliveryAddress);
+    }
+
+    public void createUserIfNotExisted(OTPRequest otpRequest){
+        var existed = repositoryManager.getCustomerRepo().existsByMobile(otpRequest.getMobile());
+        log.debug("User existed by mobile number ? {}",existed);
+        if(!existed){
+            Customer customer = new Customer();
+            customer.setCountryCode(otpRequest.getCountryCode());
+            customer.setMobile(otpRequest.getMobile());
+            customer.setRegSource(otpRequest.getRegSource());
+            customer.setPassword("9090"); // Use BCrypt for password encryption
+            // Fetch the role and ensure it is managed
+            Role role = repositoryManager.getRoleRepo().findById(AppConstants.USER_ROLE_ID)
+                    .orElseThrow(() -> new IllegalArgumentException("Role not found"));
+            customer.getRoles().add(role);
+            customer.setActive(true);
+            customer.setMobileVerified(false);
+            customer.setOtpExpiration(LocalDateTime.now().plusMinutes(15)); // Set OTP expiration to 5 minutes
+            customer = repositoryManager.getCustomerRepo().save(customer);
+            log.info("User is created for mobile :{}",otpRequest.getMobile());
+        }
     }
 }

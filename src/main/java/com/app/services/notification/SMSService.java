@@ -17,7 +17,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public abstract class SMSService {
 
-    protected String otpMessage ="%s is your OTP for your account verification.Please verify!!";
+    protected String otpMessage ="""
+            Your MithraDirect verification code is %s
+            This OTP is valid for 10 minutes.
+            Thank you for choosing MithraDirect!""";
+            //"%s is your OTP for your account verification.Please verify!!";
     protected final GlobalConfig globalConfig;
     protected final RestClient restClient = RestClient.create();
     protected final ObjectMapper objectMapper;
