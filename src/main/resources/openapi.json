@@ -1,0 +1,3452 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Mithra Direct App",
+    "description": "API documentation for the subscription services",
+    "contact": {
+      "name": "Swamy Kunta",
+      "url": "https://github.com/s713278/ECommerceApp/tree/master",
+      "email": "swamy.kunta@gmail.com"
+    },
+    "license": {
+      "name": "License",
+      "url": "/"
+    },
+    "version": "v1"
+  },
+  "externalDocs": {
+    "description": "Multi Vendor Subscription App",
+    "url": "http://localhost:8080/api/swagger-ui/index.html"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/api",
+      "description": "Local Env"
+    },
+    {
+      "url": "https://snr.ngrok.dev/api",
+      "description": "Dev Env"
+    }
+  ],
+  "paths": {
+    "/vendor/{vendor_id}/products/{productId}": {
+      "put": {
+        "tags": [
+          "8. Product Management"
+        ],
+        "operationId": "updateProduct",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "8. Product Management"
+        ],
+        "operationId": "deleteProductByCategory",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/vendor/{vendor_id}/products/{productId}/image": {
+      "put": {
+        "tags": [
+          "8. Product Management"
+        ],
+        "operationId": "updateProductImage",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "image"
+                ],
+                "type": "object",
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/vendor/{vendor_id}/categories/{categoryId}": {
+      "put": {
+        "tags": [
+          "7. Catalog Management"
+        ],
+        "operationId": "updateCategory",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "7. Catalog Management"
+        ],
+        "operationId": "deleteCategory",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/v1/vendors/{vendorId}": {
+      "put": {
+        "tags": [
+          "2. Vendors/Product Listing"
+        ],
+        "operationId": "updateStore",
+        "parameters": [
+          {
+            "name": "vendorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VendorDetailsDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseVendorDetailsDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "2. Vendors/Product Listing"
+        ],
+        "operationId": "deleteStore",
+        "parameters": [
+          {
+            "name": "vendorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseString"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/v1/vendors/{vendorId}/orders/{orderId}": {
+      "get": {
+        "tags": [
+          "5. Vendor Management"
+        ],
+        "summary": "Get a specific order",
+        "operationId": "getOrdersById",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseOrderDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "5. Vendor Management"
+        ],
+        "summary": "Update and existing order",
+        "operationId": "updateOrder",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseOrderUpdateResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/v1/users/{userId}": {
+      "get": {
+        "tags": [
+          "5. User Management"
+        ],
+        "summary": "User Information",
+        "operationId": "getUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseObject"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "5. User Management"
+        ],
+        "summary": "Update User Information",
+        "operationId": "updateUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User Update Request"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseObject"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "5. User Management"
+        ],
+        "operationId": "deleteUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseObject"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "5. User Management"
+        ],
+        "summary": "Update Delivery Address",
+        "description": "Updates the delivery address for a specific user. Only valid keys (address1, address2, city, state, zipCode, country) are accepted.",
+        "operationId": "addNameAndAddress",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "A map containing valid delivery address fields. Valid keys: address1, address2, city, state, zipCode, country.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NameAndAddressRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Address updated successfully",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseObject"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input keys or validation error",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "example": {
+                    "error": "Invalid keys found: [invalidKey]"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseObject"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/vendor/{vendor_id}/{categoryId}/products": {
+      "get": {
+        "tags": [
+          "8. Product Management"
+        ],
+        "operationId": "getProductsByCategory",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 2
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "productId"
+            }
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "8. Product Management"
+        ],
+        "operationId": "addProduct",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/vendor/{vendor_id}/categories/": {
+      "get": {
+        "tags": [
+          "7. Catalog Management"
+        ],
+        "operationId": "getCategories",
+        "parameters": [
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 2
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "categoryId"
+            }
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "7. Catalog Management"
+        ],
+        "operationId": "createCategory",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/v1/vendors/{vendorId}/orders/": {
+      "get": {
+        "tags": [
+          "5. Vendor Management"
+        ],
+        "summary": "Get all orders",
+        "operationId": "getOrdersByVendor",
+        "parameters": [
+          {
+            "name": "vendorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseListOrderDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "5. Vendor Management"
+        ],
+        "operationId": "placeOrder",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseOrderDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/v1/vendors/": {
+      "get": {
+        "tags": [
+          "2. Vendors/Product Listing"
+        ],
+        "summary": "All vendors listing",
+        "operationId": "fetchAllActiveVendors",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "2. Vendors/Product Listing"
+        ],
+        "operationId": "createStore",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VendorDetailsDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseVendorDetailsDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/v1/users/{userId}/subs/": {
+      "post": {
+        "tags": [
+          "3. Subscription Management"
+        ],
+        "summary": "Create Subscription",
+        "operationId": "createSubscription",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSubscriptionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/v1/users/{userId}/orders/history/email": {
+      "post": {
+        "tags": [
+          "4. Order Management"
+        ],
+        "operationId": "emailOrderHistory",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/v1/auth/verify-otp": {
+      "post": {
+        "tags": [
+          "1. User Authentication"
+        ],
+        "summary": "Verify OTP",
+        "operationId": "verifyMobileOtp",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OTPVerificationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/request-otp": {
+      "post": {
+        "tags": [
+          "1. User Authentication"
+        ],
+        "summary": "Request OTP",
+        "operationId": "requestOTP",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OTPRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "examples": {
+                    "Success": {
+                      "timestamp": "2024-11-24T08:56:57.8450894",
+                      "success": true,
+                      "status": 200,
+                      "data": "OTP Sent successfully"
+                    }
+                  }
+
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/refresh": {
+      "post": {
+        "tags": [
+          "1. User Authentication"
+        ],
+        "summary": "Refresh Token",
+        "operationId": "refreshAccessToken",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/users/{userId}/subs/{subId}": {
+      "get": {
+        "tags": [
+          "3. Subscription Management"
+        ],
+        "summary": "Fetch Subscription Details",
+        "operationId": "fetchSubscription",
+        "parameters": [
+          {
+            "name": "subId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "3. Subscription Management"
+        ],
+        "summary": "Delete Subscription",
+        "operationId": "deleteSubscription",
+        "parameters": [
+          {
+            "name": "subId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseString"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "3. Subscription Management"
+        ],
+        "summary": "Update Subscription",
+        "operationId": "updateSubscription",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "subId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSubscriptionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseObject"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/v1/users/{userId}/subs/{subId}/status": {
+      "patch": {
+        "tags": [
+          "3. Subscription Management"
+        ],
+        "description": "Update subscription status",
+        "operationId": "updateSubscriptionStatus",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "subId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriptionStatusRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseObject"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/v1/users/{userId}/mobile": {
+      "patch": {
+        "tags": [
+          "5. User Management"
+        ],
+        "operationId": "updateMobileAddress",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMobileRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseObject"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/v1/users/{userId}/del_instructions": {
+      "patch": {
+        "tags": [
+          "5. User Management"
+        ],
+        "operationId": "updateDeliveryInstructions",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseObject"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/vendor/{vendor_id}/products": {
+      "get": {
+        "tags": [
+          "8. Product Management"
+        ],
+        "operationId": "getAllProducts",
+        "parameters": [
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 2
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "productId"
+            }
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/vendor/{vendor_id}/products/keyword/{keyword}": {
+      "get": {
+        "tags": [
+          "8. Product Management"
+        ],
+        "operationId": "getProductsByKeyword",
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 2
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "productId"
+            }
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/v1/vendors/{zipCode}": {
+      "get": {
+        "tags": [
+          "2. Vendors/Product Listing"
+        ],
+        "summary": "Vendors listing by zipcode",
+        "operationId": "fetchAllActiveVendorsByZipCode",
+        "parameters": [
+          {
+            "name": "zipCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/vendors/{vendorId}/subs": {
+      "get": {
+        "tags": [
+          "2. Vendors/Product Listing"
+        ],
+        "summary": "Fetch Subscriptions By Vendor ID",
+        "operationId": "fetchSubsByVendorId",
+        "parameters": [
+          {
+            "name": "vendorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/vendors/{vendorId}/products": {
+      "get": {
+        "tags": [
+          "2. Vendors/Product Listing"
+        ],
+        "summary": "Vendor's products listing",
+        "operationId": "fetchVendorProductSkus",
+        "parameters": [
+          {
+            "name": "vendorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/vendors/{vendorId}/orders/public/users/{userId}/orders": {
+      "get": {
+        "tags": [
+          "5. Vendor Management"
+        ],
+        "operationId": "getOrdersByUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrderDTO"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/v1/vendors/{vendorId}/orders/public/users/{emailId}/orders/{orderId}": {
+      "get": {
+        "tags": [
+          "5. Vendor Management"
+        ],
+        "operationId": "getOrderByUser",
+        "parameters": [
+          {
+            "name": "emailId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/v1/vendors/{vendorId}/orders/admin/orders": {
+      "get": {
+        "tags": [
+          "5. Vendor Management"
+        ],
+        "operationId": "getAllOrders",
+        "parameters": [
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 2
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "totalAmount"
+            }
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/v1/vendors/status/{status}": {
+      "get": {
+        "tags": [
+          "2. Vendors/Product Listing"
+        ],
+        "summary": "Fetch vendors with a given status",
+        "operationId": "fetchVendorsByStatus",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "NEW",
+                "ACTIVE",
+                "DELETED",
+                "SUSPENDED"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/vendors/all": {
+      "get": {
+        "tags": [
+          "2. Vendors/Product Listing"
+        ],
+        "summary": "All active vendors with pagination",
+        "operationId": "getAllVendors",
+        "parameters": [
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 2
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "businessName"
+            }
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/users/{userId}/vendor/{vendorId}": {
+      "get": {
+        "tags": [
+          "5. User Management"
+        ],
+        "summary": "Fetch Subscriptions By Vendor and User",
+        "operationId": "fetchSubsByUserAndVendor",
+        "parameters": [
+          {
+            "name": "vendorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseObject"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/v1/users/{userId}/subs": {
+      "get": {
+        "tags": [
+          "5. User Management"
+        ],
+        "summary": "Fetch Subscriptions By User ID",
+        "operationId": "fetchAllSubsByUserId",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseObject"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/v1/users/{userId}/orders/history": {
+      "get": {
+        "tags": [
+          "4. Order Management"
+        ],
+        "operationId": "getUserOrderHistory",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseObject"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/v1/users/{userId}/orders/history/excel": {
+      "get": {
+        "tags": [
+          "4. Order Management"
+        ],
+        "operationId": "downloadOrderHistory",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/v1/users/{userId}/orders/history/download-pdf": {
+      "get": {
+        "tags": [
+          "4. Order Management"
+        ],
+        "operationId": "downloadOrderHistoryPdf",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/v1/users/{userId}/orders/history/date-range": {
+      "get": {
+        "tags": [
+          "4. Order Management"
+        ],
+        "operationId": "getOrderHistoryByDateRange",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrderDetailsDTO"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/v1/users/admin": {
+      "get": {
+        "tags": [
+          "5. User Management"
+        ],
+        "operationId": "getUsers",
+        "parameters": [
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 2
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "userId"
+            }
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    },
+    "/v1/auth/profile": {
+      "get": {
+        "tags": [
+          "1. User Authentication"
+        ],
+        "summary": "Authenticated Profile Info",
+        "operationId": "getAuthenticatedUser",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "E-Commerce Application": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Category": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "maxLength": 2147483647,
+            "minLength": 5,
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "vendor": {
+            "$ref": "#/components/schemas/Vendor"
+          }
+        }
+      },
+      "Product": {
+        "required": [
+          "description",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "createdBy": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "productId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "maxLength": 2147483647,
+            "minLength": 3,
+            "type": "string"
+          },
+          "imagePath": {
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 2147483647,
+            "minLength": 25,
+            "type": "string"
+          },
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "features": {
+            "type": "object"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Vendor": {
+        "required": [
+          "businessName",
+          "contactNumber",
+          "email",
+          "ownerName"
+        ],
+        "type": "object",
+        "properties": {
+          "createdBy": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "businessName": {
+            "maxLength": 2147483647,
+            "minLength": 5,
+            "type": "string"
+          },
+          "ownerName": {
+            "maxLength": 2147483647,
+            "minLength": 3,
+            "type": "string"
+          },
+          "contactNumber": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "NEW",
+              "ACTIVE",
+              "DELETED",
+              "SUSPENDED"
+            ]
+          },
+          "verificationStatus": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "APPROVED",
+              "REJECTED"
+            ]
+          },
+          "businessAddress": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "serviceAreas": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "bannerImage": {
+            "type": "string"
+          }
+        }
+      },
+      "ProductDTO": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "productName": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "price": {
+            "type": "number",
+            "format": "double"
+          },
+          "discount": {
+            "type": "number",
+            "format": "double"
+          },
+          "specialPrice": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "CategoryDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "categoryName": {
+            "type": "string"
+          }
+        }
+      },
+      "VendorDetailsDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "NEW",
+              "ACTIVE",
+              "DELETED",
+              "SUSPENDED"
+            ]
+          },
+          "contact_number": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "support_number": {
+            "type": "string"
+          },
+          "verification_status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "APPROVED",
+              "REJECTED"
+            ]
+          }
+        }
+      },
+      "APIResponseVendorDetailsDTO": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Customer registered successfully"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "integer",
+            "description": "HTTP Status Code",
+            "format": "int32",
+            "example": 201
+          },
+          "data": {
+            "$ref": "#/components/schemas/VendorDetailsDTO"
+          }
+        }
+      },
+      "OrderUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "old_status": {
+            "type": "string",
+            "description": "Old Status",
+            "example": "CREATED/PROCESSING/SHIPPED/DELIVERED",
+            "enum": [
+              "PENDING",
+              "SCHEDULED",
+              "IN_PROCESS",
+              "DELIVERED",
+              "CANCELED"
+            ]
+          },
+          "new_status": {
+            "type": "string",
+            "description": "New Status",
+            "example": "PROCESSING",
+            "enum": [
+              "PENDING",
+              "SCHEDULED",
+              "IN_PROCESS",
+              "DELIVERED",
+              "CANCELED"
+            ]
+          }
+        }
+      },
+      "APIResponseOrderUpdateResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Customer registered successfully"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "integer",
+            "description": "HTTP Status Code",
+            "format": "int32",
+            "example": 201
+          },
+          "data": {
+            "$ref": "#/components/schemas/OrderUpdateResponse"
+          }
+        }
+      },
+      "OrderUpdateResponse": {
+        "type": "object",
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "old_satus": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "SCHEDULED",
+              "IN_PROCESS",
+              "DELIVERED",
+              "CANCELED"
+            ]
+          },
+          "new_staus": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "SCHEDULED",
+              "IN_PROCESS",
+              "DELIVERED",
+              "CANCELED"
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "description": "Data"
+      },
+      "User Update Request": {
+        "required": [
+          "first_name"
+        ],
+        "type": "object",
+        "properties": {
+          "gender": {
+            "type": "string",
+            "enum": [
+              "MAN",
+              "WOMAN",
+              "OTHER"
+            ]
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "date_of_birth": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "APIResponseObject": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Customer registered successfully"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "integer",
+            "description": "HTTP Status Code",
+            "format": "int32",
+            "example": 201
+          },
+          "data": {
+            "type": "object",
+            "description": "Data"
+          }
+        }
+      },
+      "AddressDTO": {
+        "type": "object",
+        "properties": {
+          "address1": {
+            "type": "string",
+            "description": "Address1",
+            "example": "73 Owen Lane"
+          },
+          "address2": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string",
+            "description": "City",
+            "example": "Fort Myers"
+          },
+          "state": {
+            "type": "string",
+            "description": "State",
+            "example": "Florida"
+          },
+          "country": {
+            "type": "string",
+            "description": "Country",
+            "example": "United States"
+          },
+          "pincode": {
+            "type": "string",
+            "description": "Zipcode",
+            "example": "33901"
+          }
+        }
+      },
+      "OrderRequest": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "cart_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "payment_details": {
+            "$ref": "#/components/schemas/PaymentDTO"
+          },
+          "shipping_details": {
+            "$ref": "#/components/schemas/ShippingDTO"
+          }
+        }
+      },
+      "PaymentDTO": {
+        "type": "object",
+        "properties": {
+          "credit_card": {
+            "type": "string",
+            "description": "Creditcard Number",
+            "example": "XXXX-XXXX-XXXX-1280"
+          },
+          "expiry_date": {
+            "type": "string",
+            "description": "Exp Date",
+            "example": "12/2030"
+          },
+          "payment_method": {
+            "type": "string",
+            "description": "Payment Method",
+            "example": "IN_STORE_PAYMENT"
+          },
+          "billing_address": {
+            "$ref": "#/components/schemas/AddressDTO"
+          }
+        }
+      },
+      "ShippingDTO": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/AddressDTO"
+          },
+          "shipping_type": {
+            "type": "string",
+            "description": "Shipping Type",
+            "example": "INSTORE_PICKUP"
+          }
+        }
+      },
+      "APIResponseOrderDTO": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Customer registered successfully"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "integer",
+            "description": "HTTP Status Code",
+            "format": "int32",
+            "example": 201
+          },
+          "data": {
+            "$ref": "#/components/schemas/OrderDTO"
+          }
+        }
+      },
+      "OrderDTO": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "order_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "order_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "store_name": {
+            "type": "string"
+          },
+          "order_items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderItemDTO"
+            }
+          },
+          "payment_details": {
+            "$ref": "#/components/schemas/PaymentDTO"
+          },
+          "total_amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "order_status": {
+            "type": "string"
+          },
+          "shipping_details": {
+            "$ref": "#/components/schemas/ShippingDTO"
+          },
+          "sub_total": {
+            "type": "number",
+            "format": "double"
+          },
+          "federal_tax": {
+            "type": "number",
+            "format": "double"
+          },
+          "state_tax": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "description": "Data"
+      },
+      "OrderItemDTO": {
+        "type": "object",
+        "properties": {
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "discount": {
+            "type": "number",
+            "format": "double"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "unit_price": {
+            "type": "number",
+            "format": "double"
+          },
+          "state_tax": {
+            "type": "number",
+            "format": "double"
+          },
+          "federal_tax": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "CreateSubscriptionRequest": {
+        "required": [
+          "frequency",
+          "price_id",
+          "quantity",
+          "sku_id"
+        ],
+        "type": "object",
+        "properties": {
+          "quantity": {
+            "maximum": 10,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "frequency": {
+            "type": "string",
+            "enum": [
+              "ONE_TIME",
+              "DAILY",
+              "ALTERNATE_DAY",
+              "WEEKLY",
+              "CUSTOM"
+            ]
+          },
+          "sku_id": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int64"
+          },
+          "price_id": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int64"
+          },
+          "delivery_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "custom_days": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        }
+      },
+      "Data": {
+        "type": "object",
+        "properties": {
+          "subscription_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "next_delivery_date": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "SubscriptionResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Data"
+          }
+        }
+      },
+      "OTPVerificationRequest": {
+        "required": [
+          "country_code",
+          "otp"
+        ],
+        "type": "object",
+        "properties": {
+          "country_code": {
+            "type": "string",
+            "description": "Country Code",
+            "example": "+91"
+          },
+          "mobile_number": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "otp": {
+            "type": "string"
+          }
+        }
+      },
+      "OTPRequest": {
+        "required": [
+          "country_code",
+          "mobile_number"
+        ],
+        "type": "object",
+        "properties": {
+          "country_code": {
+            "type": "string",
+            "description": "Country Code",
+            "example": "+91"
+          },
+          "mobile_number": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "reg_source": {
+            "type": "string",
+            "description": "source",
+            "example": "android"
+          }
+        },
+        "example": {
+          "country_code": "+91",
+          "mobile_number": 9912149089,
+          "reg_source": "android"
+        }
+      },
+      "RefreshTokenRequest": {
+        "type": "object",
+        "properties": {
+          "refresh_token": {
+            "type": "string"
+          }
+        }
+      },
+      "NameAndAddressRequest": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Swamy Kunta"
+          },
+          "address": {
+            "type": "object",
+            "example":{
+                "address1": "123 Main Street",
+                "address2": "Apt 4B",
+                "city": "Hyderabad",
+                "state": "Telangana",
+                "zipCode": "500001",
+                "country": "India"
+            }
+          }
+        }
+      },
+      "UpdateSubscriptionRequest": {
+        "required": [
+          "frequency",
+          "quantity",
+          "sku_id"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "ACTIVE",
+              "PAUSED",
+              "CANCELLED",
+              "EXPIRED",
+              "DELETED"
+            ]
+          },
+          "quantity": {
+            "maximum": 10,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "frequency": {
+            "type": "string",
+            "enum": [
+              "ONE_TIME",
+              "DAILY",
+              "ALTERNATE_DAY",
+              "WEEKLY",
+              "CUSTOM"
+            ]
+          },
+          "sku_id": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int64"
+          },
+          "delivery_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "custom_days": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        }
+      },
+      "SubscriptionStatusRequest": {
+        "required": [
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Status of the subscription",
+            "example": "NEW",
+            "enum": [
+              "PENDING",
+              "ACTIVE",
+              "PAUSED",
+              "CANCELLED",
+              "EXPIRED",
+              "DELETED"
+            ]
+          }
+        }
+      },
+      "UpdateMobileRequest": {
+        "required": [
+          "new_mobile_number",
+          "old_mobile_number"
+        ],
+        "type": "object",
+        "properties": {
+          "old_mobile_number": {
+            "pattern": "^\\d{10}$",
+            "type": "integer",
+            "description": "Mobile number",
+            "format": "int64",
+            "example": 9876543210
+          },
+          "new_mobile_number": {
+            "pattern": "^\\d{10}$",
+            "type": "integer",
+            "description": "Mobile number",
+            "format": "int64",
+            "example": 9090912345
+          }
+        },
+        "description": "Update Mobile Request"
+      },
+      "ProductResponse": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductDTO"
+            }
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CategoryResponse": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryDTO"
+            }
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "OrderResponse": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderDTO"
+            }
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "APIResponseListOrderDTO": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Customer registered successfully"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "integer",
+            "description": "HTTP Status Code",
+            "format": "int32",
+            "example": 201
+          },
+          "data": {
+            "type": "array",
+            "description": "Data",
+            "items": {
+              "$ref": "#/components/schemas/OrderDTO"
+            }
+          }
+        }
+      },
+      "Subscription": {
+        "type": "object",
+        "properties": {
+          "createdBy": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "skuId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "priceId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "frequency": {
+            "type": "string",
+            "enum": [
+              "ONE_TIME",
+              "DAILY",
+              "ALTERNATE_DAY",
+              "WEEKLY",
+              "CUSTOM"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "ACTIVE",
+              "PAUSED",
+              "CANCELLED",
+              "EXPIRED",
+              "DELETED"
+            ]
+          },
+          "customDays": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "nextDeliveryDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "deliveryAddress": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "updateVersion": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "OrderDetailsDTO": {
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "deliveryDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "vendorName": {
+            "type": "string"
+          },
+          "itemName": {
+            "type": "string"
+          },
+          "size": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unitPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "discount": {
+            "type": "number"
+          },
+          "totalAmount": {
+            "type": "number"
+          },
+          "totalDiscount": {
+            "type": "number"
+          }
+        }
+      },
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User Update Request"
+            }
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "APIResponseString": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Customer registered successfully"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "integer",
+            "description": "HTTP Status Code",
+            "format": "int32",
+            "example": 201
+          },
+          "data": {
+            "type": "string",
+            "description": "Data"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "E-Commerce Application": {
+        "type": "http",
+        "in": "header",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

@@ -5,9 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.app.config.AppConstants;
-import com.app.entites.Role;
-import com.app.payloads.request.OTPRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,14 +14,17 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.app.config.AppConstants;
 import com.app.entites.CartItem;
 import com.app.entites.Customer;
+import com.app.entites.Role;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.payloads.CartDTO;
 import com.app.payloads.SkuDTO;
 import com.app.payloads.UserDTO;
+import com.app.payloads.request.OTPRequest;
 import com.app.payloads.request.UpdateUserRequest;
 import com.app.payloads.response.UserResponse;
 import com.app.repositories.RepositoryManager;

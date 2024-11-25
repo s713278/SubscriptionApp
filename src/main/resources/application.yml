@@ -12,6 +12,14 @@ server:
       timeout: 1m        # Session timeout set to 30 minutes
 #  profiles:
 #    active: docker
+#Swagger OpenAPI
+#For sorting endpoints alphabetically
+springdoc:
+  swagger-ui.operationsSorter: alpha
+  swagger-ui.tagsSorter: alpha
+  swagger-ui.doc-expansion: false
+  swagger-ui.url: /custom-api-docs/openapi.json
+
 logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%X{X-Request-ID}] %-5level %logger{36} - %msg%n"

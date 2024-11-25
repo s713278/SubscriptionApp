@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.app.entites.SubscriptionStatus;
 import com.app.entites.type.SubFrequency;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
