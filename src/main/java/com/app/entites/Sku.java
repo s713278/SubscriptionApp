@@ -66,8 +66,11 @@ public class Sku extends AbstractAuditingEntity<Long> implements Serializable {
     @Transient
     private List<SubFrequency> eligibleSubPlan; // For custom date range
 
+    @Column(name = "available")
+    private boolean available = true;
+
     @Column(name = "subscription_eligible")
-    private boolean subscriptionEligible;
+    private boolean subscriptionEligible = false;
 
     @Column(name = "cancel_eligible")
     private boolean cancelEligible;

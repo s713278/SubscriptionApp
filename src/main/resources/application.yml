@@ -35,7 +35,7 @@ logging:
     max-history: 10
 spring:
   cache:
-    cache-names: "skus,products,vendors,otp,otpAttempts"
+    cache-names: "skus,products,vendors,otp,otpAttempts,prices"
     caffeine:
       skus: "maximumSize=500,expireAfterAccess=600s"
       products: "maximumSize=500,expireAfterAccess=600s"

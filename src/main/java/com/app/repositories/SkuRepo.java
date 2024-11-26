@@ -71,9 +71,11 @@ public interface SkuRepo extends JpaRepository<Sku, Long> {
                 ts.vendor_id = :vendorId
                 AND led.rn = 1
             GROUP BY
-                ts.product_id, tp.name, ts.id, ts.image_path, ts.name, ts.size, ts.type, ts.service_valid_days,\s
+                ts.product_id, tp.name, ts.id, ts.image_path, ts.name, ts.size, ts.type, ts.service_valid_days,
                 led.price_id, led.list_price, led.sale_price, led.effective_date;
             """,nativeQuery = true)
     List<Object[]> findVendorProductSkus(@Param("vendorId") Long vendorId);
 
+    @Query("SELECT available from Sku WHERE id=:skuId")
+    Boolean findSkuAvailable(Long skuId);
 }

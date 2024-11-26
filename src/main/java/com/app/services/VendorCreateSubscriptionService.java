@@ -1,9 +1,9 @@
 package com.app.services;
 
 import org.springframework.context.annotation.Primary;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import com.app.entites.Subscription;
 import com.app.repositories.RepositoryManager;
 
 @Service
@@ -15,9 +15,9 @@ public class VendorCreateSubscriptionService extends AbstractCreateSubscriptionS
         super(serviceManager,repoManager, serviceHelper);
     }
 
+    @Async
     @Override
-    protected void notifyCustomer(Subscription subscription) {
+    protected void updateInventory(Long skuId) {
 
     }
-
 }

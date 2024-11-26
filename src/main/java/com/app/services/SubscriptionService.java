@@ -28,6 +28,7 @@ public class SubscriptionService {
 
     private final RepositoryManager repoManager;
     private final SubscriptionServiceHelper serviceHelper;
+
     private void notifyCustomer(Subscription subscription) {
         // Send email or SMS notification to the customer
     }
@@ -160,6 +161,7 @@ public class SubscriptionService {
         return subs.stream().map(this::convertToDTO).toList();
     }
 
+    //TODO : Simplify the query
     @Transactional(readOnly = true)
     public boolean fetchByUserIdAndSkuId(final Long userId, final Long skuId){
         return repoManager.getSubscriptionRepo().findByUserIdAndSkuId(userId,skuId).isPresent();

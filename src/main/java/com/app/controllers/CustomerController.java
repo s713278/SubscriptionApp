@@ -59,7 +59,7 @@ public class CustomerController {
     @Operation(summary = "User Information")
     @GetMapping("/{userId}")
     public ResponseEntity<APIResponse<?>> getUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(APIResponse.success(userService.getUserInfo(userId)));
+        return ResponseEntity.ok(APIResponse.success(userService.fetchUserInfo(userId)));
     }
 
 

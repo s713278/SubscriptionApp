@@ -30,7 +30,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             Long mobile=Long.parseLong(username);
             user = repositoryManager.getCustomerRepo().findByMobile(mobile);
         }catch (Exception e) {
-             throw new APIException(APIErrorCode.API_419,e.getMessage());
+             throw new APIException(APIErrorCode.INTERNAL_EXCEPTION,e.getMessage());
         }
         if (user.isEmpty()) {
              throw new APIException(APIErrorCode.API_401,"Incorrect Login Details!");

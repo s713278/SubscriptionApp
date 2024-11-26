@@ -11,12 +11,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
+import lombok.Getter;
 import lombok.Setter;
 
 /**
  * Base abstract class for entities which will hold definitions for created,
  * last modified, created by, last modified by attributes.
  */
+@Getter
 @MappedSuperclass
 @JsonIgnoreProperties(value = { "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate" }, allowGetters = true)
 public abstract class AbstractAuditingEntity<T> implements Serializable {
@@ -29,6 +31,7 @@ public abstract class AbstractAuditingEntity<T> implements Serializable {
     @Setter
     @Column(name = "created_by", nullable = true, length = 50)
     protected String createdBy;
+
 
     @CreationTimestamp
     @Column(name = "created_date", updatable = false)
