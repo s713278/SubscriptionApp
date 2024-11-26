@@ -99,7 +99,7 @@ public class AuthController {
             return new ResponseEntity<>(apiResponse, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             log.error("Error during otp-verification for email: {}: {}", otpRequest.getEmail(), e.getMessage());
-            throw new APIException(APIErrorCode.API_420,e.getMessage());
+            throw new APIException(APIErrorCode.OTP_VERIFICATION_FAILED,e.getMessage());
         }
     }
 

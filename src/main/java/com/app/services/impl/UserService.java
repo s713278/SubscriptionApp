@@ -52,7 +52,7 @@ public class UserService {
 
         List<Customer> users = pageUsers.getContent();
 
-        if (users.size() == 0) {
+        if (users.isEmpty()) {
             throw new APIException(APIErrorCode.API_400, "No User exists !!!");
         }
 
@@ -129,14 +129,12 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserDTO getUserInfo(Long userId) {
+    public UserDTO fetchUserInfo(Long userId) {
         Customer customer = repositoryManager.getCustomerRepo().findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
         // Creating the Data object
-        UserDTO data = new UserDTO(customer.getId(), customer.getFirstName(), customer.getEmail(),
-                customer.getMobile());
-        // Creating the GetUserResponse object
-        return data;
+        return new UserDTO(customer.getId(), customer.getFirstName(), customer.getEmail(),
+                customer.getFullMobileNumber(),customer.getDeliveryAddress());
     }
 
     @Transactional

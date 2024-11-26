@@ -66,9 +66,9 @@ class SubscriptionServiceTest extends AbstractBaseConfig {
         createSubscriptionRequest.setFrequency(SubFrequency.DAILY);
         createSubscriptionRequest.setEndDate(LocalDate.now().plusDays(30));
         var sub = createSubscriptionService.createSubscription(customerId, createSubscriptionRequest);
-        assertNotNull( sub.data());
-        assertTrue(sub.success());
-        testSubscriptionId = sub.data().id();
+        assertNotNull( sub);
+        assertNotNull(sub.subscriptionId());
+        testSubscriptionId = sub.subscriptionId();
     }
 
     

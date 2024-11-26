@@ -28,8 +28,8 @@ public class SkuPriceService {
      * @param skuId The SKU ID.
      * @return The price details for today or null if not found.
      */
-    @Cacheable(value = CacheType.CACHE_TYPE_PRICES,key = "'today_'#skuId")
-    public SkuPrice getTodayPrice(Long skuId) {
+    @Cacheable(value = CacheType.CACHE_TYPE_PRICES,key = "#skuId")
+    public SkuPrice fetchTodayPriceBySkuId(Long skuId) {
         LocalDate today = LocalDate.now();
         log.debug("Fetching today's price for sku : {}",skuId);
         Optional<SkuPrice> todayPrice = repositoryManager.getPriceRepository().findTodayPriceBySku(skuId, today);
@@ -43,7 +43,7 @@ public class SkuPriceService {
      * @return List of future prices ordered by effective date.
      */
     @Cacheable(value = CacheType.CACHE_TYPE_PRICES,key = "'previous_'#skuId")
-    public List<SkuPrice> getPreviousPrices(Long skuId) {
+    public List<SkuPrice> fetchPreviousPriceBySkuId(Long skuId) {
         LocalDate today = LocalDate.now();
         return repositoryManager.getPriceRepository().findPreviousPricesBySku(skuId, today);
     }
@@ -55,7 +55,7 @@ public class SkuPriceService {
      * @return List of future prices ordered by effective date.
      */
     @Cacheable(value = CacheType.CACHE_TYPE_PRICES,key = "'future_'#skuId")
-    public List<SkuPrice> getFuturePrices(Long skuId) {
+    public List<SkuPrice> fetchAllFuturePricesBySkuId(Long skuId) {
         LocalDate today = LocalDate.now();
         return repositoryManager.getPriceRepository().findFuturePricesBySku(skuId, today);
     }
@@ -67,7 +67,7 @@ public class SkuPriceService {
      * @return The price details for today or null if not found.
      */
     @Cacheable(value = CacheType.CACHE_TYPE_PRICES,key = "'today_'#skuId")
-    public SkuPrice getNextFuturePrice(Long skuId) {
+    public SkuPrice fetchFuturePriceBySkuId(Long skuId) {
         LocalDate today = LocalDate.now();
         log.debug("Fetching next increased price for sku : {}",skuId);
         Optional<SkuPrice> todayPrice = repositoryManager.getPriceRepository().findFuturePriceBySku(skuId, today);

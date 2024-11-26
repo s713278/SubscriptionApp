@@ -1,18 +1,22 @@
 package com.app.services;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import com.app.entites.*;
+import com.app.entites.type.SkuType;
+import org.springframework.scheduling.annotation.Async;
+
 import com.app.config.AppConstants;
-import com.app.entites.Customer;
-import com.app.entites.Subscription;
-import com.app.entites.SubscriptionStatus;
+import com.app.constants.NotificationType;
 import com.app.entites.type.SubFrequency;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.payloads.request.CreateSubscriptionRequest;
-import com.app.payloads.response.SubscriptionResponse;
+import com.app.payloads.response.SubscriptionResponseDTO;
 import com.app.repositories.RepositoryManager;
+import com.app.services.constants.PaymentType;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -27,6 +31,13 @@ public abstract class AbstractCreateSubscriptionService {
     private final RepositoryManager repoManager;
     private final SubscriptionServiceHelper serviceHelper;
 
+
+    protected void isSkuAvailable(Sku sku){
+        log.debug("Validating whether the SKU : {} is available or not ? {} ",sku.getId(),sku.isAvailable());
+        if(!sku.isAvailable()){
+            throw new APIException(APIErrorCode.SUBSCRIPTION_VALIDATION_FAILED,String.format("SKU %s is out of stock",sku.getId()));
+        }
+    }
     /**
      * <ol>
      *     <li>Verifying the duplicate subscription request</li>
@@ -59,21 +70,31 @@ public abstract class AbstractCreateSubscriptionService {
 
                 }
         }
+        validatePrice(userId,request);
     }
 
-    protected void postSubscription(Subscription subscription) {
-           // Notify the customer after subscription creation
-        notifyCustomer(subscription);
+    protected void validatePrice(Long userId,CreateSubscriptionRequest request){
+        log.debug("Validating is there any price change for sku :{}",request.getSkuId());
+        var dbPriceId = serviceManager.getPriceService().fetchTodayPriceBySkuId(request.getSkuId());
+        if(!dbPriceId.getId().equals(request.getPriceId())){
+            log.warn("Price has been changed to {}  for user {}",dbPriceId.getSalePrice(),userId);
+            throw new APIException(APIErrorCode.SUBSCRIPTION_VALIDATION_FAILED,
+                    String.format("Price has been changed to %s",dbPriceId.getSalePrice()));
+        }
     }
+
+
     @Transactional
-    public SubscriptionResponse createSubscription(Long userId, CreateSubscriptionRequest request) {
-        log.info("Start - Create subscription request for customer {}",userId);
+    public SubscriptionResponseDTO createSubscription(Long userId, CreateSubscriptionRequest request) {
+        log.info("Start - Create subscription request for user {}",userId);
+        var sku = serviceManager.getSkuService().fetchSkuEntityById(request.getSkuId());
+        isSkuAvailable(sku);
         Subscription subscription = new Subscription();
             preSubscription(userId,request);
             // Fetch customer and tenant info
             Customer customer = serviceManager.getUserService().fetchUserById(userId);
             // Set SKU, quantity, and frequency
-            //Vendor vendor=serviceManager.getVendorService().fetchVendor(request.getSkuId());
+           // Vendor vendor=serviceManager.getVendorService().fetchVendor(request.getSkuId());
           //  subscription.setCustomer(customer);
         subscription.setUserId(userId);
         subscription.setSkuId(request.getSkuId());
@@ -83,7 +104,15 @@ public abstract class AbstractCreateSubscriptionService {
             subscription.setQuantity(request.getQuantity());
             subscription.setFrequency(request.getFrequency());
             switch (subscription.getFrequency()){
-                case ONE_TIME ->subscription.setStartDate(request.getDeliveryDate());
+
+                case ONE_TIME ->{
+                    if(sku.getSkuType() == SkuType.SERVICE){
+                        subscription.setStartDate(LocalDate.now());
+                        subscription.setEndDate(LocalDate.now().plusDays(sku.getServiceValidDays()));
+                    }else{
+                        subscription.setStartDate(request.getDeliveryDate());
+                    }
+                }
                 case CUSTOM -> {
                     subscription.setCustomDays(request.getCustomDays());
                     subscription.setStartDate(request.getStartDate());
@@ -97,14 +126,46 @@ public abstract class AbstractCreateSubscriptionService {
             subscription.setNextDeliveryDate(serviceHelper.calculateNextDeliveryDate(subscription));
             subscription.setUpdateVersion(1); //Created First Time
             subscription = repoManager.getSubscriptionRepo().save(subscription);
-            postSubscription(subscription);
+
         // Create the Data object with subscription_id and next_delivery_date
-        SubscriptionResponse.Data data = new SubscriptionResponse.Data(subscription.getId(),
-                subscription.getNextDeliveryDate());
+        SubscriptionResponseDTO responseDTO = new SubscriptionResponseDTO(
+                subscription.getId(),
+                subscription.getCreatedDate(),
+                "",//vendor.getBusinessName(),
+                subscription.getNextDeliveryDate(),
+                PaymentType.CASH_ON_DELIVERY.name(),
+                subscription.getStatus(),
+                subscription.getFrequency(),
+                customer.getDeliveryAddress(),
+                customer.getFullMobileNumber()
+        );
+      //  postSubscription(responseDTO);
+        notifyCustomer( customer.getFullMobileNumber(),customer.getEmail());
+        notifyVendor(customer.getFullMobileNumber());
+        updateInventory(request.getSkuId());
         log.info("End - Create subscription request for user {}",userId);
-        return new SubscriptionResponse(true, "Subscription created successfully", data);
+        return responseDTO;
     }
 
+    @Async
+    protected  void notifyCustomer(String mobile,String email){
+        log.debug("Sending user notification to {} ",mobile);
+        if(mobile!=null){
+            serviceManager.getNotificationContext().sendOTPMessage(NotificationType.SMS,
+                    mobile);
+        }else if(email!=null){
+            serviceManager.getNotificationContext().sendOTPMessage(NotificationType.EMAIL,email);
+        }else{
+            log.info("Customer has neither mobile number nor email");
+        }
+    }
 
-    protected abstract void notifyCustomer(Subscription subscription);
+    @Async
+    protected  void notifyVendor(String mobile){
+        log.debug("Sending vendor notification to {} ",mobile);
+        serviceManager.getNotificationContext().sendOTPMessage(NotificationType.SMS,
+                mobile);
+    }
+
+    protected abstract void updateInventory(Long skuId);
 }

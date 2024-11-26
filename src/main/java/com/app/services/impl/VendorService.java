@@ -119,6 +119,7 @@ public class VendorService  {
         return vendorsList.stream().map(vendor->modelMapper.map(vendor, VendorDetailsDTO.class)).toList();
     }
 
+    @Cacheable(value =CacheType.CACHE_TYPE_VENDORS,key = "#vendorId")
     public Vendor fetchVendor(final Long vendorId){
         return repoManager.getVendorRepo().findById(vendorId).orElseThrow(() -> new APIException(APIErrorCode.API_400, "Vendor not exited in the system."));
 

@@ -42,7 +42,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = modelMapper.map(categoryDTO, Category.class);
         Category savedCategory = categoryRepo.findByNameIgnoreCase(category.getName());
         if (savedCategory != null) {
-            throw new APIException(APIErrorCode.API_417,
+            throw new APIException(APIErrorCode.DUPLICATE_REQUEST,
                     "Category with the name '" + category.getName() + "' already exists !!!");
         }
         savedCategory = categoryRepo.save(category);

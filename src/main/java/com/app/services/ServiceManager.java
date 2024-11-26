@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.app.security.RefreshTokenService;
 import com.app.security.TokenService;
+import com.app.services.impl.SkuPriceService;
 import com.app.services.impl.SkuService;
 import com.app.services.impl.UserService;
 import com.app.services.impl.VendorService;
@@ -27,4 +28,5 @@ public class ServiceManager {
     private final AuthService authService;
     private final SubscriptionService subscriptionService;
     private final SkuSubscriptionService skuSubscriptionService;
+    private final SkuPriceService priceService;
 }

@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import com.app.entites.type.SkuType;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
@@ -73,6 +74,11 @@ public class Subscription  extends  AbstractAuditingEntity<Long> implements Seri
     
     @Column(name="update_version",updatable = true)
     private Integer updateVersion=0;
+
+    @Column(name = "subscription_type", columnDefinition = "sku_type")
+    @JdbcType(value = PostgreSQLEnumJdbcType.class)
+    @Enumerated(EnumType.STRING)
+    private SkuType subscriptionType;
 
     // Getters and Setters
 }

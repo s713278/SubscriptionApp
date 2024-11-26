@@ -46,14 +46,15 @@ public class SubscriptionController extends AbstractRequestValidation{
     @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER') or hasAuthority('VENDOR'))")
     @Operation(summary = "Create Subscription")
     @PostMapping("/")
-    public ResponseEntity<SubscriptionResponse> createSubscription(
+    public ResponseEntity<APIResponse<?>> createSubscription(
             @PathVariable Long userId,
             @Valid @RequestBody CreateSubscriptionRequest request, BindingResult bindingResult) {
         validateRequest(bindingResult);
+
         log.debug("Entered create subscription for customer {}",userId);
-        SubscriptionResponse subscription = createSubscriptionService.createSubscription(userId,request);
+        var subscription = createSubscriptionService.createSubscription(userId,request);
      // Return the response wrapped in ResponseEntity with HTTP status 201 (Created)
-        return new ResponseEntity<>(subscription, HttpStatus.CREATED);
+        return new ResponseEntity<>(APIResponse.success(subscription),HttpStatus.CREATED);
     }
 
 

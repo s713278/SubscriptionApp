@@ -86,7 +86,7 @@ public class MobileSignUpService extends AbstractSignUpService<MobileSignUpReque
                     "OTP Sent to mobile number , Please verify with it!");
         }catch (Exception e){
             log.error("Error occurred while creating new user with mobile number : {}",request.getMobile(),e);
-            throw new APIException(APIErrorCode.API_417, e.getMessage());
+            throw new APIException(APIErrorCode.USER_CREATION_FAILED, e.getMessage());
         }
     }
 
