@@ -27,9 +27,9 @@ public interface CustomerRepo extends JpaRepository<Customer, Long>, JpaSpecific
     @Query("SELECT c FROM Customer c JOIN FETCH c.roles WHERE c.mobile = :mobile")
     Optional<Customer> findByMobile(@Param("mobile") Long mobile);
 
-    Customer findByEmailActivationToken(String token);
+    //Customer findByEmailActivationToken(String token);
 
-    Customer findByResetPasswordToken(String token);
+    //Customer findByResetPasswordToken(String token);
 
     @Modifying
     @Query("UPDATE Customer u SET u.deliveryAddress = :newDeliveryAddress WHERE u.id = :userId")

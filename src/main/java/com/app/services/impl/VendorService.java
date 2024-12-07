@@ -22,7 +22,7 @@ import com.app.exceptions.ResourceNotFoundException;
 import com.app.payloads.VendorBasicDTO;
 import com.app.payloads.VendorDetailsDTO;
 import com.app.payloads.response.APIResponse;
-import com.app.payloads.response.StoreResponse;
+import com.app.payloads.response.VendorResponse;
 import com.app.repositories.RepositoryManager;
 
 import lombok.RequiredArgsConstructor;
@@ -42,7 +42,7 @@ public class VendorService  {
         return APIResponse.success(HttpStatus.CREATED.value(), modelMapper.map(storeEntity, VendorDetailsDTO.class));
     }
 
-    public StoreResponse fetchAllVendors(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+    public VendorResponse fetchAllVendors(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
 
         Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
@@ -52,21 +52,21 @@ public class VendorService  {
         List<Vendor> stores = pageStores.getContent();
 
         if (stores.isEmpty()) {
-            throw new APIException(APIErrorCode.API_400,"No stores is created!!");
+            throw new APIException(APIErrorCode.API_400,"No vendors is created!!");
         }
 
         List<VendorDetailsDTO> storeDTOs = stores.stream().map(store -> modelMapper.map(store, VendorDetailsDTO.class))
                 .collect(Collectors.toList());
 
-        StoreResponse storeResponse = new StoreResponse();
-        storeResponse.setContent(storeDTOs);
-        storeResponse.setPageNumber(pageStores.getNumber());
-        storeResponse.setPageSize(pageStores.getSize());
-        storeResponse.setTotalElements(pageStores.getTotalElements());
-        storeResponse.setTotalPages(pageStores.getTotalPages());
-        storeResponse.setLastPage(pageStores.isLast());
+        VendorResponse vendorResponse = new VendorResponse();
+        vendorResponse.setContent(storeDTOs);
+        vendorResponse.setPageNumber(pageStores.getNumber());
+        vendorResponse.setPageSize(pageStores.getSize());
+        vendorResponse.setTotalElements(pageStores.getTotalElements());
+        vendorResponse.setTotalPages(pageStores.getTotalPages());
+        vendorResponse.setLastPage(pageStores.isLast());
 
-        return storeResponse;
+        return vendorResponse;
     }
 
     @Transactional
@@ -126,9 +126,11 @@ public class VendorService  {
     }
 
     @Cacheable(value =CacheType.CACHE_TYPE_VENDORS,key = "#zipCode")
-    public Map<String, Object> fetchVendorsAndGroupedByCategory(String zipCode) {
+    public Map<String, Object> fetchVendorsAndGroupedByCategory(String zipCode,Integer pageNumber,Integer pageSize) {
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
+
         log.debug("Fetch vendors for zipcode : {}",zipCode);
-        return  fetchVendorsByCategory(repoManager.getVendorRepo().findAllUniqueVendorsWithCategories(zipCode));
+        return  fetchVendorsByCategory(repoManager.getVendorRepo().findAllUniqueVendorsWithCategories(zipCode,pageDetails));
     }
 
     @Cacheable(value =CacheType.CACHE_TYPE_VENDORS,key = "'ALL_VENDORS'")
@@ -174,4 +176,5 @@ public class VendorService  {
         response.put("vendors_by_category", categoryMap);
         return response;
     }
+
 }

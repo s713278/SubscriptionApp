@@ -19,7 +19,6 @@ springdoc:
   swagger-ui.tagsSorter: alpha
   swagger-ui.doc-expansion: false
   swagger-ui.url: /custom-api-docs/openapi.json
-
 logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%X{X-Request-ID}] %-5level %logger{36} - %msg%n"
@@ -34,6 +33,11 @@ logging:
     max-size: 10MB
     max-history: 10
 spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
   cache:
     cache-names: "skus,products,vendors,otp,otpAttempts,prices"
     caffeine:
@@ -100,3 +104,5 @@ application:
     db_data_max_size: 5000
     otp_TTL: 5
     otp_max_size: 2500
+  images_path: images/
+

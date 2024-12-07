@@ -1,13 +1,62 @@
 
+-- public.tb_role definition
+
+-- Drop table
+
+-- DROP TABLE tb_role;
+
+CREATE TABLE tb_role (
+	role_id bigserial NOT NULL,
+	role_name varchar(255) NULL,
+	CONSTRAINT tb_role_pkey PRIMARY KEY (role_id)
+);
+
 CREATE TYPE order_status_enum AS ENUM ('CREATED', 'IN_PROCESS','SCHEDULED','DELIVERED','CANCELED');
 CREATE TYPE ship_type_enum AS ENUM ('INSTORE_PICKUP', 'HOME_DELIVERY');
 CREATE TYPE payment_type_enum AS ENUM ('CASH_ON_DELIVERY','ONLINE', 'IN_STORE_PAYMENT');
 CREATE TYPE Subscription_Status AS ENUM ('ACTIVE', 'PAUSED', 'CANCELLED');
 CREATE TYPE Subscription_Item_Status AS ENUM ('PENDING', 'IN_PROGRESS', 'DELIVERED','PAUSED','CANCELLED');
-	
-INSERT INTO public.roles (role_id, role_name) VALUES(101,'ADMIN');
-INSERT INTO public.roles (role_id, role_name) VALUES(102,'USER');
-INSERT INTO public.roles (role_id, role_name) VALUES(103,'STORE');
+CREATE TYPE user_type AS ENUM ('USER', 'VENDOR');
+-- DROP TYPE public."gender_enum";
+
+CREATE TYPE public."gender_enum" AS ENUM (
+	'MAN',
+	'WOMAN',
+	'OTHER');
+
+	-- DROP TYPE public."sku_type";
+
+CREATE TYPE public."sku_type" AS ENUM (
+    'ITEM',
+    'SERVICE');
+
+-- DROP TYPE public."subscription_frequency";
+
+CREATE TYPE public."subscription_frequency" AS ENUM (
+	'ONE_TIME',
+	'DAILY',
+	'WEEKLY',
+	'CUSTOM',
+	'ALTERNATE_DAY');
+
+-- DROP TYPE public."vendor_status_enum";
+
+CREATE TYPE public."vendor_status_enum" AS ENUM (
+	'PENDING',
+	'ACTIVE',
+	'DELETED',
+	'SUSPENDED');
+
+-- DROP TYPE public."payment_status_enum";
+
+CREATE TYPE public."payment_status_enum" AS ENUM (
+	'DUE',
+	'PAID');
+
+
+INSERT INTO public.tb_role (role_id, role_name) VALUES(101,'ADMIN');
+INSERT INTO public.tb_role (role_id, role_name) VALUES(102,'USER');
+INSERT INTO public.tb_role (role_id, role_name) VALUES(103,'VENDOR');
 
 
 

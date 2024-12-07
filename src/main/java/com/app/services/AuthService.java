@@ -48,7 +48,7 @@ public class AuthService {
 
     // Activate user account
     public boolean activateAccount(final String token) {
-        Customer customer = customerRepo.findByEmailActivationToken(token);
+        Customer customer = findByEmailActivationToken(token);
         if (customer != null && customer.getEmailTokenExpiration().isAfter(LocalDateTime.now())) {
             customer.setEmailVerified(true);
             customer.setEmailActivationToken(null); // Clear the token after activation
@@ -73,7 +73,7 @@ public class AuthService {
     
  // Reset password
     public boolean resetPassword(String token, String newPassword) {
-        Customer customer = customerRepo.findByResetPasswordToken(token);
+        Customer customer = findByResetPasswordToken(token);
         if (customer != null && customer.getEmailTokenExpiration().isAfter(LocalDateTime.now())) {
             customer.setPassword(passwordEncoder.encode(newPassword)); // Set new encoded password
             customer.setResetPasswordToken(null); // Clear the token
@@ -84,4 +84,11 @@ public class AuthService {
         return false;
     }
 
+    private Customer findByEmailActivationToken(String token){
+        return new Customer();
+    }
+
+    private Customer findByResetPasswordToken(String token){
+        return new Customer();
+    }
 }

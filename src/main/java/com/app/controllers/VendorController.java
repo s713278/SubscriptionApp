@@ -17,7 +17,7 @@ import com.app.config.AppConstants;
 import com.app.entites.type.VendorStatus;
 import com.app.payloads.VendorDetailsDTO;
 import com.app.payloads.response.APIResponse;
-import com.app.payloads.response.StoreResponse;
+import com.app.payloads.response.VendorResponse;
 import com.app.services.ServiceManager;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,9 +53,12 @@ public class VendorController {
 
     @Operation(summary = "Vendors listing by zipcode")
     @GetMapping("/{zipCode}")
-    public ResponseEntity<APIResponse<?>> fetchAllActiveVendorsByZipCode(@PathVariable String zipCode) {
+    public ResponseEntity<APIResponse<?>> fetchAllActiveVendorsByZipCode(@PathVariable String zipCode,
+                                                                         @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+                                                                         @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize
+                                                                        ) {
         log.debug("Request received fetching vendors for zipcode : {}",zipCode);
-        return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService().fetchVendorsAndGroupedByCategory(zipCode)),HttpStatus.OK);
+        return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService().fetchVendorsAndGroupedByCategory(zipCode,pageNumber,pageSize)),HttpStatus.OK);
     }
 
     @Operation(summary = "Vendor's products listing")
@@ -80,8 +83,8 @@ public class VendorController {
             @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
             @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_STORE_BY, required = false) String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
-        StoreResponse storeResponse = serviceManager.getVendorService().fetchAllVendors(pageNumber, pageSize, sortBy, sortOrder);
-        return new ResponseEntity<>(APIResponse.success(storeResponse),HttpStatus.OK);
+        VendorResponse vendorResponse = serviceManager.getVendorService().fetchAllVendors(pageNumber, pageSize, sortBy, sortOrder);
+        return new ResponseEntity<>(APIResponse.success(vendorResponse),HttpStatus.OK);
     }
 
     @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)

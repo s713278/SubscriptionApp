@@ -107,6 +107,9 @@ public class AuthController {
     @PostMapping("/request-otp")
     public ResponseEntity<?> requestOTP(@RequestBody OTPRequest request) {
         log.info("Received OTP request for mobile: {}", request.getMobile());
+        if(String.valueOf(request.getMobile()).length()!=10){
+            throw new APIException(APIErrorCode.API_400,"Invalid mobile number and should be 10 digits.");
+        }
         serviceManager.getUserService().createUserIfNotExisted(request);
         if(request.getMobile()!=null){
             notificationContext.sendOTPMessage(NotificationType.SMS,

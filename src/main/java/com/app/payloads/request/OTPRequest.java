@@ -1,5 +1,6 @@
 package com.app.payloads.request;
 
+import com.app.entites.type.UserType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -15,10 +16,16 @@ public class OTPRequest{
     @JsonProperty("country_code")
     private String  countryCode;
 
-    @NotNull @JsonProperty("mobile_number") Long mobile ;
+    @NotNull @JsonProperty("mobile_number")
+    private Long mobile ;
 
     @NotNull @Schema(description = "source", example = "android")
-    @NotNull @JsonProperty("reg_source") String regSource ;
+    @NotNull @JsonProperty("reg_source")
+    private String regSource ;
+
+    @NotNull @Schema(description = "type", example = "USER")
+    @JsonProperty("user_type")
+    private UserType userType;
 
     @JsonIgnore
     private String fullPhoneNumber;

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class StoreResponse {
+public class VendorResponse {
 
     private List<VendorDetailsDTO> content;
     private Integer pageNumber;

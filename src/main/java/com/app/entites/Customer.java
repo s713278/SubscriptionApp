@@ -68,6 +68,7 @@ public class Customer  extends  AbstractAuditingEntity<Long> implements Serializ
 
     private LocalDate dateOfBirth;
 
+    @Transient
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -100,10 +101,7 @@ public class Customer  extends  AbstractAuditingEntity<Long> implements Serializ
     @Column(name = "delivery_instructions", columnDefinition = "jsonb")
     private Map<String,String> deliveryInstructions;
 
-    @Column(name="otp_code")
-    private String otp;
 
-    private LocalDateTime otpExpiration;
 
     @Column(name="mobile_verified")
     public Boolean mobileVerified = false;
@@ -122,14 +120,23 @@ public class Customer  extends  AbstractAuditingEntity<Long> implements Serializ
     @ColumnDefault(value = "false")
     @Column(name="email_verified")
     private Boolean emailVerified = false;
-    
-    @Column(name="email_activation_token")
+
+ @Transient
+ private String otp;
+
+ @Transient
+ private LocalDateTime otpExpiration;
+
+ @Transient
+   // @Column(name="email_activation_token")
     private String emailActivationToken;
-    
-    @Column(name="reset_password_token")
+
+ @Transient
+   // @Column(name="reset_password_token")
     private String resetPasswordToken;
-    
-    @Column(name="email_token_expiration")
+
+ @Transient
+   // @Column(name="email_token_expiration")
     private LocalDateTime emailTokenExpiration;
 
     @ColumnDefault(value = "true")

@@ -195,6 +195,7 @@ public class UserService {
             customer.getRoles().add(role);
             customer.setActive(true);
             customer.setMobileVerified(false);
+            customer.setType(otpRequest.getUserType());
             customer.setOtpExpiration(LocalDateTime.now().plusMinutes(15)); // Set OTP expiration to 5 minutes
             customer = repositoryManager.getCustomerRepo().save(customer);
             log.info("User is created for mobile :{}",otpRequest.getMobile());

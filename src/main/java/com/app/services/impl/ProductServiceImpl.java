@@ -55,7 +55,7 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ModelMapper modelMapper;
 
-    @Value("${project.image}")
+    @Value("${application.images_path}")
     private String path;
 
     @Override
