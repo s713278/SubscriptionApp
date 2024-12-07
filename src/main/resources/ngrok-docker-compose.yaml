@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  ngrok:
+    image: wernight/ngrok
+    restart: always
+    ports:
+      - "4040:4040"  # Optional: Access ngrok's web interface on localhost:4040
+    environment:
+      - NGROK_AUTH=2nrHp5R8EU4Ei4B5VHcW3mLcTXf_YLSZHuHmrQuHZB3AZ1QA
+      - NGROK_PORT=host.docker.internal:8080  # Targets the local Spring Boot application

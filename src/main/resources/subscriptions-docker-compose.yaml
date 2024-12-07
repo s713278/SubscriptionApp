@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  subnrenewals-app:
+    image: s713278/subnrenewals # Use the image you built
+    container_name: SubNRenewals
+    ports:
+      - "8080:8080"  # Expose the application port (adjust if needed)
+    environment:
+      #SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://host.docker.internal:5432/multi_ecommerce  # Connect to PostgreSQL on host machine     
+      #SPRING_DATASOURCE_URL: jdbc:postgresql://172.27.80.1/multi_ecommerce  # Connect to PostgreSQL on host machine
+      SPRING_DATASOURCE_USERNAME: postgres  # Replace with your DB username
+      SPRING_DATASOURCE_PASSWORD: admin  # Replace with your DB password
+    depends_on:
+      - wait-for-db
+
+  wait-for-db:
+    image: busybox
+    entrypoint: ["sh", "-c", "while ! nc -z host.docker.internal 5432; do sleep 1; done"]  # Wait for the DB to be ready
