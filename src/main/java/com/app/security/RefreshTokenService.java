@@ -18,7 +18,7 @@ public class RefreshTokenService {
       private final GlobalConfig globalConfig;
 
     // In-memory store for refresh tokens, can be stored in DB or cache
-    private Map<String, String> refreshTokenStore = new HashMap<>();
+    private final Map<String, String> refreshTokenStore = new HashMap<>();
 
     // Validate refresh token (e.g., check if it exists in the store or DB)
     public boolean validateRefreshToken(String token) {

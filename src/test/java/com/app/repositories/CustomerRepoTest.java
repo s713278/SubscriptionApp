@@ -25,7 +25,7 @@ class CustomerRepoTest extends AbstractBaseConfig {
 
     private Customer testCustomer;
 
-    private String email = "swamy.ramya@example.com";
+    private final String email = "swamy.ramya@example.com";
     private Long customerId = null;
 
     @BeforeEach

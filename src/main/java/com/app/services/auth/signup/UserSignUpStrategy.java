@@ -20,10 +20,10 @@ public class UserSignUpStrategy {
 
     public SignUpDTO processUserSignUp(SignUpRequest signUpRequest){
         if(signUpRequest instanceof  MobileSignUpRequest){
-          return signUpServiceFactory.get("mobileSignUpService").processSignUp((MobileSignUpRequest)signUpRequest);
+          return signUpServiceFactory.get("mobileSignUpService").processSignUp(signUpRequest);
         }
         if(signUpRequest instanceof EmailSignUpRequest){
-            return signUpServiceFactory.get("emailSignUpService").processSignUp((EmailSignUpRequest)signUpRequest);
+            return signUpServiceFactory.get("emailSignUpService").processSignUp(signUpRequest);
         }
         throw new APIException(APIErrorCode.API_400,"No SignUpService Found");
     }

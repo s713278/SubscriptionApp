@@ -73,7 +73,7 @@ public class TokenService {
                 //.withClaim("cart_id", user.getCart().getId())
                 .withClaim("roles",
                         user.getRoles().stream().map(Role::getRoleName)
-                                .collect(Collectors.joining(String.valueOf(id),"[", "]")))
+                                .collect(Collectors.joining(id,"[", "]")))
                 .withIssuer(NSR_STORES)
                 .sign(Algorithm.HMAC256(globalConfig.getJwtConfig().getSecret()));
         return token;

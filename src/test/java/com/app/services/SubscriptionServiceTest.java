@@ -32,10 +32,10 @@ class SubscriptionServiceTest extends AbstractBaseConfig {
 
     private Customer testCustomer;
 
-    private String email = "swamy.ramya@example.com";
+    private final String email = "swamy.ramya@example.com";
     private Long customerId = null;
-    private Long testVendorId = 1L;
-    private Long testSkuId = 1L;
+    private final Long testVendorId = 1L;
+    private final Long testSkuId = 1L;
     private Long testSubscriptionId=null;
     
     @BeforeEach

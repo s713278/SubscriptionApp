@@ -15,7 +15,7 @@ public class CustomerSignUpEvent extends ApplicationEvent {
     private static final long serialVersionUID = -6324921889128216197L;
     private String email;
     private Long mobileNumber;
-    private String otp;
+    private final String otp;
     private String emailActivationtoken;
 
     public CustomerSignUpEvent(Object source, String email, String emailActivationtoken,String otp) {

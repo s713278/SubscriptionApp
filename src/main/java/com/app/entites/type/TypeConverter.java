@@ -9,7 +9,7 @@ public interface TypeConverter<R,E> {
      * @return  the converted data to be stored in the database 
      *          column
      */
-    public E toEntityType (R attribute);
+    E toEntityType(R attribute);
 
     /**
      * Converts the data stored in the database column into the 
@@ -24,5 +24,5 @@ public interface TypeConverter<R,E> {
      * @return  the converted value to be stored in the entity 
      *          attribute
      */
-    public R fromEntityType (E entity);
+    R fromEntityType(E entity);
 }

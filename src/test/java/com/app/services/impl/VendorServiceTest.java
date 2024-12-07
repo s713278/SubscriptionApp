@@ -31,7 +31,7 @@ class VendorServiceTest extends AbstractBaseConfig {
     @Autowired
     private ModelMapper modelMapper;
     private Long vendorId;
-    private String serviceArea="502108";
+    private final String serviceArea="502108";
     @BeforeEach
     void setUp() {
         Vendor vendor=new Vendor();

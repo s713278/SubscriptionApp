@@ -155,7 +155,6 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
             throw new APIException(APIErrorCode.API_400, "Invalid Order Status..");
         }
         }
-        ;
         // OrderStatus newOrderStatus = OrderStatus.valueOf(request.getNewSatus());
 
         OrderStatusHistory orderStatusHistory = createOrderStatusHistory(order);

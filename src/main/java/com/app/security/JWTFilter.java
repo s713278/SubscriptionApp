@@ -45,7 +45,7 @@ public class JWTFilter extends OncePerRequestFilter {
                 APIErrorResponse apiError = new APIErrorResponse(APIErrorCode.API_401, "Invalid JWT token in Bearer Header");
                 String responseJson = mapper.writeValueAsString(apiError);
                 response.getWriter().write(responseJson);
-                return;  // Return here to stop further processing
+                // Return here to stop further processing
             } else {
                 try {
                     userId = jwtUtil.validateTokenAndRetrieveSubject(jwt);
@@ -56,14 +56,13 @@ public class JWTFilter extends OncePerRequestFilter {
 
                     // Proceed with the next filter after setting the context
                     filterChain.doFilter(request, response);
-                    return;  // Return after filter chain processing
+                    // Return after filter chain processing
 
                 } catch (Exception exception) {
                     log.error("Exception occurred while authenticating token for user {}", userId, exception);
                     extracted(response, exception);
 
                     // Stop further execution after writing the response
-                    return;
                 }
             }
         } else {
@@ -73,7 +72,7 @@ public class JWTFilter extends OncePerRequestFilter {
     }
 
     private void extracted(HttpServletResponse response, Exception exception)
-            throws JsonProcessingException, IOException {
+            throws IOException {
         // Send a proper 401 response with JSON body
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");

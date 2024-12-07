@@ -41,7 +41,7 @@ public  class Fast2SMSService extends SMSService {
         Map<String, String> formData = new HashMap<>();
         formData.put("variables_values", String.valueOf(otp));
         formData.put("route", smsConfig.getRoute());
-        formData.put("numbers", String.valueOf(91+mobileNo));
+        formData.put("numbers", 91 + mobileNo);
         formData.put("message","This is OTP :"+otp);
         formData.put("language","english");
 

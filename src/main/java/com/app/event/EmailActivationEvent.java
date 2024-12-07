@@ -13,9 +13,9 @@ public class EmailActivationEvent extends ApplicationEvent {
      */
     @Serial
     private static final long serialVersionUID = -6324921889128216197L;
-    private String email;
-    private String otp;
-    private String emailActivationtoken;
+    private final String email;
+    private final String otp;
+    private final String emailActivationtoken;
 
     public EmailActivationEvent(Object source, String email, String emailActivationtoken,String otp) {
         super(source);
