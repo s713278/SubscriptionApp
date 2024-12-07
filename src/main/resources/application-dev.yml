@@ -1,0 +1,44 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://a191688-akamai-prod-6214027-default.g2a.akamaidb.net:22929/mithra_dev_db
+    username: ${DB_USERNAME:akmadmin}
+    password: ${DB_PASSWORD:}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        ddl-auto: update
+        #dialect: org.hibernate.dialect.PostgreSQLDialect
+        transaction:
+          jta:
+            platform: org.hibernate.engine.transaction.jta.platform.internal.AtomikosJtaPlatform
+  mail:
+    port: 2525
+    password: 3af3b672efa73f
+    properties.mail.smtp:
+      auth: true
+      starttls.enable: true
+application:
+  jwt_config:
+    issuer: MithraDirect
+    secret: cl$ksc^nas%lkdm!cz@xclk#as&dmka;s28*392da%jskd#n9827@3498%
+    access_exp_time: 7776000000 #Short-lived (e.g., 15 minutes, 1 hour).
+    refresh_exp_time: 1800  #Stored securely on the client.
+  vendor_config:
+  customer_config:
+    signup_props:
+      otp_exp_time: 60  #In seconds
+      otp_no_of_retry: 3  #In seconds
+  sms_providers:
+    fast2sms:
+      api_key: Xc9VjFUmHbq0b4gMaUkhMXRXti0OXrw9ECZLYQwriOMKZhuloMf49PLKqDI8
+      route: q #otp q-->Quick SMS
+      url: https://www.fast2sms.com/dev/bulkV2
+      flash: 1
+    vonage:
+      url: https://rest.nexmo.com/sms/json
+      api_key: fea31c3d
+      api_secret: BGaPL1kZtZJbMoIJ
+      from_brand: SubNRenewal
