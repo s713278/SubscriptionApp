@@ -1,8 +1,6 @@
 package com.app.services.auth.signin;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.app.config.GlobalConfig;
 import com.app.constants.NotificationType;
 import com.app.entites.Customer;
@@ -10,8 +8,8 @@ import com.app.payloads.request.SignInRequest;
 import com.app.payloads.response.AuthDetailsDTO;
 import com.app.services.ServiceManager;
 import com.app.services.auth.dto.AuthUserDetails;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Slf4j
 public abstract class AbstractSignInService {

@@ -1,7 +1,6 @@
 package com.app.payloads.response;
 
 import com.app.payloads.request.UpdateUserRequest;
-
 import lombok.Data;
 
 @Data

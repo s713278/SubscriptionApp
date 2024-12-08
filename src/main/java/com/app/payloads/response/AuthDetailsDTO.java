@@ -1,13 +1,12 @@
 package com.app.payloads.response;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.util.Map;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -40,7 +39,7 @@ public class AuthDetailsDTO{
    // @JsonProperty("active_subscriptions")
     //private List<?> activeSubscriptions;
 
-    @JsonProperty("default_vendorId")
+    @JsonProperty("default_vendor_id")
     private Long defaultVendorId;
 
     private Map<String,String> address;

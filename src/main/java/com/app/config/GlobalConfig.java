@@ -1,14 +1,13 @@
 package com.app.config;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import lombok.Getter;
-import lombok.Setter;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Setter
 @Getter

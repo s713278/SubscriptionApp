@@ -1,22 +1,20 @@
 package com.app.services;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.time.LocalDate;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.app.AbstractBaseConfig;
 import com.app.entites.Customer;
 import com.app.entites.type.SubFrequency;
 import com.app.payloads.request.CreateSubscriptionRequest;
 import com.app.payloads.request.UpdateSubscriptionRequest;
 import com.app.repositories.RepositoryManager;
-
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.LocalDate;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 class SubscriptionServiceTest extends AbstractBaseConfig {

@@ -1,15 +1,13 @@
 package com.app.security;
 
+import com.app.config.GlobalConfig;
+import com.app.services.auth.dto.AuthUserDetails;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import org.springframework.stereotype.Service;
-
-import com.app.config.GlobalConfig;
-import com.app.services.auth.dto.AuthUserDetails;
-
-import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service

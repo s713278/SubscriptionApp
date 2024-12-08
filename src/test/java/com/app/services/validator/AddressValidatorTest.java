@@ -1,8 +1,8 @@
 package com.app.services.validator;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 class AddressValidatorTest {
 

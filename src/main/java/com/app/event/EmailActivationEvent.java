@@ -1,9 +1,9 @@
 package com.app.event;
-import java.io.Serial;
-
-import org.springframework.context.ApplicationEvent;
 
 import lombok.Getter;
+import org.springframework.context.ApplicationEvent;
+
+import java.io.Serial;
 
 @Getter
 public class EmailActivationEvent extends ApplicationEvent {

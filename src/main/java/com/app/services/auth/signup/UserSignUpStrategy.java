@@ -1,16 +1,14 @@
 package com.app.services.auth.signup;
 
-import org.springframework.stereotype.Component;
-
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.payloads.request.EmailSignUpRequest;
 import com.app.payloads.request.MobileSignUpRequest;
 import com.app.payloads.request.SignUpRequest;
 import com.app.payloads.response.SignUpDTO;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Slf4j

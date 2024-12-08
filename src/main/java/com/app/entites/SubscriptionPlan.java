@@ -1,15 +1,13 @@
 package com.app.entites;
 
-import java.io.Serializable;
-
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.dialect.PostgreSQLEnumJdbcType;
-
 import com.app.entites.type.SubFrequency;
-
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+
+import java.io.Serializable;
 
 @Data
 @NoArgsConstructor

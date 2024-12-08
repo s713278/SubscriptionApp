@@ -1,19 +1,17 @@
 package com.app.services.auth.signin;
 
-import java.util.Optional;
-
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-
 import com.app.entites.Customer;
 import com.app.payloads.request.OTPVerificationRequest;
 import com.app.payloads.request.SignInRequest;
 import com.app.payloads.response.AuthDetailsDTO;
 import com.app.services.auth.dto.AuthUserDetails;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

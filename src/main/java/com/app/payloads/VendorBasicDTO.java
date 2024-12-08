@@ -1,8 +1,8 @@
 package com.app.payloads;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.List;
 
 public record VendorBasicDTO(
         @JsonProperty("vendor_id") Long id,

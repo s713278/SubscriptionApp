@@ -1,22 +1,20 @@
 package com.app.entites;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-
+import com.app.entites.type.SkuType;
+import com.app.entites.type.SubFrequency;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.hibernate.type.SqlTypes;
 
-import com.app.entites.type.SkuType;
-import com.app.entites.type.SubFrequency;
-
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
