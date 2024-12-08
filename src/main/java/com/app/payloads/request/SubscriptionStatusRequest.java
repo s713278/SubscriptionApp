@@ -2,7 +2,6 @@ package com.app.payloads.request;
 
 import com.app.entites.SubscriptionStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

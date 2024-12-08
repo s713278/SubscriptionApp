@@ -1,14 +1,5 @@
 package com.app.controllers;
 
-import java.io.IOException;
-import java.nio.file.Files;
-
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
 
 import com.app.constants.NotificationType;
 import com.app.constants.SignInType;
@@ -22,7 +13,6 @@ import com.app.services.ServiceManager;
 import com.app.services.auth.signin.SignInContext;
 import com.app.services.auth.signup.UserSignUpStrategy;
 import com.app.services.notification.NotificationContext;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,6 +23,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -191,15 +185,5 @@ public class AuthController {
             return ResponseEntity.ok("Password reset successful.");
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or expired reset token.");
-    }
-   // @GetMapping("/openapi.json")
-   // @GetMapping(value = "/openapi.json", produces = "application/json")
-    public ResponseEntity<byte[]> getOpenApiJson() throws IOException {
-        ClassPathResource resource = new ClassPathResource("openapi.json");
-        byte[] data = Files.readAllBytes(resource.getFile().toPath());
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, "application/json");
-        return new ResponseEntity<>(data, headers, HttpStatus.OK);
     }
 }

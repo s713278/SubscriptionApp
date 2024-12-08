@@ -1,9 +1,8 @@
 package com.app.repositories;
 
-import org.springframework.stereotype.Component;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @Getter
 @Component

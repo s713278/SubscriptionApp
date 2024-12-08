@@ -1,10 +1,10 @@
 package com.app.services.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.List;
-import java.util.Map;
-
+import com.app.AbstractBaseConfig;
+import com.app.entites.Vendor;
+import com.app.entites.type.VendorStatus;
+import com.app.entites.type.VerificationStatus;
+import com.app.payloads.VendorDetailsDTO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,11 +15,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.app.AbstractBaseConfig;
-import com.app.entites.Vendor;
-import com.app.entites.type.VendorStatus;
-import com.app.entites.type.VerificationStatus;
-import com.app.payloads.VendorDetailsDTO;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 class VendorServiceTest extends AbstractBaseConfig {

@@ -24,7 +24,7 @@ public class AppConstants {
             "/v1/vendor/*/subscription",
             "/v1/vendor/*/subscription/*","/v1/vendor/*/customer/*"};
     
-    public static final String[] PUBLIC_GET_URLS = { "/v3/api-docs/**", "/swagger-ui/**", 
+    public static final String[] PUBLIC_GET_URLS = { "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.**",
             "/api/store/*/categories", "/api/store/*/categories/*/products",
             "/api/store/*/products", "/api/stores/*" ,
             "/vendor/*/subscription/*","/vendor/*/customer/*","/v1/vendors/*","/v1/vendors/*/products","/custom-api-docs/**"};

@@ -15,10 +15,17 @@ server:
 #Swagger OpenAPI
 #For sorting endpoints alphabetically
 springdoc:
-  swagger-ui.operationsSorter: alpha
-  swagger-ui.tagsSorter: alpha
-  swagger-ui.doc-expansion: false
-  swagger-ui.url: /custom-api-docs/openapi.json
+  api-docs:
+    path: /custom-api-docs  # Custom path for OpenAPI documentation instead of /api/v3/api-docs
+    override-with-spec-url: true  # Override the auto-generated spec with your own
+    spec-url: /custom-api-docs/openapi.json
+  #swagger-ui.url: /custom-api-docs/openapi.json
+  swagger-ui:
+    operationsSorter: alpha          # Sort operations alphabetically
+    tagsSorter: alpha                # Sort tags alphabetically
+    doc-expansion: false              # Collapse all sections in the Swagger UI by default
+    path: /swagger-ui.html           # Path to access Swagger UI instaed of /swagger-ui/index.html
+    url: /custom-api-docs/openapi.json
 logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%X{X-Request-ID}] %-5level %logger{36} - %msg%n"
@@ -58,9 +65,9 @@ spring:
       auth: true
       starttls.enable: true
 application:
-  snr:
-    local_url: http://localhost:8080/api
-    dev_url: https://snr.ngrok.dev/api
+  #snr:
+    #local_url: http://localhost:8080/api
+    #dev_url: https://snr.ngrok.dev/api
   jwt_config:
     issuer: SubNRenewal
     secret: 

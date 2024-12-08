@@ -2,7 +2,6 @@ package com.app.payloads;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,12 +1,11 @@
 package com.app.payloads.response;
 
-import java.util.List;
-
 import com.app.payloads.VendorDetailsDTO;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor

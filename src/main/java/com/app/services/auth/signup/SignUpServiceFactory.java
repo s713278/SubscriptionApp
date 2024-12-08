@@ -1,12 +1,10 @@
 package com.app.services.auth.signup;
 
-import java.util.Map;
-
+import com.app.payloads.request.SignUpRequest;
+import lombok.Getter;
 import org.springframework.stereotype.Component;
 
-import com.app.payloads.request.SignUpRequest;
-
-import lombok.Getter;
+import java.util.Map;
 
 @Getter
 @Component

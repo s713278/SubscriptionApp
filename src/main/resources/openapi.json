@@ -24,7 +24,7 @@
       "description": "Local Env"
     },
     {
-      "url": "https://snr.ngrok.dev/api",
+      "url": "http://172.105.33.153:8080/api",
       "description": "Dev Env"
     }
   ],
@@ -1053,6 +1053,16 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/OTPVerificationRequest"
+              },
+              "examples": {
+                "Example": {
+                  "summary": "Example to OTP Verify",
+                  "value": {
+                    "mobile_number": 9912149089,
+                    "country_code": "+91",
+                    "otp": "9090"
+                  }
+                }
               }
             }
           },
@@ -1065,10 +1075,112 @@
               "*/*": {
                 "schema": {
                   "type": "object"
+                },
+                "examples": {
+                  "WithAddressAndVendor": {
+                    "summary": "Response with address and vendor",
+                    "value": {
+                      "timestamp": "2024-12-09T04:21:22.8275021",
+                      "success": true,
+                      "status": 200,
+                      "data": {
+                        "address": {
+                          "country": "India",
+                          "zipCode": "500001",
+                          "city": "Hyderabad",
+                          "state": "Telangana"
+                        },
+                        "user_id": 4902,
+                        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0OTAyIiwicm9sZXMiOiJbVVNFUl0iLCJpc3MiOiJTdWJOUmVuZXdhbHMiLCJleHAiOjE3MzM3MDAwODIsImlhdCI6MTczMzY5ODI4Mn0.noD8pa5h59ApFIdasIN1WX_4QD3ooV8PEdFwO7AtCgE",
+                        "mobile_verified": true,
+                        "email_verified": false,
+                        "refresh_token": "6e9cadb0-d4df-42a2-af31-3b4b017af852",
+                        "default_vendor_id": 1
+                      }
+                    }
+                  },
+                  "WithAddressAndWithoutVendor": {
+                    "summary": "Response with address and without vendor",
+                    "value": {
+                      "timestamp": "2024-12-09T04:21:22.8275021",
+                      "success": true,
+                      "status": 200,
+                      "data": {
+                        "address": {
+                          "country": "India",
+                          "zipCode": "500001",
+                          "city": "Hyderabad",
+                          "state": "Telangana"
+                        },
+                        "user_id": 4902,
+                        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0OTAyIiwicm9sZXMiOiJbVVNFUl0iLCJpc3MiOiJTdWJOUmVuZXdhbHMiLCJleHAiOjE3MzM3MDAwODIsImlhdCI6MTczMzY5ODI4Mn0.noD8pa5h59ApFIdasIN1WX_4QD3ooV8PEdFwO7AtCgE",
+                        "mobile_verified": true,
+                        "email_verified": false,
+                        "refresh_token": "6e9cadb0-d4df-42a2-af31-3b4b017af852",
+                        "default_vendor_id": null
+                      }
+                    }
+                  },
+                  "WithOutAddressAndWithVendor": {
+                    "summary": "Response without address and with vendor",
+                    "value": {
+                      "timestamp": "2024-12-09T04:21:22.8275021",
+                      "success": true,
+                      "status": 200,
+                      "data": {
+                        "address": null,
+                        "user_id": 4902,
+                        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0OTAyIiwicm9sZXMiOiJbVVNFUl0iLCJpc3MiOiJTdWJOUmVuZXdhbHMiLCJleHAiOjE3MzM3MDAwODIsImlhdCI6MTczMzY5ODI4Mn0.noD8pa5h59ApFIdasIN1WX_4QD3ooV8PEdFwO7AtCgE",
+                        "mobile_verified": true,
+                        "email_verified": false,
+                        "refresh_token": "6e9cadb0-d4df-42a2-af31-3b4b017af852",
+                        "default_vendor_id": 1
+                      }
+                    }
+                  },
+                  "WithOutAddressAndWithoutVendor": {
+                    "summary": "Response without address and vendor",
+                    "value": {
+                      "timestamp": "2024-12-09T04:21:22.8275021",
+                      "success": true,
+                      "status": 200,
+                      "data": {
+                        "address": null,
+                        "user_id": 4902,
+                        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0OTAyIiwicm9sZXMiOiJbVVNFUl0iLCJpc3MiOiJTdWJOUmVuZXdhbHMiLCJleHAiOjE3MzM3MDAwODIsImlhdCI6MTczMzY5ODI4Mn0.noD8pa5h59ApFIdasIN1WX_4QD3ooV8PEdFwO7AtCgE",
+                        "mobile_verified": true,
+                        "email_verified": false,
+                        "refresh_token": "6e9cadb0-d4df-42a2-af31-3b4b017af852",
+                        "default_vendor_id": null
+                      }
+                    }
+                  }
                 }
               }
             }
-          }
+          },
+          "401":{
+            "description": "Authentication Failed",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }, "examples": {
+                  "Success": {
+                    "summary": "Response for expired/invalid OTP",
+                    "value": {
+                      "success": false,
+                      "status": 401,
+                      "timestamp": "2024-12-09T04:55:17.9766051",
+                      "failure_reason": "OTP is already used or expired,Please request fow new one",
+                      "user_message": "User authentication failed!!",
+                      "api_details": []
+                    }
+                  }
+                }
+              }
+            }
+        }
         }
       }
     },
@@ -1084,6 +1196,26 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/OTPRequest"
+              },
+              "examples": {
+                "User": {
+                  "summary": "Example for a User",
+                  "value": {
+                    "country_code": "+91",
+                    "mobile_number": 9912149089,
+                    "reg_platform": "android",
+                    "user_type": "USER"
+                  }
+                },
+                "Vendor": {
+                  "summary": "Example for a Vendor",
+                  "value": {
+                    "country_code": "+91",
+                    "mobile_number": 9912149089,
+                    "reg_platform": "android",
+                    "user_type": "VENDOR"
+                  }
+                }
               }
             }
           },
@@ -1095,16 +1227,41 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "type": "object",
-                  "examples": {
-                    "Success": {
+                  "type": "object"
+                },
+                "examples": {
+                  "OTPSent": {
+                    "summary": "Success Response",
+                    "value": {
                       "timestamp": "2024-11-24T08:56:57.8450894",
                       "success": true,
                       "status": 200,
                       "data": "OTP Sent successfully"
                     }
                   }
-
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "BadMobileNumber": {
+                    "summary": "Response for bad mobile number",
+                    "value": {
+                      "success": false,
+                      "status": 400,
+                      "timestamp": "2024-12-09T04:53:04.8421849",
+                      "failure_reason": "Invalid mobile number and should be 10 digits.",
+                      "user_message": "Please check the request and try again!!",
+                      "api_details": []
+                    }
+                  }
                 }
               }
             }
@@ -2980,7 +3137,9 @@
       "OTPRequest": {
         "required": [
           "country_code",
-          "mobile_number"
+          "mobile_number",
+          "reg_platform",
+          "user_type"
         ],
         "type": "object",
         "properties": {
@@ -2993,16 +3152,19 @@
             "type": "integer",
             "format": "int64"
           },
-          "reg_source": {
+          "reg_platform": {
             "type": "string",
             "description": "source",
             "example": "android"
+          },
+          "user_type": {
+            "type": "string",
+            "description": "type",
+            "enum": [
+              "USER",
+              "VENDOR"
+            ]
           }
-        },
-        "example": {
-          "country_code": "+91",
-          "mobile_number": 9912149089,
-          "reg_source": "android"
         }
       },
       "RefreshTokenRequest": {
@@ -3020,8 +3182,7 @@
         "type": "object",
         "properties": {
           "name": {
-            "type": "string",
-            "example": "Swamy Kunta"
+            "type": "string"
           },
           "address": {
             "type": "object",

@@ -1,10 +1,10 @@
 package com.app.payloads;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 public record ProductSkuDTO(@JsonProperty("product_id") Long productId,

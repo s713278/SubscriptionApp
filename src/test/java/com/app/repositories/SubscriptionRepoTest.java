@@ -1,11 +1,10 @@
 package com.app.repositories;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import com.app.AbstractBaseConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.app.AbstractBaseConfig;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @Transactional
 class SubscriptionRepoTest extends AbstractBaseConfig {
