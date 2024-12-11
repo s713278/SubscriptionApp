@@ -36,8 +36,8 @@ jobs:
           image: s713278/subnrenewals
           tags: v1, latest
           registry: docker.io
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWD }}
+          username: swamy.kunta@gmail.com
+          password: Target@60
       #Deploy the pushed image on Linode Server
       - name: Deploy to Linode instance
         uses: appleboy/ssh-action@v0.1.5
