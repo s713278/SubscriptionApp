@@ -1742,6 +1742,26 @@
         "operationId": "fetchAllActiveVendorsByZipCode",
         "parameters": [
           {
+            "name": "pageNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 2
+            }
+          },
+          {
             "name": "zipCode",
             "in": "path",
             "required": true,
@@ -1767,7 +1787,7 @@
     "/v1/vendors/{vendorId}/subs": {
       "get": {
         "tags": [
-          "2. Vendors/Product Listing"
+          "2. Product Listing"
         ],
         "summary": "Fetch Subscriptions By Vendor ID",
         "operationId": "fetchSubsByVendorId",

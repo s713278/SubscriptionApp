@@ -42,31 +42,28 @@ public class VendorService  {
         return APIResponse.success(HttpStatus.CREATED.value(), modelMapper.map(storeEntity, VendorDetailsDTO.class));
     }
 
-    public VendorResponse fetchAllVendors(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
-
+    public VendorResponse<VendorDetailsDTO> fetchAllVendors(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
-
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
         Page<Vendor> pageStores =  repoManager.getVendorRepo().findAll(pageDetails);
         List<Vendor> stores = pageStores.getContent();
 
         if (stores.isEmpty()) {
-            throw new APIException(APIErrorCode.API_400,"No vendors is created!!");
+            throw new APIException(APIErrorCode.API_400,"No registered vendors found in database!!");
         }
 
         List<VendorDetailsDTO> storeDTOs = stores.stream().map(store -> modelMapper.map(store, VendorDetailsDTO.class))
                 .collect(Collectors.toList());
 
-        VendorResponse vendorResponse = new VendorResponse();
-        vendorResponse.setContent(storeDTOs);
-        vendorResponse.setPageNumber(pageStores.getNumber());
-        vendorResponse.setPageSize(pageStores.getSize());
-        vendorResponse.setTotalElements(pageStores.getTotalElements());
-        vendorResponse.setTotalPages(pageStores.getTotalPages());
-        vendorResponse.setLastPage(pageStores.isLast());
-
-        return vendorResponse;
+        return new VendorResponse<>(
+                storeDTOs,
+                pageStores.getNumber(),
+                pageStores.getSize(),
+                pageStores.getTotalElements(),
+                pageStores.getTotalPages(),
+                pageStores.isLast()
+        );
     }
 
     @Transactional
@@ -125,12 +122,18 @@ public class VendorService  {
 
     }
 
-    @Cacheable(value =CacheType.CACHE_TYPE_VENDORS,key = "#zipCode")
-    public Map<String, Object> fetchVendorsAndGroupedByCategory(String zipCode,Integer pageNumber,Integer pageSize) {
+    public VendorResponse<VendorBasicDTO> fetchActiveVendorsByZipCode(String zipCode, Integer pageNumber, Integer pageSize) {
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
-
         log.debug("Fetch vendors for zipcode : {}",zipCode);
-        return  fetchVendorsByCategory(repoManager.getVendorRepo().findAllUniqueVendorsWithCategories(zipCode,pageDetails));
+        return  processPaginationResult(repoManager.getVendorRepo().findActiveVendorsByZipCode(zipCode,pageDetails));
+
+    }
+
+    public VendorResponse<VendorBasicDTO> fetchActiveVendorsByZipCodeAndProduct(String zipCode,Long productId, Integer pageNumber, Integer pageSize) {
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
+        log.debug("Fetch vendors for product : {}",productId);
+        return  processPaginationResult(repoManager.getVendorRepo().findActiveVendorsByZipCode(zipCode,pageDetails));
+
     }
 
     @Cacheable(value =CacheType.CACHE_TYPE_VENDORS,key = "'ALL_VENDORS'")
@@ -140,11 +143,39 @@ public class VendorService  {
     }
 
 
+    private  VendorResponse<VendorBasicDTO> processPaginationResult(Page<Object[]> pageResult){
+        List<Object[]> pageStores = pageResult.getContent();
+        List<VendorBasicDTO> vendorsList = new ArrayList<>();
+
+        for (Object[] result : pageStores) {
+            Long vendorId = ((Number) result[0]).longValue();
+            String businessName = (String) result[1];
+            String bannerImage = (String) result[2];
+            String serviceArea = (String) result[3];
+
+            // Cast the category array to a list
+            String[] categoriesArray = (String[]) result[4];
+            List<String> categories = Arrays.asList(categoriesArray);
+
+            // Create VendorCategoryDTO
+            VendorBasicDTO vendor = new VendorBasicDTO(vendorId, businessName, bannerImage, serviceArea, categories);
+            vendorsList.add(vendor);
+        }
+        return new VendorResponse<>(
+                vendorsList,
+                pageResult.getNumber(),
+                pageResult.getSize(),
+                pageResult.getTotalElements(),
+                pageResult.getTotalPages(),
+                pageResult.isLast()
+        );
+    }
+
     private Map<String,Object> fetchVendorsByCategory(List<Object[]> rawResults){
-       if(rawResults==null || rawResults.isEmpty()){
-           log.info("No vendors found");
-           return Collections.emptyMap();
-       }
+        if(rawResults==null || rawResults.isEmpty()){
+            log.info("No vendors found");
+            return Collections.emptyMap();
+        }
         List<VendorBasicDTO> vendorList = new ArrayList<>();
         Map<String, List<VendorBasicDTO>> categoryMap = new HashMap<>();
 

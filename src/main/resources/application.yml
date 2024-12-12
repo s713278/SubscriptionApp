@@ -16,16 +16,16 @@ server:
 #For sorting endpoints alphabetically
 springdoc:
   api-docs:
-    path: /custom-api-docs  # Custom path for OpenAPI documentation instead of /api/v3/api-docs
-    override-with-spec-url: true  # Override the auto-generated spec with your own
-    spec-url: /custom-api-docs/openapi.json
+    #path: /custom-api-docs  # Custom path for OpenAPI documentation instead of /api/v3/api-docs
+    override-with-spec-url: false  # Override the auto-generated spec with your own
+    #spec-url: /custom-api-docs/openapi.json
   #swagger-ui.url: /custom-api-docs/openapi.json
   swagger-ui:
     operationsSorter: alpha          # Sort operations alphabetically
     tagsSorter: alpha                # Sort tags alphabetically
     doc-expansion: false              # Collapse all sections in the Swagger UI by default
-    path: /swagger-ui.html           # Path to access Swagger UI instaed of /swagger-ui/index.html
-    url: /custom-api-docs/openapi.json
+    #path: /swagger-ui.html           # Path to access Swagger UI instaed of /swagger-ui/index.html
+    #url: /custom-api-docs/openapi.json
 logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%X{X-Request-ID}] %-5level %logger{36} - %msg%n"
@@ -64,6 +64,12 @@ spring:
     properties.mail.smtp:
       auth: true
       starttls.enable: true
+  security:
+    cors:
+      allowed-origins: "http://localhost:3000"
+      allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
+      allowed-headers: "*"
+      allow-credentials: true
 application:
   #snr:
     #local_url: http://localhost:8080/api
@@ -112,4 +118,5 @@ application:
     otp_TTL: 5
     otp_max_size: 2500
   images_path: images/
+
 

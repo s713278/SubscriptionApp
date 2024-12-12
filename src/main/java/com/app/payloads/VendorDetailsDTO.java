@@ -1,17 +1,19 @@
 package com.app.payloads;
 
+import java.io.Serializable;
+
 import com.app.entites.type.VendorStatus;
 import com.app.entites.type.VerificationStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
 
-import java.io.Serializable;
+import lombok.Data;
 
 
 @Data
 public class VendorDetailsDTO  implements Serializable {
 
+    @JsonProperty("vendor_id")
     private Long id;
 
     @JsonProperty("contact_number")
@@ -24,7 +26,7 @@ public class VendorDetailsDTO  implements Serializable {
     @JsonProperty("business_name")
     private String businessName;
 
-    @JsonProperty("support_number")
+    @JsonProperty("support_email")
     private String email;
 
     private VendorStatus status;

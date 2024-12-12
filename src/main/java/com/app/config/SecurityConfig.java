@@ -1,11 +1,7 @@
 package com.app.config;
 
-import com.app.security.AppFilter;
-import com.app.security.CustomAccessDeniedHandler;
-import com.app.security.CustomAuthenticationEntryPoint;
-import com.app.security.JWTFilter;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -23,11 +19,34 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import com.app.security.AppFilter;
+import com.app.security.CustomAccessDeniedHandler;
+import com.app.security.CustomAuthenticationEntryPoint;
+import com.app.security.JWTFilter;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
+
+    @Value("${spring.security.cors.allowed-origins}")
+    private String allowedOrigins;
+
+    @Value("${spring.security.cors.allowed-methods}")
+    private String allowedMethods;
+
+    @Value("${spring.security.cors.allowed-headers}")
+    private String allowedHeaders;
+
+    @Value("${spring.security.cors.allow-credentials}")
+    private boolean allowCredentials;
+
 
     @Autowired
     private JWTFilter jwtFilter;
@@ -50,7 +69,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 // Disable CSRF since we're using tokens (JWT, session cookies) in REST APIs
-                .csrf(AbstractHttpConfigurer::disable).cors(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource())
+                )
                 // Allow stateless sessions or create sessions on login
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // Authorization rules
@@ -131,5 +152,18 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin(allowedOrigins);
+        configuration.addAllowedMethod(allowedMethods); // Allow all HTTP methods
+        configuration.addAllowedHeader(allowedHeaders);
+        configuration.setAllowCredentials(allowCredentials);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }

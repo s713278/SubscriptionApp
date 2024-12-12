@@ -1,12 +1,14 @@
 package com.app.entites.type;
 
+import java.util.Map;
+
+import org.springframework.stereotype.Component;
+
 import com.app.payloads.AddressDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j

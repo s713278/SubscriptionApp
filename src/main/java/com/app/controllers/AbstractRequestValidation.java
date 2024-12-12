@@ -1,12 +1,13 @@
 package com.app.controllers;
 
-import com.app.exceptions.APIErrorCode;
-import com.app.exceptions.APIException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.app.exceptions.APIErrorCode;
+import com.app.exceptions.APIException;
 
 public abstract class AbstractRequestValidation {
 

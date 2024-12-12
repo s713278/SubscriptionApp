@@ -1,9 +1,10 @@
 package com.app.payloads;
 
-import com.app.entites.type.SubFrequency;
-import lombok.Data;
-
 import java.util.List;
+
+import com.app.entites.type.SubFrequency;
+
+import lombok.Data;
 
 @Data
 public class SubscriptionItemDto {

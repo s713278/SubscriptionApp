@@ -1,9 +1,10 @@
 package com.app.event;
 
-import lombok.Getter;
+import java.io.Serial;
+
 import org.springframework.context.ApplicationEvent;
 
-import java.io.Serial;
+import lombok.Getter;
 
 @Getter
 public class MobileActivationEvent extends ApplicationEvent {

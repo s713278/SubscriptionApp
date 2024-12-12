@@ -9,6 +9,8 @@ public enum APIErrorCode {
 
     // General Errors
     API_404(HttpStatus.NOT_FOUND, "No data found!!"),
+    API_405(HttpStatus.NOT_FOUND, "No registered vendors found in this area!!"),
+
     API_400(HttpStatus.BAD_REQUEST, "Please check the request and try again!!"),
     API_401(HttpStatus.UNAUTHORIZED, "User authentication failed!!"),
     API_403(HttpStatus.FORBIDDEN, "User authorization failed!!"),

@@ -1,7 +1,8 @@
 package com.app;
 
-import com.app.repositories.RoleRepo;
-import lombok.extern.slf4j.Slf4j;
+import java.time.ZoneId;
+import java.util.TimeZone;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -11,8 +12,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-import java.time.ZoneId;
-import java.util.TimeZone;
+import com.app.repositories.RoleRepo;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @SpringBootApplication

@@ -1,5 +1,16 @@
 package com.app.services.auth.signup;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.app.config.AppConstants;
 import com.app.config.GlobalConfig;
 import com.app.entites.Customer;
@@ -10,16 +21,6 @@ import com.app.payloads.request.EmailSignUpRequest;
 import com.app.payloads.response.SignUpDTO;
 import com.app.repositories.RepositoryManager;
 import com.app.services.ServiceManager;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Transactional
 @Service(value = "emailSignUpService")

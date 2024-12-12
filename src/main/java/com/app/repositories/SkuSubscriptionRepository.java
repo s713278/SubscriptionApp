@@ -1,11 +1,12 @@
 package com.app.repositories;
 
-import com.app.entites.SkuSubscription;
-import com.app.entites.type.SubFrequency;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import com.app.entites.SkuSubscription;
+import com.app.entites.type.SubFrequency;
 
 @Repository
 public interface SkuSubscriptionRepository extends JpaRepository<SkuSubscription, Long> {

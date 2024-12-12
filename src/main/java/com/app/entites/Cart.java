@@ -1,11 +1,11 @@
 package com.app.entites;
 
-import jakarta.persistence.*;
-import lombok.Data;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
 @Data

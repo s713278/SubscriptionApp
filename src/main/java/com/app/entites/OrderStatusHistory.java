@@ -1,11 +1,12 @@
 package com.app.entites;
 
+import java.time.LocalDateTime;
+
 import com.app.entites.type.OrderStatus;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter

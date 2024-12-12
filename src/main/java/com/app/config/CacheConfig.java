@@ -1,12 +1,14 @@
 package com.app.config;
 
-import com.github.benmanes.caffeine.cache.Caffeine;
-import lombok.AllArgsConstructor;
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.concurrent.TimeUnit;
+import com.github.benmanes.caffeine.cache.Caffeine;
+
+import lombok.AllArgsConstructor;
 
 @Configuration
 @EnableCaching
