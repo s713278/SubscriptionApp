@@ -1,7 +1,14 @@
 package com.app.entites;
 
+import java.io.Serializable;
+import java.util.List;
+
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+
 import com.app.entites.type.SkuType;
 import com.app.entites.type.SubFrequency;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -9,11 +16,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.dialect.PostgreSQLEnumJdbcType;
-
-import java.io.Serializable;
-import java.util.List;
 
 @EqualsAndHashCode(callSuper = false)
 @Entity

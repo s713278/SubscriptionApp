@@ -1,16 +1,17 @@
 package com.app.services.auth.signup;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import com.app.config.GlobalConfig;
 import com.app.constants.NotificationType;
 import com.app.payloads.request.SignUpRequest;
 import com.app.payloads.response.SignUpDTO;
 import com.app.repositories.RepositoryManager;
 import com.app.services.ServiceManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 public abstract class AbstractSignUpService<T extends SignUpRequest> {
 

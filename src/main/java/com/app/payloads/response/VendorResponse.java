@@ -1,21 +1,29 @@
 package com.app.payloads.response;
 
-import com.app.payloads.VendorDetailsDTO;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.util.List;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class VendorResponse {
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-    private List<VendorDetailsDTO> content;
-    private Integer pageNumber;
-    private Integer pageSize;
-    private Long totalElements;
-    private Integer totalPages;
-    private boolean lastPage;
+
+
+public record VendorResponse<T> (
+        @JsonProperty("result")
+        List<T> content,
+
+    @JsonProperty("page_number")
+     Integer pageNumber,
+
+     @JsonProperty("page_size")
+     Integer pageSize,
+
+     @JsonProperty("total_elements")
+     Long totalElements,
+
+     @JsonProperty("total_pages")
+     Integer totalPages,
+
+     @JsonProperty("last_page")
+     boolean lastPage
+){
+
 }

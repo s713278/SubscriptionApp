@@ -1,12 +1,13 @@
 package com.app.repositories;
 
-import com.app.AbstractBaseConfig;
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import com.app.AbstractBaseConfig;
 
 @Transactional
 class SkuPriceRepositoryTest extends AbstractBaseConfig {

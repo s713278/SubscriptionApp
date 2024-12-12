@@ -1,14 +1,16 @@
 package com.app.services.auth.signin;
 
-import com.app.entites.Customer;
-import com.app.payloads.request.SignInRequest;
-import com.app.payloads.response.AuthDetailsDTO;
-import com.app.services.auth.dto.AuthUserDetails;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import com.app.entites.Customer;
+import com.app.payloads.request.SignInRequest;
+import com.app.payloads.response.AuthDetailsDTO;
+import com.app.services.auth.dto.AuthUserDetails;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor

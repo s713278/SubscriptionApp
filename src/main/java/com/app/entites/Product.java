@@ -1,6 +1,9 @@
 package com.app.entites;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -8,8 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
 
 @EqualsAndHashCode(callSuper = false)
 @Entity

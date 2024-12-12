@@ -1,12 +1,13 @@
 package com.app.entites;
 
-import jakarta.persistence.*;
-import lombok.Data;
+import java.io.Serializable;
+import java.util.Map;
+
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.io.Serializable;
-import java.util.Map;
+import jakarta.persistence.*;
+import lombok.Data;
 
 @Data
 @Entity

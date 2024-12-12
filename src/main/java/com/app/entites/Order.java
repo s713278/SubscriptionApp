@@ -1,17 +1,19 @@
 package com.app.entites;
 
+import java.io.Serial;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+
 import com.app.entites.type.OrderStatus;
 import com.app.entites.type.PaymentStatus;
+
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.dialect.PostgreSQLEnumJdbcType;
-
-import java.io.Serial;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity

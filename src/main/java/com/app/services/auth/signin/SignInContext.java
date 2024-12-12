@@ -1,15 +1,17 @@
 package com.app.services.auth.signin;
 
+import java.util.Arrays;
+
+import org.springframework.stereotype.Component;
+
 import com.app.constants.SignInType;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.payloads.request.SignInRequest;
 import com.app.payloads.response.AuthDetailsDTO;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
 
 @Slf4j
 @RequiredArgsConstructor

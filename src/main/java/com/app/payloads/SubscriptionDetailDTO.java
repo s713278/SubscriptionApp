@@ -1,9 +1,9 @@
 package com.app.payloads;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record SubscriptionDetailDTO(
     Long subscriptionId,

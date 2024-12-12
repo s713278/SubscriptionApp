@@ -1,9 +1,9 @@
 package com.app.entites.type;
 
+import java.util.Arrays;
+
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
-
-import java.util.Arrays;
 
 public enum VendorStatus {
 
