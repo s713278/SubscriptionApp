@@ -1,5 +1,8 @@
 package com.app.config;
 
+import java.time.Duration;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -7,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,6 +31,7 @@ import com.app.security.AppFilter;
 import com.app.security.CustomAccessDeniedHandler;
 import com.app.security.CustomAuthenticationEntryPoint;
 import com.app.security.JWTFilter;
+import com.app.services.constants.MDCConstants;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -35,18 +40,8 @@ import jakarta.servlet.http.HttpServletResponse;
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-    @Value("${spring.security.cors.allowed-origins}")
-    private String allowedOrigins;
-
-    @Value("${spring.security.cors.allowed-methods}")
-    private String allowedMethods;
-
-    @Value("${spring.security.cors.allowed-headers}")
-    private String allowedHeaders;
-
-    @Value("${spring.security.cors.allow-credentials}")
-    private boolean allowCredentials;
-
+    @Autowired
+    private CorsConfig corsConfig;
 
     @Autowired
     private JWTFilter jwtFilter;
@@ -70,8 +65,7 @@ public class SecurityConfig {
         http
                 // Disable CSRF since we're using tokens (JWT, session cookies) in REST APIs
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource())
-                )
+                .cors(corsConfig->corsConfig.configurationSource(corsConfigurationSource()))
                 // Allow stateless sessions or create sessions on login
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // Authorization rules
@@ -156,14 +150,16 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin(allowedOrigins);
-        configuration.addAllowedMethod(allowedMethods); // Allow all HTTP methods
-        configuration.addAllowedHeader(allowedHeaders);
-        configuration.setAllowCredentials(allowCredentials);
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(corsConfig.getAllowedOrigins());
+        config.setAllowedMethods(corsConfig.getAllowedMethods());
+        config.setAllowCredentials(corsConfig.isAllowCredentials());
+        config.setMaxAge(Duration.ofMinutes(10));
+        config.setAllowedHeaders(corsConfig.getAllowedHeaders());
+        config.setExposedHeaders(corsConfig.getExposedHeaders());
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/**", config);
         return source;
     }
 }
