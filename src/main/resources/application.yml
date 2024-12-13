@@ -134,6 +134,6 @@ application:
     db_data_max_size: 5000
     otp_TTL: 5
     otp_max_size: 2500
-  images_path: images/
+  image_path: images/
 
 

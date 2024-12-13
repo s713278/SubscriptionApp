@@ -11,5 +11,7 @@ public record VendorBasicDTO(
      @JsonProperty("service_area") String serviceArea,
         @JsonProperty("category") List<String> categories
 ){
-
+    public VendorBasicDTO() {
+        this(0L, "Default Business", null, null, List.of());
+    }
 }

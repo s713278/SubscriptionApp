@@ -20,6 +20,7 @@ public class GlobalConfig {
     private CacheConfig cacheConfig;
     private Map<String,ProviderConfig> smsProviders;
     private SubscriptionConfig subscriptionConfig;
+    private String imagePath;
     
     @Getter
     @Setter

@@ -93,11 +93,4 @@ public class VendorListingController {
         return new ResponseEntity<>(APIResponse.success(vendorResponse),HttpStatus.OK);
     }
 
-    @Operation(summary = "Fetch Subscriptions By Vendor ID")
-    @GetMapping("/{vendorId}/subs")
-    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('VENDOR'))")
-    public ResponseEntity<APIResponse<?>> fetchSubsByVendorId( @PathVariable Long vendorId) {
-       var subscriptions = serviceManager.getSubscriptionService().fetchSubsByVendor(vendorId);
-        return ResponseEntity.ok(APIResponse.success(subscriptions));
-    }
 }

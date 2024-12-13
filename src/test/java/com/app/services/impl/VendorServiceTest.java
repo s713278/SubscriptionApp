@@ -71,7 +71,6 @@ class VendorServiceTest extends AbstractBaseConfig {
     @Test
     void fetchVendorById() {
         var vendorResponse= vendorService.fetchVendorById(vendorId);
-
         assertAll(()->{
             assertNotNull(vendorResponse);
             assertEquals(vendorId,vendorResponse.getId());
