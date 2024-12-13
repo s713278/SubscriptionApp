@@ -1,6 +1,7 @@
 package com.app.payloads;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import com.app.entites.type.VendorStatus;
 import com.app.entites.type.VerificationStatus;
@@ -32,4 +33,10 @@ public class VendorDetailsDTO  implements Serializable {
     private VendorStatus status;
     @JsonProperty("verification_status")
     private VerificationStatus verificationStatus;
+
+    @JsonProperty("owner_name")
+    private String ownerName;
+
+    @JsonProperty("service_areas")
+    private Map<String, Object> serviceAreas;
 }

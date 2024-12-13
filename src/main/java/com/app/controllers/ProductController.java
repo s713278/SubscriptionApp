@@ -16,14 +16,12 @@ import com.app.payloads.response.ProductResponse;
 import com.app.services.ProductService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
-@Tag(name = "8. Product Management")
-@RestController
-@RequestMapping("/vendor/{vendor_id}")
+//@Slf4j
+//@Tag(name = "8. Product Management")
+//@RestController
+//@RequestMapping("/products")
 @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
 public class ProductController {
 

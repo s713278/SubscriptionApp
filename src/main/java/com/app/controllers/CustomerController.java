@@ -95,22 +95,7 @@ public class CustomerController {
         return ResponseEntity.ok(APIResponse.success("Address updated successfully."));
     }
 
-    @Operation(summary = "Fetch Subscriptions By User ID")
-    @GetMapping("/{userId}/subs")
-    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
-    public ResponseEntity<APIResponse<?>> fetchAllSubsByUserId( @PathVariable Long userId) {
-        var subscriptions = subscriptionService.fetchSubsByUserId(userId);
-        return ResponseEntity.ok(APIResponse.success(subscriptions));
-    }
 
-    @Operation(summary = "Fetch Subscriptions By Vendor and User")
-    @GetMapping("/{userId}/vendor/{vendorId}")
-    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
-    public ResponseEntity<APIResponse<?>> fetchSubsByUserAndVendor( @PathVariable Long vendorId,
-            @PathVariable Long userId) {
-        var subscriptions = subscriptionService.fetchSubsByUserAndVendor(userId, vendorId);
-        return ResponseEntity.ok(APIResponse.success(subscriptions));
-    }
 
     @PatchMapping("/{userId}/mobile")
     @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")

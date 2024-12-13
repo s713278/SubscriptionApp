@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.app.config.GlobalConfig;
 import com.app.entites.Cart;
 import com.app.entites.Category;
 import com.app.entites.Product;
@@ -55,8 +55,7 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ModelMapper modelMapper;
 
-    @Value("${application.images_path}")
-    private String path;
+    private GlobalConfig globalConfig;
 
     @Override
     public ProductDTO addProduct(Long categoryId, Product product) {
@@ -194,7 +193,7 @@ public class ProductServiceImpl implements ProductService {
         List<CartDTO> cartDTOs = carts.stream().map(cart -> {
             CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
             return cartDTO;
-        }).collect(Collectors.toList());
+        }).toList();
         cartDTOs.forEach(cart -> cartService.updateProductInCarts(cart.getCartId(), productId));
         return modelMapper.map(savedProduct, ProductDTO.class);
     }
@@ -207,7 +206,7 @@ public class ProductServiceImpl implements ProductService {
         if (productFromDB == null) {
             throw new APIException(APIErrorCode.API_400,"Product not found with productId: " + productId);
         }
-        String fileName = fileService.uploadImage(path, image);
+        String fileName = fileService.uploadImage(globalConfig.getImagePath(), image);
         productFromDB.setImagePath(fileName);
         Product updatedProduct = productRepo.save(productFromDB);
         return modelMapper.map(updatedProduct, ProductDTO.class);
