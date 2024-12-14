@@ -7,7 +7,7 @@ import com.app.exceptions.APIException;
 
 public enum VendorStatus {
 
-    NEW,ACTIVE, DELETED, SUSPENDED;
+    ACTIVE, INACTIVE, SUSPENDED;
 
     public static VendorStatus valueFromString(String status){
         try{

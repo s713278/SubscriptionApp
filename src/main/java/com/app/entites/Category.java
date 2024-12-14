@@ -23,7 +23,9 @@ public class Category implements Serializable {
     @NotBlank
     @Size(min = 5, message = "Category name must contain atleast 5 characters")
     private String name;
-    
+
+    private String imagePath;
+
     private String description;
 
     @ManyToOne

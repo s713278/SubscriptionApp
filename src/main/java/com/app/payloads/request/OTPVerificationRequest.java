@@ -15,9 +15,11 @@ public class OTPVerificationRequest {
     @JsonProperty("country_code")
     private String  countryCode;
 
+    @Schema(example = "9912149049")
     @JsonProperty("mobile_number")
     private Long mobile;
 
+    @Schema(example = "9090")
     @NotBlank(message="OTP is required!")
     @JsonProperty("otp")
     private String otp;
