@@ -186,7 +186,7 @@ public class ProductServiceImpl implements ProductService {
             throw new APIException(APIErrorCode.API_400,"Product not found with productId: " + productId);
         }
         product.setImagePath(productFromDB.getImagePath());
-        product.setProductId(productId);
+        product.setId(productId);
         product.setCategory(productFromDB.getCategory());
         Product savedProduct = productRepo.save(product);
         List<Cart> carts = cartRepo.findCartsBySkuId(productId);

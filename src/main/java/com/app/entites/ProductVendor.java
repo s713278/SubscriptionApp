@@ -2,6 +2,8 @@ package com.app.entites;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -21,5 +23,7 @@ public class ProductVendor implements Serializable {
     @ManyToOne
     @JoinColumn(name = "vendor_id", nullable = false)
     private Vendor vendor;
+
+    private ObjectNode features;
 
 }

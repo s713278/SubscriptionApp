@@ -21,6 +21,7 @@ public class GlobalConfig {
     private Map<String,ProviderConfig> smsProviders;
     private SubscriptionConfig subscriptionConfig;
     private String imagePath;
+    private Set<String> businessTypes;
     
     @Getter
     @Setter

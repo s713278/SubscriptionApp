@@ -83,11 +83,8 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDTO updateCategory(CategoryDTO category, Long categoryId) {
         Category savedCategory = categoryRepo.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
-
-        category.setId(categoryId);
-
+       // category.setId(categoryId);
         savedCategory = categoryRepo.save(modelMapper.map(category, Category.class));
-
         return modelMapper.map(savedCategory, CategoryDTO.class);
     }
 
@@ -99,7 +96,7 @@ public class CategoryServiceImpl implements CategoryService {
         List<Product> products = null;//category.getProducts();
 
         products.forEach(product -> {
-            productService.deleteProduct(product.getProductId());
+            productService.deleteProduct(product.getId());
         });
 
         categoryRepo.delete(category);

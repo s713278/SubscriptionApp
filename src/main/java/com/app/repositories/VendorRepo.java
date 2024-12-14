@@ -30,18 +30,22 @@ public interface VendorRepo extends JpaRepository<Vendor, Long> {
     List<Vendor> findByServiceArea(@Param("substring") String substring);
 
     @Query(value = """
-        SELECT 
-            tv.id AS vendor_id, 
-            tv.business_name, 
-            tv.banner_image, 
-            tv.service_area, 
+        SELECT
+            tv.id AS vendor_id,
+            tv.business_name,
+            tv.banner_image,
+            tv.service_area,
             ARRAY_AGG(DISTINCT tc.name) AS categories
-        FROM 
-            tb_vendor tv
-        JOIN 
-            tb_category tc 
-        ON 
-            tv.id = tc.vendor_id
+        FROM
+              tb_vendor tv
+          JOIN
+              tb_category_vendor tcv
+          ON
+              tv.id = tcv.vendor_id
+          JOIN
+              tb_category tc
+          ON
+              tcv.category_id = tc.id
         WHERE 
             tv.status = 'ACTIVE'
         GROUP BY 
@@ -56,12 +60,16 @@ public interface VendorRepo extends JpaRepository<Vendor, Long> {
               tv.banner_image,
               tv.service_area,
               ARRAY_AGG(DISTINCT tc.name) AS categories
-          FROM
+         FROM
               tb_vendor tv
+          JOIN
+              tb_category_vendor tcv
+          ON
+              tv.id = tcv.vendor_id
           JOIN
               tb_category tc
           ON
-              tv.id = tc.vendor_id
+              tcv.category_id = tc.id
           WHERE
               tv.status = 'ACTIVE'
               AND EXISTS (
@@ -84,9 +92,13 @@ public interface VendorRepo extends JpaRepository<Vendor, Long> {
           FROM
               tb_vendor tv
           JOIN
+              tb_category_vendor tcv
+          ON
+              tv.id = tcv.vendor_id
+          JOIN
               tb_category tc
           ON
-              tv.id = tc.vendor_id
+              tcv.category_id = tc.id
           WHERE
               tv.status = 'ACTIVE'
               AND EXISTS (

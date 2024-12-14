@@ -135,5 +135,11 @@ application:
     otp_TTL: 5
     otp_max_size: 2500
   image_path: images/
+  business_types:
+    - Agriculture
+    - Mechanics and Repair
+    - Services
+    - Handicrafts
+
 
 

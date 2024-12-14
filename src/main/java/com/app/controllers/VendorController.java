@@ -1,13 +1,17 @@
 package com.app.controllers;
 
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.app.config.AppConstants;
 import com.app.payloads.VendorDetailsDTO;
 import com.app.payloads.response.APIResponse;
 import com.app.services.ServiceManager;
+import com.app.services.validator.AddressValidator;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,12 +28,15 @@ import lombok.extern.slf4j.Slf4j;
 public class VendorController {
 
     private final ServiceManager serviceManager;
+    private final AddressValidator addressValidator;
 
     @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
     @PostMapping("/")
-    public ResponseEntity<APIResponse<VendorDetailsDTO>> createStore(@Valid @RequestBody VendorDetailsDTO storeDTO) {
-        return new ResponseEntity<>(serviceManager.getVendorService().createVendor(storeDTO), HttpStatus.CREATED);
+    public ResponseEntity<APIResponse<?>> createUpdate(@Valid @RequestBody VendorDetailsDTO storeDTO) {
+        var vendorId =serviceManager.getVendorService().createVendor(storeDTO);
+        return new ResponseEntity<>(APIResponse.success(vendorId), HttpStatus.CREATED);
     }
+
 
     @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
     @PutMapping("/{vendorId}")
@@ -44,4 +51,11 @@ public class VendorController {
         return new ResponseEntity<>(serviceManager.getVendorService().deleteVendor(vendorId), HttpStatus.OK);
     }
 
+    @PatchMapping("/{vendorId}")
+    @PreAuthorize("#vendorId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
+    public ResponseEntity<APIResponse<?>> updateBusinessAddress(@PathVariable Long vendorId,
+                                                            @RequestBody Map<String,String> address) {
+        addressValidator.validateAddress(vendorId, address);
+        return ResponseEntity.ok(APIResponse.success("Business address updated successfully."));
+    }
 }
