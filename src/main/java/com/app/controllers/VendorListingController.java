@@ -1,5 +1,6 @@
 package com.app.controllers;
 
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,9 +34,11 @@ public class VendorListingController {
         return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService().fetchVendorsAndGroupedByCategory()),HttpStatus.OK);
     }
 
-    @Operation(summary = "Vendor's listing by zipcode")
+    //TODO : Enhance this to accept categoryId as optional value
+    @Operation(summary = "Vendor's listing by zipcode and/or category")
     @GetMapping("/{zipCode}")
     public ResponseEntity<APIResponse<?>> fetchActiveVendorsByZipCode(@PathVariable String zipCode,
+                                                                         @RequestParam(required = false) Long categoryId,
                                                                          @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
                                                                          @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize
                                                                         ) {
@@ -43,17 +46,6 @@ public class VendorListingController {
         return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService().fetchActiveVendorsByZipCode(zipCode,pageNumber,pageSize)),HttpStatus.OK);
     }
 
-    @Operation(summary = "Vendor's listing by zipcode and category")
-    @GetMapping("/{zipCode}/{categoryId}")
-    public ResponseEntity<APIResponse<?>> fetchActiveVendorsByCategory(@PathVariable String zipCode,
-                                                                      @PathVariable Long categoryId,
-                                                                      @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
-                                                                      @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize
-    ) {
-        log.debug("Request received for fetching vendors for categoryId : {}",categoryId);
-        return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService()
-                .fetchActiveVendorsByZipCodeAndProduct(zipCode,categoryId,pageNumber,pageSize)),HttpStatus.OK);
-    }
 
     @Operation(summary = "Vendors search by zipcode and product name")
     @GetMapping("/{zipCode}/{productName}")

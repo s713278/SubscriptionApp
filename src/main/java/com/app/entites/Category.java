@@ -28,8 +28,8 @@ public class Category implements Serializable {
 
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "vendor_id")
-    private Vendor vendor;
+    //@ManyToOne
+    //@JoinColumn(name = "vendor_id")
+    //private Vendor vendor;
 
    }
