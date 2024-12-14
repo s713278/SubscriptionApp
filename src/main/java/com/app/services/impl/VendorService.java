@@ -37,9 +37,9 @@ public class VendorService  {
     private final RepositoryManager repoManager;
 
     @Transactional
-    public APIResponse<VendorDetailsDTO> createVendor(VendorDetailsDTO storeDTO) {
-        Vendor storeEntity = repoManager.getVendorRepo().save(modelMapper.map(storeDTO, Vendor.class));
-        return APIResponse.success(HttpStatus.CREATED.value(), modelMapper.map(storeEntity, VendorDetailsDTO.class));
+    public Long createVendor(VendorDetailsDTO vendorDetailsDTO) {
+        Vendor storeEntity = repoManager.getVendorRepo().save(modelMapper.map(vendorDetailsDTO, Vendor.class));
+        return storeEntity.getId();
     }
 
     public VendorResponse<VendorDetailsDTO> fetchAllVendors(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
