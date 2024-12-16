@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.app.constants.CacheType;
 import com.app.entites.Vendor;
+import com.app.entites.type.ApprovalStatus;
 import com.app.entites.type.VendorStatus;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
@@ -22,7 +23,8 @@ import com.app.exceptions.ResourceNotFoundException;
 import com.app.payloads.VendorBasicDTO;
 import com.app.payloads.VendorDetailsDTO;
 import com.app.payloads.response.APIResponse;
-import com.app.payloads.response.VendorResponse;
+import com.app.payloads.response.CreateItemResponse;
+import com.app.payloads.response.VendorListingResponse;
 import com.app.repositories.RepositoryManager;
 
 import lombok.RequiredArgsConstructor;
@@ -37,12 +39,12 @@ public class VendorService  {
     private final RepositoryManager repoManager;
 
     @Transactional
-    public Long createVendor(VendorDetailsDTO vendorDetailsDTO) {
+    public CreateItemResponse createVendor(VendorDetailsDTO vendorDetailsDTO) {
         Vendor storeEntity = repoManager.getVendorRepo().save(modelMapper.map(vendorDetailsDTO, Vendor.class));
-        return storeEntity.getId();
+        return new CreateItemResponse(storeEntity.getId(),"Vendor created successfully.");
     }
 
-    public VendorResponse<VendorDetailsDTO> fetchAllVendors(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+    public VendorListingResponse<VendorDetailsDTO> fetchAllVendors(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
@@ -56,7 +58,7 @@ public class VendorService  {
         List<VendorDetailsDTO> storeDTOs = stores.stream().map(store -> modelMapper.map(store, VendorDetailsDTO.class))
                 .collect(Collectors.toList());
 
-        return new VendorResponse<>(
+        return new VendorListingResponse<>(
                 storeDTOs,
                 pageStores.getNumber(),
                 pageStores.getSize(),
@@ -67,13 +69,13 @@ public class VendorService  {
     }
 
     @Transactional
-    public APIResponse<VendorDetailsDTO> updateStore(VendorDetailsDTO storeDTO, Long storeId) {
+    public CreateItemResponse updateVendor(VendorDetailsDTO storeDTO, Long storeId) {
         Vendor savedStore =  repoManager.getVendorRepo().findById(storeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Store", "storeId", storeId));
         modelMapper.map(storeDTO, savedStore);
         savedStore.setId(storeId);
         savedStore =  repoManager.getVendorRepo().save(savedStore);
-        return APIResponse.success(HttpStatus.OK.value(), modelMapper.map(savedStore, VendorDetailsDTO.class));
+        return new CreateItemResponse(storeId,"Vendor information updated successfully.");
     }
 
     @Transactional
@@ -112,7 +114,7 @@ public class VendorService  {
 
     //@Cacheable(value =CacheType.CACHE_TYPE_VENDORS,key = "#serviceArea")
     public List<VendorDetailsDTO> fetchVendorsByServiceArea(String serviceArea) {
-       var vendorsList =   repoManager.getVendorRepo().findByServiceArea(serviceArea);
+        var vendorsList =   repoManager.getVendorRepo().findByServiceArea(serviceArea);
         return vendorsList.stream().map(vendor->modelMapper.map(vendor, VendorDetailsDTO.class)).toList();
     }
 
@@ -123,6 +125,8 @@ public class VendorService  {
     }
 
     public VendorResponse<VendorBasicDTO> fetchActiveVendorsByZipCode(String zipCode, Long categoryId, Integer pageNumber, Integer pageSize) {
+
+    public VendorListingResponse<VendorBasicDTO> fetchActiveVendorsByZipCode(String zipCode, Integer pageNumber, Integer pageSize) {
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
         log.debug("Fetch vendors for zipcode : {}",zipCode);
         if(categoryId == null)
@@ -132,7 +136,7 @@ public class VendorService  {
 
     }
 
-    public VendorResponse<VendorBasicDTO> fetchActiveVendorsByZipCodeAndProduct(String zipCode,Long productId, Integer pageNumber, Integer pageSize) {
+    public VendorListingResponse<VendorBasicDTO> fetchActiveVendorsByZipCodeAndProduct(String zipCode, Long productId, Integer pageNumber, Integer pageSize) {
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
         log.debug("Fetch vendors for product : {}",productId);
         return  processPaginationResult(repoManager.getVendorRepo().findActiveVendorsByZipCode(zipCode,pageDetails));
@@ -146,7 +150,7 @@ public class VendorService  {
     }
 
 
-    private  VendorResponse<VendorBasicDTO> processPaginationResult(Page<Object[]> pageResult){
+    private VendorListingResponse<VendorBasicDTO> processPaginationResult(Page<Object[]> pageResult){
         List<Object[]> pageStores = pageResult.getContent();
         List<VendorBasicDTO> vendorsList = new ArrayList<>();
 
@@ -164,7 +168,7 @@ public class VendorService  {
             VendorBasicDTO vendor = new VendorBasicDTO(vendorId, businessName, bannerImage, serviceArea, categories);
             vendorsList.add(vendor);
         }
-        return new VendorResponse<>(
+        return new VendorListingResponse<>(
                 vendorsList,
                 pageResult.getNumber(),
                 pageResult.getSize(),
@@ -211,4 +215,38 @@ public class VendorService  {
         return response;
     }
 
+    @Transactional(readOnly = false)
+    public void updateApprovalStatus(Long vendorId, ApprovalStatus approvalStatus) {
+        log.debug("DB update request for vendor's approval status of user_id : {} ",vendorId);
+        var isExisted = repoManager.getVendorRepo().existsById(vendorId);
+        if(!isExisted){
+            throw new APIException(APIErrorCode.API_404, "Vendor details not defined in system for user " + vendorId);
+        }
+        VendorStatus vendorStatus= VendorStatus.INACTIVE;
+        if (Objects.requireNonNull(approvalStatus) == ApprovalStatus.ACCEPTED) {
+            vendorStatus = VendorStatus.ACTIVE;
+        }
+        repoManager.getVendorRepo().updateApprovalStatus(vendorId,approvalStatus,vendorStatus);
+    }
+
+    @Transactional(readOnly = false)
+    public void updateVendorStatus(Long vendorId, VendorStatus vendorStatus) {
+        log.debug("DB update request for vendor's status of user_id : {} ",vendorId);
+        var isExisted = repoManager.getVendorRepo().existsById(vendorId);
+        if(!isExisted){
+            throw new APIException(APIErrorCode.API_404, "Vendor details not defined in system for user " + vendorId);
+        }
+        repoManager.getVendorRepo().updateVendorStatus(vendorId,vendorStatus);
+    }
+
+    @Transactional(readOnly = false)
+    public void assignCategories(Long vendorId, Long[] categories)  {
+
+    }
+
+
+    @Transactional(readOnly = false)
+    public void assignProducts(Long vendorId, Long[] products)  {
+
+    }
 }

@@ -2,8 +2,6 @@ package com.app.entites;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -25,7 +23,7 @@ public class Product extends AbstractAuditingEntity<Long> implements Serializabl
     private Long id;
 
     @NotBlank
-    @Size(min = 3, message = "Product name must contain atleast 3 characters")
+    @Size(min = 3, message = "Product name must contain at least 3 characters")
     private String name;
 
     private String imagePath;
@@ -37,8 +35,6 @@ public class Product extends AbstractAuditingEntity<Long> implements Serializabl
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
-
-    private ObjectNode features;
 
     @Override
     public Long getId() {

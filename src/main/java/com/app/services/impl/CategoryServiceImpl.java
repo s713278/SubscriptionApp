@@ -17,7 +17,9 @@ import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.payloads.CategoryDTO;
+import com.app.payloads.CategoryWithProductsDTO;
 import com.app.payloads.response.CategoryResponse;
+import com.app.payloads.response.CreateItemResponse;
 import com.app.repositories.CategoryRepo;
 import com.app.services.CategoryService;
 import com.app.services.ProductService;
@@ -38,7 +40,7 @@ public class CategoryServiceImpl implements CategoryService {
     private ModelMapper modelMapper;
 
     @Override
-    public CategoryDTO createCategory(CategoryDTO categoryDTO) {
+    public CreateItemResponse createCategory(CategoryDTO categoryDTO) {
         Category category = modelMapper.map(categoryDTO, Category.class);
         Category savedCategory = categoryRepo.findByNameIgnoreCase(category.getName());
         if (savedCategory != null) {
@@ -46,7 +48,7 @@ public class CategoryServiceImpl implements CategoryService {
                     "Category with the name '" + category.getName() + "' already exists !!!");
         }
         savedCategory = categoryRepo.save(category);
-        return modelMapper.map(savedCategory, CategoryDTO.class);
+        return new CreateItemResponse(savedCategory.getId(),"Category created successfully");
     }
 
     @Override
@@ -80,12 +82,9 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDTO updateCategory(CategoryDTO category, Long categoryId) {
-        Category savedCategory = categoryRepo.findById(categoryId)
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
-       // category.setId(categoryId);
-        savedCategory = categoryRepo.save(modelMapper.map(category, Category.class));
-        return modelMapper.map(savedCategory, CategoryDTO.class);
+    public CreateItemResponse updateCategory(CategoryDTO category, Long categoryId) {
+        Category savedCategory  = categoryRepo.save(modelMapper.map(category, Category.class));
+        return new CreateItemResponse(savedCategory.getId(),"Category updated successfully");
     }
 
     @Override
@@ -102,5 +101,17 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepo.delete(category);
 
         return "Category with categoryId: " + categoryId + " deleted successfully !!!";
+    }
+
+    public List<CategoryWithProductsDTO> getCategoryProductMapping() {
+        return categoryRepo.findAll().stream()
+                .map(category -> new CategoryWithProductsDTO(
+                        category.getId(),
+                        category.getName(),
+                        category.getProducts().stream()
+                                .map(product -> new CategoryWithProductsDTO.Data(product.getId(), product.getName()))
+                                .collect(Collectors.toList())
+                ))
+                .collect(Collectors.toList());
     }
 }

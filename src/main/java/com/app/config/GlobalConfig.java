@@ -22,6 +22,7 @@ public class GlobalConfig {
     private SubscriptionConfig subscriptionConfig;
     private String imagePath;
     private Set<String> businessTypes;
+    private Set<String> userTypes;
     
     @Getter
     @Setter

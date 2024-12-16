@@ -1,6 +1,7 @@
 package com.app.entites;
 
 import java.io.Serializable;
+import java.util.List;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -21,11 +22,13 @@ public class Category implements Serializable {
     private Long id;
 
     @NotBlank
-    @Size(min = 5, message = "Category name must contain atleast 5 characters")
+    @Size(min = 3, message = "Category name must contain at least 3 characters")
     private String name;
 
     private String imagePath;
 
     private String description;
 
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Product> products;
    }

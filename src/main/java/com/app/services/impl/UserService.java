@@ -1,6 +1,5 @@
 package com.app.services.impl;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -26,7 +25,7 @@ import com.app.payloads.SkuDTO;
 import com.app.payloads.UserDTO;
 import com.app.payloads.request.OTPRequest;
 import com.app.payloads.request.UpdateUserRequest;
-import com.app.payloads.response.UserResponse;
+import com.app.payloads.response.UserListingResponse;
 import com.app.repositories.RepositoryManager;
 import com.app.services.validator.AddressValidator;
 
@@ -42,7 +41,7 @@ public class UserService {
     private final AddressValidator addressValidator;
 
     @Transactional(readOnly = true)
-    public UserResponse getAllUsers(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+    public UserListingResponse getAllUsers(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
 
@@ -69,14 +68,14 @@ public class UserService {
             return dto;
         }).collect(Collectors.toList());
 
-        UserResponse userResponse = new UserResponse();
-        userResponse.setContent(userDTOs);
-        userResponse.setPageNumber(pageUsers.getNumber());
-        userResponse.setPageSize(pageUsers.getSize());
-        userResponse.setTotalElements(pageUsers.getTotalElements());
-        userResponse.setTotalPages(pageUsers.getTotalPages());
-        userResponse.setLastPage(pageUsers.isLast());
-        return userResponse;
+        UserListingResponse userListResponse = new UserListingResponse();
+        userListResponse.setContent(userDTOs);
+        userListResponse.setPageNumber(pageUsers.getNumber());
+        userListResponse.setPageSize(pageUsers.getSize());
+        userListResponse.setTotalElements(pageUsers.getTotalElements());
+        userListResponse.setTotalPages(pageUsers.getTotalPages());
+        userListResponse.setLastPage(pageUsers.isLast());
+        return userListResponse;
     }
 
     @Transactional(readOnly = true)
@@ -196,9 +195,8 @@ public class UserService {
             customer.setActive(true);
             customer.setMobileVerified(false);
             customer.setType(otpRequest.getUserType());
-            customer.setOtpExpiration(LocalDateTime.now().plusMinutes(15)); // Set OTP expiration to 5 minutes
             customer = repositoryManager.getCustomerRepo().save(customer);
-            log.info("User is created for mobile :{}",otpRequest.getMobile());
+            log.info("User #{} is created for mobile :{}",customer.getId(),otpRequest.getMobile());
         }
     }
 }

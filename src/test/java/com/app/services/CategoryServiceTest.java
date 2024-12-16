@@ -1,5 +1,7 @@
 package com.app.services;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -7,27 +9,16 @@ import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.app.CommonConfig;
-import com.app.services.impl.SkuService;
-
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 
 @SpringBootTest
 @Testcontainers
 @ContextConfiguration(classes = {CommonConfig.class})
-class SkuServiceTest  {
+class CategoryServiceTest {
 
-
-    @Autowired
-    SkuService skuService;
+    @Autowired  CategoryService categoryService;
     @Test
-    void getPriceForSku() {
-    }
-
-    @Test
-    void fetchVendorProductSkusById() {
-        var vendorProductsMap = skuService.fetchProductSkusByVendorId(1L);
-        //Assertions.assertEquals(2,vendorProductsMap.size());
+    void getCategoryProductMapping() {
+        var data= categoryService.getCategoryProductMapping();
+        assertEquals(4,data.size());
     }
 }

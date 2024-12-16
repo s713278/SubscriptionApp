@@ -13,11 +13,13 @@ import com.app.config.AppConstants;
 import com.app.entites.Product;
 import com.app.payloads.CategoryDTO;
 import com.app.payloads.ProductDTO;
+import com.app.payloads.response.APIResponse;
 import com.app.payloads.response.CategoryResponse;
 import com.app.payloads.response.ProductResponse;
 import com.app.services.CategoryService;
 import com.app.services.ProductService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -35,11 +37,12 @@ public class CategoryController {
     @Autowired
     private ProductService productService;
 
+    @Operation(description="Create new category")
     @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN')")
     @PostMapping("/")
-    public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO category) {
-        CategoryDTO savedCategoryDTO = categoryService.createCategory(category);
-        return new ResponseEntity<CategoryDTO>(savedCategoryDTO, HttpStatus.CREATED);
+    public ResponseEntity<APIResponse<?>> createCategory(@Valid @RequestBody CategoryDTO category) {
+        var response = categoryService.createCategory(category);
+        return new ResponseEntity<>(APIResponse.success(HttpStatus.CREATED.value(),response), HttpStatus.CREATED);
     }
 
     @GetMapping("/")
@@ -49,15 +52,15 @@ public class CategoryController {
             @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_CATEGORIES_BY, required = false) String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
         CategoryResponse categoryResponse = categoryService.getCategories(pageNumber, pageSize, sortBy, sortOrder);
-        return new ResponseEntity<CategoryResponse>(categoryResponse, HttpStatus.FOUND);
+        return new ResponseEntity<CategoryResponse>(categoryResponse, HttpStatus.OK);
     }
 
     @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN')")
     @PutMapping("/{categoryId}")
-    public ResponseEntity<CategoryDTO> updateCategory(@RequestBody CategoryDTO category,
+    public ResponseEntity<APIResponse<?>> updateCategory(@RequestBody CategoryDTO category,
             @PathVariable Long categoryId) {
-        CategoryDTO categoryDTO = categoryService.updateCategory(category, categoryId);
-        return new ResponseEntity<CategoryDTO>(categoryDTO, HttpStatus.OK);
+        var response = categoryService.updateCategory(category, categoryId);
+        return new ResponseEntity<>(APIResponse.success(response), HttpStatus.OK);
     }
 
 
@@ -139,5 +142,10 @@ public class CategoryController {
         String status = productService.deleteProduct(productId);
 
         return new ResponseEntity<String>(status, HttpStatus.OK);
+    }
+
+    @GetMapping("/product-mapping")
+    public ResponseEntity<APIResponse<?>> getCategoryProductMapping() {
+        return new ResponseEntity<>(APIResponse.success(categoryService.getCategoryProductMapping()),HttpStatus.OK);
     }
 }
