@@ -9,19 +9,23 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.app.AbstractBaseConfig;
+import com.app.CommonConfig;
 import com.app.entites.Customer;
 
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
+@SpringBootTest
+@Testcontainers
+@ContextConfiguration(classes = {CommonConfig.class})
 @Slf4j
-@Transactional
-class CustomerRepoTest extends AbstractBaseConfig {
+class CustomerRepoTest {
 
     @Autowired
-    private CustomerRepo customerRepository;
+    private RepositoryManager repositoryManager;
 
     private Customer testCustomer;
 
@@ -34,15 +38,15 @@ class CustomerRepoTest extends AbstractBaseConfig {
         testCustomer = new Customer();
         testCustomer.setFirstName("swamyk");
         testCustomer.setEmail(email);
+        testCustomer.setCountryCode("+91");
         testCustomer.setMobile(9912149048L);
-        customerId = customerRepository.save(testCustomer).getId();
-        System.out.println("setUp");
+        customerId = repositoryManager.getCustomerRepo().save(testCustomer).getId();
     }
 
     @AfterEach
     void tearDown() {
         // Clean up the customer repository after each test
-        customerRepository.deleteById(customerId);
+        repositoryManager.getCustomerRepo().deleteById(customerId);
         System.out.println("tearDown");
     }
 
@@ -51,7 +55,7 @@ class CustomerRepoTest extends AbstractBaseConfig {
         // Given a customer was saved in setUp
 
         // When we count the number of customers
-        var optionalCustomer = customerRepository.findById(customerId);
+        var optionalCustomer = repositoryManager.getCustomerRepo().findById(customerId);
 
         // Then we expect the count to be 1
         assertTrue(optionalCustomer.isPresent());
@@ -60,7 +64,7 @@ class CustomerRepoTest extends AbstractBaseConfig {
     @Test
     void testFindByEmail() {
         // When we retrieve a customer by email
-        Optional<Customer> customer = customerRepository.findByEmail(email);
+        Optional<Customer> customer = repositoryManager.getCustomerRepo().findByEmail(email);
 
         // Then we expect the customer to be present and match the saved customer
         assertTrue(customer.isPresent());

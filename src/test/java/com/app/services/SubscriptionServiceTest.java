@@ -8,18 +8,22 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.app.AbstractBaseConfig;
+import com.app.CommonConfig;
 import com.app.entites.Customer;
 import com.app.entites.type.SubFrequency;
 import com.app.payloads.request.CreateSubscriptionRequest;
 import com.app.payloads.request.UpdateSubscriptionRequest;
 import com.app.repositories.RepositoryManager;
 
-import jakarta.transaction.Transactional;
 
-@Transactional
-class SubscriptionServiceTest extends AbstractBaseConfig {
+@SpringBootTest
+@Testcontainers
+@ContextConfiguration(classes = {CommonConfig.class})
+class SubscriptionServiceTest  {
     
     @Autowired
     private  SubscriptionService subscriptionService;

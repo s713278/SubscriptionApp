@@ -140,6 +140,10 @@ application:
     - Mechanics and Repair
     - Services
     - Handicrafts
+  user_types:
+    - Individual
+    - Institution
+    - Business
 
 
 

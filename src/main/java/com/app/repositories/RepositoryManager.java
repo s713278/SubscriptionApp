@@ -17,4 +17,6 @@ public class RepositoryManager {
     private final OrderRepo orderRepo;
     private final SkuPriceRepository priceRepository;
     private final SkuSubscriptionRepository skuSubscriptionRepository;
+    private final CategoryRepo categoryRepo;
+    private final ProductRepo productRepo;
 }

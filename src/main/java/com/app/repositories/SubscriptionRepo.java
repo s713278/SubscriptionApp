@@ -13,6 +13,7 @@ public interface SubscriptionRepo extends JpaRepository<Subscription, Long> {
 
     @Query("Select id,quantity,frequency,status,startDate,nextDeliveryDate from Subscription s where s.id=?1")
     Optional<Subscription> findSubscription(final Long subId);
+
     @Query(value = """
         WITH LatestEffectiveDates
           AS ( SELECT

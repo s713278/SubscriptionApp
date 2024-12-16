@@ -33,6 +33,7 @@ public class VendorListingController {
         return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService().fetchVendorsAndGroupedByCategory()),HttpStatus.OK);
     }
 
+    //TODO : Enhance this to accept categoryId as optional value
     @Operation(summary = "Vendor's listing by zipcode and/or category")
     @GetMapping("/{zipCode}")
     public ResponseEntity<APIResponse<?>> fetchActiveVendorsByZipCode(@PathVariable String zipCode,
@@ -43,6 +44,7 @@ public class VendorListingController {
         log.debug("Request received for fetching vendors for zipcode :{} and/or categoryId: {}",zipCode,categoryId);
         return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService().fetchActiveVendorsByZipCode(zipCode,categoryId,pageNumber,pageSize)),HttpStatus.OK);
     }
+
 
     @Operation(summary = "Vendors search by zipcode and product name")
     @GetMapping("/{zipCode}/{productName}")

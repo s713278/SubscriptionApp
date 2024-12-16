@@ -12,7 +12,7 @@ import com.app.payloads.request.NameAndAddressRequest;
 import com.app.payloads.request.UpdateMobileRequest;
 import com.app.payloads.request.UpdateUserRequest;
 import com.app.payloads.response.APIResponse;
-import com.app.payloads.response.UserResponse;
+import com.app.payloads.response.UserListingResponse;
 import com.app.services.SubscriptionService;
 import com.app.services.impl.UserService;
 
@@ -38,13 +38,13 @@ public class CustomerController {
 
     @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN'))")
     @GetMapping("/admin")
-    public ResponseEntity<UserResponse> getUsers(
+    public ResponseEntity<UserListingResponse> getUsers(
             @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
             @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_USERS_BY, required = false) String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
-        UserResponse userResponse = userService.getAllUsers(pageNumber, pageSize, sortBy, sortOrder);
-        return new ResponseEntity<UserResponse>(userResponse, HttpStatus.FOUND);
+        UserListingResponse userListResponse = userService.getAllUsers(pageNumber, pageSize, sortBy, sortOrder);
+        return new ResponseEntity<UserListingResponse>(userListResponse, HttpStatus.FOUND);
     }
 
     @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")

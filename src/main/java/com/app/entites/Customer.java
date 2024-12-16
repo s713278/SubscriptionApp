@@ -17,6 +17,7 @@ import com.app.entites.type.UserType;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
@@ -51,6 +52,7 @@ public class Customer  extends  AbstractAuditingEntity<Long> implements Serializ
     private String email;
 
 
+    @NotBlank(message = "Country code is required.")
     @Column(name = "country_code")
     private String countryCode;
 

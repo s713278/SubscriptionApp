@@ -38,6 +38,7 @@ public class Vendor extends AbstractAuditingEntity<Long> implements Serializable
     @Size(min = 5, message = "Business name must contain at least 5 characters")
     private String businessName;
 
+    @NotBlank
     @Column(name = "business_type")
     private String businessType;
 
@@ -58,13 +59,12 @@ public class Vendor extends AbstractAuditingEntity<Long> implements Serializable
     @NotBlank(message = "Contact number is required.")
     private String contactNumber;
 
-    @Pattern(regexp = "^\\d{10}$", message = "Mobile Number must contain only Numbers")
-    private String customerCareNumber;
 
     //Vendor's email for notifications and correspondence.
     @Email
     @NotBlank(message = "Contact email is required.")
-    private String email;
+    @Column(name="communication_email")
+    private String communicationEmail;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "business_address", columnDefinition = "jsonb")
@@ -89,5 +89,9 @@ public class Vendor extends AbstractAuditingEntity<Long> implements Serializable
     @JdbcType(value = PostgreSQLEnumJdbcType.class)
     @Enumerated(EnumType.STRING)
     private ApprovalStatus approvalStatus;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private Customer user;
 
 }
