@@ -112,4 +112,34 @@ public interface VendorRepo extends JpaRepository<Vendor, Long> {
     //List<Object[]> findAllUniqueVendorsWithCategories(String zipCode, Pageable pageable);
     Page<Object[]> findActiveVendorsByZipCode(String zipCode, Pageable pageable);
 
+    @Query(value = """
+            SELECT
+              tv.id AS vendor_id,
+              tv.business_name,
+              tv.banner_image,
+              tv.service_area,
+              ARRAY_AGG(DISTINCT tc.name) AS categories
+          FROM
+              tb_vendor tv
+          JOIN
+              tb_category_vendor tcv
+          ON
+              tv.id = tcv.vendor_id
+          JOIN
+              tb_category tc
+          ON
+              tcv.category_id = tc.id
+          WHERE
+              tv.status = 'ACTIVE'
+              AND EXISTS (
+                  SELECT 1
+                  FROM jsonb_array_elements_text(tv.service_area->'areas') AS area
+                  WHERE area LIKE CONCAT('%', :zipCode, '%')
+              )
+              AND tcv.category_id = :category
+          GROUP BY
+              tv.id, tv.business_name, tv.banner_image, tv.service_area;
+        """, nativeQuery = true)
+    Page<Object[]> findActiveVendorsByZipCodeAndCategory(String zipCode, Long category, Pageable pageable);
+
 }

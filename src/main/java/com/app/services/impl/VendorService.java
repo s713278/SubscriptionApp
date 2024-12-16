@@ -122,10 +122,13 @@ public class VendorService  {
 
     }
 
-    public VendorResponse<VendorBasicDTO> fetchActiveVendorsByZipCode(String zipCode, Integer pageNumber, Integer pageSize) {
+    public VendorResponse<VendorBasicDTO> fetchActiveVendorsByZipCode(String zipCode, Long categoryId, Integer pageNumber, Integer pageSize) {
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
         log.debug("Fetch vendors for zipcode : {}",zipCode);
-        return  processPaginationResult(repoManager.getVendorRepo().findActiveVendorsByZipCode(zipCode,pageDetails));
+        if(categoryId == null)
+            return  processPaginationResult(repoManager.getVendorRepo().findActiveVendorsByZipCode(zipCode,pageDetails));
+        else
+            return processPaginationResult(repoManager.getVendorRepo().findActiveVendorsByZipCodeAndCategory(zipCode,categoryId,pageDetails));
 
     }
 
