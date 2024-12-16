@@ -22,7 +22,7 @@ public class Product extends AbstractAuditingEntity<Long> implements Serializabl
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long productId;
+    private Long id;
 
     @NotBlank
     @Size(min = 3, message = "Product name must contain atleast 3 characters")
@@ -42,6 +42,6 @@ public class Product extends AbstractAuditingEntity<Long> implements Serializabl
 
     @Override
     public Long getId() {
-        return this.productId;
+        return this.id;
     }
 }

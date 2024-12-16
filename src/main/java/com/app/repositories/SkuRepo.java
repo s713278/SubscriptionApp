@@ -57,7 +57,7 @@ public interface SkuRepo extends JpaRepository<Sku, Long> {
                 tb_sku ts
             JOIN
                 tb_product tp
-                ON ts.product_id = tp.product_id
+                ON ts.product_id = tp.id
             JOIN
                 tb_sku_sub_plan tssp
                 ON tssp.sku_id = ts.id

@@ -1,5 +1,7 @@
 package com.app.payloads;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +11,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CategoryDTO {
 
-    private Long id;
-    private String categoryName;
+    @JsonProperty("category_name")
+    private String name;
+
+    @JsonProperty("description")
+    private String description;
+
+
     // private List<ProductDTO> products = new ArrayList<>();
 }

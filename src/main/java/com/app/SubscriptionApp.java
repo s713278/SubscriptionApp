@@ -40,7 +40,7 @@ public class SubscriptionApp implements CommandLineRunner {
         try {
             roleRepo.findByRoleName("ADMIN");
             long count = roleRepo.count();
-            if (count != 3) throw new RuntimeException("Initiatial data missed!!!!");
+            if (count != 3) throw new RuntimeException("Initial data missed!!!!");
         } catch (Exception e) {
             log.error("No pre defined roles defined in database ,Please check the data base tb_roles table {} ", e.getMessage(), e);
         }

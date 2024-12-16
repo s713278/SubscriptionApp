@@ -33,26 +33,15 @@ public class VendorListingController {
         return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService().fetchVendorsAndGroupedByCategory()),HttpStatus.OK);
     }
 
-    @Operation(summary = "Vendor's listing by zipcode")
+    @Operation(summary = "Vendor's listing by zipcode and/or category")
     @GetMapping("/{zipCode}")
     public ResponseEntity<APIResponse<?>> fetchActiveVendorsByZipCode(@PathVariable String zipCode,
+                                                                         @RequestParam(required = false) Long categoryId,
                                                                          @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
                                                                          @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize
                                                                         ) {
-        log.debug("Request received for fetching vendors for zipcode : {}",zipCode);
-        return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService().fetchActiveVendorsByZipCode(zipCode,pageNumber,pageSize)),HttpStatus.OK);
-    }
-
-    @Operation(summary = "Vendor's listing by zipcode and category")
-    @GetMapping("/{zipCode}/{categoryId}")
-    public ResponseEntity<APIResponse<?>> fetchActiveVendorsByCategory(@PathVariable String zipCode,
-                                                                      @PathVariable Long categoryId,
-                                                                      @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
-                                                                      @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize
-    ) {
-        log.debug("Request received for fetching vendors for categoryId : {}",categoryId);
-        return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService()
-                .fetchActiveVendorsByZipCodeAndProduct(zipCode,categoryId,pageNumber,pageSize)),HttpStatus.OK);
+        log.debug("Request received for fetching vendors for zipcode :{} and/or categoryId: {}",zipCode,categoryId);
+        return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService().fetchActiveVendorsByZipCode(zipCode,categoryId,pageNumber,pageSize)),HttpStatus.OK);
     }
 
     @Operation(summary = "Vendors search by zipcode and product name")

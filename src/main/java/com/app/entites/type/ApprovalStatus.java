@@ -1,6 +1,6 @@
 package com.app.entites.type;
 
-public enum VerificationStatus {
+public enum ApprovalStatus {
     PENDING, APPROVED, REJECTED
 
 }
