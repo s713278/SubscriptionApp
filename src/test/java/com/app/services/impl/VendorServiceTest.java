@@ -11,18 +11,22 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.ContextConfiguration;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.app.AbstractBaseConfig;
+import com.app.CommonConfig;
 import com.app.entites.Vendor;
 import com.app.entites.type.ApprovalStatus;
 import com.app.entites.type.VendorStatus;
 import com.app.payloads.VendorDetailsDTO;
 
-@Transactional
-class VendorServiceTest extends AbstractBaseConfig {
+@SpringBootTest
+@Testcontainers
+@ContextConfiguration(classes = {CommonConfig.class})
+class VendorServiceTest {
 
     @MockBean
     private JavaMailSender javaMailSender; // Mock the JavaMailSender
@@ -36,7 +40,9 @@ class VendorServiceTest extends AbstractBaseConfig {
     void setUp() {
         Vendor vendor=new Vendor();
         vendor.setBusinessName("Kunta's Natural Farm");
-        vendor.setEmail("knf@example.com");
+        vendor.setDescription("Organic Farming,Farm Stay and Many more");
+        vendor.setBusinessType("Agriculture");
+        vendor.setCommunicationEmail("knf@example.com");
         vendor.setServiceAreas(Map.of("areas", List.of("502108","502103","Mirdoddi","Siddipet")));
         vendor.setStatus(VendorStatus.ACTIVE);
         vendor.setContactNumber("9912149048");
@@ -44,9 +50,8 @@ class VendorServiceTest extends AbstractBaseConfig {
         vendor.setApprovalStatus(ApprovalStatus.PENDING);
         vendor.setBusinessAddress(Map.of("address1","33 Acres Land",
                 "city","Mirdoddi","zipCode","502108"));
-        vendorId=vendorService.createVendor(modelMapper.map(vendor, VendorDetailsDTO.class));
-        assertNotNull(vendorId);
-      //  assertEquals(VendorStatus.ACTIVE,vendorResponse.);
+        var response=vendorService.createVendor(modelMapper.map(vendor, VendorDetailsDTO.class));
+        assertNotNull(response.id());
     }
 
     @AfterEach

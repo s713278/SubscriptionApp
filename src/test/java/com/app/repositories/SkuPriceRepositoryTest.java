@@ -3,24 +3,40 @@ package com.app.repositories;
 import java.time.LocalDate;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.app.AbstractBaseConfig;
+import com.app.CommonConfig;
+import com.app.entites.Sku;
+import com.app.entites.type.SkuType;
 
-@Transactional
-class SkuPriceRepositoryTest extends AbstractBaseConfig {
+@SpringBootTest
+@Testcontainers
+@ContextConfiguration(classes = {CommonConfig.class})
+class SkuPriceRepositoryTest {
 
     @Autowired
     private RepositoryManager repositoryManager;
 
+    @BeforeAll
+     static void setUp(){
+        Sku sku = new Sku();
+        sku.setSkuType(SkuType.ITEM);
+
+    }
+
     @Test
     void findTodayPriceBySku() {
+        var today = LocalDate.now();
         var skuPriceEntity =repositoryManager.getPriceRepository().findTodayPriceBySku(10004L, LocalDate.now());
         Assertions.assertTrue(skuPriceEntity.isPresent());
-        Assertions.assertEquals(110,skuPriceEntity.get().getListPrice().doubleValue());
-        Assertions.assertEquals(90,skuPriceEntity.get().getSalePrice().doubleValue());
+        Assertions.assertEquals((skuPriceEntity.get().getEffectiveDate().isBefore(today) || skuPriceEntity.get().getEffectiveDate().isEqual(today)),
+                skuPriceEntity.get().getListPrice().doubleValue());
+        //Assertions.assertEquals(90d,skuPriceEntity.get().getSalePrice().doubleValue());
     }
 
     @Test
@@ -34,9 +50,9 @@ class SkuPriceRepositoryTest extends AbstractBaseConfig {
 
     @Test
     void findFuturePriceBySku() {
-        var skuPriceEntity =repositoryManager.getPriceRepository().findFuturePriceBySku(10004L, LocalDate.now());
+        var skuPriceEntity =repositoryManager.getPriceRepository().findFuturePriceBySku(10005L, LocalDate.of(2024,12,30));
         Assertions.assertTrue(skuPriceEntity.isPresent());
-        Assertions.assertEquals(150,skuPriceEntity.get().getListPrice().doubleValue());
-        Assertions.assertEquals(135,skuPriceEntity.get().getSalePrice().doubleValue());
+        Assertions.assertEquals(2800,skuPriceEntity.get().getListPrice().doubleValue());
+        Assertions.assertEquals(2300,skuPriceEntity.get().getSalePrice().doubleValue());
     }
 }

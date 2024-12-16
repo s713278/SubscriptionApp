@@ -57,6 +57,7 @@ CREATE TYPE public."payment_status_enum" AS ENUM (
 INSERT INTO public.tb_role (role_id, role_name) VALUES(101,'ADMIN');
 INSERT INTO public.tb_role (role_id, role_name) VALUES(102,'USER');
 INSERT INTO public.tb_role (role_id, role_name) VALUES(103,'VENDOR');
+INSERT INTO public.tb_role (role_id, role_name) VALUES(104,'CUSTOMER_CARE');
 
 
 

@@ -5,11 +5,13 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.app.entites.Vendor;
+import com.app.entites.type.ApprovalStatus;
 import com.app.entites.type.VendorStatus;
 
 @Repository
@@ -111,5 +113,13 @@ public interface VendorRepo extends JpaRepository<Vendor, Long> {
         """, nativeQuery = true)
     //List<Object[]> findAllUniqueVendorsWithCategories(String zipCode, Pageable pageable);
     Page<Object[]> findActiveVendorsByZipCode(String zipCode, Pageable pageable);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Vendor v SET v.approvalStatus = :approvalStatus, v.status = :status WHERE v.id = :vendorId")
+    void updateApprovalStatus(@Param("vendorId") Long vendorId, @Param("approvalStatus") ApprovalStatus approvalStatus, @Param("status") VendorStatus status);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Vendor v SET v.status = :status WHERE v.id = :vendorId")
+    void updateVendorStatus(@Param("vendorId") Long vendorId, @Param("status") VendorStatus status);
 
 }

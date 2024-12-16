@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponse {
+public class UserListingResponse {
 
     private List<UpdateUserRequest> content;
     private Integer pageNumber;

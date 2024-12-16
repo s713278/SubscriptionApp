@@ -4,13 +4,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.app.AbstractBaseConfig;
+import com.app.CommonConfig;
 
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
-class SMSServiceTest extends AbstractBaseConfig {
+@SpringBootTest
+@Testcontainers
+@ContextConfiguration(classes = {CommonConfig.class})
+class SMSServiceTest  {
 
     @Autowired
     private SMSService smsService;
