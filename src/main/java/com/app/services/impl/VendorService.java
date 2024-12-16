@@ -124,9 +124,7 @@ public class VendorService  {
 
     }
 
-    public VendorResponse<VendorBasicDTO> fetchActiveVendorsByZipCode(String zipCode, Long categoryId, Integer pageNumber, Integer pageSize) {
-
-    public VendorListingResponse<VendorBasicDTO> fetchActiveVendorsByZipCode(String zipCode, Integer pageNumber, Integer pageSize) {
+    public VendorListingResponse<VendorBasicDTO> fetchActiveVendorsByZipCode(String zipCode, Long categoryId, Integer pageNumber, Integer pageSize) {
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
         log.debug("Fetch vendors for zipcode : {}",zipCode);
         if(categoryId == null)
