@@ -42,7 +42,7 @@ public class VendorListingController {
                                                                          @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize
                                                                         ) {
         log.debug("Request received for fetching vendors for zipcode :{} and/or categoryId: {}",zipCode,categoryId);
-        return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService().fetchActiveVendorsByZipCode(zipCode,pageNumber,pageSize)),HttpStatus.OK);
+        return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService().fetchActiveVendorsByZipCode(zipCode,categoryId,pageNumber,pageSize)),HttpStatus.OK);
     }
 
 
