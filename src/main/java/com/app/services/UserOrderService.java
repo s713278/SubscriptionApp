@@ -182,7 +182,7 @@ public class UserOrderService {
                        //     .getPriceListService().fetchVendorSkuPrice(skuId);
                    // var sku = priceList.getSku();
                     var skuDto = serviceManager.getSkuService().fetchSkuById(skuId);
-                    var vendor = serviceManager.getVendorService().fetchVendorById(order.getVendorId());
+                    var vendor = serviceManager.getVendorService().fetchVendorById(order.getVendorId(),null);
                     return OrderDetailsDTO.builder()
                             .orderId(order.getId())
                             .deliveryDate(order.getDeliveryDate())

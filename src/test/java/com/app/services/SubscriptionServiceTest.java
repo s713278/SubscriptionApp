@@ -12,7 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.app.CommonConfig;
+import com.app.TestContainerConfig;
 import com.app.entites.Customer;
 import com.app.entites.type.SubFrequency;
 import com.app.payloads.request.CreateSubscriptionRequest;
@@ -22,7 +22,7 @@ import com.app.repositories.RepositoryManager;
 
 @SpringBootTest
 @Testcontainers
-@ContextConfiguration(classes = {CommonConfig.class})
+@ContextConfiguration(classes = {TestContainerConfig.class})
 class SubscriptionServiceTest  {
     
     @Autowired

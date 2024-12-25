@@ -13,17 +13,14 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.app.config.AppConstants;
 import com.app.entites.CartItem;
 import com.app.entites.Customer;
-import com.app.entites.Role;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.payloads.CartDTO;
 import com.app.payloads.SkuDTO;
 import com.app.payloads.UserDTO;
-import com.app.payloads.request.OTPRequest;
 import com.app.payloads.request.UpdateUserRequest;
 import com.app.payloads.response.UserListingResponse;
 import com.app.repositories.RepositoryManager;
@@ -179,24 +176,4 @@ public class UserService {
         repositoryManager.getCustomerRepo().updateDeliveryInstructions(userId, newDeliveryAddress);
     }
 
-    public void createUserIfNotExisted(OTPRequest otpRequest){
-        var existed = repositoryManager.getCustomerRepo().existsByMobile(otpRequest.getMobile());
-        log.debug("User existed by mobile number ? {}",existed);
-        if(!existed){
-            Customer customer = new Customer();
-            customer.setCountryCode(otpRequest.getCountryCode());
-            customer.setMobile(otpRequest.getMobile());
-            customer.setRegSource(otpRequest.getRegSource());
-            customer.setPassword("9090"); // Use BCrypt for password encryption
-            // Fetch the role and ensure it is managed
-            Role role = repositoryManager.getRoleRepo().findById(AppConstants.USER_ROLE_ID)
-                    .orElseThrow(() -> new IllegalArgumentException("Role not found"));
-            customer.getRoles().add(role);
-            customer.setActive(true);
-            customer.setMobileVerified(false);
-            customer.setType(otpRequest.getUserType());
-            customer = repositoryManager.getCustomerRepo().save(customer);
-            log.info("User #{} is created for mobile :{}",customer.getId(),otpRequest.getMobile());
-        }
-    }
 }

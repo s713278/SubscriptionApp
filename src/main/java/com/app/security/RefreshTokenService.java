@@ -42,4 +42,9 @@ public class RefreshTokenService {
         refreshTokenStore.put(refreshToken, String.valueOf(authUserDetails.getId()));
         return refreshToken;
     }
+
+    // Get username from the refresh token
+    public void removeRefreshToken(String token) {
+         refreshTokenStore.remove(token);
+    }
 }

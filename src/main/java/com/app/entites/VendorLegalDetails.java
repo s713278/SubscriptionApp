@@ -15,7 +15,7 @@ public class VendorLegalDetails {
 
     private String PANNumber;
 
-    private String businessRegNumber;
+    private String regNumber;
 
     @OneToOne(cascade = { CascadeType.MERGE })
     @JoinColumn(name = "vendor_id")

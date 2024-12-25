@@ -18,8 +18,8 @@ import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.payloads.CategoryDTO;
 import com.app.payloads.CategoryWithProductsDTO;
-import com.app.payloads.response.CategoryResponse;
 import com.app.payloads.response.CreateItemResponse;
+import com.app.payloads.response.PaginationResponse;
 import com.app.repositories.CategoryRepo;
 import com.app.services.CategoryService;
 import com.app.services.ProductService;
@@ -52,7 +52,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryResponse getCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+    public PaginationResponse<?> getCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
 
@@ -62,23 +62,14 @@ public class CategoryServiceImpl implements CategoryService {
 
         List<Category> categories = pageCategories.getContent();
 
-        if (categories.size() == 0) {
+        if (categories.isEmpty()) {
             throw new APIException(APIErrorCode.API_400,"No category is created till now");
         }
 
         List<CategoryDTO> categoryDTOs = categories.stream()
                 .map(category -> modelMapper.map(category, CategoryDTO.class)).collect(Collectors.toList());
-
-        CategoryResponse categoryResponse = new CategoryResponse();
-
-        categoryResponse.setContent(categoryDTOs);
-        categoryResponse.setPageNumber(pageCategories.getNumber());
-        categoryResponse.setPageSize(pageCategories.getSize());
-        categoryResponse.setTotalElements(pageCategories.getTotalElements());
-        categoryResponse.setTotalPages(pageCategories.getTotalPages());
-        categoryResponse.setLastPage(pageCategories.isLast());
-
-        return categoryResponse;
+        return new PaginationResponse<>(categoryDTOs,pageCategories.getNumber(),
+                pageCategories.getSize(),pageCategories.getTotalElements(),pageCategories.getTotalPages(),pageCategories.isLast());
     }
 
     @Override

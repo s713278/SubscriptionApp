@@ -1,7 +1,10 @@
 package com.app.services.auth.signin;
 
 
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 
 import com.app.config.GlobalConfig;
 import com.app.constants.NotificationType;
@@ -40,7 +43,7 @@ public abstract class AbstractSignInService {
 
     protected AuthDetailsDTO getSignInResponse(AuthUserDetails userDetails){
         var responseBuilder = AuthDetailsDTO.builder()
-                .emailVerified(userDetails.isEmailVerified())
+              //  .emailVerified(userDetails.isEmailVerified())
                 .mobileVerified(userDetails.isMobileVerified())
                 .userId(userDetails.getId());
         if(!globalConfig.getCustomerConfig().isOtpVerificationEnabled() || userDetails.isMobileVerified()){
@@ -48,9 +51,9 @@ public abstract class AbstractSignInService {
             String refreshToken = serviceManager.getRefreshTokenService().createRefreshToken(userDetails);
             return responseBuilder.userToken(accessToken)
                     .refreshToken(refreshToken)
-                    .defaultVendorId(1L)
-                    //.activeSubscriptions(List.of())
+                    .referredVendorId(1L)
                     .address(userDetails.getAddress())
+                    .roles(userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()))
                     .build();
         }else{
             serviceManager.getNotificationContext().sendOTPMessage(NotificationType.SMS,userDetails.getFullMobileNumber());

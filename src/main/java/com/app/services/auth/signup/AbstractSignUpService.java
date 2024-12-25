@@ -1,7 +1,5 @@
 package com.app.services.auth.signup;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,10 +10,13 @@ import com.app.payloads.request.SignUpRequest;
 import com.app.payloads.response.SignUpDTO;
 import com.app.repositories.RepositoryManager;
 import com.app.services.ServiceManager;
+import com.app.services.notification.NotificationTemplate;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public abstract class AbstractSignUpService<T extends SignUpRequest> {
 
-    private static final Logger log = LoggerFactory.getLogger(AbstractSignUpService.class);
     @Autowired
     protected RepositoryManager repoManager;
 
@@ -31,9 +32,9 @@ public abstract class AbstractSignUpService<T extends SignUpRequest> {
     @Autowired
     protected ServiceManager serviceManager;
 
-    public final SignUpDTO processSignUp(T user) {
-        preSignUpOperations(user);
-       var response= doSignUp(user);
+    public final SignUpDTO processSignUp(T request) {
+        preSignUpOperations(request);
+       var response= doSignUp(request);
         postSignUpOperations(response);
         return response;
     }
@@ -44,6 +45,6 @@ public abstract class AbstractSignUpService<T extends SignUpRequest> {
     protected abstract SignUpDTO doSignUp(T user);
 
     protected void postSignUpOperations(SignUpDTO signUpDTO) {
-        serviceManager.getNotificationContext().sendOTPMessage(NotificationType.SMS,signUpDTO.mobile());
+        serviceManager.getNotificationContext().notifyUser(NotificationType.SMS, NotificationTemplate.OTP,signUpDTO.mobile());
     }
 }

@@ -2,9 +2,9 @@ package com.app.services.auth.dto;
 
 import java.io.Serial;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -35,7 +35,7 @@ public class AuthUserDetails implements UserDetails {
     private String password;
     private boolean isMobileVerified;
     private boolean isEmailVerified;
-    private List<GrantedAuthority> authorities;
+    private Set<GrantedAuthority> authorities;
     private Map<String,String> address;
     private String fullMobileNumber;
 
@@ -48,14 +48,8 @@ public class AuthUserDetails implements UserDetails {
         isEmailVerified = !Objects.isNull(user.getEmail()) && user.getEmailVerified();
         log.info("User mobile {} and role {}", user.getMobile(), user.getRoles());
         this.authorities = user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getRoleName()))
-                .collect(Collectors.toList());
-        this.address=user.getDeliveryAddress();
+                .collect(Collectors.toSet());
         this.fullMobileNumber=user.getFullMobileNumber();
-        if( this.address!=null) {
-           // this.address.remove("address1");
-           // this.address.remove("address2");
-            this.address.remove("country");
-        }
     }
 
     @Override

@@ -9,14 +9,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.app.CommonConfig;
+import com.app.TestContainerConfig;
 import com.app.config.AppConstants;
 
 import lombok.extern.slf4j.Slf4j;
 
 @SpringBootTest
 @Testcontainers
-@ContextConfiguration(classes = {CommonConfig.class})
+@ContextConfiguration(classes = {TestContainerConfig.class})
 @Slf4j
 public class EmailOrMobileTest {
 

@@ -12,14 +12,12 @@ import com.app.exceptions.APIException;
 import com.app.services.cache.OTPCacheManager;
 
 import lombok.RequiredArgsConstructor;
-
 @RequiredArgsConstructor
 @Component
 public class OTPService {
 
     private final GlobalConfig globalConfig;
     private final Random random = new Random();
-
     private final OTPCacheManager otpCacheManager;
 
     private static final int MAX_ATTEMPTS = 3; // Maximum attempts

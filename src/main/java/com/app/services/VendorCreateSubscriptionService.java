@@ -8,7 +8,6 @@ import com.app.repositories.RepositoryManager;
 
 @Service
 @Primary
-
 public class VendorCreateSubscriptionService extends AbstractCreateSubscriptionService {
 
     public VendorCreateSubscriptionService(ServiceManager serviceManager,RepositoryManager repoManager, SubscriptionServiceHelper serviceHelper) {

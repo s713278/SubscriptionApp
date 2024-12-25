@@ -10,13 +10,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.app.CommonConfig;
+import com.app.TestContainerConfig;
 import com.app.entites.Sku;
 import com.app.entites.type.SkuType;
 
 @SpringBootTest
 @Testcontainers
-@ContextConfiguration(classes = {CommonConfig.class})
+@ContextConfiguration(classes = {TestContainerConfig.class})
 class SkuPriceRepositoryTest {
 
     @Autowired

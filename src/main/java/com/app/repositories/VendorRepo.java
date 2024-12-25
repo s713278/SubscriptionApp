@@ -1,6 +1,7 @@
 package com.app.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -150,4 +151,9 @@ public interface VendorRepo extends JpaRepository<Vendor, Long> {
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Vendor v SET v.status = :status WHERE v.id = :vendorId")
     void updateVendorStatus(@Param("vendorId") Long vendorId, @Param("status") VendorStatus status);
+
+    @Query("SELECT v.id FROM Vendor v WHERE v.userId = :userId")
+    Long findByUserId(Long userId);
+
+    Optional<Vendor> findByContactNumber(String mobileNo);
 }

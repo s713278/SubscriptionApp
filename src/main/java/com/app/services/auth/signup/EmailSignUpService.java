@@ -65,7 +65,7 @@ public class EmailSignUpService extends AbstractSignUpService<EmailSignUpRequest
     protected SignUpDTO doSignUp(EmailSignUpRequest request) {
         // Create a new user
         Customer customer = new Customer();
-        customer.setFirstName(request.getFirstName());
+       // customer.setFirstName(request.getFirstName());
         customer.setEmail(request.getEmail());
         customer.setPassword(passwordEncoder.encode(request.getPassword())); // Use BCrypt for password encryption
 
@@ -87,7 +87,7 @@ public class EmailSignUpService extends AbstractSignUpService<EmailSignUpRequest
         customer = repoManager.getCustomerRepo().save(customer);
         request.setEmailActivationtoken(activationToken);
        // request.setOtp(otp);
-        return new SignUpDTO(customer.getId(),"Email registered successdully!");
+        return new SignUpDTO(customer.getId(),"Email registered successfully!");
     }
 
     private boolean isValidEmail(String email) {

@@ -4,8 +4,10 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -19,6 +21,7 @@ import lombok.Setter;
  * last modified, created by, last modified by attributes.
  */
 @Getter
+@Setter
 @MappedSuperclass
 @JsonIgnoreProperties(value = { "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate" }, allowGetters = true)
 public abstract class AbstractAuditingEntity<T> implements Serializable {
@@ -28,20 +31,21 @@ public abstract class AbstractAuditingEntity<T> implements Serializable {
 
     public abstract T getId();
 
-    @Setter
-    @Column(name = "created_by", nullable = true, length = 50)
+
+    @CreatedBy
+    @Column(name = "created_by", nullable = false, length = 50)
     protected String createdBy;
 
-
-    @CreationTimestamp
-    @Column(name = "created_date", updatable = false)
+    @CreatedDate
+    @Column(name = "created_date", nullable = false, updatable = false)
     protected LocalDateTime createdDate ;
 
-    @Column(name = "last_modified_by", length = 50)
-    protected String lastModifiedBy;
+    @LastModifiedBy
+    @Column(name = "last_modified_by", nullable = false,length = 50)
+    protected String updatedBy;
 
-    @UpdateTimestamp
-    @Column(name = "last_modified_date")
+    @LastModifiedDate
+    @Column(name = "last_modified_date",nullable = false)
     protected LocalDateTime lastModifiedDate ;
 
 }

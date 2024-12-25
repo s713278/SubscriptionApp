@@ -7,10 +7,8 @@ public record SignUpDTO(
         @JsonProperty("mobile_number") String mobile,
         @JsonProperty("mobile_verified")
         boolean mobileVerified,
-        @JsonProperty("email_verified")
-        boolean emailVerified,
         String message) {
     public SignUpDTO(Long userId, String message) {
-        this(userId,null, false, false, message);
+        this(userId,null, false, message);
     }
 }

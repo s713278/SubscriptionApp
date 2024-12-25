@@ -1,6 +1,7 @@
 package com.app.payloads.response;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -37,11 +38,10 @@ public class AuthDetailsDTO{
 
     private String message;
 
-   // @JsonProperty("active_subscriptions")
-    //private List<?> activeSubscriptions;
-
-    @JsonProperty("default_vendor_id")
-    private Long defaultVendorId;
+    @JsonProperty("referred_vendor_id")
+    private Long referredVendorId;
 
     private Map<String,String> address;
+
+    private Set<String> roles;
 }

@@ -3,9 +3,11 @@ package com.app.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import com.app.config.AppConstants;
 import com.app.constants.NotificationType;
 import com.app.constants.SignInType;
 import com.app.entites.Customer;
@@ -101,25 +103,16 @@ public class AuthController {
 
     @Operation(summary  = "Request OTP")
     @PostMapping("/request-otp")
-    public ResponseEntity<?> requestOTP(@RequestBody OTPRequest request) {
+    public ResponseEntity<APIResponse<?>> requestOTP(@RequestBody @Valid MobileSignUpRequest request) {
         log.info("Received OTP request for mobile: {}", request.getMobile());
-        if(String.valueOf(request.getMobile()).length()!=10){
-            throw new APIException(APIErrorCode.API_400,"Invalid mobile number and should be 10 digits.");
-        }
-        serviceManager.getUserService().createUserIfNotExisted(request);
-        if(request.getMobile()!=null){
-            notificationContext.sendOTPMessage(NotificationType.SMS,
-                    request.getFullPhoneNumber());
-        }else{
-            notificationContext.sendOTPMessage(NotificationType.EMAIL,
-                    request.getEmail());
-        }
-        return  ResponseEntity.ok(APIResponse.success("OTP Sent successfully"));
+            var response = signUpStrategy.processUserSignUp(request);
+            var appResponse = APIResponse.success(HttpStatus.CREATED.value(), response);
+            return new ResponseEntity<>(appResponse, HttpStatus.CREATED);
     }
 
     @Operation(summary  = "Verify OTP")
     @PostMapping("/verify-otp")
-    public ResponseEntity<?> verifyMobileOtp(@Valid @RequestBody OTPVerificationRequest otpRequest) {
+    public ResponseEntity<APIResponse<?>> verifyMobileOtp(@Valid @RequestBody OTPVerificationRequest otpRequest) {
         SignInRequest request = new SignInRequest();
         request.setCountryCode(otpRequest.getCountryCode());
         request.setMobile(otpRequest.getMobile());
@@ -132,12 +125,13 @@ public class AuthController {
     // REST API to get authenticated user details (for testing session management)
     @Operation(summary  = "Authenticated Profile Info")
     @GetMapping("/profile")
-    @SecurityRequirement(name = "E-Commerce Application")
-    public @ResponseBody String getAuthenticatedUser(@AuthenticationPrincipal Long userId) {
+    @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
+    public @ResponseBody ResponseEntity<String> getAuthenticatedUser(@AuthenticationPrincipal Long userId, Authentication authentication) {
+        log.debug("authentication : {}",authentication);
         if (userId != null) {
-            return "Its authenticated request for the user :"+userId;
+            return new ResponseEntity<>("Its authenticated request for the user :"+userId,HttpStatus.OK);
             } else {
-            return "No authenticated user";
+            return new ResponseEntity<>("No authenticated user",HttpStatus.OK);
         }
     }
 
@@ -152,6 +146,18 @@ public class AuthController {
             String newAccessToken = serviceManager.getTokenService()
                     .generateToken(refreshTokenService.getUserIdFromRefreshToken(refreshToken));
             return new ResponseEntity<>(APIResponse.success(newAccessToken), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Sign out")
+    @PostMapping("/signout")
+    public @ResponseBody ResponseEntity<APIResponse<?>> signOut(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+        String refreshToken = refreshTokenRequest.getRefreshToken();
+        var refreshTokenService= serviceManager.getRefreshTokenService();
+        if (!refreshTokenService.validateRefreshToken(refreshToken)) {
+            throw new APIException(APIErrorCode.API_400, "Invalid refresh token");
+        }
+        refreshTokenService.removeRefreshToken(refreshToken);
+        return new ResponseEntity<>(APIResponse.success("Successfully logged out."), HttpStatus.OK);
     }
 
     // Account activation endpoint

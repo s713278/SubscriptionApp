@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
+import com.app.entites.type.DeliveryMode;
 import com.app.entites.type.SubFrequency;
 
 import jakarta.persistence.*;
@@ -27,5 +28,10 @@ public class SubscriptionPlan implements Serializable {
     private SubFrequency frequency;
 
     private String description;
+
+    @JdbcType(value  = PostgreSQLEnumJdbcType.class)
+    @Enumerated(EnumType.STRING)
+    @Column(name="delivery_mode",columnDefinition = "delivery_mode_enum")
+    private DeliveryMode deliveryMode;
 
 }

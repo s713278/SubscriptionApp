@@ -13,3 +13,7 @@ ALTER TABLE tb_subscription
  DROP TYPE public."subscription_status";
 
 ALTER TYPE public."subscription_status_v2" RENAME TO "subscription_status";
+
+CREATE TYPE public."delivery_mode_enum" AS ENUM (
+	'FIXED',
+	'FLEXIBLE');

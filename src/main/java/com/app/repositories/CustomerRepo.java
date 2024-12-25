@@ -27,6 +27,9 @@ public interface CustomerRepo extends JpaRepository<Customer, Long>, JpaSpecific
     @Query("SELECT c FROM Customer c JOIN FETCH c.roles WHERE c.mobile = :mobile")
     Optional<Customer> findByMobile(@Param("mobile") Long mobile);
 
+    @Query("SELECT c FROM Customer c WHERE c.mobile = :mobile")
+    Optional<Customer> findUserByMobile(@Param("mobile") Long mobile);
+
     //Customer findByEmailActivationToken(String token);
 
     //Customer findByResetPasswordToken(String token);
@@ -58,4 +61,5 @@ public interface CustomerRepo extends JpaRepository<Customer, Long>, JpaSpecific
 
     @Query("SELECT COUNT(u) > 0 FROM Customer u WHERE u.mobile = :mobileNumber")
     boolean existsByMobile(Long mobileNumber);
+
 }

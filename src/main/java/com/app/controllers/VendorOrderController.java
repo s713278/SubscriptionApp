@@ -21,7 +21,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 
-@Tag(name = "6. Vendor Management")@RestController
+@Tag(name = "9. Vendor's Order Management")@RestController
 @RequestMapping("/v1/vendors/{vendorId}/orders")
 @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
 @AllArgsConstructor

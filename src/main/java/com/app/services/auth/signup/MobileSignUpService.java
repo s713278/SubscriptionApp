@@ -40,9 +40,10 @@ public class MobileSignUpService extends AbstractSignUpService<MobileSignUpReque
             throw new APIException(APIErrorCode.API_400, "Invalid mobile number");
         }
         // Optionally check if mobile number already exists
-        if (isMobileNumberRegistered(request.getMobile())) {
-            throw new APIException(APIErrorCode.API_409, "Mobile number is already registered!");
-        }
+       // if (isMobileNumberRegistered(request.getMobile())) {
+            //throw new APIException(APIErrorCode.API_409, "Mobile number is already registered!");
+         //   log.debug("User already registered.");
+       // }
     }
 
 
@@ -62,32 +63,41 @@ public class MobileSignUpService extends AbstractSignUpService<MobileSignUpReque
     @Override
     protected SignUpDTO doSignUp(MobileSignUpRequest request) {
         // Create a new user
+        Long roleId= AppConstants.ADMIN_ROLE_ID;
+        Customer customer = new Customer();
         try {
-            Customer customer = new Customer();
-            customer.setFirstName(request.getFirstName());
-            customer.setCountryCode(request.getCountryCode());
-            customer.setMobile(request.getMobile());
-            customer.setRegSource(request.getRegSource());
-            customer.setPassword(passwordEncoder.encode(request.getPassword())); // Use BCrypt for password encryption
-
+            switch (request.getUserRoleEnum()){
+                case ADMIN -> roleId=AppConstants.ADMIN_ROLE_ID;
+                case VENDOR -> roleId=AppConstants.VENDOR_ROLE_ID;
+                case CUSTOMER_CARE -> roleId=AppConstants.CC_ROLE_ID;
+                case null, default -> roleId=AppConstants.USER_ROLE_ID;
+            }
+            var optionalUser = repoManager.getCustomerRepo().findUserByMobile(request.getMobile());
+            log.debug("User existed by mobile number ? {}",optionalUser.isPresent());
             // Fetch the role and ensure it is managed
-            Role role = repoManager.getRoleRepo().findById(AppConstants.USER_ROLE_ID)
+            Role role = repoManager.getRoleRepo().findById(roleId)
                     .orElseThrow(() -> new IllegalArgumentException("Role not found"));
-            customer.getRoles().add(role);
-            // Generate OTP
-           // String otp = otpService.generateOtp(100L);
-            //customer.setOtp(otp);
-            customer.setActive(true);
-            customer.setMobileVerified(false);
-            customer.setOtpExpiration(LocalDateTime.now().plusMinutes(15)); // Set OTP expiration to 5 minutes
-            customer= serviceManager.getUserService().createUser(customer);
-           // customer = repoManager.getCustomerRepo().save(customer);
-            return new SignUpDTO(customer.getId(),customer.getFullMobileNumber(),customer.getMobileVerified(),customer.getEmailVerified(),
-                    "OTP Sent to mobile number , Please verify with it!");
+            if(optionalUser.isEmpty()) {
+                customer.setCountryCode(request.getCountryCode());
+                customer.setMobile(request.getMobile());
+                customer.setRegSource(request.getRegPlatform().name());
+                customer.getRoles().add(role);
+                customer.setPassword(String.valueOf(request.getMobile()).substring(0,5));
+                customer.setActive(true);
+                customer.setMobileVerified(false);
+                customer.setOtpExpiration(LocalDateTime.now().plusMinutes(15)); // Set OTP expiration to 5 minutes
+            }else{
+                customer = optionalUser.get();
+                customer.getRoles().add(role);
+            }
+            customer = serviceManager.getUserService().createUser(customer);
+            log.info("User #{} is created for mobile :{}",customer.getId(),request.getMobile());
         }catch (Exception e){
             log.error("Error occurred while creating new user with mobile number : {}",request.getMobile(),e);
             throw new APIException(APIErrorCode.USER_CREATION_FAILED, e.getMessage());
         }
+        return new SignUpDTO(customer.getId(), customer.getFullMobileNumber(), customer.getMobileVerified(),
+                "OTP has been sent to registered mobile.");
     }
 
     private boolean isValidMobileNumber(Long mobile) {

@@ -1,16 +1,16 @@
-package com.app.payloads;
+package com.app.payloads.request;
 
 import java.io.Serializable;
 import java.util.Map;
 
-import com.app.entites.type.VendorStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 
 
 @Data
-public class VendorDetailsDTO  implements Serializable {
+public class VendorProfileRequest implements Serializable {
 
     @JsonProperty("business_name")
     private String businessName;
@@ -31,7 +31,7 @@ public class VendorDetailsDTO  implements Serializable {
     private String contactNumber;
 
     @JsonProperty("communication_email")
-    private String email;
+    private String communicationEmail;
 
     @JsonProperty("business_address")
     private  Map<String, String> businessAddress;
@@ -42,7 +42,7 @@ public class VendorDetailsDTO  implements Serializable {
     @JsonProperty("banner_image")
     private String bannerImage;
 
-    @JsonProperty("vendor_status")
-    private VendorStatus status=VendorStatus.ACTIVE;
+    @JsonIgnore
+    private Long userId;
 
 }

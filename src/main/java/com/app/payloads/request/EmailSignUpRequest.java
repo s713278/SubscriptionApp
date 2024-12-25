@@ -1,6 +1,7 @@
 package com.app.payloads.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -18,5 +19,8 @@ public class EmailSignUpRequest extends SignUpRequest {
     private String otp;
     @JsonIgnore
     private String emailActivationtoken;
+
+    @JsonProperty("password")
+    private String password;
 
 }

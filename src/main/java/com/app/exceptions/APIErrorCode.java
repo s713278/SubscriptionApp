@@ -13,7 +13,7 @@ public enum APIErrorCode {
 
     API_400(HttpStatus.BAD_REQUEST, "Please check the request and try again!!"),
     API_401(HttpStatus.UNAUTHORIZED, "User authentication failed!!"),
-    API_403(HttpStatus.FORBIDDEN, "User authorization failed!!"),
+    API_403(HttpStatus.FORBIDDEN, "Authorization failed!!"),
     API_409(HttpStatus.CONFLICT, "Data already existed in system."),
     API_500(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong,Please try after sometime!!"),
     API_429(HttpStatus.TOO_MANY_REQUESTS, "Maximum attempts exceeded. Please try again later."),

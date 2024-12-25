@@ -12,7 +12,6 @@ import com.app.entites.type.ApprovalStatus;
 import com.app.entites.type.VendorStatus;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -60,8 +59,8 @@ public class Vendor extends AbstractAuditingEntity<Long> implements Serializable
     private String contactNumber;
 
 
-    //Vendor's email for notifications and correspondence.
-    @Email
+    //Vendor's email for notContactifications and correspondence.
+    //@Email
     @NotBlank(message = "Contact email is required.")
     @Column(name="communication_email")
     private String communicationEmail;
@@ -90,8 +89,9 @@ public class Vendor extends AbstractAuditingEntity<Long> implements Serializable
     @Enumerated(EnumType.STRING)
     private ApprovalStatus approvalStatus;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private Customer user;
+    //@OneToOne(fetch = FetchType.LAZY)
+    //@JoinColumn(name = "user_id")
+    @Column(name = "user_id")
+    private Long userId;
 
 }

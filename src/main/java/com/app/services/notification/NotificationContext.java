@@ -20,6 +20,7 @@ public class NotificationContext {
     private final Map<String, NotificationStrategy> notificationStrategies;
 
     private final OTPService otpService;
+
     @Async
     public void sendOTPMessage(NotificationType type,String to){
         log.debug("OTP is going to send to user/mobile :{}",to);
@@ -48,6 +49,18 @@ public class NotificationContext {
             case SMS -> notificationStrategies.get("smsNotificationStrategy").sendResetPasswordEmail(to,resetToken);
             case EMAIL -> notificationStrategies.get("emailNotificationStrategy").sendResetPasswordEmail(to,resetToken);
             case WHATSAPP -> notificationStrategies.get("wNotificationStrategy").sendResetPasswordEmail(to,resetToken);
+            case null, default -> throw new APIException(APIErrorCode.API_400,type +" should be one of the "+ Arrays.toString(NotificationType.values()));
+        }
+    }
+
+    @Async
+    public void notifyUser(NotificationType type,NotificationTemplate template,String to){
+        log.debug("Notification type :{}, templated:{} and mobile number {}",type,template,to);
+        var otp=otpService.generateOtp(to);
+        switch (type){
+            case SMS -> notificationStrategies.get("smsNotificationStrategy").sendOTP(to,otp);
+            case EMAIL -> notificationStrategies.get("emailNotificationStrategy").sendOTP(to,otp);
+            case WHATSAPP -> notificationStrategies.get("wNotificationStrategy").sendOTP(to,otp);
             case null, default -> throw new APIException(APIErrorCode.API_400,type +" should be one of the "+ Arrays.toString(NotificationType.values()));
         }
     }

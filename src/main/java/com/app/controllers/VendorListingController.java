@@ -25,17 +25,9 @@ public class VendorListingController {
 
     private final ServiceManager serviceManager;
 
-    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN'))")
-    @Operation(summary = "All vendors listing")
-    @GetMapping("/")
-    public ResponseEntity<APIResponse<?>> fetchAllActiveVendors() {
-        log.debug("Request received for all vendors");
-        return new ResponseEntity<>(APIResponse.success(serviceManager.getVendorService().fetchVendorsAndGroupedByCategory()),HttpStatus.OK);
-    }
-
     //TODO : Enhance this to accept categoryId as optional value
     @Operation(summary = "Vendor's listing by zipcode and/or category")
-    @GetMapping("/{zipCode}")
+    @GetMapping("zipcode/{zipCode}")
     public ResponseEntity<APIResponse<?>> fetchActiveVendorsByZipCode(@PathVariable String zipCode,
                                                                          @RequestParam(required = false) Long categoryId,
                                                                          @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,

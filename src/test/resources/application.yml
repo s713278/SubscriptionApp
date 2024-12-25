@@ -2,3 +2,74 @@ spring:
   cache:
     #type: caffeine
     type: "none"
+  jpa:
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+      transaction.jta.platform: org.hibernate.engine.transaction.jta.platform.internal.AtomikosJtaPlatform
+    hibernate:
+      ddl-auto: update
+
+  logging:
+    level:
+      root: INFO
+      org.hibernate.SQL: DEBUG
+application:
+  #snr:
+  #local_url: http://localhost:8080/api
+  #dev_url: https://snr.ngrok.dev/api
+  jwt-config:
+    issuer: MithraDirect
+    secret:
+    access-exp-time: 1800 #Short-lived (e.g., 15 minutes, 1 hour).
+    refresh-exp-time: 7776000000  #Stored securely on the client.
+  vendor_config:
+  customer_config:
+    otp_verification_enabled: false
+    verify_otp: false
+    otp_exp_time: 60  #In seconds
+    otp_no_of_retry: 3  #In seconds
+    email_token_exp: 3600
+    address_valid_keys:
+      - name
+      - house_no
+      - address1
+      - address2
+      - city
+      - state
+      - zipCode
+      - state
+      - country
+    preference_valid_keys:
+      - vendor_id
+  subscription_config:
+    eligible_delivery_keys:
+      - type
+      - delivery_days
+  sms_providers:
+    fast2sms:
+      api_key:
+      route: q #otp q-->Quick SMS
+      url: https://www.fast2sms.com/dev/bulkV2
+      flash: 1
+    vonage:
+      url: https://rest.nexmo.com/sms/json
+      api_key:
+      api_secret:
+      from_brand: SubNRenewal
+  cache_config: #In minutes
+    db_data_TTL: 360
+    db_data_max_size: 5000
+    otp_TTL: 5
+    otp_max_size: 2500
+  image_path: images/
+  business_types:
+    - Agriculture
+    - Mechanics and Repair
+    - Services
+    - Handicrafts
+  user_types:
+    - Individual
+    - Institution
+    - Business

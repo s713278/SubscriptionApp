@@ -14,7 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.app.CommonConfig;
+import com.app.TestContainerConfig;
 import com.app.entites.Customer;
 import com.app.entites.Vendor;
 import com.app.entites.type.ApprovalStatus;
@@ -22,7 +22,7 @@ import com.app.entites.type.VendorStatus;
 
 @SpringBootTest
 @Testcontainers
-@ContextConfiguration(classes = {CommonConfig.class}) // Include MockTestConfig
+@ContextConfiguration(classes = {TestContainerConfig.class}) // Include MockTestConfig
 public class VendorRepoTest {
 
     @Autowired
@@ -50,7 +50,7 @@ public class VendorRepoTest {
         vendor.setBusinessAddress(Map.of("address1","33 Acres Land",
                 "city","Mirdoddi","zipCode","502108"));
         vendor.setServiceAreas(Map.of("areas", List.of("502108","502103","Mirdoddi","Siddipet")));
-        vendor.setUser(customer);
+        vendor.setUserId(customer.getId());
         vendor.setStatus(VendorStatus.ACTIVE);
         vendor.setApprovalStatus(ApprovalStatus.PENDING);
        // entityManager.persist(vendor);
@@ -60,7 +60,7 @@ public class VendorRepoTest {
         assertThat(customer.getId()).isNotNull();
         assertThat(vendor.getId()).isNotNull();
         assertThat(vendor.getBusinessName()).isEqualTo("Sample Business");
-        Assertions.assertSame(customer.getId(),vendor.getUser().getId());
+        Assertions.assertSame(customer.getId(),vendor.getUserId());
         Assertions.assertEquals(VendorStatus.ACTIVE,vendor.getStatus());
         Assertions.assertEquals(ApprovalStatus.PENDING,vendor.getApprovalStatus());
 

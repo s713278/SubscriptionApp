@@ -1,17 +1,17 @@
 package com.app.payloads.request;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.app.entites.type.UserRoleEnum;
+import com.app.services.constants.UserRegPlatform;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 @Schema(description = "Request for user registration")
 public class SignUpRequest {
-
+/*
 //    @NotBlank(message = "First name is required.")
     @JsonProperty("first_name")
     @Schema(description = "First name", example = "Rama")
@@ -23,5 +23,12 @@ public class SignUpRequest {
     @NotBlank(message = "Password is required.")
     @JsonProperty("password")
     private String password="909090";
+*/
+@NotNull @Schema(description = "Registration Source", example = "Android")
+@JsonProperty("reg_platform")
+private UserRegPlatform regPlatform;
 
+    @NotNull @Schema(description = "type", example = "USER")
+    @JsonProperty("user_role")
+    private UserRoleEnum userRoleEnum;
 }

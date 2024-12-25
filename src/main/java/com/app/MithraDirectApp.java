@@ -19,15 +19,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @SpringBootApplication
 @EnableAsync
-@EnableJpaAuditing
-public class SubscriptionApp implements CommandLineRunner {
+@EnableJpaAuditing(auditorAwareRef = "auditorProvider")
+public class MithraDirectApp implements CommandLineRunner {
 
     @Autowired
     private RoleRepo roleRepo;
 
     public static void main(String[] args) {
         TimeZone.setDefault(TimeZone.getTimeZone(ZoneId.of("Asia/Kolkata")));
-        SpringApplication.run(SubscriptionApp.class, args);
+        SpringApplication.run(MithraDirectApp.class, args);
     }
 
     @Bean
@@ -40,7 +40,7 @@ public class SubscriptionApp implements CommandLineRunner {
         try {
             roleRepo.findByRoleName("ADMIN");
             long count = roleRepo.count();
-            if (count != 3) throw new RuntimeException("Initial data missed!!!!");
+            if (count < 1) throw new RuntimeException("Initial data missed!!!!");
         } catch (Exception e) {
             log.error("No pre defined roles defined in database ,Please check the data base tb_roles table {} ", e.getMessage(), e);
         }

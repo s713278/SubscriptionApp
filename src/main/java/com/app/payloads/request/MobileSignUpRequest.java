@@ -20,8 +20,4 @@ public class MobileSignUpRequest extends SignUpRequest{
     @NotNull @Schema(description = "Mobile number", example = "9876543210",pattern = AppConstants.MOBILE_REGEX)
     @JsonProperty("mobile_number")
     private Long mobile;
-
-    @NotNull @Schema(description = "Registration Source", example = "android")
-    @JsonProperty("reg_source")
-    private String  regSource;
 }

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 
-public record VendorListingResponse<T> (
+public record PaginationResponse<T> (
         @JsonProperty("result")
         List<T> content,
 

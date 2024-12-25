@@ -1,6 +1,6 @@
 package com.app.services;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,11 +8,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.app.CommonConfig;
+import com.app.TestContainerConfig;
 
 @SpringBootTest
 @Testcontainers
-@ContextConfiguration(classes = {CommonConfig.class})
+@ContextConfiguration(classes = {TestContainerConfig.class})
 class CategoryServiceTest {
 
     @Autowired  CategoryService categoryService;

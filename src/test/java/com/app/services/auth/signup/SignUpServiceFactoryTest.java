@@ -8,11 +8,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.app.CommonConfig;
+import com.app.TestContainerConfig;
 
 @SpringBootTest
 @Testcontainers
-@ContextConfiguration(classes = {CommonConfig.class})
+@ContextConfiguration(classes = {TestContainerConfig.class})
 class SignUpServiceFactoryTest {
 private @Autowired SignUpServiceFactory signUpServiceFactory;
     @Test

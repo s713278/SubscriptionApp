@@ -14,8 +14,6 @@ import com.app.entites.Product;
 import com.app.payloads.CategoryDTO;
 import com.app.payloads.ProductDTO;
 import com.app.payloads.response.APIResponse;
-import com.app.payloads.response.CategoryResponse;
-import com.app.payloads.response.ProductResponse;
 import com.app.services.CategoryService;
 import com.app.services.ProductService;
 
@@ -46,13 +44,13 @@ public class CategoryController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<CategoryResponse> getCategories(
+    public ResponseEntity<APIResponse<?>> getCategories(
             @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
             @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_CATEGORIES_BY, required = false) String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
-        CategoryResponse categoryResponse = categoryService.getCategories(pageNumber, pageSize, sortBy, sortOrder);
-        return new ResponseEntity<CategoryResponse>(categoryResponse, HttpStatus.OK);
+        var categoryResponse = categoryService.getCategories(pageNumber, pageSize, sortBy, sortOrder);
+        return new ResponseEntity<>(APIResponse.success(categoryResponse), HttpStatus.OK);
     }
 
     @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN')")
@@ -83,41 +81,38 @@ public class CategoryController {
 
     @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN')")
     @GetMapping("/products")
-    public ResponseEntity<ProductResponse> getAllProducts(
+    public ResponseEntity<APIResponse<?>> getAllProducts(
             @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
             @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_PRODUCTS_BY, required = false) String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
-        ProductResponse productResponse = productService.getAllProducts(pageNumber, pageSize, sortBy, sortOrder);
-        return new ResponseEntity<ProductResponse>(productResponse, HttpStatus.FOUND);
+        var productResponse = productService.getAllProducts(pageNumber, pageSize, sortBy, sortOrder);
+        return new ResponseEntity<>(APIResponse.success(productResponse), HttpStatus.FOUND);
     }
 
     //@PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('VENDOR'))")
     @GetMapping("/{categoryId}/products")
-    public ResponseEntity<ProductResponse> getProductsByCategory(@PathVariable Long categoryId,
+    public ResponseEntity<APIResponse<?>> getProductsByCategory(@PathVariable Long categoryId,
                                                                  @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
                                                                  @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
                                                                  @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_PRODUCTS_BY, required = false) String sortBy,
                                                                  @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
 
-        ProductResponse productResponse = productService.searchByCategory(categoryId, pageNumber, pageSize, sortBy,
+        var productResponse = productService.searchByCategory(categoryId, pageNumber, pageSize, sortBy,
                 sortOrder);
-
-        return new ResponseEntity<ProductResponse>(productResponse, HttpStatus.FOUND);
+        return new ResponseEntity<>(APIResponse.success(productResponse), HttpStatus.FOUND);
     }
 
     //@PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('VENDOR'))")
     @GetMapping("/products/keyword/{keyword}")
-    public ResponseEntity<ProductResponse> getProductsByKeyword(@PathVariable String keyword,
+    public ResponseEntity<APIResponse<?>> getProductsByKeyword(@PathVariable String keyword,
                                                                 @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
                                                                 @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
                                                                 @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_PRODUCTS_BY, required = false) String sortBy,
                                                                 @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
-
-        ProductResponse productResponse = productService.searchProductByKeyword(keyword, pageNumber, pageSize, sortBy,
+        var productResponse = productService.searchProductByKeyword(keyword, pageNumber, pageSize, sortBy,
                 sortOrder);
-
-        return new ResponseEntity<ProductResponse>(productResponse, HttpStatus.FOUND);
+        return new ResponseEntity<>(APIResponse.success(productResponse), HttpStatus.FOUND);
     }
 
     @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN')")
