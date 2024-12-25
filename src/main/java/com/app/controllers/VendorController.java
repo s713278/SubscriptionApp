@@ -24,7 +24,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Tag(name = "6. Vendor Management")
+@Tag(name = "6. Vendor Profile Management")
 @RestController
 @RequestMapping("/v1/vendors")
 
@@ -39,13 +39,14 @@ public class VendorController {
 
     @PostMapping("/")
     @PreAuthorize("(hasAuthority('VENDOR') or hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")
+    @Operation(summary = "Create Vendor Profile",description = "Profile can be created by  Vendor/Admin/Customer_Care after login.")
     public ResponseEntity<APIResponse<?>> createVendorProfile(@Valid @RequestBody VendorProfileRequest vendorDetails, Authentication authentication) {
         var response =serviceManager.getVendorService().createVendorProfile(vendorDetails,authentication);
         return new ResponseEntity<>(APIResponse.success(HttpStatus.CREATED.value(),response), HttpStatus.CREATED);
     }
 
     @PreAuthorize("#vendorId == authentication.principal and (hasAuthority('ADMIN'))")
-    @Operation(summary = "Fetch all vendors")
+    @Operation(summary = "Fetch all vendors",description = "Fetch all vendors by admin role only")
     @GetMapping("/")
     public ResponseEntity<APIResponse<?>> fetchAllActiveVendors() {
         log.debug("Request received for all vendors");
@@ -54,31 +55,41 @@ public class VendorController {
 
     @PreAuthorize("#vendorId == authentication.principal OR (hasAuthority('VENDOR') or hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")
     @PutMapping("/{vendorId}")
+    @Operation(summary = "Update vendor full profile",description = "Update vendor full profile by Vendor/Admin/Customer_Care after login")
     public ResponseEntity<APIResponse<?>> updateVendor(@RequestBody VendorProfileRequest storeDTO,
                                                                      @PathVariable Long vendorId,Authentication authentication) {
         var response = serviceManager.getVendorService().updateVendorProfile(storeDTO, vendorId,authentication);
         return new ResponseEntity<>(APIResponse.success(HttpStatus.OK.value(),response), HttpStatus.OK);
     }
 
+    @Operation(summary = "Access vendor profile by vendorId",description = "Fetch vendor profile by Vendor/Admin/Customer_Care after login.")
     @PreAuthorize("#vendorId == authentication.principal OR (hasAuthority('VENDOR') or hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")
     @GetMapping("/{vendorId}")
     public ResponseEntity<APIResponse<?>> getVendorProfileById(@PathVariable Long vendorId, Authentication authentication) {
         UserAuthentication userAuthentication= (UserAuthentication)authentication;
-        Long userId=(Long)userAuthentication.getPrincipal();
-
         var response = serviceManager.getVendorService().fetchVendorById(vendorId, userAuthentication);
         return new ResponseEntity<>(APIResponse.success(HttpStatus.OK.value(),response), HttpStatus.OK);
     }
 
-    @PatchMapping("/{vendorId}")
+    @Operation(summary = "Search vendor profile by mobile",description = "Fetch vendor profile by Admin/Customer_Care after login.")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")
+    @GetMapping("/{mobile}")
+    public ResponseEntity<APIResponse<?>> getVendorProfileByMobile(@PathVariable String mobile, Authentication authentication) {
+        log.debug("Request received for fetching vendor profile for mobile #{}",mobile);
+        UserAuthentication userAuthentication= (UserAuthentication)authentication;
+        var response = serviceManager.getVendorService().fetchVendorByMobile(mobile, userAuthentication);
+        return new ResponseEntity<>(APIResponse.success(HttpStatus.OK.value(),response), HttpStatus.OK);
+    }
+
+   /* @PatchMapping("/{vendorId}")
     @PreAuthorize("#vendorId == authentication.principal OR (hasAuthority('VENDOR') or hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")
     public ResponseEntity<APIResponse<?>> updateBusinessAddress(@PathVariable Long vendorId,
                                                             @RequestBody Map<String,String> address) {
         addressValidator.validateAddress(vendorId, address);
         return ResponseEntity.ok(APIResponse.success("Business address updated successfully."));
-    }
+    }*/
 
-    @Operation(description = "Update vendor's approval status (Accepted/Rejected")
+    @Operation(summary = "Review Vendor", description = "Update vendor's approval status (Accepted/Rejected by admin after login.")
     @PatchMapping("/{vendorId}/approval_status")
     @PreAuthorize("(hasAuthority('ADMIN')")
     public ResponseEntity<APIResponse<?>> updateApprovalStatus(@PathVariable Long vendorId,
@@ -87,7 +98,7 @@ public class VendorController {
         return ResponseEntity.ok(APIResponse.success("Vendor approval's status changed successfully."));
     }
 
-    @Operation(description = "Update vendor status(Active/InActive")
+    @Operation(summary = "Update vendor status", description = "Update vendor status(Active/InActive by Admin/Customer_Care after login.")
     @PatchMapping("/{vendorId}/vendor_status")
     @PreAuthorize("(hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")
     public ResponseEntity<APIResponse<?>> updateVendorStatus(@PathVariable Long vendorId,
@@ -96,7 +107,7 @@ public class VendorController {
         return ResponseEntity.ok(APIResponse.success("Vendor status changed successfully."));
     }
 
-    @Operation(description = "Assign Categories")
+    @Operation(summary = "Assign categories", description = "Assign Categories to vendor by Admin/Customer_Care")
     @PatchMapping("/{vendorId}/categories")
     @PreAuthorize("(hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")
     public ResponseEntity<APIResponse<?>> assignCategories(@PathVariable Long userId,
@@ -104,7 +115,7 @@ public class VendorController {
         return ResponseEntity.ok(APIResponse.success("Categories assigned successfully."));
     }
 
-    @Operation(description = "Assign Products")
+    @Operation(summary = "Assign products", description = "Assign Categories to vendor by Admin/Customer_Care")
     @PatchMapping("/{vendorId}/products")
     @PreAuthorize("(hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")
     public ResponseEntity<APIResponse<?>> assignProducts(@PathVariable Long vendorId,

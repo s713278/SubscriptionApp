@@ -48,6 +48,7 @@ public abstract class AbstractVendorService {
     protected  UserService userService;
     protected  NotificationContext notificationContext;
 
+
     protected VendorProfileResponse validateOwnershipAndGet(Long vendorId, Long userPrincipal){
         var vendor =  fetchVendorById(vendorId);
         if(!Objects.equals(vendor.getUserId(), userPrincipal)){
@@ -93,6 +94,11 @@ public abstract class AbstractVendorService {
             vendor.setUserId(vendorEntity.getId());
             postCreateVendorProfile(vendorEntity.getId(),customer.getFullMobileNumber());
         }else if (isVendor){ //Vendor Profile has to be created
+            Long vendorId=getRepoManager().getVendorRepo().findByUserId(principal);
+            //fetchVendorById(principal)
+            if(vendorId!=null){
+                throw new APIException(APIErrorCode.DUPLICATE_REQUEST,"Vendor profile already existed with id :"+vendorId);
+            }
             vendor.setUserId(principal);
             vendor.setStatus(VendorStatus.INACTIVE);
             vendor.setApprovalStatus(ApprovalStatus.PENDING);
