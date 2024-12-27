@@ -1,39 +1,29 @@
 package com.app.services.notification;
 
+import com.app.entites.Order;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import com.app.entites.Order;
-
-import lombok.RequiredArgsConstructor;
-
-/**
- * SMS Service 
- */
+/** SMS Service */
 @Component
 @RequiredArgsConstructor
-@Qualifier("wNotificationStrategy") public class WhatsAppNotificationStrategy implements NotificationStrategy {
+@Qualifier("wNotificationStrategy")
+public class WhatsAppNotificationStrategy implements NotificationStrategy {
 
-    private final SMSService smsService;
+  private final SMSService smsService;
 
-    @Override
-    public void sendOTP( String mobile, String otp) {
-        smsService.sendTextMessage(mobile,otp);
-    }
+  @Override
+  public void sendOTP(String mobile, String otp) {
+    smsService.sendTextMessage(mobile, otp);
+  }
 
-    @Override
-    public void sendActivationEmail(String email, String activationToken) {
+  @Override
+  public void sendActivationEmail(String email, String activationToken) {}
 
-    }
+  @Override
+  public void sendResetPasswordEmail(String email, String resetToken) {}
 
-    @Override
-    public void sendResetPasswordEmail(String email, String resetToken) {
-
-    }
-
-    @Override
-    public void sendOrderNotification(String email, Order order) {
-
-    }
-
+  @Override
+  public void sendOrderNotification(String email, Order order) {}
 }

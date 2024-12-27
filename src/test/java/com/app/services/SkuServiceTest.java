@@ -1,33 +1,28 @@
 package com.app.services;
 
+import com.app.TestContainerConfig;
+import com.app.services.impl.SkuService;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.app.TestContainerConfig;
-import com.app.services.impl.SkuService;
-
-import lombok.extern.slf4j.Slf4j;
-
 @Slf4j
-
 @SpringBootTest
 @Testcontainers
 @ContextConfiguration(classes = {TestContainerConfig.class})
-class SkuServiceTest  {
+class SkuServiceTest {
 
+  @Autowired SkuService skuService;
 
-    @Autowired
-    SkuService skuService;
-    @Test
-    void getPriceForSku() {
-    }
+  @Test
+  void getPriceForSku() {}
 
-    @Test
-    void fetchVendorProductSkusById() {
-        var vendorProductsMap = skuService.fetchProductSkusByVendorId(1L);
-        //Assertions.assertEquals(2,vendorProductsMap.size());
-    }
+  @Test
+  void fetchVendorProductSkusById() {
+    var vendorProductsMap = skuService.fetchProductSkusByVendorId(1L);
+    // Assertions.assertEquals(2,vendorProductsMap.size());
+  }
 }

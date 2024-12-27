@@ -1,5 +1,7 @@
 package com.app.entites.type;
 
 public enum UserCategory {
-    RESIDENT,BUSINESS,INSTITUTION
+  RESIDENT,
+  BUSINESS,
+  INSTITUTION
 }

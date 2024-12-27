@@ -1,8 +1,10 @@
 package com.app.repositories;
 
+import com.app.entites.Vendor;
+import com.app.entites.type.ApprovalStatus;
+import com.app.entites.type.VendorStatus;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,28 +13,28 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.app.entites.Vendor;
-import com.app.entites.type.ApprovalStatus;
-import com.app.entites.type.VendorStatus;
-
 @Repository
 public interface VendorRepo extends JpaRepository<Vendor, Long> {
 
+  List<Vendor> findAllByStatus(VendorStatus status);
 
-    List<Vendor> findAllByStatus(VendorStatus status);
-
-    @Query(value = """
-            SELECT * 
-            FROM tb_vendor 
+  @Query(
+      value =
+          """
+            SELECT *
+            FROM tb_vendor
             WHERE EXISTS (
-                SELECT 1 
+                SELECT 1
                 FROM jsonb_array_elements_text(service_area->'areas') AS area
                 WHERE area LIKE %:substring%
             )
-            """, nativeQuery = true)
-    List<Vendor> findByServiceArea(@Param("substring") String substring);
+            """,
+      nativeQuery = true)
+  List<Vendor> findByServiceArea(@Param("substring") String substring);
 
-    @Query(value = """
+  @Query(
+      value =
+          """
         SELECT
             tv.id AS vendor_id,
             tv.business_name,
@@ -49,14 +51,17 @@ public interface VendorRepo extends JpaRepository<Vendor, Long> {
               tb_category tc
           ON
               tcv.category_id = tc.id
-        WHERE 
+        WHERE
             tv.status = 'ACTIVE'
-        GROUP BY 
+        GROUP BY
             tv.id, tv.business_name, tv.banner_image, tv.service_area;
-        """, nativeQuery = true)
-    List<Object[]> findAllUniqueVendorsWithCategories();
+        """,
+      nativeQuery = true)
+  List<Object[]> findAllUniqueVendorsWithCategories();
 
-    @Query(value = """
+  @Query(
+      value =
+          """
             SELECT
               tv.id AS vendor_id,
               tv.business_name,
@@ -82,10 +87,13 @@ public interface VendorRepo extends JpaRepository<Vendor, Long> {
               )
           GROUP BY
               tv.id, tv.business_name, tv.banner_image, tv.service_area;
-        """, nativeQuery = true)
-    List<Object[]> findAllUniqueVendorsWithCategories(String zipCode);
+        """,
+      nativeQuery = true)
+  List<Object[]> findAllUniqueVendorsWithCategories(String zipCode);
 
-    @Query(value = """
+  @Query(
+      value =
+          """
             SELECT
               tv.id AS vendor_id,
               tv.business_name,
@@ -111,11 +119,14 @@ public interface VendorRepo extends JpaRepository<Vendor, Long> {
               )
           GROUP BY
               tv.id, tv.business_name, tv.banner_image, tv.service_area;
-        """, nativeQuery = true)
-    //List<Object[]> findAllUniqueVendorsWithCategories(String zipCode, Pageable pageable);
-    Page<Object[]> findActiveVendorsByZipCode(String zipCode, Pageable pageable);
+        """,
+      nativeQuery = true)
+  // List<Object[]> findAllUniqueVendorsWithCategories(String zipCode, Pageable pageable);
+  Page<Object[]> findActiveVendorsByZipCode(String zipCode, Pageable pageable);
 
-    @Query(value = """
+  @Query(
+      value =
+          """
             SELECT
               tv.id AS vendor_id,
               tv.business_name,
@@ -142,18 +153,25 @@ public interface VendorRepo extends JpaRepository<Vendor, Long> {
               AND tcv.category_id = :category
           GROUP BY
               tv.id, tv.business_name, tv.banner_image, tv.service_area;
-        """, nativeQuery = true)
-    Page<Object[]> findActiveVendorsByZipCodeAndCategory(String zipCode, Long category, Pageable pageable);
-    @Modifying(clearAutomatically = true)
-    @Query("UPDATE Vendor v SET v.approvalStatus = :approvalStatus, v.status = :status WHERE v.id = :vendorId")
-    void updateApprovalStatus(@Param("vendorId") Long vendorId, @Param("approvalStatus") ApprovalStatus approvalStatus, @Param("status") VendorStatus status);
+        """,
+      nativeQuery = true)
+  Page<Object[]> findActiveVendorsByZipCodeAndCategory(
+      String zipCode, Long category, Pageable pageable);
 
-    @Modifying(clearAutomatically = true)
-    @Query("UPDATE Vendor v SET v.status = :status WHERE v.id = :vendorId")
-    void updateVendorStatus(@Param("vendorId") Long vendorId, @Param("status") VendorStatus status);
+  @Modifying(clearAutomatically = true)
+  @Query(
+      "UPDATE Vendor v SET v.approvalStatus = :approvalStatus, v.status = :status WHERE v.id = :vendorId")
+  void updateApprovalStatus(
+      @Param("vendorId") Long vendorId,
+      @Param("approvalStatus") ApprovalStatus approvalStatus,
+      @Param("status") VendorStatus status);
 
-    @Query("SELECT v.id FROM Vendor v WHERE v.userId = :userId")
-    Long findByUserId(Long userId);
+  @Modifying(clearAutomatically = true)
+  @Query("UPDATE Vendor v SET v.status = :status WHERE v.id = :vendorId")
+  void updateVendorStatus(@Param("vendorId") Long vendorId, @Param("status") VendorStatus status);
 
-    Optional<Vendor> findByContactNumber(String mobileNo);
+  @Query("SELECT v.id FROM Vendor v WHERE v.userId = :userId")
+  Long findByUserId(Long userId);
+
+  Optional<Vendor> findByContactNumber(String mobileNo);
 }

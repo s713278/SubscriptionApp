@@ -211,6 +211,8 @@
                             <spacesPerTab>4</spacesPerTab>
                         </indent>
                         <formatAnnotations/>
+                        <removeUnusedImports/>
+                        <googleJavaFormat/>
                     </java>
                     <markdown>
                         <includes>

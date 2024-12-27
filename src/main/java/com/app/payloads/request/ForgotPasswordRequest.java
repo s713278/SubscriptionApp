@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class ForgotPasswordRequest {
-    private String email;
+  private String email;
 
-    // Getters and setters
+  // Getters and setters
 }

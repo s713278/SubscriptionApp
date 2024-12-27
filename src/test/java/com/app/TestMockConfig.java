@@ -9,9 +9,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 @TestConfiguration
 public class TestMockConfig {
 
-    @Bean
-    public JavaMailSender javaMailSender() {
-        return mock(JavaMailSender.class); // Create a mock JavaMailSender instance
-    }
-
+  @Bean
+  public JavaMailSender javaMailSender() {
+    return mock(JavaMailSender.class); // Create a mock JavaMailSender instance
+  }
 }

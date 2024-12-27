@@ -7,6 +7,6 @@ import lombok.Data;
 @Builder
 public class UserClaims {
 
-    private String userId;
-    private String storeId;
+  private String userId;
+  private String storeId;
 }

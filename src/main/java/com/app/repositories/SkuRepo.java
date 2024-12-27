@@ -1,25 +1,25 @@
 package com.app.repositories;
 
+import com.app.entites.Sku;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.app.entites.Sku;
-
 @Repository
 public interface SkuRepo extends JpaRepository<Sku, Long> {
 
-    @Query("SELECT s FROM Sku s WHERE s.id = ?1 ")
-    Optional<Sku> findByIdAndStoreId(final Long skuId);
-   
-    @Query("SELECT s FROM Sku s WHERE s.id = ?1 ")
-    Optional<Sku>  findByIdAndVendorId(final Long skuId,final Long vendorId);
+  @Query("SELECT s FROM Sku s WHERE s.id = ?1 ")
+  Optional<Sku> findByIdAndStoreId(final Long skuId);
 
-    @Query(value = """ 
+  @Query("SELECT s FROM Sku s WHERE s.id = ?1 ")
+  Optional<Sku> findByIdAndVendorId(final Long skuId, final Long vendorId);
+
+  @Query(
+      value =
+          """
             WITH LatestEffectiveDates AS (
               SELECT
                   id AS price_id,
@@ -73,9 +73,10 @@ public interface SkuRepo extends JpaRepository<Sku, Long> {
             GROUP BY
                 ts.product_id, tp.name, ts.id, ts.image_path, ts.name, ts.size, ts.type, ts.service_valid_days,
                 led.price_id, led.list_price, led.sale_price, led.effective_date;
-            """,nativeQuery = true)
-    List<Object[]> findVendorProductSkus(@Param("vendorId") Long vendorId);
+            """,
+      nativeQuery = true)
+  List<Object[]> findVendorProductSkus(@Param("vendorId") Long vendorId);
 
-    @Query("SELECT available from Sku WHERE id=:skuId")
-    Boolean findSkuAvailable(Long skuId);
+  @Query("SELECT available from Sku WHERE id=:skuId")
+  Boolean findSkuAvailable(Long skuId);
 }

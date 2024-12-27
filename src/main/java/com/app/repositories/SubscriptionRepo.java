@@ -1,20 +1,21 @@
 package com.app.repositories;
 
+import com.app.entites.Subscription;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.app.entites.Subscription;
-
 public interface SubscriptionRepo extends JpaRepository<Subscription, Long> {
 
-    @Query("Select id,quantity,frequency,status,startDate,nextDeliveryDate from Subscription s where s.id=?1")
-    Optional<Subscription> findSubscription(final Long subId);
+  @Query(
+      "Select id,quantity,frequency,status,startDate,nextDeliveryDate from Subscription s where s.id=?1")
+  Optional<Subscription> findSubscription(final Long subId);
 
-    @Query(value = """
+  @Query(
+      value =
+          """
         WITH LatestEffectiveDates
           AS ( SELECT
                     id AS price_id,
@@ -58,11 +59,15 @@ public interface SubscriptionRepo extends JpaRepository<Subscription, Long> {
               ON vendor.id = :vendorId and vendor.id = sku.vendor_id
           WHERE
               sub.customer_id = :userId
-        """, nativeQuery = true)
-    List<Object[]> findByUserIdAndVendorId(@Param("userId") Long userId, @Param("vendorId")  Long vendorId);
-    
-   // List<Subscription> findByVendorIdAndStatus(final Long vendorId,SubscriptionStatus status);
-    @Query(value = """
+        """,
+      nativeQuery = true)
+  List<Object[]> findByUserIdAndVendorId(
+      @Param("userId") Long userId, @Param("vendorId") Long vendorId);
+
+  // List<Subscription> findByVendorIdAndStatus(final Long vendorId,SubscriptionStatus status);
+  @Query(
+      value =
+          """
         WITH LatestEffectiveDates
           AS ( SELECT
                     id AS price_id,
@@ -104,13 +109,15 @@ public interface SubscriptionRepo extends JpaRepository<Subscription, Long> {
           JOIN
               tb_vendor vendor
               ON vendor.id = :vendorId and vendor.id = sku.vendor_id
-        """, nativeQuery = true)
-    List<Object[]> findByVendorId(@Param("vendorId") Long vendorId);
+        """,
+      nativeQuery = true)
+  List<Object[]> findByVendorId(@Param("vendorId") Long vendorId);
 
-    Optional<Subscription> findByUserIdAndSkuId(final Long userId, final Long vendorId);
+  Optional<Subscription> findByUserIdAndSkuId(final Long userId, final Long vendorId);
 
-
-    @Query(value = """
+  @Query(
+      value =
+          """
             WITH LatestEffectiveDates
             AS ( SELECT
                       id AS price_id,
@@ -154,8 +161,9 @@ public interface SubscriptionRepo extends JpaRepository<Subscription, Long> {
                 ON vendor.id = sku.vendor_id
             WHERE
                 sub.customer_id = :userId
-        """, nativeQuery = true)
-    List<Object[]> findByUserId(@Param("userId") Long userId);
+        """,
+      nativeQuery = true)
+  List<Object[]> findByUserId(@Param("userId") Long userId);
 
-    Optional<Subscription> findByIdAndUserId(Long subId,Long userId);
+  Optional<Subscription> findByIdAndUserId(Long subId, Long userId);
 }

@@ -7,17 +7,20 @@ import lombok.Data;
 @Entity
 @Table(name = "tb_vendor_legal_details")
 public class VendorLegalDetails {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private String GSTNumber;
+  @JoinColumn(name = "gst_number")
+  private String GSTNumber;
 
-    private String PANNumber;
+  @JoinColumn(name = "pan_number")
+  private String PANNumber;
 
-    private String regNumber;
+  @JoinColumn(name = "reg_number")
+  private String regNumber;
 
-    @OneToOne(cascade = { CascadeType.MERGE })
-    @JoinColumn(name = "vendor_id")
-    private Vendor vendor;
+  @OneToOne(cascade = {CascadeType.MERGE})
+  @JoinColumn(name = "vendor_id")
+  private Vendor vendor;
 }
