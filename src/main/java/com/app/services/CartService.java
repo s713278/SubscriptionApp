@@ -1,24 +1,23 @@
 package com.app.services;
 
-import java.util.List;
-
 import com.app.payloads.CartDTO;
 import com.app.payloads.request.ItemRequest;
 import com.app.payloads.response.APIResponse;
+import java.util.List;
 
 public interface CartService {
 
-    APIResponse<CartDTO> addOrUpdateItem(final Long storeId, final ItemRequest request);
+  APIResponse<CartDTO> addOrUpdateItem(final Long storeId, final ItemRequest request);
 
-    List<CartDTO> getAllCarts();
+  List<CartDTO> getAllCarts();
 
-    APIResponse<CartDTO> getCart(Long cartId);
+  APIResponse<CartDTO> getCart(Long cartId);
 
-    CartDTO updateCart(Long cartId, Long skuId, Integer quantity);
+  CartDTO updateCart(Long cartId, Long skuId, Integer quantity);
 
-    void updateProductInCarts(Long cartId, Long skuId);
+  void updateProductInCarts(Long cartId, Long skuId);
 
-    APIResponse<String> deleteItem(Long cartId, Long cartItemId);
+  APIResponse<String> deleteItem(Long cartId, Long cartItemId);
 
-    APIResponse<List<CartDTO>> getAllCarts(final Long storeId);
+  APIResponse<List<CartDTO>> getAllCarts(final Long storeId);
 }

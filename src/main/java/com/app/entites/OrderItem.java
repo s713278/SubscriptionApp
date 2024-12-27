@@ -12,25 +12,24 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OrderItem {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "sku_id")
-    private Sku sku;
+  @OneToOne
+  @JoinColumn(name = "sku_id")
+  private Sku sku;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
+  @ManyToOne
+  @JoinColumn(name = "order_id")
+  private Order order;
 
-    private Integer quantity;
+  private Integer quantity;
 
-    private double discount;
-    private double unitPrice;
-    private double stateTax = 0;
-    private double federalTax = 0;
+  private double discount;
+  private double unitPrice;
+  private double stateTax = 0;
+  private double federalTax = 0;
 
-    @Transient
-    private double amount; // quantity * unitPrice + stateTax + federalTax;
+  @Transient private double amount; // quantity * unitPrice + stateTax + federalTax;
 }

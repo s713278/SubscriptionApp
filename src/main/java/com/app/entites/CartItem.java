@@ -12,25 +12,24 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CartItem {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @ManyToOne(cascade = { CascadeType.REFRESH })
-    @JoinColumn(name = "cart_id")
-    private Cart cart;
+  @ManyToOne(cascade = {CascadeType.REFRESH})
+  @JoinColumn(name = "cart_id")
+  private Cart cart;
 
-    @OneToOne
-    @JoinColumn(name = "sku_id")
-    private Sku sku;
+  @OneToOne
+  @JoinColumn(name = "sku_id")
+  private Sku sku;
 
-    private Integer quantity;
-    private double discount;
-    private double unitPrice;
-    /*
-     * private double stateTax = 0; private double federalTax = 0;
-     */
+  private Integer quantity;
+  private double discount;
+  private double unitPrice;
+  /*
+   * private double stateTax = 0; private double federalTax = 0;
+   */
 
-    @Transient
-    private double amount; // quantity * unitPrice + stateTax + federalTax;
+  @Transient private double amount; // quantity * unitPrice + stateTax + federalTax;
 }

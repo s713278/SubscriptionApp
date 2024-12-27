@@ -44,4 +44,23 @@ INSERT INTO public.tb_sku_sub_plan (eligible_delivery_days,sku_id,sub_plan_id) V
 	 ('{"delivery_mode": "FLEXIBLE"}',10005,1),
 	 ('{"delivery_mode": "FLEXIBLE"}',10001,1);
 
+--Roles
+INSERT INTO tb_role (role_id, role_name) VALUES(101, 'ADMIN');
+INSERT INTO tb_role (role_id, role_name) VALUES(104, 'CUSTOMER_CARE');
+INSERT INTO tb_role (role_id, role_name) VALUES(102, 'USER');
+INSERT INTO tb_role (role_id, role_name) VALUES(103, 'VENDOR');
+
+--Test Vendor Creation
+INSERT INTO tb_customer (id, created_date, delivery_address, email,
+ email_verified, first_name, last_name, mobile, mobile_verified, reg_device,
+ reg_source, is_active, created_by, last_modified_date, last_modified_by,
+ delivery_instructions, mobile_verified_timestamp, date_of_birth, "gender",
+ preferences, country_code, "type") VALUES
+ (1000, '2024-11-24 10:19:06.555', 'null'::jsonb, NULL, false, NULL, NULL,
+  9848336190, true, NULL,
+ 'android', true, NULL, '2024-11-24 10:19:06.555', NULL, 'null'::jsonb,
+ '2024-11-24 10:19:29.078', NULL, NULL, 'null'::jsonb, '+91', 'VENDOR');
+
+--Vendor Roles
+INSERT INTO tb_user_roles (user_id, role_id) VALUES(1000, 103);
 

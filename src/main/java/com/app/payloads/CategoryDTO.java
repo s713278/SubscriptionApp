@@ -1,22 +1,19 @@
 package com.app.payloads;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class CategoryDTO {
 
-    @JsonProperty("category_name")
-    private String name;
+  @JsonProperty("id")
+  private Long id;
 
-    @JsonProperty("description")
-    private String description;
+  @JsonProperty("name")
+  private String name;
 
-
-    // private List<ProductDTO> products = new ArrayList<>();
+  @JsonProperty("description")
+  private String description;
 }

@@ -1,10 +1,8 @@
 package com.app.payloads;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,21 +12,21 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CartDTO {
 
-    @JsonProperty("cart_id")
-    private Long cartId;
+  @JsonProperty("cart_id")
+  private Long cartId;
 
-    @JsonProperty("total_amount")
-    private Double totalPrice = 0.0;
+  @JsonProperty("total_amount")
+  private Double totalPrice = 0.0;
 
-    // private List<SkuDTO> skus = new ArrayList<>();
+  // private List<SkuDTO> skus = new ArrayList<>();
 
-    @JsonProperty("items")
-    private List<CartItemDTO> items = new ArrayList<>();
+  @JsonProperty("items")
+  private List<CartItemDTO> items = new ArrayList<>();
 
-    @JsonProperty("items_count")
-    private Integer itemsCount;
+  @JsonProperty("items_count")
+  private Integer itemsCount;
 
-    public Integer getItemsCount() {
-        return items.stream().map(t -> t.getQuantity()).mapToInt(Integer::intValue).sum();
-    }
+  public Integer getItemsCount() {
+    return items.stream().map(t -> t.getQuantity()).mapToInt(Integer::intValue).sum();
+  }
 }

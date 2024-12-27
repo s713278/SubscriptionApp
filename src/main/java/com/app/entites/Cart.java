@@ -1,10 +1,9 @@
 package com.app.entites;
 
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
-import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -12,17 +11,20 @@ import lombok.Data;
 @Table(name = "tb_cart")
 public class Cart {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private Customer user;
+  @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id")
+  private Customer user;
 
-    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name = "cart_id")
-    private List<CartItem> cartItems = new ArrayList<>();
+  @OneToMany(
+      cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+      fetch = FetchType.LAZY,
+      orphanRemoval = true)
+  @JoinColumn(name = "cart_id")
+  private List<CartItem> cartItems = new ArrayList<>();
 
-    private BigDecimal totalPrice;
+  private BigDecimal totalPrice;
 }

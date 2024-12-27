@@ -1,7 +1,13 @@
 package com.app.controllers;
 
+import com.app.config.AppConstants;
+import com.app.entites.Product;
+import com.app.payloads.ProductDTO;
+import com.app.payloads.response.APIResponse;
+import com.app.services.ProductService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import java.io.IOException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,93 +15,84 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.app.config.AppConstants;
-import com.app.entites.Product;
-import com.app.payloads.ProductDTO;
-import com.app.payloads.response.ProductResponse;
-import com.app.services.ProductService;
-
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.validation.Valid;
-
-//@Slf4j
-//@Tag(name = "8. Product Management")
-//@RestController
-//@RequestMapping("/products")
+// @Slf4j
+// @Tag(name = "8. Product Management")
+// @RestController
+// @RequestMapping("/products")
 @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
 public class ProductController {
 
-    @Autowired
-    private ProductService productService;
+  @Autowired private ProductService productService;
 
-    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('VENDOR_PRO'))")
-    @PostMapping("/{categoryId}/products")
-    public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody Product product, @PathVariable Long categoryId) {
-        ProductDTO savedProduct = productService.addProduct(categoryId, product);
-        return new ResponseEntity<ProductDTO>(savedProduct, HttpStatus.CREATED);
-    }
+  @PreAuthorize(
+      "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('VENDOR_PRO'))")
+  @PostMapping("/{categoryId}/products")
+  public ResponseEntity<ProductDTO> addProduct(
+      @Valid @RequestBody Product product, @PathVariable Long categoryId) {
+    ProductDTO savedProduct = productService.addProduct(categoryId, product);
+    return new ResponseEntity<ProductDTO>(savedProduct, HttpStatus.CREATED);
+  }
 
-    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('VENDOR'))")
-    @GetMapping("/products")
-    public ResponseEntity<ProductResponse> getAllProducts(
-            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
-            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
-            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_PRODUCTS_BY, required = false) String sortBy,
-            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
-        ProductResponse productResponse = productService.getAllProducts(pageNumber, pageSize, sortBy, sortOrder);
-        return new ResponseEntity<ProductResponse>(productResponse, HttpStatus.FOUND);
-    }
+  @PreAuthorize(
+      "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('VENDOR'))")
+  @GetMapping("/products")
+  public ResponseEntity<APIResponse<?>> getAllProducts(
+      @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false)
+          Integer pageNumber,
+      @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false)
+          Integer pageSize,
+      @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_PRODUCTS_BY, required = false)
+          String sortBy,
+      @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false)
+          String sortOrder) {
+    var productResponse = productService.getAllProducts(pageNumber, pageSize, sortBy, sortOrder);
+    return new ResponseEntity<>(APIResponse.success(productResponse), HttpStatus.FOUND);
+  }
 
-    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('VENDOR'))")
-    @GetMapping("/{categoryId}/products")
-    public ResponseEntity<ProductResponse> getProductsByCategory(@PathVariable Long categoryId,
-            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
-            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
-            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_PRODUCTS_BY, required = false) String sortBy,
-            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
+  @PreAuthorize(
+      "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('VENDOR'))")
+  @GetMapping("/products/keyword/{keyword}")
+  public ResponseEntity<APIResponse<?>> getProductsByKeyword(
+      @PathVariable String keyword,
+      @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false)
+          Integer pageNumber,
+      @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false)
+          Integer pageSize,
+      @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_PRODUCTS_BY, required = false)
+          String sortBy,
+      @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false)
+          String sortOrder) {
 
-        ProductResponse productResponse = productService.searchByCategory(categoryId, pageNumber, pageSize, sortBy,
-                sortOrder);
+    var productResponse =
+        productService.searchProductByKeyword(keyword, pageNumber, pageSize, sortBy, sortOrder);
+    return new ResponseEntity<>(APIResponse.success(productResponse), HttpStatus.OK);
+  }
 
-        return new ResponseEntity<ProductResponse>(productResponse, HttpStatus.FOUND);
-    }
+  @PreAuthorize(
+      "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('VENDOR'))")
+  @PutMapping("/products/{productId}")
+  public ResponseEntity<ProductDTO> updateProduct(
+      @RequestBody Product product, @PathVariable Long productId) {
+    ProductDTO updatedProduct = productService.updateProduct(productId, product);
+    return new ResponseEntity<ProductDTO>(updatedProduct, HttpStatus.OK);
+  }
 
-    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('VENDOR'))")
-    @GetMapping("/products/keyword/{keyword}")
-    public ResponseEntity<ProductResponse> getProductsByKeyword(@PathVariable String keyword,
-            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
-            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
-            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_PRODUCTS_BY, required = false) String sortBy,
-            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
+  @PreAuthorize(
+      "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('VENDOR'))")
+  @PutMapping("/products/{productId}/image")
+  public ResponseEntity<ProductDTO> updateProductImage(
+      @PathVariable Long productId, @RequestParam("image") MultipartFile image) throws IOException {
+    ProductDTO updatedProduct = productService.updateProductImage(productId, image);
 
-        ProductResponse productResponse = productService.searchProductByKeyword(keyword, pageNumber, pageSize, sortBy,
-                sortOrder);
+    return new ResponseEntity<ProductDTO>(updatedProduct, HttpStatus.OK);
+  }
 
-        return new ResponseEntity<ProductResponse>(productResponse, HttpStatus.FOUND);
-    }
+  @PreAuthorize(
+      "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('VENDOR'))")
+  @DeleteMapping("/products/{productId}")
+  public ResponseEntity<String> deleteProductByCategory(@PathVariable Long productId) {
+    String status = productService.deleteProduct(productId);
 
-    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('VENDOR'))")
-    @PutMapping("/products/{productId}")
-    public ResponseEntity<ProductDTO> updateProduct(@RequestBody Product product, @PathVariable Long productId) {
-        ProductDTO updatedProduct = productService.updateProduct(productId, product);
-        return new ResponseEntity<ProductDTO>(updatedProduct, HttpStatus.OK);
-    }
-
-    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('VENDOR'))")
-    @PutMapping("/products/{productId}/image")
-    public ResponseEntity<ProductDTO> updateProductImage(@PathVariable Long productId,
-            @RequestParam("image") MultipartFile image) throws IOException {
-        ProductDTO updatedProduct = productService.updateProductImage(productId, image);
-
-        return new ResponseEntity<ProductDTO>(updatedProduct, HttpStatus.OK);
-    }
-
-
-    @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('VENDOR'))")
-    @DeleteMapping("/products/{productId}")
-    public ResponseEntity<String> deleteProductByCategory(@PathVariable Long productId) {
-        String status = productService.deleteProduct(productId);
-
-        return new ResponseEntity<String>(status, HttpStatus.OK);
-    }
+    return new ResponseEntity<String>(status, HttpStatus.OK);
+  }
 }

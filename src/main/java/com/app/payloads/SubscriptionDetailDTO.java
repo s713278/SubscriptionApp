@@ -1,9 +1,8 @@
 package com.app.payloads;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record SubscriptionDetailDTO(
     Long subscriptionId,
@@ -20,14 +19,17 @@ public record SubscriptionDetailDTO(
     String status,
     LocalDate nextDeliveryDate,
     String name,
-    String imagePath
-) {
-    @JsonProperty("discount")
-    public Double discount() {
-        return (listPrice != null && salePrice != null) ? listPrice.subtract(salePrice).doubleValue() : null;
-    }
-    @JsonProperty("on_sale")
-    public Boolean onSale() {
-        return (listPrice != null && salePrice != null) && salePrice.doubleValue() < listPrice.doubleValue();
-    }
+    String imagePath) {
+  @JsonProperty("discount")
+  public Double discount() {
+    return (listPrice != null && salePrice != null)
+        ? listPrice.subtract(salePrice).doubleValue()
+        : null;
+  }
+
+  @JsonProperty("on_sale")
+  public Boolean onSale() {
+    return (listPrice != null && salePrice != null)
+        && salePrice.doubleValue() < listPrice.doubleValue();
+  }
 }
