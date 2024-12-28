@@ -49,7 +49,7 @@ public class UserService {
     List<Customer> users = pageUsers.getContent();
 
     if (users.isEmpty()) {
-      throw new APIException(APIErrorCode.API_400, "No User exists !!!");
+      throw new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, "No User exists !!!");
     }
 
     List<UpdateUserRequest> userDTOs =

@@ -12,7 +12,7 @@ public enum APIErrorCode {
   VENDOR_LEGAL_DETAILS_NOT_EXISTED(HttpStatus.NOT_FOUND, "Vendor Legal Details not found."),
   UN_AUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "User don't have have required access to update."),
 
-  API_400(HttpStatus.BAD_REQUEST, "Please check the request and try again!!"),
+  BAD_REQUEST_RECEIVED(HttpStatus.BAD_REQUEST, "Please check the request and try again."),
   API_401(HttpStatus.UNAUTHORIZED, "User authentication failed!!"),
   API_403(HttpStatus.FORBIDDEN, "Authorization failed!!"),
   API_409(HttpStatus.CONFLICT, "Data already existed in system."),

@@ -75,7 +75,7 @@ public abstract class AbstractCreateSubscriptionService {
         log.debug("Day of the week :{}", request.getDeliveryDate().getDayOfWeek().name());
         if (!deliveryDaysList.contains(request.getDeliveryDate().getDayOfWeek().name())) {
           throw new APIException(
-              APIErrorCode.API_400,
+              APIErrorCode.BAD_REQUEST_RECEIVED,
               "Selected delivery date is not available for this item : "
                   + request.getSkuId()
                   + ". Please select "

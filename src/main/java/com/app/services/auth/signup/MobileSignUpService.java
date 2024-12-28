@@ -38,7 +38,10 @@ public class MobileSignUpService extends AbstractSignUpService<MobileSignUpReque
     super.preSignUpOperations(request);
     // Perform mobile-specific pre-sign-up operations, like OTP validation
     if (!isValidMobileNumber(request.getMobile())) {
-      throw new APIException(APIErrorCode.API_400, "Invalid mobile number");
+      throw new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, "Invalid mobile number.");
+    }
+    if (!AppConstants.COUNTRY_CODES.contains(request.getCountryCode())) {
+      throw new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, "Invalid country code.");
     }
     // Optionally check if mobile number already exists
     // if (isMobileNumberRegistered(request.getMobile())) {
@@ -72,7 +75,8 @@ public class MobileSignUpService extends AbstractSignUpService<MobileSignUpReque
         case CUSTOMER_CARE -> roleId = AppConstants.CC_ROLE_ID;
         case null, default -> roleId = AppConstants.USER_ROLE_ID;
       }
-      var optionalUser = repoManager.getCustomerRepo().findUserByMobile(request.getMobile());
+      var optionalUser =
+          repoManager.getCustomerRepo().findUserByMobile(Long.parseLong(request.getMobile()));
       log.debug("User existed by mobile number ? {}", optionalUser.isPresent());
       // Fetch the role and ensure it is managed
       Role role =
@@ -82,7 +86,7 @@ public class MobileSignUpService extends AbstractSignUpService<MobileSignUpReque
               .orElseThrow(() -> new IllegalArgumentException("Role not found"));
       if (optionalUser.isEmpty()) {
         customer.setCountryCode(request.getCountryCode());
-        customer.setMobile(request.getMobile());
+        customer.setMobile(Long.parseLong(request.getMobile()));
         customer.setRegSource(request.getRegPlatform().name());
         customer.getRoles().add(role);
         customer.setPassword(String.valueOf(request.getMobile()).substring(0, 5));
@@ -108,12 +112,8 @@ public class MobileSignUpService extends AbstractSignUpService<MobileSignUpReque
         "OTP has been sent to registered mobile.");
   }
 
-  private boolean isValidMobileNumber(Long mobile) {
+  private boolean isValidMobileNumber(String mobile) {
     // Mobile number validation logic
-    return mobile != null && String.valueOf(mobile).matches("[0-9]{10}");
-  }
-
-  private boolean isMobileNumberRegistered(Long mobile) {
-    return repoManager.getCustomerRepo().findByMobile(mobile).isPresent();
+    return mobile != null && mobile.matches(AppConstants.MOBILE_REGEX);
   }
 }

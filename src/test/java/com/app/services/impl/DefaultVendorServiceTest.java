@@ -54,7 +54,7 @@ class DefaultVendorServiceTest {
   void testCreateVendorByAdmin() {
     MobileSignUpRequest mobileSignUpRequest = new MobileSignUpRequest();
     mobileSignUpRequest.setCountryCode("+91");
-    mobileSignUpRequest.setMobile(9912149048L);
+    mobileSignUpRequest.setMobile("9912149048L");
     mobileSignUpRequest.setRegPlatform(UserRegPlatform.Web);
     mobileSignUpRequest.setUserRoleEnum(UserRoleEnum.ADMIN);
 
@@ -101,7 +101,7 @@ class DefaultVendorServiceTest {
   void testCreateVendorWithVendorRole() {
     MobileSignUpRequest mobileSignUpRequest = new MobileSignUpRequest();
     mobileSignUpRequest.setCountryCode("+91");
-    mobileSignUpRequest.setMobile(7876543299L);
+    mobileSignUpRequest.setMobile("7876543299L");
     mobileSignUpRequest.setRegPlatform(UserRegPlatform.Android);
     mobileSignUpRequest.setUserRoleEnum(UserRoleEnum.VENDOR);
 

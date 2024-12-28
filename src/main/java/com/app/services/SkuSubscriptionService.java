@@ -47,7 +47,7 @@ public class SkuSubscriptionService {
         .orElseThrow(
             () ->
                 new APIException(
-                    APIErrorCode.API_400,
+                    APIErrorCode.BAD_REQUEST_RECEIVED,
                     "No defined subscription plans found for skuId :"
                         + skuId
                         + " with frequency: "

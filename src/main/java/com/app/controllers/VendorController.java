@@ -1,6 +1,7 @@
 package com.app.controllers;
 
 import com.app.config.AppConstants;
+import com.app.controllers.validator.AbstractRequestValidation;
 import com.app.entites.type.ApprovalStatus;
 import com.app.entites.type.VendorStatus;
 import com.app.payloads.LegalDetailsDTO;
@@ -20,17 +21,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(
     name = "6. Vendor Profile API",
-    description = "APIS for managing vendor profile and accessed after vendor sign-in only.")
+    description = "APIS for managing vendor profile and accessed through bearer token only.")
 @RestController
 @RequestMapping("/v1/vendors")
 @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
 @Slf4j
 @RequiredArgsConstructor
-public class VendorController {
+public class VendorController extends AbstractRequestValidation {
 
   private final ServiceManager serviceManager;
   private final AddressValidator addressValidator;
@@ -40,23 +42,28 @@ public class VendorController {
       "(hasAuthority('VENDOR') or hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")
   @Operation(
       summary = "Create Vendor Profile",
-      description = "Profile can be created by  Vendor/Admin/Customer_Care after login.")
+      description = "Profile can be created by Vendor/Admin/Customer_Care after login.")
   public ResponseEntity<APIResponse<?>> createVendorProfile(
-      @Valid @RequestBody VendorProfileRequest vendorDetails, Authentication authentication) {
+      @Valid @RequestBody VendorProfileRequest vendorDetails,
+      BindingResult bindingResult,
+      Authentication authentication) {
+    log.info(
+        "Received request for creating vendor profile by logged in user {}",
+        authentication.getPrincipal());
+    validateRequest(bindingResult);
     var response =
         serviceManager.getVendorService().createVendorProfile(vendorDetails, authentication);
     return new ResponseEntity<>(
         APIResponse.success(HttpStatus.CREATED.value(), response), HttpStatus.CREATED);
   }
 
-  @PreAuthorize("#vendorId == authentication.principal and (hasAuthority('ADMIN'))")
+  @PreAuthorize("(hasAuthority('ADMIN'))")
   @Operation(summary = "Fetch all vendors", description = "Fetch all vendors by admin role only")
   @GetMapping("/")
-  public ResponseEntity<APIResponse<?>> fetchAllActiveVendors() {
-    log.debug("Request received for all vendors");
+  public ResponseEntity<APIResponse<?>> fetchAllActiveVendors(Authentication authentication) {
+    log.info("Request received for all vendors by user {}", authentication.getPrincipal());
     return new ResponseEntity<>(
-        APIResponse.success(serviceManager.getVendorService().fetchVendorsAndGroupedByCategory()),
-        HttpStatus.OK);
+        APIResponse.success(serviceManager.getVendorService().fetchAllVendors()), HttpStatus.OK);
   }
 
   @PreAuthorize(
@@ -79,7 +86,7 @@ public class VendorController {
       summary = "Access vendor profile by vendorId",
       description = "Fetch vendor profile by Vendor/Admin/Customer_Care after login.")
   @PreAuthorize(
-      "#vendorId == authentication.principal OR (hasAuthority('VENDOR') or hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")
+      "((#vendorId == authentication.principal AND hasAuthority('VENDOR'))  or (hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE')))")
   @GetMapping("/{vendorId}")
   public ResponseEntity<APIResponse<?>> getVendorProfileById(
       @PathVariable Long vendorId, Authentication authentication) {

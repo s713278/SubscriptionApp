@@ -14,7 +14,7 @@ public enum VendorStatus {
       return valueOf(status);
     } catch (Exception e) {
       throw new APIException(
-          APIErrorCode.API_400,
+          APIErrorCode.BAD_REQUEST_RECEIVED,
           "Invalid status.Status should be in onf of the :"
               + Arrays.toString(VendorStatus.values()));
     }

@@ -2,6 +2,8 @@ package com.app.services.auth.signup;
 
 import com.app.config.GlobalConfig;
 import com.app.constants.NotificationType;
+import com.app.exceptions.APIErrorCode;
+import com.app.exceptions.APIException;
 import com.app.payloads.request.SignUpRequest;
 import com.app.payloads.response.SignUpDTO;
 import com.app.repositories.RepositoryManager;
@@ -32,9 +34,15 @@ public abstract class AbstractSignUpService<T extends SignUpRequest> {
     return response;
   }
 
-  protected void preSignUpOperations(T user) {}
+  protected void preSignUpOperations(T request) {
+    switch (request.getUserRoleEnum()) {
+      case ADMIN, CUSTOMER_CARE ->
+          throw new APIException(
+              APIErrorCode.BAD_REQUEST_RECEIVED, "This role not allowed to create.");
+    }
+  }
 
-  protected abstract SignUpDTO doSignUp(T user);
+  protected abstract SignUpDTO doSignUp(T request);
 
   protected void postSignUpOperations(SignUpDTO signUpDTO) {
     serviceManager

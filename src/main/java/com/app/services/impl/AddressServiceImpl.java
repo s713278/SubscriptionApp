@@ -42,7 +42,7 @@ public class AddressServiceImpl implements AddressService {
 
     if (addressFromDB != null) {
       throw new APIException(
-          APIErrorCode.API_400,
+          APIErrorCode.BAD_REQUEST_RECEIVED,
           "Address already exists with addressId: " + addressFromDB.getAddressId());
     }
 

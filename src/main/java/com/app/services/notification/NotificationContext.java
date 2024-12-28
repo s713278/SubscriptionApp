@@ -29,7 +29,7 @@ public class NotificationContext {
       case WHATSAPP -> notificationStrategies.get("wNotificationStrategy").sendOTP(to, otp);
       case null, default ->
           throw new APIException(
-              APIErrorCode.API_400,
+              APIErrorCode.BAD_REQUEST_RECEIVED,
               type + " should be one of the " + Arrays.toString(NotificationType.values()));
     }
   }
@@ -43,7 +43,7 @@ public class NotificationContext {
       case WHATSAPP -> notificationStrategies.get("wNotificationStrategy").sendOTP(to, otp);
       case null, default ->
           throw new APIException(
-              APIErrorCode.API_400,
+              APIErrorCode.BAD_REQUEST_RECEIVED,
               type + " should be one of the " + Arrays.toString(NotificationType.values()));
     }
   }
@@ -65,7 +65,7 @@ public class NotificationContext {
               .sendResetPasswordEmail(to, resetToken);
       case null, default ->
           throw new APIException(
-              APIErrorCode.API_400,
+              APIErrorCode.BAD_REQUEST_RECEIVED,
               type + " should be one of the " + Arrays.toString(NotificationType.values()));
     }
   }
@@ -80,7 +80,7 @@ public class NotificationContext {
       case WHATSAPP -> notificationStrategies.get("wNotificationStrategy").sendOTP(to, otp);
       case null, default ->
           throw new APIException(
-              APIErrorCode.API_400,
+              APIErrorCode.BAD_REQUEST_RECEIVED,
               type + " should be one of the " + Arrays.toString(NotificationType.values()));
     }
   }

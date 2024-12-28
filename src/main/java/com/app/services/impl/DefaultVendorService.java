@@ -59,11 +59,11 @@ public class DefaultVendorService extends AbstractVendorService {
   }
 
   public List<VendorProfileRequest> fetchAllVendors() {
-    List<Vendor> stores = repoManager.getVendorRepo().findAll();
-    if (stores.isEmpty()) {
+    List<Vendor> vendors = repoManager.getVendorRepo().findAll();
+    if (vendors.isEmpty()) {
       return List.of();
     }
-    return stores.stream()
+    return vendors.stream()
         .map(store -> modelMapper.map(store, VendorProfileRequest.class))
         .collect(Collectors.toList());
   }
@@ -110,7 +110,8 @@ public class DefaultVendorService extends AbstractVendorService {
     Page<Vendor> pageStores = repoManager.getVendorRepo().findAll(pageDetails);
     List<Vendor> stores = pageStores.getContent();
     if (stores.isEmpty()) {
-      throw new APIException(APIErrorCode.API_400, "No registered vendors found in database!!");
+      throw new APIException(
+          APIErrorCode.BAD_REQUEST_RECEIVED, "No registered vendors found in database!!");
     }
     List<VendorProfileRequest> storeDTOs =
         stores.stream()
@@ -159,7 +160,9 @@ public class DefaultVendorService extends AbstractVendorService {
         .getVendorRepo()
         .findById(vendorId)
         .orElseThrow(
-            () -> new APIException(APIErrorCode.API_400, "Vendor not exited in the system."));
+            () ->
+                new APIException(
+                    APIErrorCode.BAD_REQUEST_RECEIVED, "Vendor not exited in the system."));
   }
 
   public PaginationResponse<VendorBasicDTO> fetchActiveVendorsByZipCode(

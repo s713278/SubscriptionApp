@@ -75,7 +75,7 @@ public class ProductServiceImpl implements ProductService {
       Product savedProduct = repoManager.getProductRepo().save(product);
       return modelMapper.map(savedProduct, ProductDTO.class);
     } else {
-      throw new APIException(APIErrorCode.API_400, "Product already exists !!!");
+      throw new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, "Product already exists !!!");
     }
   }
 
@@ -113,7 +113,8 @@ public class ProductServiceImpl implements ProductService {
     Page<Product> pageProducts = repoManager.getProductRepo().findByNameLike(keyword, pageDetails);
     List<Product> products = pageProducts.getContent();
     if (products.isEmpty()) {
-      throw new APIException(APIErrorCode.API_400, "Products not found with keyword: " + keyword);
+      throw new APIException(
+          APIErrorCode.BAD_REQUEST_RECEIVED, "Products not found with keyword: " + keyword);
     }
     List<ProductDTO> productDTOs =
         products.stream()
@@ -138,7 +139,7 @@ public class ProductServiceImpl implements ProductService {
             .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
     if (productFromDB == null) {
       throw new APIException(
-          APIErrorCode.API_400, "Product not found with productId: " + productId);
+          APIErrorCode.BAD_REQUEST_RECEIVED, "Product not found with productId: " + productId);
     }
     product.setImagePath(productFromDB.getImagePath());
     product.setId(productId);
@@ -167,7 +168,7 @@ public class ProductServiceImpl implements ProductService {
 
     if (productFromDB == null) {
       throw new APIException(
-          APIErrorCode.API_400, "Product not found with productId: " + productId);
+          APIErrorCode.BAD_REQUEST_RECEIVED, "Product not found with productId: " + productId);
     }
     String fileName = fileService.uploadImage(globalConfig.getImagePath(), image);
     productFromDB.setImagePath(fileName);

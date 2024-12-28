@@ -33,12 +33,12 @@ public class SwaggerConfig {
                 .contact(
                     new Contact()
                         .name("Swamy Kunta")
-                        .url("https://github.com/s713278/ECommerceApp/tree/master")
+                        .url("https://github.com/s713278/SubscriptionApp/tree/master")
                         .email("swamy.kunta@gmail.com"))
                 .license(new License().name("License").url("/")))
         .externalDocs(
             new ExternalDocumentation()
-                .description("Multi Vendor Subscription App")
+                .description("MithraDirect Application")
                 .url("http://localhost:8080/api/swagger-ui/index.html"));
     // .servers(List.of(localServer,devServer));
 

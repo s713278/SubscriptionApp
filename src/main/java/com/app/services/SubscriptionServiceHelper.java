@@ -21,7 +21,8 @@ public class SubscriptionServiceHelper {
       case ONE_TIME -> item.getStartDate();
       default ->
           throw new APIException(
-              APIErrorCode.API_400, "Invalid Subscription Frequency " + item.getFrequency());
+              APIErrorCode.BAD_REQUEST_RECEIVED,
+              "Invalid Subscription Frequency " + item.getFrequency());
     };
   }
 

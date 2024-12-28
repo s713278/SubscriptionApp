@@ -23,7 +23,7 @@ public class AddressValidator {
 
   public Map<String, String> validateAddress(Long userId, Map<String, String> newDeliveryAddress) {
     if (newDeliveryAddress == null || newDeliveryAddress.isEmpty()) {
-      throw new APIException(APIErrorCode.API_400, "Address map is empty/null!!");
+      throw new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, "Address map is empty/null!!");
     }
     List<String> validAddressKeys = globalConfig.getCustomerConfig().getAddressValidKeys();
     // Filter the input to only keep valid keys
@@ -34,7 +34,8 @@ public class AddressValidator {
             .toList();
     log.debug("Address Invalid Keys : {}", invalidKeys);
     if (!invalidKeys.isEmpty()) {
-      throw new APIException(APIErrorCode.API_400, "Invalid address keys found ", invalidKeys);
+      throw new APIException(
+          APIErrorCode.BAD_REQUEST_RECEIVED, "Invalid address keys found ", invalidKeys);
     }
     return newDeliveryAddress.entrySet().stream()
         .filter(entry -> validAddressKeys.contains(entry.getKey()))

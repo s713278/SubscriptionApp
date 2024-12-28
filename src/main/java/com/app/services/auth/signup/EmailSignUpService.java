@@ -45,11 +45,11 @@ public class EmailSignUpService extends AbstractSignUpService<EmailSignUpRequest
     super.preSignUpOperations(request);
     // Perform mobile-specific pre-sign-up operations, like OTP validation
     if (!isValidEmail(request.getEmail())) {
-      throw new APIException(APIErrorCode.API_400, "Invalid email address!");
+      throw new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, "Invalid email address!");
     }
     // Optionally check if mobile number already exists
     if (isEmailRegistered(request.getEmail())) {
-      throw new APIException(APIErrorCode.API_400, "Email is already registered!");
+      throw new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, "Email is already registered!");
     }
   }
 

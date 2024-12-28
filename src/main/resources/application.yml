@@ -106,11 +106,14 @@ application:
     address_valid_keys:
       - name
       - house_no
+      - longitude
+      - latitude
       - address1
       - address2
       - city
       - state
       - zipCode
+      - district
       - state
       - country
     preference_valid_keys:

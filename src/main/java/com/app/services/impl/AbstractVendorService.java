@@ -4,6 +4,7 @@ import com.app.constants.CacheType;
 import com.app.constants.NotificationType;
 import com.app.entites.Customer;
 import com.app.entites.Vendor;
+import com.app.entites.VendorCategory;
 import com.app.entites.VendorLegalDetails;
 import com.app.entites.type.ApprovalStatus;
 import com.app.entites.type.UserRoleEnum;
@@ -11,6 +12,7 @@ import com.app.entites.type.VendorStatus;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.payloads.LegalDetailsDTO;
+import com.app.payloads.request.AssignCategoriesRequest;
 import com.app.payloads.request.VendorProfileRequest;
 import com.app.payloads.response.CreateItemResponse;
 import com.app.payloads.response.PaginationResponse;
@@ -19,6 +21,7 @@ import com.app.repositories.RepositoryManager;
 import com.app.services.auth.dto.UserAuthentication;
 import com.app.services.notification.NotificationContext;
 import com.app.services.notification.NotificationTemplate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -123,6 +126,7 @@ public abstract class AbstractVendorService {
           String.format("User %s not allowed to have vendor profile", principal));
     }
     Vendor vendorEntity = getRepoManager().getVendorRepo().save(vendor);
+    assignCategories(vendorEntity.getId(), vendorRequest.getAssignCategories());
     return new CreateItemResponse(vendorEntity.getId(), "Vendor profile created successfully.");
   }
 
@@ -171,11 +175,12 @@ public abstract class AbstractVendorService {
     log.debug("Validating vendor id {}", vendorId);
     var vendor = getRepoManager().getVendorRepo().findById(vendorId);
     if (vendor.isEmpty()) {
-      throw new APIException(APIErrorCode.API_400, "Vendor profile is not existed");
+      throw new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, "Vendor profile is not existed");
     }
     if (VendorStatus.SUSPENDED == vendor.get().getStatus()) {
       throw new APIException(
-          APIErrorCode.API_400, "Vendor profile is suspended state,No further updates allowed.");
+          APIErrorCode.BAD_REQUEST_RECEIVED,
+          "Vendor profile is suspended state,No further updates allowed.");
     }
     return vendor.get();
   }
@@ -242,7 +247,8 @@ public abstract class AbstractVendorService {
     Page<Vendor> pageStores = repoManager.getVendorRepo().findAll(pageDetails);
     List<Vendor> stores = pageStores.getContent();
     if (stores.isEmpty()) {
-      throw new APIException(APIErrorCode.API_400, "No registered vendors found in database!!");
+      throw new APIException(
+          APIErrorCode.BAD_REQUEST_RECEIVED, "No registered vendors found in database!!");
     }
     List<VendorProfileRequest> storeDTOs =
         stores.stream()
@@ -301,5 +307,36 @@ public abstract class AbstractVendorService {
               vendorLegalEntity.setVendor(vendor);
               getRepoManager().getVendorLegalDetailsRepo().save(vendorLegalEntity);
             });
+  }
+
+  @Async
+  @Transactional
+  public void assignCategories(Long vendorId, AssignCategoriesRequest request) {
+    // Validate input
+    if (request == null || request.categoryIds() == null || request.categoryIds().length == 0) {
+      throw new IllegalArgumentException("Category IDs cannot be null or empty.");
+    }
+
+    // Fetch existing categories for the vendor to avoid duplicates
+    Set<Long> existingCategoryIds =
+        getRepoManager().getVendorCategoryRepo().findByVendorId(vendorId).stream()
+            .map(VendorCategory::getCategoryId)
+            .collect(Collectors.toSet());
+
+    // Filter out categories that are already assigned
+    List<VendorCategory> newVendorCategories =
+        Arrays.stream(request.categoryIds())
+            .filter(catId -> !existingCategoryIds.contains(catId))
+            .map(catId -> new VendorCategory(catId, vendorId))
+            .collect(Collectors.toList());
+
+    // Save new categories in bulk for better performance
+    if (!newVendorCategories.isEmpty()) {
+      getRepoManager().getVendorCategoryRepo().saveAll(newVendorCategories);
+      log.info(
+          "Assigned {} new categories to vendor with ID: {}", newVendorCategories.size(), vendorId);
+    } else {
+      log.info("No new categories to assign for vendor with ID: {}", vendorId);
+    }
   }
 }
