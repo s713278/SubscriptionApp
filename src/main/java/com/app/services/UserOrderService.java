@@ -202,7 +202,7 @@ public class UserOrderService {
                   var vendor =
                       serviceManager
                           .getVendorService()
-                          .fetchFullVendorDetailsById(order.getVendorId(), null);
+                          .fetchVendorByMobile("" + order.getVendorId(), null);
                   return OrderDetailsDTO.builder()
                       .orderId(order.getId())
                       .deliveryDate(order.getDeliveryDate())

@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
             .map(error -> error.getField() + ": " + error.getDefaultMessage())
             .collect(Collectors.toList());
     APIErrorResponse apiError =
-        new APIErrorResponse(APIErrorCode.API_400, ex.getMessage(), validationErrors);
+        new APIErrorResponse(APIErrorCode.BAD_REQUEST_RECEIVED, ex.getMessage(), validationErrors);
     return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
   }
 
@@ -46,8 +46,10 @@ public class GlobalExceptionHandler {
       HttpMessageNotReadableException ex, WebRequest request) {
     APIErrorResponse apiError =
         new APIErrorResponse(
-            APIErrorCode.API_400, ex.getMessage(), List.of(request.getDescription(false)));
-    return new ResponseEntity<>(apiError, APIErrorCode.API_400.getHttpStatus());
+            APIErrorCode.BAD_REQUEST_RECEIVED,
+            ex.getMessage(),
+            List.of(request.getDescription(false)));
+    return new ResponseEntity<>(apiError, APIErrorCode.BAD_REQUEST_RECEIVED.getHttpStatus());
   }
 
   @ExceptionHandler(BadCredentialsException.class)
@@ -62,7 +64,8 @@ public class GlobalExceptionHandler {
       IllegalArgumentException ex) {
     log.error("IllegalArgumentException ", ex);
     List<String> errors = Collections.singletonList(ex.getMessage());
-    APIErrorResponse apiError = new APIErrorResponse(APIErrorCode.API_400, ex.getMessage(), errors);
+    APIErrorResponse apiError =
+        new APIErrorResponse(APIErrorCode.BAD_REQUEST_RECEIVED, ex.getMessage(), errors);
     return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
   }
 
@@ -82,8 +85,9 @@ public class GlobalExceptionHandler {
         e.getConstraintViolations().stream()
             .map(v -> v.getPropertyPath() + "==>" + v.getMessage())
             .collect(Collectors.toList());
-    APIErrorResponse apiError = new APIErrorResponse(APIErrorCode.API_400, e.getMessage(), errors);
-    return new ResponseEntity<>(apiError, APIErrorCode.API_400.getHttpStatus());
+    APIErrorResponse apiError =
+        new APIErrorResponse(APIErrorCode.BAD_REQUEST_RECEIVED, e.getMessage(), errors);
+    return new ResponseEntity<>(apiError, APIErrorCode.BAD_REQUEST_RECEIVED.getHttpStatus());
   }
 
   @ExceptionHandler(AuthenticationException.class)

@@ -28,6 +28,7 @@ public class GlobalConfig {
     private Long otpExpTime;
     private Long emailTokenExp;
     private List<String> addressValidKeys;
+    private Set<String> serviceAreasKeys;
     private Set<String> preferenceValidKeys;
     private boolean otpVerificationEnabled;
   }

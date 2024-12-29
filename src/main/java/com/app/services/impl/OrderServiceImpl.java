@@ -114,7 +114,8 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
 
     if (orderDTOs.size() == 0) {
       throw new APIException(
-          APIErrorCode.API_400, "No orders placed yet by the user with email: " + userId);
+          APIErrorCode.BAD_REQUEST_RECEIVED,
+          "No orders placed yet by the user with email: " + userId);
     }
 
     return orderDTOs;
@@ -126,7 +127,8 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
     Order order =
         orderRepo
             .findById(orderId)
-            .orElseThrow(() -> new APIException(APIErrorCode.API_400, "Order not found"));
+            .orElseThrow(
+                () -> new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, "Order not found"));
 
     return modelMapper.map(order, OrderDTO.class);
   }
@@ -152,7 +154,8 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
             .collect(Collectors.toList());
 
     if (orderDTOs.size() == 0) {
-      throw new APIException(APIErrorCode.API_400, "No orders placed yet by the users");
+      throw new APIException(
+          APIErrorCode.BAD_REQUEST_RECEIVED, "No orders placed yet by the users");
     }
 
     OrderResponse orderResponse = new OrderResponse();
@@ -179,7 +182,7 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
     }
     switch (order.getStatus()) {
       case DELIVERED, CANCELED -> {
-        throw new APIException(APIErrorCode.API_400, "Invalid Order Status..");
+        throw new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, "Invalid Order Status..");
       }
     }
     // OrderStatus newOrderStatus = OrderStatus.valueOf(request.getNewSatus());
@@ -199,7 +202,8 @@ public class OrderServiceImpl extends AbstarctCatalogService implements OrderSer
     Order order =
         orderRepo
             .findById(orderId)
-            .orElseThrow(() -> new APIException(APIErrorCode.API_400, "Order not found"));
+            .orElseThrow(
+                () -> new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, "Order not found"));
     order.setStatus(orderStatus);
     return modelMapper.map(order, OrderDTO.class);
   }

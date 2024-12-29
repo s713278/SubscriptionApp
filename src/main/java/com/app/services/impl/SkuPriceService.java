@@ -34,7 +34,8 @@ public class SkuPriceService {
         repositoryManager.getPriceRepository().findTodayPriceBySku(skuId, today);
     return todayPrice.orElseThrow(
         () ->
-            new APIException(APIErrorCode.API_400, "No price found in pricing table for " + skuId));
+            new APIException(
+                APIErrorCode.BAD_REQUEST_RECEIVED, "No price found in pricing table for " + skuId));
   }
 
   /**

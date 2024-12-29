@@ -2,6 +2,7 @@ package com.app.payloads.request;
 
 import com.app.entites.type.UserRoleEnum;
 import com.app.services.constants.UserRegPlatform;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -28,8 +29,9 @@ public class SignUpRequest {
   @JsonProperty("reg_platform")
   private UserRegPlatform regPlatform;
 
-  @NotNull
-  @Schema(description = "type", example = "USER")
+  // @NotNull
+  @JsonIgnore
+  @Schema(description = "type", example = "USER or VENDOR")
   @JsonProperty("user_role")
   private UserRoleEnum userRoleEnum;
 }

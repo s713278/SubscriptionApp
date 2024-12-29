@@ -28,7 +28,7 @@ public class SignInContext {
       }
       case null, default -> {
         throw new APIException(
-            APIErrorCode.API_400,
+            APIErrorCode.BAD_REQUEST_RECEIVED,
             "Invalid sign in option,SignIn option should be one of the "
                 + Arrays.toString(SignInType.values()));
       }

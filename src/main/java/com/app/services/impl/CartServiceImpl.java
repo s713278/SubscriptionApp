@@ -131,7 +131,7 @@ public class CartServiceImpl implements CartService {
     List<Cart> carts = cartRepo.findAll();
 
     if (carts.size() == 0) {
-      throw new APIException(APIErrorCode.API_400, "No cart exists");
+      throw new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, "No cart exists");
     }
 
     List<CartDTO> cartDTOs =
@@ -207,7 +207,8 @@ public class CartServiceImpl implements CartService {
 
     if (cartItem != null) {
       throw new APIException(
-          APIErrorCode.API_400, "Sku " + sku.getName() + " already exists in the cart");
+          APIErrorCode.BAD_REQUEST_RECEIVED,
+          "Sku " + sku.getName() + " already exists in the cart");
     }
     /*
     if (sku.getStock() == 0) {

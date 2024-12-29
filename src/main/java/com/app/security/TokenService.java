@@ -17,6 +17,7 @@ import java.time.Instant;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +43,7 @@ public class TokenService {
               .withClaim(
                   "roles",
                   authUserDetails.getAuthorities().stream()
-                      .map(auth -> auth.getAuthority())
+                      .map(GrantedAuthority::getAuthority)
                       .collect(
                           Collectors.joining(String.valueOf(authUserDetails.getId()), "[", "]")))
               .withIssuer(NSR_STORES)
@@ -104,7 +105,7 @@ public class TokenService {
       DecodedJWT jwt = verifier.verify(token);
       return jwt.getSubject();
     } catch (IllegalArgumentException e) {
-      throw new APIException(APIErrorCode.API_400, e.getMessage());
+      throw new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, e.getMessage());
     } catch (JWTVerificationException e) {
       throw new APIException(APIErrorCode.API_401, e.getMessage());
     }

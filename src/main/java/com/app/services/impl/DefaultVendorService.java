@@ -20,7 +20,6 @@ import com.app.services.notification.NotificationContext;
 import com.app.services.notification.NotificationTemplate;
 import jakarta.annotation.PostConstruct;
 import java.util.*;
-import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -28,7 +27,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
@@ -56,16 +54,6 @@ public class DefaultVendorService extends AbstractVendorService {
     log.info("Inviting vendor :{} to complete to complete onboarding process.", vendorId);
     getNotificationContext()
         .notifyUser(NotificationType.SMS, NotificationTemplate.PROFILE_UPDATES, mobileNumber);
-  }
-
-  public List<VendorProfileRequest> fetchAllVendors() {
-    List<Vendor> stores = repoManager.getVendorRepo().findAll();
-    if (stores.isEmpty()) {
-      return List.of();
-    }
-    return stores.stream()
-        .map(store -> modelMapper.map(store, VendorProfileRequest.class))
-        .collect(Collectors.toList());
   }
 
   @Cacheable(value = CacheType.CACHE_TYPE_VENDORS, key = "#status")
@@ -98,31 +86,6 @@ public class DefaultVendorService extends AbstractVendorService {
           APIErrorCode.API_404, "Vendor details not defined in system for user " + vendorId);
     }
     repoManager.getVendorRepo().updateVendorStatus(vendorId, vendorStatus);
-  }
-
-  public PaginationResponse<VendorProfileRequest> fetchAllVendors(
-      Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
-    Sort sortByAndOrder =
-        sortOrder.equalsIgnoreCase("asc")
-            ? Sort.by(sortBy).ascending()
-            : Sort.by(sortBy).descending();
-    Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
-    Page<Vendor> pageStores = repoManager.getVendorRepo().findAll(pageDetails);
-    List<Vendor> stores = pageStores.getContent();
-    if (stores.isEmpty()) {
-      throw new APIException(APIErrorCode.API_400, "No registered vendors found in database!!");
-    }
-    List<VendorProfileRequest> storeDTOs =
-        stores.stream()
-            .map(store -> modelMapper.map(store, VendorProfileRequest.class))
-            .collect(Collectors.toList());
-    return new PaginationResponse<>(
-        storeDTOs,
-        pageStores.getNumber(),
-        pageStores.getSize(),
-        pageStores.getTotalElements(),
-        pageStores.getTotalPages(),
-        pageStores.isLast());
   }
 
   @PostConstruct
@@ -159,7 +122,9 @@ public class DefaultVendorService extends AbstractVendorService {
         .getVendorRepo()
         .findById(vendorId)
         .orElseThrow(
-            () -> new APIException(APIErrorCode.API_400, "Vendor not exited in the system."));
+            () ->
+                new APIException(
+                    APIErrorCode.BAD_REQUEST_RECEIVED, "Vendor not exited in the system."));
   }
 
   public PaginationResponse<VendorBasicDTO> fetchActiveVendorsByZipCode(
@@ -247,12 +212,6 @@ public class DefaultVendorService extends AbstractVendorService {
     response.put("vendors_by_category", categoryMap);
     return response;
   }
-
-  @Transactional(readOnly = false)
-  public void assignCategories(Long vendorId, Long[] categories) {}
-
-  @Transactional(readOnly = false)
-  public void assignProducts(Long vendorId, Long[] products) {}
 
   @Cacheable(value = CacheType.CACHE_TYPE_VENDORS, key = "'ALL_VENDORS'")
   public Map<String, Object> fetchVendorsAndGroupedByCategory() {

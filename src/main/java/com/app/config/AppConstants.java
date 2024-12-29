@@ -1,9 +1,12 @@
 package com.app.config;
 
+import java.util.Set;
+
 public class AppConstants {
 
   // Regular expression to validate a mobile number (Indian mobile number format example)
-  public static final String MOBILE_REGEX = "^\\d{10}$";
+  public static final String MOBILE_REGEX = "^[6-9]\\d{9}$";
+  public static final Set<String> COUNTRY_CODES = Set.of("+1", "+91");
   // Updated regular expression to validate an email format, preventing consecutive dots anywhere in
   // the domain
   public static final String EMAIL_REGEX =

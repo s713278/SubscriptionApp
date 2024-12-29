@@ -4,9 +4,11 @@ import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
+@Slf4j
 public abstract class AbstractRequestValidation {
 
   protected void validateRequest(final BindingResult bindingResult) {
@@ -16,12 +18,13 @@ public abstract class AbstractRequestValidation {
       List<String> errors = new ArrayList<>();
       for (FieldError error : bindingResult.getFieldErrors()) {
         errors.add(error.getField() + ":" + error.getDefaultMessage());
+        log.debug("Request field:{}: Message: {}", error.getField(), error.getDefaultMessage());
       }
       bindingResult
           .getAllErrors()
           .forEach(objectError -> errors.add(objectError.getDefaultMessage()));
       // Return the error map as the response with BAD_REQUEST status
-      throw new APIException(APIErrorCode.API_400, errors.toString());
+      throw new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, errors.toString());
     }
   }
 }

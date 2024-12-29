@@ -8,10 +8,10 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 
 /**
  * Base abstract class for entities which will hold definitions for created, last modified, created
@@ -33,7 +33,7 @@ public abstract class AbstractAuditingEntity<T> implements Serializable {
   @Column(name = "created_by", nullable = false, length = 50)
   protected String createdBy;
 
-  @CreatedDate
+  @CreationTimestamp
   @Column(name = "created_date", nullable = false, updatable = false)
   protected LocalDateTime createdDate;
 
@@ -41,7 +41,7 @@ public abstract class AbstractAuditingEntity<T> implements Serializable {
   @Column(name = "last_modified_by", nullable = false, length = 50)
   protected String updatedBy;
 
-  @LastModifiedDate
+  @UpdateTimestamp
   @Column(name = "last_modified_date", nullable = false)
   protected LocalDateTime lastModifiedDate;
 }

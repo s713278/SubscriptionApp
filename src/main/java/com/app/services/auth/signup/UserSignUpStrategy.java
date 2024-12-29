@@ -23,6 +23,6 @@ public class UserSignUpStrategy {
     if (signUpRequest instanceof EmailSignUpRequest) {
       return signUpServiceFactory.get("emailSignUpService").processSignUp(signUpRequest);
     }
-    throw new APIException(APIErrorCode.API_400, "No SignUpService Found");
+    throw new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, "No SignUpService Found");
   }
 }

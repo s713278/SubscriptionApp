@@ -3,6 +3,7 @@ package com.app.controllers;
 import com.app.config.AppConstants;
 import com.app.constants.NotificationType;
 import com.app.constants.SignInType;
+import com.app.controllers.validator.AbstractRequestValidation;
 import com.app.entites.Customer;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
@@ -12,7 +13,6 @@ import com.app.payloads.response.AuthDetailsDTO;
 import com.app.services.ServiceManager;
 import com.app.services.auth.signin.SignInContext;
 import com.app.services.auth.signup.UserSignUpStrategy;
-import com.app.services.notification.NotificationContext;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -27,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -36,12 +37,11 @@ import org.springframework.web.bind.annotation.*;
 @Tag(
     name = "1. User Authentication API",
     description = "APIs for User sing up, sign in and session management.")
-public class AuthController {
+public class AuthController extends AbstractRequestValidation {
 
   private final ServiceManager serviceManager;
   private final UserSignUpStrategy signUpStrategy;
   private final SignInContext signInContext;
-  private final NotificationContext notificationContext;
 
   @Operation(
       summary = "Signup with mobile number",
@@ -68,6 +68,7 @@ public class AuthController {
   public ResponseEntity<APIResponse<?>> mobileSignUp(
       @Valid @RequestBody MobileSignUpRequest signUpRequest) {
     log.info("Received sign-up request for mobile: {}", signUpRequest.getMobile());
+
     var response = signUpStrategy.processUserSignUp(signUpRequest);
     var appResponse = APIResponse.success(HttpStatus.CREATED.value(), response);
     return new ResponseEntity<>(appResponse, HttpStatus.CREATED);
@@ -142,11 +143,14 @@ public class AuthController {
     }
   }
 
-  @Operation(summary = "Request OTP")
+  @Operation(
+      summary = "Request OTP",
+      description = "user_role value shall be either USER or VENDOR")
   @PostMapping("/request-otp")
   public ResponseEntity<APIResponse<?>> requestOTP(
-      @RequestBody @Valid MobileSignUpRequest request) {
+      @RequestBody @Valid MobileSignUpRequest request, BindingResult bindingResult) {
     log.info("Received OTP request for mobile: {}", request.getMobile());
+    validateRequest(bindingResult);
     var response = signUpStrategy.processUserSignUp(request);
     var appResponse = APIResponse.success(HttpStatus.CREATED.value(), response);
     return new ResponseEntity<>(appResponse, HttpStatus.CREATED);
@@ -187,7 +191,7 @@ public class AuthController {
     String refreshToken = refreshTokenRequest.getRefreshToken();
     var refreshTokenService = serviceManager.getRefreshTokenService();
     if (!refreshTokenService.validateRefreshToken(refreshToken)) {
-      throw new APIException(APIErrorCode.API_400, "Invalid refresh token");
+      throw new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, "Invalid refresh token");
     }
     String newAccessToken =
         serviceManager
@@ -203,7 +207,7 @@ public class AuthController {
     String refreshToken = refreshTokenRequest.getRefreshToken();
     var refreshTokenService = serviceManager.getRefreshTokenService();
     if (!refreshTokenService.validateRefreshToken(refreshToken)) {
-      throw new APIException(APIErrorCode.API_400, "Invalid refresh token");
+      throw new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, "Invalid refresh token");
     }
     refreshTokenService.removeRefreshToken(refreshToken);
     return new ResponseEntity<>(APIResponse.success("Successfully logged out."), HttpStatus.OK);

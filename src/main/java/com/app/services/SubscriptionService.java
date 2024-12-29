@@ -47,7 +47,7 @@ public class SubscriptionService {
             .orElseThrow(
                 () ->
                     new APIException(
-                        APIErrorCode.API_400,
+                        APIErrorCode.BAD_REQUEST_RECEIVED,
                         subId + " Subscription not existed for user " + userId));
 
     boolean changedFound = false;
@@ -105,7 +105,9 @@ public class SubscriptionService {
         repoManager
             .getSubscriptionRepo()
             .findById(subId)
-            .orElseThrow(() -> new APIException(APIErrorCode.API_400, "Subscription not found"));
+            .orElseThrow(
+                () ->
+                    new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, "Subscription not found"));
     SubscriptionResponse response =
         new SubscriptionResponse(true, "No subscription status changes found!!");
     boolean changeEligible = false;
@@ -124,13 +126,14 @@ public class SubscriptionService {
         // It can be changed to ACTIVE
       }
       case CANCELLED -> {
-        throw new APIException(APIErrorCode.API_400, "Subscription already cancelled.");
+        throw new APIException(
+            APIErrorCode.BAD_REQUEST_RECEIVED, "Subscription already cancelled.");
       }
       case EXPIRED -> {
-        throw new APIException(APIErrorCode.API_400, "Subscription already expired.");
+        throw new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, "Subscription already expired.");
       }
       case null, default -> {
-        throw new APIException(APIErrorCode.API_400, "Invalid subscription status.");
+        throw new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, "Invalid subscription status.");
       }
     }
     if (changeEligible) {
@@ -155,7 +158,9 @@ public class SubscriptionService {
             .getSubscriptionRepo()
             .findById(subId)
             .orElseThrow(
-                () -> new APIException(APIErrorCode.API_400, "Subsction details not found"));
+                () ->
+                    new APIException(
+                        APIErrorCode.BAD_REQUEST_RECEIVED, "Subsction details not found"));
     return sub;
   }
 
