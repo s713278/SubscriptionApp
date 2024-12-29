@@ -75,8 +75,7 @@ class DefaultVendorServiceTest {
     profileRequest.setOwnerName("Swamy Kunta");
     profileRequest.setBusinessAddress(
         Map.of("address1", "33 Acres Land", "city", "Mirdoddi", "zipCode", "502108"));
-    profileRequest.setAssignCategories(
-        new AssignCategoriesRequest(new Long[] {100L, 101L, 10000L}));
+    profileRequest.setAssignCategories(new AssignCategoriesRequest(Set.of(100L, 101L, 10000L)));
     UserAuthentication userAuthentication =
         new UserAuthentication(
             adminUser.getId(),
