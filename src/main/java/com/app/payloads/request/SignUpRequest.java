@@ -31,7 +31,7 @@ public class SignUpRequest {
 
   // @NotNull
   @JsonIgnore
-  @Schema(description = "type", example = "ADMIN")
+  @Schema(description = "type", example = "USER or VENDOR")
   @JsonProperty("user_role")
   private UserRoleEnum userRoleEnum;
 }

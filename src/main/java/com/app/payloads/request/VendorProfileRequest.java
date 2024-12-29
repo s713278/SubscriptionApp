@@ -70,7 +70,9 @@ public class VendorProfileRequest implements Serializable {
   @JsonProperty("banner_image")
   private String bannerImage;
 
+  /*
   @Schema(description = "This is to assign products later on.")
   @JsonProperty("assign_categories")
   private AssignCategoriesRequest assignCategories;
+   */
 }

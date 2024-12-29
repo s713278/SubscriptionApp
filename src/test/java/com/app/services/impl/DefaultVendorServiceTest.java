@@ -4,7 +4,6 @@ import com.app.TestContainerConfig;
 import com.app.TestMockConfig;
 import com.app.entites.Customer;
 import com.app.entites.type.UserRoleEnum;
-import com.app.payloads.request.AssignCategoriesRequest;
 import com.app.payloads.request.MobileSignUpRequest;
 import com.app.payloads.request.VendorProfileRequest;
 import com.app.repositories.RepositoryManager;
@@ -75,7 +74,7 @@ class DefaultVendorServiceTest {
     profileRequest.setOwnerName("Swamy Kunta");
     profileRequest.setBusinessAddress(
         Map.of("address1", "33 Acres Land", "city", "Mirdoddi", "zipCode", "502108"));
-    profileRequest.setAssignCategories(new AssignCategoriesRequest(Set.of(100L, 101L, 10000L)));
+    // profileRequest.setAssignCategories(new AssignCategoriesRequest(Set.of(100L, 101L, 10000L)));
     UserAuthentication userAuthentication =
         new UserAuthentication(
             adminUser.getId(),

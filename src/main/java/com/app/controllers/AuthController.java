@@ -143,7 +143,9 @@ public class AuthController extends AbstractRequestValidation {
     }
   }
 
-  @Operation(summary = "Request OTP")
+  @Operation(
+      summary = "Request OTP",
+      description = "user_role value shall be either USER or VENDOR")
   @PostMapping("/request-otp")
   public ResponseEntity<APIResponse<?>> requestOTP(
       @RequestBody @Valid MobileSignUpRequest request, BindingResult bindingResult) {
