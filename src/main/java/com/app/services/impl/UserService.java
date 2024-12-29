@@ -99,7 +99,7 @@ public class UserService {
       List<SkuDTO> skuDTOs =
           user.getCart().getCartItems().stream()
               .map(item -> modelMapper.map(item.getSku(), SkuDTO.class))
-              .collect(Collectors.toList());
+              .toList();
       // userDTO.getCart().setSkus(skuDTOs);
     }
     return userDTO;
@@ -157,14 +157,14 @@ public class UserService {
   @Transactional
   public void addNameAndAddress(Long userId, String name, Map<String, String> newDeliveryAddress) {
     fetchUserById(userId);
-    addressValidator.validateAddress(userId, newDeliveryAddress);
+    addressValidator.validateAddress(newDeliveryAddress);
     repositoryManager.getCustomerRepo().addNameAddress(userId, name, newDeliveryAddress);
   }
 
   @Transactional
   public void updateUserAddress(Long userId, Map<String, String> newDeliveryAddress) {
     fetchUserById(userId);
-    addressValidator.validateAddress(userId, newDeliveryAddress);
+    addressValidator.validateAddress(newDeliveryAddress);
     repositoryManager.getCustomerRepo().updateDeliveryAddress(userId, newDeliveryAddress);
   }
 
@@ -172,7 +172,10 @@ public class UserService {
     return repositoryManager
         .getCustomerRepo()
         .findByMobile(mobile)
-        .orElseThrow(() -> new APIException(APIErrorCode.API_404, "User is registered in system"));
+        .orElseThrow(
+            () ->
+                new APIException(
+                    APIErrorCode.API_404, "No user details found for mobile # " + mobile));
   }
 
   @Transactional

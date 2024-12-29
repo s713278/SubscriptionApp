@@ -2,7 +2,9 @@ package com.app.services.impl;
 
 import com.app.TestContainerConfig;
 import com.app.TestMockConfig;
+import com.app.entites.Customer;
 import com.app.entites.type.UserRoleEnum;
+import com.app.payloads.request.AssignCategoriesRequest;
 import com.app.payloads.request.MobileSignUpRequest;
 import com.app.payloads.request.VendorProfileRequest;
 import com.app.repositories.RepositoryManager;
@@ -10,7 +12,6 @@ import com.app.services.ServiceManager;
 import com.app.services.auth.dto.UserAuthentication;
 import com.app.services.auth.signup.MobileSignUpService;
 import com.app.services.constants.UserRegPlatform;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
@@ -52,15 +53,16 @@ class DefaultVendorServiceTest {
   @Rollback
   @Test
   void testCreateVendorByAdmin() {
-    MobileSignUpRequest mobileSignUpRequest = new MobileSignUpRequest();
+    /* MobileSignUpRequest mobileSignUpRequest = new MobileSignUpRequest();
     mobileSignUpRequest.setCountryCode("+91");
     mobileSignUpRequest.setMobile("9912149048L");
     mobileSignUpRequest.setRegPlatform(UserRegPlatform.Web);
     mobileSignUpRequest.setUserRoleEnum(UserRoleEnum.ADMIN);
+     var adminUserResponse = mobileSignUpService.processSignUp(mobileSignUpRequest);*/
+    var result = repositoryManager.getCustomerRepo().findAll();
 
-    var adminUserResponse = mobileSignUpService.processSignUp(mobileSignUpRequest);
+    Customer adminUser = serviceManager.getUserService().fetchUserById(1001L);
     // entityManager.persist(customer);
-    log.debug("Vendor user is created and id is {}", adminUserResponse.userId());
     VendorProfileRequest profileRequest = new VendorProfileRequest();
     profileRequest.setBusinessName("Kunta's Natural Farm");
     profileRequest.setDescription("Organic Farming,Farm Stay and Many more");
@@ -68,15 +70,19 @@ class DefaultVendorServiceTest {
     profileRequest.setContactPerson("Jane Doe");
     profileRequest.setCommunicationEmail("swamy.k@outlook.com");
     profileRequest.setServiceAreas(
-        Map.of("areas", List.of("502108", "502103", "Mirdoddi", "Siddipet")));
+        Map.of("areas", Set.of("502108", "502103", "Mirdoddi", "Siddipet")));
     profileRequest.setContactNumber("9912149047");
     profileRequest.setOwnerName("Swamy Kunta");
     profileRequest.setBusinessAddress(
         Map.of("address1", "33 Acres Land", "city", "Mirdoddi", "zipCode", "502108"));
+    profileRequest.setAssignCategories(
+        new AssignCategoriesRequest(new Long[] {100L, 101L, 10000L}));
     UserAuthentication userAuthentication =
         new UserAuthentication(
-            adminUserResponse.userId(),
-            Set.of(new SimpleGrantedAuthority(UserRoleEnum.ADMIN.name())));
+            adminUser.getId(),
+            Set.of(
+                new SimpleGrantedAuthority(
+                    adminUser.getRoles().stream().findFirst().get().getRoleName())));
     var vendorResponse = vendorService.createVendorProfile(profileRequest, userAuthentication);
     Assertions.assertNotNull(vendorResponse.id());
     Assertions.assertNotNull(vendorResponse.message());
@@ -88,10 +94,11 @@ class DefaultVendorServiceTest {
           Assertions.assertNotNull(vendorEntity.get().getBusinessName());
           Assertions.assertEquals("9912149047", vendorEntity.get().getContactNumber());
           Assertions.assertNotNull(vendorEntity.get().getUserId());
-          Assertions.assertNotSame(vendorEntity.get().getUserId(), adminUserResponse.userId());
+          Assertions.assertNotSame(vendorEntity.get().getUserId(), adminUser.getId());
           Assertions.assertEquals(
-              adminUserResponse.userId(), Long.parseLong(vendorEntity.get().getCreatedBy()));
+              adminUser.getId(), Long.parseLong(vendorEntity.get().getCreatedBy()));
         });
+    // vendorService.assignCategories(vendorEntity.get().getId(),profileRequest.getAssignCategories());
   }
 
   @DisplayName("Create vendor profile by Self")
@@ -116,11 +123,12 @@ class DefaultVendorServiceTest {
     profileRequest.setContactPerson("Jane Doe");
     profileRequest.setCommunicationEmail("swamy.k@outlook.com");
     profileRequest.setServiceAreas(
-        Map.of("areas", List.of("502108", "502103", "Mirdoddi", "Siddipet")));
+        Map.of("areas", Set.of("502108", "502103", "Mirdoddi", "Siddipet")));
     profileRequest.setContactNumber("9912149048");
     profileRequest.setOwnerName("Swamy Kunta");
     profileRequest.setBusinessAddress(
         Map.of("address1", "33 Acres Land", "city", "Mirdoddi", "zipCode", "502108"));
+
     UserAuthentication userAuthentication =
         new UserAuthentication(
             response.userId(), Set.of(new SimpleGrantedAuthority(UserRoleEnum.VENDOR.name())));

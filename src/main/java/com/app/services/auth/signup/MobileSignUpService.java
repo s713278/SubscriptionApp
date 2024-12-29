@@ -96,7 +96,7 @@ public class MobileSignUpService extends AbstractSignUpService<MobileSignUpReque
             LocalDateTime.now().plusMinutes(15)); // Set OTP expiration to 5 minutes
       } else {
         customer = optionalUser.get();
-        customer.getRoles().add(role);
+        // customer.getRoles().add(role);
       }
       customer = serviceManager.getUserService().createUser(customer);
       log.info("User #{} is created for mobile :{}", customer.getId(), request.getMobile());

@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 @Entity
 @Table(name = "tb_category_vendor")
-public class VendorCategory extends AbstractAuditingEntity<Long> implements Serializable {
+public class VendorCategory /* extends AbstractAuditingEntity<Long>*/ implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,10 +27,5 @@ public class VendorCategory extends AbstractAuditingEntity<Long> implements Seri
   public VendorCategory(Long categoryId, Long vendorId) {
     this.categoryId = categoryId;
     this.vendorId = vendorId;
-  }
-
-  @Override
-  public Long getId() {
-    return this.id;
   }
 }

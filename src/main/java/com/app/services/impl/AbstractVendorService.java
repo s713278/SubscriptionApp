@@ -2,10 +2,7 @@ package com.app.services.impl;
 
 import com.app.constants.CacheType;
 import com.app.constants.NotificationType;
-import com.app.entites.Customer;
-import com.app.entites.Vendor;
-import com.app.entites.VendorCategory;
-import com.app.entites.VendorLegalDetails;
+import com.app.entites.*;
 import com.app.entites.type.ApprovalStatus;
 import com.app.entites.type.UserRoleEnum;
 import com.app.entites.type.VendorStatus;
@@ -13,6 +10,7 @@ import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.payloads.LegalDetailsDTO;
 import com.app.payloads.request.AssignCategoriesRequest;
+import com.app.payloads.request.AssignProductsRequest;
 import com.app.payloads.request.VendorProfileRequest;
 import com.app.payloads.response.CreateItemResponse;
 import com.app.payloads.response.PaginationResponse;
@@ -21,10 +19,7 @@ import com.app.repositories.RepositoryManager;
 import com.app.services.auth.dto.UserAuthentication;
 import com.app.services.notification.NotificationContext;
 import com.app.services.notification.NotificationTemplate;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
@@ -51,7 +46,7 @@ public abstract class AbstractVendorService {
   protected NotificationContext notificationContext;
 
   protected VendorProfileResponse validateOwnershipAndGet(Long vendorId, Long userPrincipal) {
-    var vendor = fetchFullVendorDetailsById(vendorId);
+    var vendor = fetchVendorById(vendorId);
     if (!Objects.equals(vendor.getUserId(), userPrincipal)) {
       throw new APIException(
           APIErrorCode.API_403, "Unauthorized access to fetch vendor profile " + vendorId);
@@ -59,7 +54,7 @@ public abstract class AbstractVendorService {
     return modelMapper.map(vendor, VendorProfileResponse.class);
   }
 
-  protected VendorProfileResponse fetchFullVendorDetailsById(Long vendorId) {
+  protected VendorProfileResponse fetchVendorById(Long vendorId) {
     var vendor =
         repoManager
             .getVendorRepo()
@@ -68,7 +63,7 @@ public abstract class AbstractVendorService {
                 () ->
                     new APIException(
                         APIErrorCode.API_404,
-                        "Vendor profile not existed for vendor #" + vendorId));
+                        "Vendor profile not existed for with ID #" + vendorId));
 
     return modelMapper.map(vendor, VendorProfileResponse.class);
   }
@@ -126,12 +121,28 @@ public abstract class AbstractVendorService {
           String.format("User %s not allowed to have vendor profile", principal));
     }
     Vendor vendorEntity = getRepoManager().getVendorRepo().save(vendor);
-    assignCategories(vendorEntity.getId(), vendorRequest.getAssignCategories());
+    if (isAdmin || isCustomerCare) {
+      assignCategories(vendorEntity.getId(), vendorRequest.getAssignCategories());
+    }
     return new CreateItemResponse(vendorEntity.getId(), "Vendor profile created successfully.");
   }
 
   protected void preCreateVendorProfile(VendorProfileRequest vendorRequest) {
-    // TODO: Add any pre create validation
+    var optionalVendor =
+        repoManager.getVendorRepo().findByContactNumber(vendorRequest.getContactNumber());
+    if (optionalVendor.isPresent()) {
+      log.error(
+          "Vendor profile already existed for this mobile #"
+              + vendorRequest.getContactNumber()
+              + " with profile ID #"
+              + optionalVendor.get().getId());
+      throw new APIException(
+          APIErrorCode.BAD_REQUEST_RECEIVED,
+          "Vendor profile already existed for this mobile #"
+              + vendorRequest.getContactNumber()
+              + " with profile ID #"
+              + optionalVendor.get().getId());
+    }
   }
 
   @Async
@@ -186,8 +197,7 @@ public abstract class AbstractVendorService {
   }
 
   @Cacheable(value = CacheType.CACHE_TYPE_VENDORS, key = "#vendorId")
-  public VendorProfileResponse fetchFullVendorDetailsById(
-      Long vendorId, Authentication authentication) {
+  public VendorProfileResponse fetchVendorById(Long vendorId, Authentication authentication) {
     UserAuthentication userAuthentication = (UserAuthentication) authentication;
     Long userId = (Long) userAuthentication.getPrincipal();
     var roles = getRoles(userAuthentication);
@@ -195,7 +205,7 @@ public abstract class AbstractVendorService {
     boolean isAdmin = roles.contains(UserRoleEnum.ADMIN.name());
     boolean isVendor = roles.contains(UserRoleEnum.VENDOR.name());
     boolean isCustomerCare = roles.contains(UserRoleEnum.CUSTOMER_CARE.name());
-    var vendorDetails = fetchFullVendorDetailsById(vendorId);
+    var vendorDetails = fetchVendorById(vendorId);
     if (isAdmin) {
       return vendorDetails;
     }
@@ -237,7 +247,7 @@ public abstract class AbstractVendorService {
     getRepoManager().getVendorRepo().updateVendorStatus(vendorId, vendorStatus);
   }
 
-  public PaginationResponse<VendorProfileRequest> fetchAllVendors(
+  public PaginationResponse<VendorProfileResponse> fetchAllVendors(
       Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
     Sort sortByAndOrder =
         sortOrder.equalsIgnoreCase("asc")
@@ -246,13 +256,9 @@ public abstract class AbstractVendorService {
     Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
     Page<Vendor> pageStores = repoManager.getVendorRepo().findAll(pageDetails);
     List<Vendor> stores = pageStores.getContent();
-    if (stores.isEmpty()) {
-      throw new APIException(
-          APIErrorCode.BAD_REQUEST_RECEIVED, "No registered vendors found in database!!");
-    }
-    List<VendorProfileRequest> storeDTOs =
+    List<VendorProfileResponse> storeDTOs =
         stores.stream()
-            .map(store -> modelMapper.map(store, VendorProfileRequest.class))
+            .map(store -> modelMapper.map(store, VendorProfileResponse.class))
             .collect(Collectors.toList());
     return new PaginationResponse<>(
         storeDTOs,
@@ -263,11 +269,11 @@ public abstract class AbstractVendorService {
         pageStores.isLast());
   }
 
-  @Cacheable(value = CacheType.CACHE_TYPE_VENDORS, key = "#mobileId")
-  public VendorProfileResponse fetchVendorByMobile(String mobileId, Authentication authentication) {
+  @Cacheable(value = CacheType.CACHE_TYPE_VENDORS, key = "#mobileNo")
+  public VendorProfileResponse fetchVendorByMobile(String mobileNo, Authentication authentication) {
     log.debug(
         "Fetching vendor profile for mobile #{} buy user #{}",
-        mobileId,
+        mobileNo,
         authentication.getPrincipal());
     UserAuthentication userAuthentication = (UserAuthentication) authentication;
     Long userId = (Long) userAuthentication.getPrincipal();
@@ -275,12 +281,16 @@ public abstract class AbstractVendorService {
     boolean isAdmin = roles.contains(UserRoleEnum.ADMIN.name());
     boolean isVendor = roles.contains(UserRoleEnum.VENDOR.name());
     boolean isCustomerCare = roles.contains(UserRoleEnum.CUSTOMER_CARE.name());
-    var optionalVendor = repoManager.getVendorRepo().findByContactNumber(String.valueOf(mobileId));
-    if (optionalVendor.isEmpty()) {
-      throw new APIException(
-          APIErrorCode.API_404, "Vendor not existed with this number #" + mobileId);
-    }
-    var vendorDetails = modelMapper.map(optionalVendor.get(), VendorProfileResponse.class);
+    Vendor vendor =
+        repoManager
+            .getVendorRepo()
+            .findByContactNumber(mobileNo)
+            .orElseThrow(
+                () ->
+                    new APIException(
+                        APIErrorCode.API_404,
+                        "No registered vendor profile existed with this mobile no#" + mobileNo));
+    var vendorDetails = modelMapper.map(vendor, VendorProfileResponse.class);
     if (isAdmin) {
       return vendorDetails;
     }
@@ -290,7 +300,7 @@ public abstract class AbstractVendorService {
       vendorDetails.setRegNumber("");
       return vendorDetails;
     } else if (isVendor) {
-      return validateOwnershipAndGet(optionalVendor.get().getId(), userId);
+      return validateOwnershipAndGet(vendor.getId(), userId);
     }
     throw new APIException(APIErrorCode.API_403, "Unauthorized to fetch vendor profile");
   }
@@ -309,34 +319,130 @@ public abstract class AbstractVendorService {
             });
   }
 
-  @Async
   @Transactional
   public void assignCategories(Long vendorId, AssignCategoriesRequest request) {
-    // Validate input
-    if (request == null || request.categoryIds() == null || request.categoryIds().length == 0) {
-      throw new IllegalArgumentException("Category IDs cannot be null or empty.");
+    log.debug(
+        "Assign categories to vendor  #{} and category ids :#{}", vendorId, request.categoryIds());
+    //  Step 1:Validate input
+    if (request.categoryIds() == null || request.categoryIds().isEmpty()) {
+      throw new APIException(
+          APIErrorCode.BAD_REQUEST_RECEIVED, "Category IDs cannot be null or empty.");
+    }
+    // Step 2: Validate the vendor ID
+    Vendor vendor =
+        getRepoManager()
+            .getVendorRepo()
+            .findById(vendorId)
+            .orElseThrow(
+                () ->
+                    new APIException(
+                        APIErrorCode.BAD_REQUEST_RECEIVED, "Invalid vendor ID: " + vendorId));
+    // Step 3: Validate the categories whether those are existed in category table or not.
+    var validCategories =
+        getRepoManager()
+            .getCategoryRepo()
+            .findValidCategories(request.categoryIds())
+            .orElseThrow(
+                () ->
+                    new APIException(
+                        APIErrorCode.BAD_REQUEST_RECEIVED, "All Category IDs are invalid."));
+    log.debug(
+        "Vendor eligible categories {} but the requested categories {} ",
+        validCategories,
+        request.categoryIds());
+    if (validCategories.size() != request.categoryIds().size()) {
+      throw new IllegalArgumentException(
+          "The following one or more category IDs are invalid" + request.categoryIds());
     }
 
-    // Fetch existing categories for the vendor to avoid duplicates
-    Set<Long> existingCategoryIds =
-        getRepoManager().getVendorCategoryRepo().findByVendorId(vendorId).stream()
-            .map(VendorCategory::getCategoryId)
-            .collect(Collectors.toSet());
+    // Step 4: Validate product IDs against VendorProduct entity (already assigned check)
+    Set<Long> alreadyAssignedCategoryIds =
+        getRepoManager()
+            .getVendorCategoryRepo()
+            .findAssignedCategoryIDsForVendor(vendorId, validCategories);
+    if (!alreadyAssignedCategoryIds.isEmpty()) {
+      throw new IllegalArgumentException(
+          "The following categories are already assigned: " + alreadyAssignedCategoryIds);
+    }
 
-    // Filter out categories that are already assigned
+    // Step 5: Prepare batch updates
     List<VendorCategory> newVendorCategories =
-        Arrays.stream(request.categoryIds())
-            .filter(catId -> !existingCategoryIds.contains(catId))
+        validCategories.stream()
             .map(catId -> new VendorCategory(catId, vendorId))
             .collect(Collectors.toList());
+    getRepoManager().getVendorCategoryRepo().saveAll(newVendorCategories);
+    log.info(
+        "Assign categories to vendor  #{} and category ids :#{} is success.",
+        vendorId,
+        validCategories);
+  }
 
-    // Save new categories in bulk for better performance
-    if (!newVendorCategories.isEmpty()) {
-      getRepoManager().getVendorCategoryRepo().saveAll(newVendorCategories);
-      log.info(
-          "Assigned {} new categories to vendor with ID: {}", newVendorCategories.size(), vendorId);
-    } else {
-      log.info("No new categories to assign for vendor with ID: {}", vendorId);
+  @Transactional
+  public void assignProducts(Long vendorId, Map<Long, List<AssignProductsRequest>> request) {
+    // Step 1: Validate the vendor ID
+    Vendor vendor =
+        getRepoManager()
+            .getVendorRepo()
+            .findById(vendorId)
+            .orElseThrow(
+                () ->
+                    new APIException(
+                        APIErrorCode.BAD_REQUEST_RECEIVED, "Invalid vendor ID: " + vendorId));
+
+    // Step 2: Extract all product IDs from the request
+    Set<Long> productIds =
+        request.values().stream()
+            .flatMap(List::stream)
+            .map(AssignProductsRequest::productId)
+            .collect(Collectors.toSet());
+
+    Long categoryId = request.keySet().stream().findFirst().get();
+    // Step 3: Validate product IDs whether all the productId are same Category or not
+    Set<Long> validProductIds =
+        getRepoManager()
+            .getProductRepo()
+            .findValidProductIDs(categoryId, productIds)
+            .orElseThrow(
+                () ->
+                    new APIException(
+                        APIErrorCode.BAD_REQUEST_RECEIVED,
+                        "All product IDs are invalid.No product id is belongs to category id #"
+                            + categoryId));
+
+    if (validProductIds.size() != productIds.size()) {
+      throw new IllegalArgumentException(
+          "One or more product IDs are invalid or might be not assigned to category #"
+              + categoryId);
     }
+
+    // Step 4: Validate product IDs against VendorProduct entity (already assigned check)
+    Set<Long> alreadyAssignedProductIds =
+        getRepoManager()
+            .getVendorProductRepo()
+            .findAssignedProductIdsForVendor(vendorId, validProductIds);
+    if (!alreadyAssignedProductIds.isEmpty()) {
+      throw new IllegalArgumentException(
+          "The following products are already assigned: " + alreadyAssignedProductIds);
+    }
+
+    // Step 5: Prepare batch updates
+    List<VendorProduct> vendorProducts = new ArrayList<>();
+    for (Map.Entry<Long, List<AssignProductsRequest>> entry : request.entrySet()) {
+      // Long categoryId = entry.getKey();
+      List<AssignProductsRequest> productRequests = entry.getValue();
+      for (AssignProductsRequest productRequest : productRequests) {
+        VendorProduct vendorProduct = new VendorProduct();
+        vendorProduct.setVendorId(vendor.getId());
+        vendorProduct.setProductId(productRequest.productId());
+        vendorProduct.setFeatures(productRequest.features()); // Assuming features is stored as JSON
+        vendorProducts.add(vendorProduct);
+      }
+    }
+    // Step 6: Save in batch
+    getRepoManager().getVendorProductRepo().saveAll(vendorProducts);
+    log.info(
+        "Assign products to vendor  #{} and products ids :#{} is success.",
+        vendorId,
+        validProductIds);
   }
 }

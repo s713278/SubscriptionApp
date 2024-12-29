@@ -116,6 +116,9 @@ application:
       - district
       - state
       - country
+    service_area_keys:
+      - zipcodes
+      - areas
     preference_valid_keys:
       - vendor_id
   subscription_config:

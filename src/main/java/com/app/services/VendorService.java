@@ -7,6 +7,7 @@ import com.app.payloads.request.AssignCategoriesRequest;
 import com.app.payloads.request.AssignProductsRequest;
 import com.app.payloads.request.VendorProfileRequest;
 import com.app.payloads.response.CreateItemResponse;
+import com.app.payloads.response.PaginationResponse;
 import com.app.payloads.response.VendorProfileResponse;
 import java.util.Map;
 
@@ -45,6 +46,9 @@ public interface VendorService {
       throw new IllegalArgumentException("Service areas cannot be null or empty");
     }
   }
+
+  PaginationResponse<VendorProfileRequest> fetchAllVendors(
+      Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
   default boolean isValidVendorId(Long vendorId) {
     return vendorId != null && vendorId > 0;

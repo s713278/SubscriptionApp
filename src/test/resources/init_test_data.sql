@@ -1,8 +1,8 @@
-INSERT INTO public.tb_category (description,name,image_path) VALUES
-	 ('Automobile Services','Automobile Services',NULL),
-	 ('Milk and Milk products','Dairy Products',NULL),
-	 ('Vegetables and Leafs','Vegetables',NULL),
-	 ('Ayurvedic Medicines','Ayurvedic Medicines',NULL);
+INSERT INTO public.tb_category (id,description,name,image_path) VALUES
+	 (100,'Automobile Services','Automobile Services',NULL),
+	 (101,'Milk and Buy products','Milk Dairy',NULL),
+	 (101,'Vegetables and Leafs','Vegetables',NULL),
+	 (103,'Ayurvedic Medicines','Ayurvedic Medicines',NULL);
 
 
 INSERT INTO public.tb_product (id,description,features,image_path,name,category_id,created_date,last_modified_date,created_by,last_modified_by) VALUES
@@ -46,9 +46,9 @@ INSERT INTO public.tb_sku_sub_plan (eligible_delivery_days,sku_id,sub_plan_id) V
 
 --Roles
 INSERT INTO tb_role (role_id, role_name) VALUES(101, 'ADMIN');
-INSERT INTO tb_role (role_id, role_name) VALUES(104, 'CUSTOMER_CARE');
 INSERT INTO tb_role (role_id, role_name) VALUES(102, 'USER');
 INSERT INTO tb_role (role_id, role_name) VALUES(103, 'VENDOR');
+INSERT INTO tb_role (role_id, role_name) VALUES(104, 'CUSTOMER_CARE');
 
 --Test Vendor Creation
 INSERT INTO tb_customer (id, created_date, delivery_address, email,
@@ -59,8 +59,14 @@ INSERT INTO tb_customer (id, created_date, delivery_address, email,
  (1000, '2024-11-24 10:19:06.555', 'null'::jsonb, NULL, false, NULL, NULL,
   9848336190, true, NULL,
  'android', true, NULL, '2024-11-24 10:19:06.555', NULL, 'null'::jsonb,
- '2024-11-24 10:19:29.078', NULL, NULL, 'null'::jsonb, '+91', 'VENDOR');
+ '2024-11-24 10:19:29.078', NULL, NULL, 'null'::jsonb, '+91', 'VENDOR'),
+  (1001, '2024-11-24 10:19:06.555', 'null'::jsonb, NULL, false, NULL, NULL,
+   9912149049, true, NULL,
+  'android', true, NULL, '2024-11-24 10:19:06.555', NULL, 'null'::jsonb,
+  '2024-11-24 10:19:29.078', NULL, NULL, 'null'::jsonb, '+91', 'ADMIN')
+ ;
 
 --Vendor Roles
 INSERT INTO tb_user_roles (user_id, role_id) VALUES(1000, 103);
+INSERT INTO tb_user_roles (user_id, role_id) VALUES(1001, 101);
 

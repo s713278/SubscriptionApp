@@ -25,7 +25,7 @@ public class MobileSignUpRequest extends SignUpRequest {
   @NotNull
   @Schema(
       description = "Mobile number",
-      example = "9876543210",
+      example = "9912149049",
       pattern = AppConstants.MOBILE_REGEX)
   @JsonProperty("mobile_number")
   @Size(min = 10, max = 10, message = "Mobile number should be 10 digits.")

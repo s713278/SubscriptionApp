@@ -174,4 +174,7 @@ public interface VendorRepo extends JpaRepository<Vendor, Long> {
   Long findByUserId(Long userId);
 
   Optional<Vendor> findByContactNumber(String mobileNo);
+
+  // @Query("SELECT v FROM Vendor v WHERE v.id = :searchWord OR v.contactNumber=:searchWord")
+  // Optional<Vendor> findByKeyword(String searchWord);
 }
