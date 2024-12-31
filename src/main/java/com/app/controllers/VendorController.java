@@ -7,6 +7,7 @@ import com.app.entites.type.VendorStatus;
 import com.app.payloads.LegalDetailsDTO;
 import com.app.payloads.request.AssignCategoriesRequest;
 import com.app.payloads.request.AssignProductsRequest;
+import com.app.payloads.request.SkuCreateRequest;
 import com.app.payloads.request.VendorProfileRequest;
 import com.app.payloads.response.APIResponse;
 import com.app.payloads.response.VendorProfileResponse;
@@ -16,6 +17,7 @@ import com.app.services.validator.AddressValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -162,10 +164,10 @@ public class VendorController extends AbstractRequestValidation {
   }*/
 
   @Operation(
-      summary = "Review Vendor",
+      summary = "Approve Vendor",
       description = "Update vendor's approval status (Accepted/Rejected by admin after login.")
   @PatchMapping("/{vendorId}/approval_status")
-  @PreAuthorize("(hasAuthority('ADMIN')")
+  @PreAuthorize("hasAuthority('ADMIN')")
   public ResponseEntity<APIResponse<?>> updateApprovalStatus(
       @PathVariable Long vendorId, @RequestBody ApprovalStatus approvalStatus) {
     serviceManager.getVendorService().updateApprovalStatus(vendorId, approvalStatus);
@@ -223,5 +225,24 @@ public class VendorController extends AbstractRequestValidation {
       @RequestBody Map<Long, List<AssignProductsRequest>> assignProductsRequest) {
     serviceManager.getVendorService().assignProducts(vendorId, assignProductsRequest);
     return ResponseEntity.ok(APIResponse.success("Products assigned successfully."));
+  }
+
+  @PreAuthorize(
+      "(hasAuthority('VENDOR') or hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")
+  @PostMapping("/{vendor_id}/{vendor_product_id}")
+  @Operation(
+      summary = "Create Vendor Sku",
+      description = "Create Vendor Sku by Vendor/Admin/Customer_Care after login")
+  public ResponseEntity<APIResponse<?>> createVendorSku(
+      @PathVariable("vendor_id") @Schema(example = "91") Long vendorId,
+      @PathVariable("vendor_product_id") @Schema(example = "10002") Long vendorProductId,
+      @RequestBody @Valid SkuCreateRequest request,
+      BindingResult bindingResult,
+      Authentication authentication) {
+    log.info("Request received for creating a new SKU by {}", authentication.getPrincipal());
+    validateRequest(bindingResult);
+    var response = serviceManager.getSkuService().createSku(vendorId, vendorProductId, request);
+    return new ResponseEntity<>(
+        APIResponse.success(HttpStatus.OK.value(), response), HttpStatus.CREATED);
   }
 }

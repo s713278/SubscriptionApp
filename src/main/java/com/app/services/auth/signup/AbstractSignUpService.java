@@ -35,10 +35,12 @@ public abstract class AbstractSignUpService<T extends SignUpRequest> {
   }
 
   protected void preSignUpOperations(T request) {
-    switch (request.getUserRoleEnum()) {
-      case ADMIN, CUSTOMER_CARE ->
-          throw new APIException(
-              APIErrorCode.BAD_REQUEST_RECEIVED, "This role not allowed to create.");
+    if (request.getUserRoleEnum() != null) {
+      switch (request.getUserRoleEnum()) {
+        case ADMIN, CUSTOMER_CARE ->
+            throw new APIException(
+                APIErrorCode.BAD_REQUEST_RECEIVED, "This role not allowed to create.");
+      }
     }
   }
 

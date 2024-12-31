@@ -77,6 +77,9 @@ public interface SkuRepo extends JpaRepository<Sku, Long> {
       nativeQuery = true)
   List<Object[]> findVendorProductSkus(@Param("vendorId") Long vendorId);
 
-  @Query("SELECT available from Sku WHERE id=:skuId")
+  @Query("SELECT active from Sku WHERE id=:skuId")
   Boolean findSkuAvailable(Long skuId);
+
+  @Query("SELECT s FROM Sku s WHERE s.vendorProductId = :vendorProductId AND s.id = :skuId")
+  Optional<Sku> findByVendorProductAndSkuId(Long vendorProductId, Long skuId);
 }

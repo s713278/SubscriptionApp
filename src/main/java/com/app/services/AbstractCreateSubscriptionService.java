@@ -30,10 +30,8 @@ public abstract class AbstractCreateSubscriptionService {
 
   protected void isSkuAvailable(Sku sku) {
     log.debug(
-        "Validating whether the SKU : {} is available or not ? {} ",
-        sku.getId(),
-        sku.isAvailable());
-    if (!sku.isAvailable()) {
+        "Validating whether the SKU : {} is available or not ? {} ", sku.getId(), sku.isActive());
+    if (!sku.isActive()) {
       throw new APIException(
           APIErrorCode.SUBSCRIPTION_VALIDATION_FAILED,
           String.format("SKU %s is out of stock", sku.getId()));
@@ -121,7 +119,8 @@ public abstract class AbstractCreateSubscriptionService {
       case ONE_TIME -> {
         if (sku.getSkuType() == SkuType.SERVICE) {
           subscription.setStartDate(LocalDate.now());
-          subscription.setEndDate(LocalDate.now().plusDays(sku.getServiceValidDays()));
+          subscription.setEndDate(
+              LocalDate.now().plusDays(sku.getServiceAttributes().getValidDays()));
         } else {
           subscription.setStartDate(request.getDeliveryDate());
         }

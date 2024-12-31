@@ -3,14 +3,20 @@ package com.app.entites;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 @Data
 @Entity
 @Table(name = "tb_sku_sub_plan")
-public class SkuSubscription implements Serializable {
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class SkuSubscriptionPlan implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,4 +37,5 @@ public class SkuSubscription implements Serializable {
   // Additional fields can be added as needed
   //  @Column(name = "validity")
   // private String validity;
+
 }

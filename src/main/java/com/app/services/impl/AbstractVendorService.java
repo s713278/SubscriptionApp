@@ -62,7 +62,7 @@ public abstract class AbstractVendorService {
             .orElseThrow(
                 () ->
                     new APIException(
-                        APIErrorCode.API_404,
+                        APIErrorCode.ENTITY_NOT_FOUND,
                         "Vendor profile not existed for with ID #" + vendorId));
 
     return modelMapper.map(vendor, VendorProfileResponse.class);
@@ -228,7 +228,8 @@ public abstract class AbstractVendorService {
     var isExisted = getRepoManager().getVendorRepo().existsById(vendorId);
     if (!isExisted) {
       throw new APIException(
-          APIErrorCode.API_404, "Vendor details not defined in system for user " + vendorId);
+          APIErrorCode.ENTITY_NOT_FOUND,
+          "Vendor details not defined in system for user " + vendorId);
     }
     VendorStatus vendorStatus = VendorStatus.INACTIVE;
     if (Objects.requireNonNull(approvalStatus) == ApprovalStatus.APPROVED) {
@@ -243,7 +244,8 @@ public abstract class AbstractVendorService {
     var isExisted = getRepoManager().getVendorRepo().existsById(vendorId);
     if (!isExisted) {
       throw new APIException(
-          APIErrorCode.API_404, "Vendor details not defined in system for user " + vendorId);
+          APIErrorCode.ENTITY_NOT_FOUND,
+          "Vendor details not defined in system for user " + vendorId);
     }
     getRepoManager().getVendorRepo().updateVendorStatus(vendorId, vendorStatus);
   }
@@ -289,7 +291,7 @@ public abstract class AbstractVendorService {
             .orElseThrow(
                 () ->
                     new APIException(
-                        APIErrorCode.API_404,
+                        APIErrorCode.ENTITY_NOT_FOUND,
                         "No registered vendor profile existed with this mobile no#" + mobileNo));
     var vendorDetails = modelMapper.map(vendor, VendorProfileResponse.class);
     if (isAdmin) {

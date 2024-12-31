@@ -15,11 +15,13 @@ public class VendorCategory /* extends AbstractAuditingEntity<Long>*/ implements
 
   // @ManyToOne
   // @JoinColumn(name = "category_id", nullable = false)
+  @Column(name = "category_id")
   private Long categoryId;
 
   // @ManyToOne
   // @JoinColumn(name = "vendor_id", nullable = false)
   // private Vendor vendor;
+  @Column(name = "vendor_id")
   private Long vendorId;
 
   public VendorCategory() {}

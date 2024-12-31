@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ServiceManager {
   private final UserService userService;
-  private final SkuService skuService;
+  private final DefaultSkuService skuService;
   private final DefaultVendorService vendorService;
   private final OTPService otpService;
   private final NotificationContext notificationContext;

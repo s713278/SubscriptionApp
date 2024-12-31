@@ -20,8 +20,12 @@ public class Category implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column(name = "type", unique = true)
+  private String type;
+
   @NotBlank
   @Size(min = 3, message = "Category name must contain at least 3 characters")
+  @Column(name = "name", unique = true)
   private String name;
 
   private String imagePath;

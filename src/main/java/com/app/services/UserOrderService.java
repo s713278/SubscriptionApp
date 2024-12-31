@@ -3,7 +3,6 @@ package com.app.services;
 import com.app.entites.Order;
 import com.app.payloads.OrderDetailsDTO;
 import com.app.repositories.RepositoryManager;
-import com.app.services.impl.SkuService;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -206,7 +205,7 @@ public class UserOrderService {
                   return OrderDetailsDTO.builder()
                       .orderId(order.getId())
                       .deliveryDate(order.getDeliveryDate())
-                      .size(skuDto.getSize())
+                      .size(skuDto.getWeight())
                       .discount(BigDecimal.valueOf(0)) // TODO
                       .itemName(skuDto.getName())
                       .quantity(order.getQuantity())

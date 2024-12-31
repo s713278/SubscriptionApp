@@ -177,4 +177,7 @@ public interface VendorRepo extends JpaRepository<Vendor, Long> {
 
   // @Query("SELECT v FROM Vendor v WHERE v.id = :searchWord OR v.contactNumber=:searchWord")
   // Optional<Vendor> findByKeyword(String searchWord);
+  @Query(
+      "SELECT v.id FROM Vendor v WHERE v.id=:id AND v.approvalStatus = :approvalStatus AND v.status = :status")
+  Optional<Long> findByStatus(Long id, ApprovalStatus approvalStatus, VendorStatus status);
 }

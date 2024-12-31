@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 public enum APIErrorCode {
 
   // General Errors
-  API_404(HttpStatus.NOT_FOUND, "No data found!!"),
+  ENTITY_NOT_FOUND(HttpStatus.NOT_FOUND, "No data found!!"),
   API_405(HttpStatus.NOT_FOUND, "No registered vendors found in this area!!"),
   VENDOR_LEGAL_DETAILS_NOT_EXISTED(HttpStatus.NOT_FOUND, "Vendor Legal Details not found."),
   UN_AUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "User don't have have required access to update."),
@@ -37,6 +37,9 @@ public enum APIErrorCode {
   OTP_MAX_ATTEMPTS_EXCEEDED(
       HttpStatus.TOO_MANY_REQUESTS,
       "Maximum OTP verification attempts exceeded. Please try again later."),
+
+  // Sku Creation
+  SKU_CREATION_VALIDATION(HttpStatus.EXPECTATION_FAILED, "Creating is SKU is failed."),
 
   INTERNAL_EXCEPTION(
       HttpStatus.INTERNAL_SERVER_ERROR,

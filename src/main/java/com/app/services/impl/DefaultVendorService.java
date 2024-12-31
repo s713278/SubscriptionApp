@@ -68,7 +68,8 @@ public class DefaultVendorService extends AbstractVendorService {
     var isExisted = repoManager.getVendorRepo().existsById(vendorId);
     if (!isExisted) {
       throw new APIException(
-          APIErrorCode.API_404, "Vendor details not defined in system for user " + vendorId);
+          APIErrorCode.ENTITY_NOT_FOUND,
+          "Vendor details not defined in system for user " + vendorId);
     }
     VendorStatus vendorStatus = VendorStatus.INACTIVE;
     if (Objects.requireNonNull(approvalStatus) == ApprovalStatus.APPROVED) {
@@ -83,7 +84,8 @@ public class DefaultVendorService extends AbstractVendorService {
     var isExisted = repoManager.getVendorRepo().existsById(vendorId);
     if (!isExisted) {
       throw new APIException(
-          APIErrorCode.API_404, "Vendor details not defined in system for user " + vendorId);
+          APIErrorCode.ENTITY_NOT_FOUND,
+          "Vendor details not defined in system for user " + vendorId);
     }
     repoManager.getVendorRepo().updateVendorStatus(vendorId, vendorStatus);
   }
