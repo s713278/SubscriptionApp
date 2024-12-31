@@ -29,8 +29,5 @@ public class SkuPrice {
   @Column(name = "effective_date", nullable = false)
   private LocalDate effectiveDate;
 
-  @Column(name = "created_by")
-  private String updatedBy;
-
   // Getters and Setters
 }

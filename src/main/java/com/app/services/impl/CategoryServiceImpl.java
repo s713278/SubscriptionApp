@@ -59,7 +59,7 @@ public class CategoryServiceImpl implements CategoryService {
     Page<CategoryProjection> pageCategories = categoryRepo.findAllCategories(pageDetails);
     List<CategoryProjection> categories = pageCategories.getContent();
     if (categories.isEmpty()) {
-      throw new APIException(APIErrorCode.API_404, "No category are created in system");
+      throw new APIException(APIErrorCode.ENTITY_NOT_FOUND, "No category are created in system");
     }
 
     return new PaginationResponse<>(

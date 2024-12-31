@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
       ResourceNotFoundException ex, WebRequest request) {
     APIErrorResponse apiError =
         new APIErrorResponse(
-            APIErrorCode.API_404, ex.getMessage(), List.of(request.getDescription(false)));
+            APIErrorCode.ENTITY_NOT_FOUND, ex.getMessage(), List.of(request.getDescription(false)));
     return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
   }
 

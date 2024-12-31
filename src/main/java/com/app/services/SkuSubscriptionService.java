@@ -1,7 +1,7 @@
 package com.app.services;
 
 import com.app.constants.CacheType;
-import com.app.entites.SkuSubscription;
+import com.app.entites.SkuSubscriptionPlan;
 import com.app.entites.type.SubFrequency;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
@@ -19,17 +19,17 @@ public class SkuSubscriptionService {
   private final RepositoryManager repositoryManager;
 
   // Create or Update a SkuSubscription
-  public SkuSubscription saveSkuSubscription(SkuSubscription skuSubscription) {
-    return repositoryManager.getSkuSubscriptionRepo().save(skuSubscription);
+  public SkuSubscriptionPlan saveSkuSubscription(SkuSubscriptionPlan skuSubscriptionPlan) {
+    return repositoryManager.getSkuSubscriptionRepo().save(skuSubscriptionPlan);
   }
 
   // Get all SkuSubscriptions
-  public List<SkuSubscription> getAllSkuSubscriptions() {
+  public List<SkuSubscriptionPlan> getAllSkuSubscriptions() {
     return repositoryManager.getSkuSubscriptionRepo().findAll();
   }
 
   // Get a SkuSubscription by ID
-  public Optional<SkuSubscription> getSkuSubscriptionById(Long id) {
+  public Optional<SkuSubscriptionPlan> getSkuSubscriptionById(Long id) {
     return repositoryManager.getSkuSubscriptionRepo().findById(id);
   }
 
@@ -40,7 +40,7 @@ public class SkuSubscriptionService {
 
   // Custom business logic can be added here if needed
   @Cacheable(value = CacheType.CACHE_TYPE_VENDORS, key = "#skuId + '_' + #frequency")
-  public SkuSubscription fetchBySkuIdAndFrequency(Long skuId, SubFrequency frequency) {
+  public SkuSubscriptionPlan fetchBySkuIdAndFrequency(Long skuId, SubFrequency frequency) {
     return repositoryManager
         .getSkuSubscriptionRepo()
         .findBySkuIdAndSubscriptionPlanFrequency(skuId, frequency)

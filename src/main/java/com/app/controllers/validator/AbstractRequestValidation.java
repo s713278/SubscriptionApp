@@ -24,7 +24,7 @@ public abstract class AbstractRequestValidation {
           .getAllErrors()
           .forEach(objectError -> errors.add(objectError.getDefaultMessage()));
       // Return the error map as the response with BAD_REQUEST status
-      throw new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, errors.toString());
+      throw new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, errors.getFirst());
     }
   }
 }

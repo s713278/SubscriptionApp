@@ -1,71 +1,63 @@
 package com.app.services.impl;
 
+import com.app.entites.ServiceAttribute;
 import com.app.entites.Sku;
+import com.app.entites.SkuPrice;
+import com.app.entites.SkuSubscriptionPlan;
+import com.app.entites.type.SkuType;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.payloads.EligibleSubscriptionDTO;
 import com.app.payloads.ProductSkuDTO;
-import com.app.payloads.SkuDTO;
+import com.app.payloads.request.SkuCreateRequest;
 import com.app.repositories.RepositoryManager;
+import com.app.services.AbstractSkuService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@AllArgsConstructor
-public class SkuService {
+@Getter
+@Slf4j
+public class DefaultSkuService extends AbstractSkuService {
 
-  private static final Logger log = LoggerFactory.getLogger(SkuService.class);
-  final RepositoryManager repositoryManager;
-  final ModelMapper modelMapper;
-
-  public SkuDTO addSku(SkuDTO skuDTO) {
-    Sku sku = modelMapper.map(skuDTO, Sku.class);
-    repositoryManager.getSkuRepo().save(sku);
-    return modelMapper.map(sku, SkuDTO.class);
+  public DefaultSkuService(
+      UserService userService, RepositoryManager repoManager, ModelMapper modelMapper) {
+    this.userService = userService;
+    this.repositoryManager = repoManager;
+    this.modelMapper = modelMapper;
   }
 
-  public SkuDTO updateSku(Long skuId, SkuDTO skuDTO) {
+  public SkuCreateRequest updateSku(Long skuId, SkuCreateRequest skuDTO) {
     Sku sku = modelMapper.map(skuDTO, Sku.class);
     // sku.setSkuId(skuId);
     repositoryManager.getSkuRepo().save(sku);
-    return modelMapper.map(sku, SkuDTO.class);
+    return modelMapper.map(sku, SkuCreateRequest.class);
   }
 
   @CacheEvict(key = "#skuId")
   public String deleteSku(Long skuId) {
     repositoryManager.getSkuRepo().deleteById(skuId);
-    return "Sku " + skuId + " deleted successfully !!!";
-  }
-
-  @Cacheable(value = "skus", key = "#skuId")
-  public SkuDTO fetchSkuById(final Long skuId) {
-    var sku =
-        repositoryManager
-            .getSkuRepo()
-            .findById(skuId)
-            .orElseThrow(
-                () -> new APIException(APIErrorCode.API_404, "SKU not existed in system."));
-    return modelMapper.map(sku, SkuDTO.class);
+    return "SKU " + skuId + " deleted successfully !!!";
   }
 
   public Sku fetchSkuEntityById(final Long skuId) {
     return repositoryManager
         .getSkuRepo()
         .findById(skuId)
-        .orElseThrow(() -> new APIException(APIErrorCode.API_404, "SKU not existed in system."));
+        .orElseThrow(
+            () -> new APIException(APIErrorCode.ENTITY_NOT_FOUND, "SKU not existed in system."));
   }
 
   // @Cacheable(value = CacheType.CACHE_TYPE_VENDORS,key = "'vendor::product::' + #vendorId")
@@ -109,5 +101,51 @@ public class SkuService {
 
     // Group the ProductSku objects by productId
     return productSkus.stream().collect(Collectors.groupingBy(ProductSkuDTO::productName));
+  }
+
+  @Override
+  protected Sku processCreateSku(Long vendorProductId, SkuCreateRequest request) {
+    var sku = modelMapper.map(request, Sku.class);
+    sku.setVendorProductId(vendorProductId);
+    sku.setSkuCode("SKU_" + vendorProductId + "_" + request.getName());
+    // Service attributes
+    if (request.getSkuType() == SkuType.SERVICE) {
+      sku.setServiceAttributes(
+          modelMapper.map(request.getServiceAttributes(), ServiceAttribute.class));
+    } else if (request.getSkuType() == SkuType.ITEM) {
+      List<SkuSubscriptionPlan> skuSubscriptionPlans = new ArrayList<>();
+      request
+          .getEligibleSubPlans()
+          .forEach(
+              subscriptionPlanDTO -> {
+                getRepositoryManager()
+                    .getSubscriptionPlanRepo()
+                    .findById(subscriptionPlanDTO.getSubPlanId())
+                    .ifPresent(
+                        (subPlanEntity) -> {
+                          skuSubscriptionPlans.add(
+                              SkuSubscriptionPlan.builder()
+                                  .sku(sku)
+                                  .subscriptionPlan(subPlanEntity)
+                                  .eligibleDeliveryDays(
+                                      subscriptionPlanDTO.getEligibleDeliveryDays())
+                                  .build());
+                        });
+              });
+      log.debug("SKU Subscription Plans Size: {}", skuSubscriptionPlans.size());
+      sku.setEligibleSubPlans(skuSubscriptionPlans);
+    }
+    var skuPriceList =
+        request.getPriceList().stream()
+            .map(
+                skuPriceDTO -> {
+                  SkuPrice skuPrice = modelMapper.map(skuPriceDTO, SkuPrice.class);
+                  skuPrice.setSku(sku);
+                  return skuPrice;
+                })
+            .collect(Collectors.toList());
+    sku.setPriceList(skuPriceList);
+    log.debug("SKU Price List Size : {}", skuPriceList.size());
+    return sku;
   }
 }

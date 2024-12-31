@@ -1,5 +1,6 @@
 package com.app.payloads;
 
+import com.app.payloads.request.SkuCreateRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ public class CartItemDTO {
 
   // private CartDTO cart;
 
-  @JsonIgnore private SkuDTO sku;
+  @JsonIgnore private SkuCreateRequest sku;
   // private ProductDTO product;
   private Integer quantity;
 

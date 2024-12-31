@@ -1,5 +1,6 @@
 package com.app.payloads;
 
+import com.app.payloads.request.SkuCreateRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Transient;
@@ -21,7 +22,7 @@ public class OrderItemDTO {
 
   private double discount;
 
-  @JsonIgnore private SkuDTO sku;
+  @JsonIgnore private SkuCreateRequest sku;
 
   @JsonProperty("state_tax")
   private double stateTax = 0;

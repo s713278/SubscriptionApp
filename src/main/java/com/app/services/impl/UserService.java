@@ -6,8 +6,8 @@ import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.payloads.CartDTO;
-import com.app.payloads.SkuDTO;
 import com.app.payloads.UserDTO;
+import com.app.payloads.request.SkuCreateRequest;
 import com.app.payloads.request.UpdateUserRequest;
 import com.app.payloads.response.UserListingResponse;
 import com.app.repositories.RepositoryManager;
@@ -62,9 +62,9 @@ public class UserService {
                    * user.getAddresses().stream().findFirst().get(), AddressDTO.class)); }
                    */
                   CartDTO cart = modelMapper.map(user.getCart(), CartDTO.class);
-                  List<SkuDTO> skuDTOs =
+                  List<SkuCreateRequest> skuDTOs =
                       user.getCart().getCartItems().stream()
-                          .map(item -> modelMapper.map(item.getSku(), SkuDTO.class))
+                          .map(item -> modelMapper.map(item.getSku(), SkuCreateRequest.class))
                           .collect(Collectors.toList());
                   // dto.getCart().setSkus(skuDTOs);
                   return dto;
@@ -96,9 +96,9 @@ public class UserService {
      */
     if (user.getCart() != null) {
       CartDTO cart = modelMapper.map(user.getCart(), CartDTO.class);
-      List<SkuDTO> skuDTOs =
+      List<SkuCreateRequest> skuDTOs =
           user.getCart().getCartItems().stream()
-              .map(item -> modelMapper.map(item.getSku(), SkuDTO.class))
+              .map(item -> modelMapper.map(item.getSku(), SkuCreateRequest.class))
               .toList();
       // userDTO.getCart().setSkus(skuDTOs);
     }
@@ -175,7 +175,7 @@ public class UserService {
         .orElseThrow(
             () ->
                 new APIException(
-                    APIErrorCode.API_404, "No user details found for mobile # " + mobile));
+                    APIErrorCode.ENTITY_NOT_FOUND, "No user details found for mobile # " + mobile));
   }
 
   @Transactional
@@ -194,7 +194,8 @@ public class UserService {
     return repositoryManager
         .getCustomerRepo()
         .findById(userId)
-        .orElseThrow(() -> new APIException(APIErrorCode.API_404, "User not existed in system."));
+        .orElseThrow(
+            () -> new APIException(APIErrorCode.ENTITY_NOT_FOUND, "User not existed in system."));
   }
 
   @Transactional

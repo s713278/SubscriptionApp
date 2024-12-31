@@ -9,8 +9,8 @@ import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.payloads.CartDTO;
 import com.app.payloads.CartItemDTO;
-import com.app.payloads.SkuDTO;
 import com.app.payloads.request.ItemRequest;
+import com.app.payloads.request.SkuCreateRequest;
 import com.app.payloads.response.APIResponse;
 import com.app.repositories.CartItemRepo;
 import com.app.repositories.CartRepo;
@@ -140,9 +140,9 @@ public class CartServiceImpl implements CartService {
                 cart -> {
                   CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
 
-                  List<SkuDTO> skus =
+                  List<SkuCreateRequest> skus =
                       cart.getCartItems().stream()
-                          .map(p -> modelMapper.map(p.getSku(), SkuDTO.class))
+                          .map(p -> modelMapper.map(p.getSku(), SkuCreateRequest.class))
                           .collect(Collectors.toList());
                   // cartDTO.setSkus(skus);
                   return cartDTO;
@@ -227,9 +227,9 @@ public class CartServiceImpl implements CartService {
     cartItemRepo.save(newCartItem);
     // TODO:  cart.setTotalPrice(cart.getTotalPrice() + (sku.getSalePrice() * quantity));
     CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
-    List<SkuDTO> skuDTOs =
+    List<SkuCreateRequest> skuDTOs =
         cart.getCartItems().stream()
-            .map(p -> modelMapper.map(p.getSku(), SkuDTO.class))
+            .map(p -> modelMapper.map(p.getSku(), SkuCreateRequest.class))
             .collect(Collectors.toList());
     // cartDTO.setSkus(skuDTOs);
     return cartDTO;
