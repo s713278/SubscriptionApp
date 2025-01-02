@@ -1,6 +1,5 @@
 package com.app.payloads.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Map;
@@ -9,7 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder
 public class AuthDetailsDTO {
 
@@ -29,8 +27,10 @@ public class AuthDetailsDTO {
   @JsonProperty("mobile_verified")
   boolean mobileVerified;
 
+  /*
   @JsonProperty("email_verified")
   boolean emailVerified;
+   */
 
   // Long Lived Token
   @JsonProperty("refresh_token")

@@ -36,7 +36,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/v1/auth")
 @Tag(
     name = "1. User Authentication API",
-    description = "APIs for User sing up, sign in and session management.")
+    description =
+        "APIs for User sing up, sign in and session management.Please refer each endpoint level description for testing and usage.")
 public class AuthController extends AbstractRequestValidation {
 
   private final ServiceManager serviceManager;
@@ -145,15 +146,18 @@ public class AuthController extends AbstractRequestValidation {
 
   @Operation(
       summary = "Request OTP",
-      description = "user_role value shall be either USER or VENDOR")
+      description =
+          "<b>Test users with USER role</b><br> Test User#1 : 9912149045 with address <br> Test User#2 : 9912149046 without address"
+              + "<br><b>Test users with VENDOR role </b><br> Test User#1 : 9912149047")
   @PostMapping("/request-otp")
   public ResponseEntity<APIResponse<?>> requestOTP(
       @RequestBody @Valid MobileSignUpRequest request, BindingResult bindingResult) {
     log.info("Received OTP request for mobile: {}", request.getMobile());
     validateRequest(bindingResult);
     var response = signUpStrategy.processUserSignUp(request);
-    var appResponse = APIResponse.success(HttpStatus.CREATED.value(), response);
-    return new ResponseEntity<>(appResponse, HttpStatus.CREATED);
+    var httpstatus = response.mobileVerified() ? HttpStatus.OK : HttpStatus.CREATED;
+    var appResponse = APIResponse.success(httpstatus.value(), response);
+    return new ResponseEntity<>(appResponse, httpstatus);
   }
 
   @Operation(summary = "Verify OTP")

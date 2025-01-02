@@ -106,10 +106,7 @@ public class MobileSignUpService extends AbstractSignUpService<MobileSignUpReque
       throw new APIException(APIErrorCode.USER_CREATION_FAILED, e.getMessage());
     }
     return new SignUpDTO(
-        customer.getId(),
-        customer.getFullMobileNumber(),
-        customer.getMobileVerified(),
-        "OTP has been sent to registered mobile.");
+        customer.getId(), customer.getFullMobileNumber(), customer.getMobileVerified());
   }
 
   private boolean isValidMobileNumber(String mobile) {

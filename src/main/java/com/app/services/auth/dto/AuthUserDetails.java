@@ -1,6 +1,7 @@
 package com.app.services.auth.dto;
 
 import com.app.entites.Customer;
+import com.app.entites.type.UserRoleEnum;
 import java.io.Serial;
 import java.util.Collection;
 import java.util.Map;
@@ -47,6 +48,16 @@ public class AuthUserDetails implements UserDetails {
             .map(role -> new SimpleGrantedAuthority(role.getRoleName()))
             .collect(Collectors.toSet());
     this.fullMobileNumber = user.getFullMobileNumber();
+    var isUserRole =
+        user.getRoles().stream()
+            .anyMatch(role -> UserRoleEnum.USER.name().equals(role.getRoleName()));
+
+    if (isUserRole && user.getDeliveryAddress() != null) {
+      this.address = user.getDeliveryAddress();
+      this.address.remove("address1");
+      this.address.remove("address2");
+      this.address.remove("country");
+    }
   }
 
   @Override

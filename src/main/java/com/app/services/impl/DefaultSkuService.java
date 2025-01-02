@@ -110,8 +110,10 @@ public class DefaultSkuService extends AbstractSkuService {
     sku.setSkuCode("SKU_" + vendorProductId + "_" + request.getName());
     // Service attributes
     if (request.getSkuType() == SkuType.SERVICE) {
-      sku.setServiceAttributes(
-          modelMapper.map(request.getServiceAttributes(), ServiceAttribute.class));
+      var serviceAttribute =
+          modelMapper.map(request.getServiceAttributes(), ServiceAttribute.class);
+      serviceAttribute.setSku(sku);
+      sku.setServiceAttributes(serviceAttribute);
     } else if (request.getSkuType() == SkuType.ITEM) {
       List<SkuSubscriptionPlan> skuSubscriptionPlans = new ArrayList<>();
       request

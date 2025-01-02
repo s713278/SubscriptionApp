@@ -221,7 +221,7 @@ public class VendorController extends AbstractRequestValidation {
   @PatchMapping("/{vendorId}/products")
   @PreAuthorize("(hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")
   public ResponseEntity<APIResponse<?>> assignProducts(
-      @PathVariable Long vendorId,
+      @PathVariable @Schema(example = "91") Long vendorId,
       @RequestBody Map<Long, List<AssignProductsRequest>> assignProductsRequest) {
     serviceManager.getVendorService().assignProducts(vendorId, assignProductsRequest);
     return ResponseEntity.ok(APIResponse.success("Products assigned successfully."));
