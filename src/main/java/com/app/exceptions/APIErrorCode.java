@@ -6,6 +6,10 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum APIErrorCode {
 
+  // Session Expired
+  TOKEN_EXPIRED(
+      ReasonCodeEnum.ACCESS_TOKEN_EXPIRED, HttpStatus.UNAUTHORIZED, "User access token expired."),
+
   // General Errors
   ENTITY_NOT_FOUND(HttpStatus.NOT_FOUND, "No data found!!"),
   API_405(HttpStatus.NOT_FOUND, "No registered vendors found in this area!!"),
@@ -47,9 +51,17 @@ public enum APIErrorCode {
 
   private final HttpStatus httpStatus;
   private final String userMessage;
+  private final ReasonCodeEnum reasonCode;
 
   APIErrorCode(HttpStatus httpStatus, String userMessage) {
     this.httpStatus = httpStatus;
     this.userMessage = userMessage;
+    reasonCode = null;
+  }
+
+  APIErrorCode(ReasonCodeEnum errorCode, HttpStatus httpStatus, String userMessage) {
+    this.httpStatus = httpStatus;
+    this.userMessage = userMessage;
+    this.reasonCode = errorCode;
   }
 }

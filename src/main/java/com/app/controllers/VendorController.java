@@ -34,7 +34,10 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(
     name = "6. Vendor Profile API",
-    description = "APIS for managing vendor profile and accessed through bearer token only.")
+    description =
+        """
+            APIS for creating,managing vendor profiles,catalogue. These API can be accessed by VENDOR or ADMIN role only.
+            """)
 @RestController
 @RequestMapping("/v1/vendors")
 @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
@@ -50,7 +53,15 @@ public class VendorController extends AbstractRequestValidation {
       "(hasAuthority('VENDOR') or hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")
   @Operation(
       summary = "Create Vendor Profile",
-      description = "Profile can be created by Vendor/Admin/Customer_Care after login.")
+      description =
+          """
+          Profile can be created by Vendor/Admin/Customer_Care after login.
+            <br>
+              <b>Test data</b>
+            </br>
+            <br>Admin : 9948023105 </br>
+            <br>Vendor : 9948023190 </br>
+            OTP is default one to verify the APIs.""")
   public ResponseEntity<APIResponse<?>> createVendorProfile(
       @Valid @RequestBody VendorProfileRequest vendorDetails,
       BindingResult bindingResult,
@@ -89,13 +100,13 @@ public class VendorController extends AbstractRequestValidation {
 
   @PreAuthorize(
       "#vendorId == authentication.principal OR (hasAuthority('VENDOR') or hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")
-  @PutMapping("/{vendorId}")
+  @PutMapping("/{vendor_id}")
   @Operation(
       summary = "Update vendor full profile",
       description = "Update vendor full profile by Vendor/Admin/Customer_Care after login")
   public ResponseEntity<APIResponse<?>> updateVendor(
       @RequestBody VendorProfileRequest storeDTO,
-      @PathVariable Long vendorId,
+      @PathVariable("vendor_id") Long vendorId,
       Authentication authentication) {
     var response =
         serviceManager.getVendorService().updateVendorProfile(storeDTO, vendorId, authentication);
@@ -108,9 +119,9 @@ public class VendorController extends AbstractRequestValidation {
       description = "Fetch vendor profile by Vendor/Admin/Customer_Care after login.")
   @PreAuthorize(
       "((#vendorId == authentication.principal AND hasAuthority('VENDOR'))  or (hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE')))")
-  @GetMapping("/{vendorId}")
+  @GetMapping("/{vendor_id}")
   public ResponseEntity<APIResponse<?>> getVendorProfileById(
-      @PathVariable Long vendorId, Authentication authentication) {
+      @PathVariable("vendor_id") Long vendorId, Authentication authentication) {
     UserAuthentication userAuthentication = (UserAuthentication) authentication;
     var response = serviceManager.getVendorService().fetchVendorById(vendorId, userAuthentication);
     return new ResponseEntity<>(
@@ -141,12 +152,12 @@ public class VendorController extends AbstractRequestValidation {
   }
 
   @PreAuthorize("(hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")
-  @PatchMapping("/{vendorId}/legal_details")
+  @PatchMapping("/{vendor_id}/legal_details")
   @Operation(
       summary = "Add legal details",
       description = "Add legal details by Admin/Customer_Care after login")
   public ResponseEntity<APIResponse<?>> addLegalDetails(
-      @PathVariable Long vendorId,
+      @PathVariable("vendor_id") Long vendorId,
       @RequestBody LegalDetailsDTO legalDetails,
       Authentication authentication) {
     serviceManager.getVendorService().addVendorLegalDetails(vendorId, legalDetails, authentication);
@@ -166,10 +177,10 @@ public class VendorController extends AbstractRequestValidation {
   @Operation(
       summary = "Approve Vendor",
       description = "Update vendor's approval status (Accepted/Rejected by admin after login.")
-  @PatchMapping("/{vendorId}/approval_status")
+  @PatchMapping("/{vendor_id}/approval_status")
   @PreAuthorize("hasAuthority('ADMIN')")
   public ResponseEntity<APIResponse<?>> updateApprovalStatus(
-      @PathVariable Long vendorId, @RequestBody ApprovalStatus approvalStatus) {
+      @PathVariable("vendor_id") Long vendorId, @RequestBody ApprovalStatus approvalStatus) {
     serviceManager.getVendorService().updateApprovalStatus(vendorId, approvalStatus);
     return ResponseEntity.ok(APIResponse.success("Vendor approval's status changed successfully."));
   }
@@ -177,10 +188,10 @@ public class VendorController extends AbstractRequestValidation {
   @Operation(
       summary = "Update vendor status",
       description = "Update vendor status(Active/InActive by Admin/Customer_Care after login.")
-  @PatchMapping("/{vendorId}/vendor_status")
+  @PatchMapping("/{vendor_id}/vendor_status")
   @PreAuthorize("(hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")
   public ResponseEntity<APIResponse<?>> updateVendorStatus(
-      @PathVariable Long vendorId, @RequestBody VendorStatus vendorStatus) {
+      @PathVariable("vendor_id") Long vendorId, @RequestBody VendorStatus vendorStatus) {
     serviceManager.getVendorService().updateVendorStatus(vendorId, vendorStatus);
     return ResponseEntity.ok(APIResponse.success("Vendor status changed successfully."));
   }
@@ -188,10 +199,11 @@ public class VendorController extends AbstractRequestValidation {
   @Operation(
       summary = "Assign categories to a vendor",
       description = "Assign one or more categories to a vendor by Admin/Customer_Care role")
-  @PatchMapping("/{vendorId}/categories")
+  @PatchMapping("/{vendor_id}/categories")
   @PreAuthorize("(hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")
   public ResponseEntity<APIResponse<?>> assignCategories(
-      @PathVariable Long vendorId, @RequestBody AssignCategoriesRequest assignCategoriesRequest) {
+      @PathVariable("vendor_id") Long vendorId,
+      @RequestBody AssignCategoriesRequest assignCategoriesRequest) {
     serviceManager.getVendorService().assignCategories(vendorId, assignCategoriesRequest);
     return ResponseEntity.ok(APIResponse.success("Categories assigned successfully."));
   }
@@ -218,10 +230,10 @@ public class VendorController extends AbstractRequestValidation {
                                       + "    }\n"
                                       + "  ]\n"
                                       + "}"))))
-  @PatchMapping("/{vendorId}/products")
+  @PatchMapping("/{vendor_id}/products")
   @PreAuthorize("(hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")
   public ResponseEntity<APIResponse<?>> assignProducts(
-      @PathVariable @Schema(example = "91") Long vendorId,
+      @PathVariable("vendor_id") @Schema(example = "91") Long vendorId,
       @RequestBody Map<Long, List<AssignProductsRequest>> assignProductsRequest) {
     serviceManager.getVendorService().assignProducts(vendorId, assignProductsRequest);
     return ResponseEntity.ok(APIResponse.success("Products assigned successfully."));

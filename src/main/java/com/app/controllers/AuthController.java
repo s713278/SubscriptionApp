@@ -160,7 +160,15 @@ public class AuthController extends AbstractRequestValidation {
     return new ResponseEntity<>(appResponse, httpstatus);
   }
 
-  @Operation(summary = "Verify OTP")
+  @Operation(
+      summary = "Verify OTP",
+      description =
+          """
+          This API returns <b>access_token</b> with short TTL and <b>refresh_token</b> with long TTL on successful user authentication.
+          <ul>
+          <li>data.address and name values are null for new users.
+          <li>data.roles never be null.
+          """)
   @PostMapping("/verify-otp")
   public ResponseEntity<APIResponse<?>> verifyMobileOtp(
       @Valid @RequestBody OTPVerificationRequest otpRequest) {

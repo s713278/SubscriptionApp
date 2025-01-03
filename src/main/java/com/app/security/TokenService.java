@@ -26,8 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class TokenService {
 
-  private static final String NSR_STORES = "SubNRenewals";
-
   private final GlobalConfig globalConfig;
 
   private final RepositoryManager repositoryManager;
@@ -39,14 +37,14 @@ public class TokenService {
               .withSubject(String.valueOf(authUserDetails.getId())) // User ID
               .withIssuedAt(Instant.now())
               .withExpiresAt(
-                  Instant.now().plusSeconds(globalConfig.getJwtConfig().getRefreshExpTime()))
+                  Instant.now().plusSeconds(globalConfig.getJwtConfig().getAccessExpTime()))
               .withClaim(
                   "roles",
                   authUserDetails.getAuthorities().stream()
                       .map(GrantedAuthority::getAuthority)
                       .collect(
                           Collectors.joining(String.valueOf(authUserDetails.getId()), "[", "]")))
-              .withIssuer(NSR_STORES)
+              .withIssuer(globalConfig.getJwtConfig().getIssuer())
               .sign(Algorithm.HMAC256(globalConfig.getJwtConfig().getSecret()));
       return token;
     } catch (Exception e) {
@@ -75,7 +73,7 @@ public class TokenService {
             .withSubject(String.valueOf(user.getId())) // User ID
             .withIssuedAt(Instant.now())
             .withExpiresAt(
-                Instant.now().plusSeconds(globalConfig.getJwtConfig().getRefreshExpTime()))
+                Instant.now().plusSeconds(globalConfig.getJwtConfig().getAccessExpTime()))
             // .withClaim("email", user.getEmail())
             // .withClaim("cart_id", user.getCart().getId())
             .withClaim(
@@ -83,7 +81,7 @@ public class TokenService {
                 user.getRoles().stream()
                     .map(Role::getRoleName)
                     .collect(Collectors.joining(id, "[", "]")))
-            .withIssuer(NSR_STORES)
+            .withIssuer(globalConfig.getJwtConfig().getIssuer())
             .sign(Algorithm.HMAC256(globalConfig.getJwtConfig().getSecret()));
     return token;
   }
@@ -100,14 +98,14 @@ public class TokenService {
       JWTVerifier verifier =
           JWT.require(Algorithm.HMAC256(globalConfig.getJwtConfig().getSecret()))
               // .withSubject("User Details")
-              .withIssuer(NSR_STORES)
+              .withIssuer(globalConfig.getJwtConfig().getIssuer())
               .build();
       DecodedJWT jwt = verifier.verify(token);
       return jwt.getSubject();
     } catch (IllegalArgumentException e) {
       throw new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, e.getMessage());
     } catch (JWTVerificationException e) {
-      throw new APIException(APIErrorCode.API_401, e.getMessage());
+      throw new APIException(APIErrorCode.TOKEN_EXPIRED, e.getMessage());
     }
   }
 
@@ -116,7 +114,7 @@ public class TokenService {
     try {
       DecodedJWT jwt =
           JWT.require(Algorithm.HMAC256(globalConfig.getJwtConfig().getSecret()))
-              .withIssuer(NSR_STORES)
+              .withIssuer(globalConfig.getJwtConfig().getIssuer())
               .build()
               .verify(token);
       return true;
@@ -130,7 +128,7 @@ public class TokenService {
     try {
       DecodedJWT jwt =
           JWT.require(Algorithm.HMAC256(globalConfig.getJwtConfig().getSecret()))
-              .withIssuer(NSR_STORES)
+              .withIssuer(globalConfig.getJwtConfig().getIssuer())
               .build()
               .verify(token);
       return jwt.getSubject();

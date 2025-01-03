@@ -13,7 +13,7 @@ public class APIErrorResponse {
 
   private boolean success;
   @JsonIgnore private APIErrorCode errorCode;
-  private int status;
+  private String status;
 
   @JsonProperty("failure_reason")
   private String failureReason;
@@ -26,10 +26,14 @@ public class APIErrorResponse {
   @JsonProperty("api_details")
   private List<String> details;
 
+  @JsonProperty("reason_code")
+  private String reasonCode;
+
   public APIErrorResponse() {}
 
   public APIErrorResponse(APIErrorCode apiErrorCode, String failureReason) {
-    this.status = apiErrorCode.getHttpStatus().value();
+    this.status = apiErrorCode.getHttpStatus().name();
+    this.reasonCode = apiErrorCode.getReasonCode().name();
     this.success = false;
     this.failureReason = failureReason;
     this.userMessage = apiErrorCode.getUserMessage();
@@ -39,7 +43,8 @@ public class APIErrorResponse {
 
   public APIErrorResponse(
       APIErrorCode apiErrorCode, String failureReason, List<String> apiDetails) {
-    this.status = apiErrorCode.getHttpStatus().value();
+    this.status = apiErrorCode.getHttpStatus().name();
+    this.reasonCode = apiErrorCode.getReasonCode().name();
     this.success = false;
     this.failureReason = failureReason;
     this.userMessage = apiErrorCode.getUserMessage();

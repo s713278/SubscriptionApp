@@ -54,17 +54,17 @@ public class CustomerController {
   @PreAuthorize(
       "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
   @Operation(summary = "User Information")
-  @GetMapping("/{userId}")
-  public ResponseEntity<APIResponse<?>> getUser(@PathVariable Long userId) {
+  @GetMapping("/{user_id}")
+  public ResponseEntity<APIResponse<?>> getUser(@PathVariable("user_id") Long userId) {
     return ResponseEntity.ok(APIResponse.success(userService.fetchUserInfo(userId)));
   }
 
   @PreAuthorize(
       "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
   @Operation(summary = "Update User Information")
-  @PutMapping("/{userId}")
+  @PutMapping("/{user_id}")
   public ResponseEntity<APIResponse<?>> updateUser(
-      @RequestBody UpdateUserRequest userDTO, @PathVariable Long userId) {
+      @RequestBody UpdateUserRequest userDTO, @PathVariable("user_id") Long userId) {
     userService.updateUser(userId, userDTO);
     return new ResponseEntity<>(
         APIResponse.success("User information updated successfully."), HttpStatus.OK);
@@ -72,9 +72,9 @@ public class CustomerController {
 
   @PreAuthorize(
       "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
-  @DeleteMapping("/{userId}")
+  @DeleteMapping("/{user_id}")
   // @Operation(summary = "Delete User")
-  public ResponseEntity<APIResponse<?>> deleteUser(@PathVariable Long userId) {
+  public ResponseEntity<APIResponse<?>> deleteUser(@PathVariable("user_id") Long userId) {
     String status = userService.deleteUser(userId);
     return new ResponseEntity<>(
         APIResponse.success("User is deleted successfully."), HttpStatus.OK);
@@ -113,20 +113,20 @@ public class CustomerController {
     return ResponseEntity.ok(APIResponse.success("Address updated successfully."));
   }
 
-  @PatchMapping("/{userId}/del_instructions")
+  @PatchMapping("/{user_id}/del_instructions")
   @PreAuthorize(
       "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
   public ResponseEntity<APIResponse<?>> updateDeliveryInstructions(
-      @PathVariable Long userId, @RequestBody Map<String, String> deliveryInstructions) {
+      @PathVariable("user_id") Long userId, @RequestBody Map<String, String> deliveryInstructions) {
     userService.updateDeliveryInstructions(userId, deliveryInstructions);
     return ResponseEntity.ok(APIResponse.success("Address updated successfully."));
   }
 
-  @PatchMapping("/{userId}/mobile")
+  @PatchMapping("/{user_id}/mobile")
   @PreAuthorize(
       "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
   public ResponseEntity<APIResponse<?>> updateMobileAddress(
-      @PathVariable Long userId, @RequestBody UpdateMobileRequest request) {
+      @PathVariable("user_id") Long userId, @RequestBody UpdateMobileRequest request) {
     // TODO : Implement
     return ResponseEntity.ok(APIResponse.success("Mobile number updated successfully."));
   }

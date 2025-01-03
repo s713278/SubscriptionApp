@@ -48,11 +48,11 @@ public class AuthUserDetails implements UserDetails {
             .map(role -> new SimpleGrantedAuthority(role.getRoleName()))
             .collect(Collectors.toSet());
     this.fullMobileNumber = user.getFullMobileNumber();
-    var isUserRole =
+    var isAdminRole =
         user.getRoles().stream()
-            .anyMatch(role -> UserRoleEnum.USER.name().equals(role.getRoleName()));
+            .anyMatch(role -> UserRoleEnum.ADMIN.name().equals(role.getRoleName()));
 
-    if (isUserRole && user.getDeliveryAddress() != null) {
+    if (!isAdminRole && user.getDeliveryAddress() != null) {
       this.address = user.getDeliveryAddress();
       this.address.remove("address1");
       this.address.remove("address2");
