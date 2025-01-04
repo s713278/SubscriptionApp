@@ -49,10 +49,12 @@ public abstract class AbstractSkuDTO implements Serializable {
   @JsonProperty("subscription_eligible")
   private boolean subscriptionEligible;
 
-  @JsonProperty("cancel_eligible")
+  @Schema(example = "false")
+  @JsonProperty(value = "cancel_eligible", defaultValue = "false")
   private boolean cancelEligible;
 
-  @JsonProperty("return_eligible")
+  @Schema(example = "false")
+  @JsonProperty(value = "return_eligible", defaultValue = "false")
   private boolean returnEligible;
 
   @JsonProperty("service_attributes")

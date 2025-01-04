@@ -27,6 +27,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
       Long mobile = Long.parseLong(username);
       user = repositoryManager.getCustomerRepo().findByMobile(mobile);
     } catch (Exception e) {
+      log.error("Unable to load the user details for mobile {}", username);
       throw new APIException(APIErrorCode.INTERNAL_EXCEPTION, e.getMessage());
     }
     if (user.isEmpty()) {

@@ -12,6 +12,8 @@ public class AppConstants {
   public static final String EMAIL_REGEX =
       "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*\\.[a-zA-Z]{2,}$";
 
+  public static final String REQ_PARAM_PAGE_NUMBER = "page_number";
+  public static final String REQ_PARAM_PAGE_SIZE = "page_size";
   public static final String PAGE_NUMBER = "0";
   public static final String PAGE_SIZE = "10";
   public static final String SORT_CATEGORIES_BY = "id";
@@ -39,7 +41,7 @@ public class AppConstants {
     "/swagger-ui.**",
     "/v1/categories/*",
     "/v1/categories/*/products/**",
-    "/v1/vendors/*",
+    "/v1/vendors/zipcode/*",
     "/v1/vendors/*/products",
     "/custom-api-docs/**"
   };

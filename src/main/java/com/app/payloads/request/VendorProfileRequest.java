@@ -3,6 +3,7 @@ package com.app.payloads.request;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.Map;
@@ -70,9 +71,8 @@ public class VendorProfileRequest implements Serializable {
   @JsonProperty("banner_image")
   private String bannerImage;
 
-  /*
+  @NotNull(message = "Categories is required.")
   @Schema(description = "This is to assign products later on.")
   @JsonProperty("assign_categories")
   private AssignCategoriesRequest assignCategories;
-   */
 }

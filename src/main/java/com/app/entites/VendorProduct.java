@@ -32,6 +32,6 @@ public class VendorProduct implements Serializable {
   private Long vendorId;
 
   @JdbcTypeCode(SqlTypes.JSON)
-  @Column(name = "eligible_delivery_days", columnDefinition = "jsonb")
+  @Column(name = "features", columnDefinition = "jsonb")
   private ObjectNode features;
 }

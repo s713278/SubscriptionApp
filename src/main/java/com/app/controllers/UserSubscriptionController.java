@@ -23,9 +23,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
-@Tag(name = "3. Subscription API", description = "APIS for creating ,managing user subscriptions.")
+@Tag(
+    name = "3. Subscription API",
+    description = "APIS for creating ,managing user subscriptions after sign-in.")
 @RestController
-@RequestMapping("/v1/users/{userId}/subs")
+@RequestMapping("/v1/users/{user_id}/subs")
 @Slf4j
 @RequiredArgsConstructor
 public class UserSubscriptionController extends AbstractRequestValidation {
@@ -35,10 +37,12 @@ public class UserSubscriptionController extends AbstractRequestValidation {
 
   @PreAuthorize(
       "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER') or hasAuthority('VENDOR'))")
-  @Operation(summary = "Create Subscription")
+  @Operation(
+      summary = "Create Subscription",
+      description = "API accessed through Bearer Token only.")
   @PostMapping("/")
   public ResponseEntity<APIResponse<?>> createSubscription(
-      @PathVariable Long userId,
+      @PathVariable("user_id") Long userId,
       @Valid @RequestBody CreateSubscriptionRequest request,
       BindingResult bindingResult) {
     validateRequest(bindingResult);
@@ -51,11 +55,11 @@ public class UserSubscriptionController extends AbstractRequestValidation {
 
   @PreAuthorize(
       "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER') or hasAuthority('VENDOR'))")
-  @PatchMapping("/{subId}")
+  @PatchMapping("/{sub_id}")
   @Operation(summary = "Update Subscription")
   public ResponseEntity<APIResponse<?>> updateSubscription(
-      @PathVariable Long userId,
-      @PathVariable Long subId,
+      @PathVariable("user_id") Long userId,
+      @PathVariable("sub_id") Long subId,
       @Valid @RequestBody UpdateSubscriptionRequest request,
       BindingResult bindingResult) {
     validateRequest(bindingResult);
@@ -66,11 +70,11 @@ public class UserSubscriptionController extends AbstractRequestValidation {
 
   @PreAuthorize(
       "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER') or hasAuthority('VENDOR'))")
-  @PatchMapping("/{subId}/status")
+  @PatchMapping("/{sub_id}/status")
   @Operation(description = "Update subscription status")
   public ResponseEntity<APIResponse<?>> updateSubscriptionStatus(
-      @PathVariable Long userId,
-      @PathVariable Long subId,
+      @PathVariable("user_id") Long userId,
+      @PathVariable("sub_id") Long subId,
       @Valid @RequestBody SubscriptionStatusRequest request) {
     SubscriptionResponse subscription =
         subscriptionService.updateSubscriptionStatus(userId, subId, request.getStatus());
@@ -79,10 +83,10 @@ public class UserSubscriptionController extends AbstractRequestValidation {
 
   @PreAuthorize(
       "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER') or hasAuthority('VENDOR'))")
-  @GetMapping("/{subId}")
+  @GetMapping("/{sub_id}")
   @Operation(summary = "Fetch Subscription Details By ID")
   public ResponseEntity<Subscription> fetchSubscription(
-      @PathVariable Long subId, @PathVariable Long userId) {
+      @PathVariable("sub_id") Long subId, @PathVariable("user_id") Long userId) {
     var sub = subscriptionService.fetchSubscription(subId);
     return ResponseEntity.ok(sub);
   }
@@ -100,17 +104,17 @@ public class UserSubscriptionController extends AbstractRequestValidation {
   @GetMapping("/")
   @PreAuthorize(
       "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
-  public ResponseEntity<APIResponse<?>> fetchAllSubsByUserId(@PathVariable Long userId) {
+  public ResponseEntity<APIResponse<?>> fetchAllSubsByUserId(@PathVariable("user_id") Long userId) {
     var subscriptions = subscriptionService.fetchSubsByUserId(userId);
     return ResponseEntity.ok(APIResponse.success(subscriptions));
   }
 
   @Operation(summary = "Fetch Subscriptions By Vendor and User")
-  @GetMapping("/vendor/{vendorId}")
+  @GetMapping("/vendor/{vendor_id}")
   @PreAuthorize(
       "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
   public ResponseEntity<APIResponse<?>> fetchSubsByUserAndVendor(
-      @PathVariable Long vendorId, @PathVariable Long userId) {
+      @PathVariable("vendor_id") Long vendorId, @PathVariable("user_id") Long userId) {
     var subscriptions = subscriptionService.fetchSubsByUserAndVendor(userId, vendorId);
     return ResponseEntity.ok(APIResponse.success(subscriptions));
   }

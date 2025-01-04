@@ -1,16 +1,15 @@
 package com.app.controllers;
 
 import com.app.config.AppConstants;
-import com.app.entites.type.VendorStatus;
 import com.app.payloads.response.APIResponse;
 import com.app.services.ServiceManager;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "2. Vendor's Listing API", description = "APIs for listing vendors based on zipcode.")
@@ -22,15 +21,28 @@ public class VendorListingController {
 
   private final ServiceManager serviceManager;
 
-  // TODO : Enhance this to accept categoryId as optional value
-  @Operation(summary = "Vendor's listing by zipcode and/or category")
-  @GetMapping("zipcode/{zipCode}")
+  @Operation(
+      summary = "Vendor's listing by zipcode and/or category",
+      description =
+          """
+              This API used for fetching categories based on <b>zipcode</b>.<br>
+              This API also used for fetching the categories by <b>zipcode</b> and <b>category_id</b><br>
+              <b>Test data: zipcode</b>: 502108,502103
+              <b>Test data: category_id</b>: 102,103
+              """)
+  @GetMapping("zipcode/{zipcode}")
   public ResponseEntity<APIResponse<?>> fetchActiveVendorsByZipCode(
-      @PathVariable String zipCode,
-      @RequestParam(required = false) Long categoryId,
-      @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false)
+      @PathVariable("zipcode") @Schema(example = "502018") String zipCode,
+      @RequestParam(name = "category_id", required = false) Long categoryId,
+      @RequestParam(
+              name = AppConstants.REQ_PARAM_PAGE_NUMBER,
+              defaultValue = AppConstants.PAGE_NUMBER,
+              required = false)
           Integer pageNumber,
-      @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false)
+      @RequestParam(
+              name = AppConstants.REQ_PARAM_PAGE_SIZE,
+              defaultValue = AppConstants.PAGE_SIZE,
+              required = false)
           Integer pageSize) {
     log.debug(
         "Request received for fetching vendors for zipcode :{} and/or categoryId: {}",
@@ -44,54 +56,31 @@ public class VendorListingController {
         HttpStatus.OK);
   }
 
-  @Operation(summary = "Vendors search by zipcode and product name")
-  @GetMapping("/{zipCode}/{productName}")
-  public ResponseEntity<APIResponse<?>> fetchActiveVendorsByProduct(
-      @PathVariable String zipCode,
-      @PathVariable Long productName,
-      @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false)
-          Integer pageNumber,
-      @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false)
-          Integer pageSize) {
-    log.debug("Request received for fetching vendors for productId : {}", productName);
-    return new ResponseEntity<>(
-        APIResponse.success(
-            serviceManager
-                .getVendorService()
-                .fetchActiveVendorsByZipCodeAndProduct(zipCode, productName, pageNumber, pageSize)),
-        HttpStatus.OK);
-  }
+  /*
+   @Operation(summary = "Vendors search by zipcode and product_id",description = "This API used for searching ")
+   @GetMapping("/{zipcode}/{product_id}")
+   public ResponseEntity<APIResponse<?>> fetchActiveVendorsByProduct(
+       @PathVariable("zipcode") String zipCode,
+       @PathVariable("product_id") Long productId,
+       @RequestParam(name = "page_number", defaultValue = AppConstants.PAGE_NUMBER, required = false)
+           Integer pageNumber,
+       @RequestParam(name = "page_size", defaultValue = AppConstants.PAGE_SIZE, required = false)
+           Integer pageSize) {
+     log.debug("Request received for fetching vendors for productId : {}", productId);
+     return new ResponseEntity<>(
+         APIResponse.success(
+             serviceManager
+                 .getVendorService()
+                 .fetchActiveVendorsByZipCodeAndProduct(zipCode, productId, pageNumber, pageSize)),
+         HttpStatus.OK);
+   }
+  */
 
-  @Operation(summary = "Vendor's products listing")
-  @GetMapping("/{vendorId}/products")
-  public ResponseEntity<APIResponse<?>> fetchVendorProductSkus(@PathVariable Long vendorId) {
+  @Operation(summary = "Vendor's products listing", description = "Test data: vendor_id:91")
+  @GetMapping("/{vendor_id}/products")
+  public ResponseEntity<APIResponse<?>> fetchVendorProductSkus(
+      @PathVariable("vendor_id") @Schema(example = "91") Long vendorId) {
     var response = serviceManager.getSkuService().fetchProductSkusByVendorId(vendorId);
     return new ResponseEntity<>(APIResponse.success(response), HttpStatus.OK);
-  }
-
-  @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN'))")
-  @Operation(summary = "Fetch vendors with a given status")
-  @GetMapping("/status/{status}")
-  public ResponseEntity<APIResponse<?>> fetchVendorsByStatus(@PathVariable VendorStatus status) {
-    return new ResponseEntity<>(
-        APIResponse.success(serviceManager.getVendorService().fetchVendorsByStatus(status)),
-        HttpStatus.OK);
-  }
-
-  @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN'))")
-  @Operation(summary = "All active vendors with pagination")
-  @GetMapping("/all")
-  public ResponseEntity<APIResponse<?>> getAllVendors(
-      @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false)
-          Integer pageNumber,
-      @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false)
-          Integer pageSize,
-      @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_STORE_BY, required = false)
-          String sortBy,
-      @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false)
-          String sortOrder) {
-    var vendorResponse =
-        serviceManager.getVendorService().fetchAllVendors(pageNumber, pageSize, sortBy, sortOrder);
-    return new ResponseEntity<>(APIResponse.success(vendorResponse), HttpStatus.OK);
   }
 }

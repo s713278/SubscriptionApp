@@ -9,6 +9,8 @@ import com.app.payloads.request.VendorProfileRequest;
 import com.app.payloads.response.CreateItemResponse;
 import com.app.payloads.response.PaginationResponse;
 import com.app.payloads.response.VendorProfileResponse;
+import com.app.repositories.projections.CategoryProjection;
+import java.util.List;
 import java.util.Map;
 
 public interface VendorService {
@@ -31,6 +33,8 @@ public interface VendorService {
 
   // Category management
   void assignCategories(Long vendorId, AssignCategoriesRequest request);
+
+  List<CategoryProjection> fetchAssignedCategories(Long vendorId);
 
   void unAssignCategories(Long vendorId, Long[] vendorCategoryIds);
 

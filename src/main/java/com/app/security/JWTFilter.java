@@ -60,7 +60,6 @@ public class JWTFilter extends OncePerRequestFilter {
         } catch (Exception exception) {
           log.error("Exception occurred while authenticating token for user {}", userId, exception);
           extracted(response, exception);
-
           // Stop further execution after writing the response
         }
       }
