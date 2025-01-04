@@ -121,10 +121,9 @@ public abstract class AbstractVendorService {
           String.format("User %s not allowed to have vendor profile", principal));
     }
     Vendor vendorEntity = getRepoManager().getVendorRepo().save(vendor);
-    /*  if (isAdmin || isCustomerCare) {
-       assignCategories(vendorEntity.getId(), vendorRequest.getAssignCategories());
-     }
-    */
+    if (isAdmin || isCustomerCare) {
+      assignCategories(vendorEntity.getId(), vendorRequest.getAssignCategories());
+    }
     return new CreateItemResponse(vendorEntity.getId(), "Vendor profile created successfully.");
   }
 

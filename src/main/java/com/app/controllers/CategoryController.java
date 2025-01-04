@@ -26,9 +26,21 @@ public class CategoryController {
   @Autowired private ProductService productService;
 
   @Operation(
+      summary = "Fetch categories by type",
+      description =
+          "API accessed by  Admin/Customer_Care roles with bearer token.This API return all the categories grouped by <b>type</b>")
+  @GetMapping("/grouped")
+  // @PreAuthorize("(hasAuthority('ADMIN') OR hasAuthority('CUSTOMER_CARE')")
+  public ResponseEntity<APIResponse<?>> getCategoriesByType() {
+    log.info("Request received to fetch the categories by grouped.");
+    var categoryResponse = categoryService.fetchCategoriesByType();
+    return new ResponseEntity<>(APIResponse.success(categoryResponse), HttpStatus.OK);
+  }
+
+  @Operation(
       summary = "Fetch All Categories",
       description = "API accessed by  Admin/Customer_Care roles")
-  @GetMapping("/")
+  // @GetMapping("/")
   public ResponseEntity<APIResponse<?>> getCategories(
       @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false)
           Integer pageNumber,
@@ -99,8 +111,9 @@ public class CategoryController {
       description = "API accessed by Admin/Customer_Care role only")
   // @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or
   // hasAuthority('VENDOR'))")
-  @GetMapping("/{categoryId}/products")
-  public ResponseEntity<APIResponse<?>> getProductsByCategory(@PathVariable Long categoryId) {
+  @GetMapping("/{category_id}/products")
+  public ResponseEntity<APIResponse<?>> getProductsByCategory(
+      @PathVariable("category_id") Long categoryId) {
     var products = categoryService.fetchProductsByCategory(categoryId);
     return new ResponseEntity<>(APIResponse.success(products), HttpStatus.FOUND);
   }

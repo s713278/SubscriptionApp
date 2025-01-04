@@ -15,6 +15,7 @@ import com.app.payloads.request.VendorProfileRequest;
 import com.app.payloads.response.APIResponse;
 import com.app.payloads.response.PaginationResponse;
 import com.app.repositories.RepositoryManager;
+import com.app.repositories.projections.CategoryProjection;
 import com.app.services.auth.dto.UserAuthentication;
 import com.app.services.notification.NotificationContext;
 import com.app.services.notification.NotificationTemplate;
@@ -240,5 +241,10 @@ public class DefaultVendorService extends AbstractVendorService {
               "User %s not allowed to add legal details to vendor profile: %s",
               principal, vendorId));
     }
+  }
+
+  public List<CategoryProjection> fetchAssignedCategories(Long vendorId) {
+    log.debug("Fetching assigned categories for vendor : {}", vendorId);
+    return getRepoManager().getVendorCategoryRepo().findCategoriesByVendorId(vendorId);
   }
 }

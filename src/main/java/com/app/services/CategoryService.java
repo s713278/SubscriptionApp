@@ -5,6 +5,7 @@ import com.app.payloads.response.CreateItemResponse;
 import com.app.payloads.response.PaginationResponse;
 import com.app.repositories.projections.ProductProjection;
 import java.util.List;
+import java.util.Map;
 
 public interface CategoryService {
 
@@ -18,4 +19,6 @@ public interface CategoryService {
   String deleteCategory(Long categoryId);
 
   List<ProductProjection> fetchProductsByCategory(Long categoryId);
+
+  Map<String, List<CategoryDTO>> fetchCategoriesByType();
 }

@@ -33,7 +33,8 @@ public class APIErrorResponse {
 
   public APIErrorResponse(APIErrorCode apiErrorCode, String failureReason) {
     this.status = apiErrorCode.getHttpStatus().name();
-    this.reasonCode = apiErrorCode.getReasonCode().name();
+    this.reasonCode =
+        apiErrorCode.getReasonCode() != null ? apiErrorCode.getReasonCode().name() : this.status;
     this.success = false;
     this.failureReason = failureReason;
     this.userMessage = apiErrorCode.getUserMessage();
@@ -44,7 +45,8 @@ public class APIErrorResponse {
   public APIErrorResponse(
       APIErrorCode apiErrorCode, String failureReason, List<String> apiDetails) {
     this.status = apiErrorCode.getHttpStatus().name();
-    this.reasonCode = apiErrorCode.getReasonCode().name();
+    this.reasonCode =
+        apiErrorCode.getReasonCode() != null ? apiErrorCode.getReasonCode().name() : this.status;
     this.success = false;
     this.failureReason = failureReason;
     this.userMessage = apiErrorCode.getUserMessage();

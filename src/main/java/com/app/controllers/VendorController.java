@@ -220,16 +220,18 @@ public class VendorController extends AbstractRequestValidation {
                       examples =
                           @ExampleObject(
                               value =
-                                  "{\n"
-                                      + "  \"102\": [\n"
-                                      + "    {\n"
-                                      + "      \"product_id\": 1002,\n"
-                                      + "      \"features_map\": {\n"
-                                      + "        \"color\": \"red\"\n"
-                                      + "      }\n"
-                                      + "    }\n"
-                                      + "  ]\n"
-                                      + "}"))))
+                                  """
+                                        {
+                                          "102": [
+                                            {
+                                              "product_id": 1002,
+                                              "features_map": {
+                                                "color": "red"
+                                              }
+                                            }
+                                          ]
+                                        }
+                                        """))))
   @PatchMapping("/{vendor_id}/products")
   @PreAuthorize("(hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")
   public ResponseEntity<APIResponse<?>> assignProducts(

@@ -14,6 +14,8 @@ import com.app.repositories.projections.ProductProjection;
 import com.app.services.CategoryService;
 import com.app.services.ProductService;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,5 +100,19 @@ public class CategoryServiceImpl implements CategoryService {
   @Override
   public List<ProductProjection> fetchProductsByCategory(Long categoryId) {
     return productService.fetchProductsByCategory(categoryId);
+  }
+
+  @Override
+  public Map<String, List<CategoryDTO>> fetchCategoriesByType() {
+    List<Category> categories = categoryRepo.findAll();
+    return categories.stream()
+        .collect(
+            Collectors.groupingBy(
+                Category::getType,
+                Collectors.mapping(this::convertToCategoryDTO, Collectors.toList())));
+  }
+
+  private CategoryDTO convertToCategoryDTO(Category category) {
+    return new CategoryDTO(category.getId(), category.getName());
   }
 }

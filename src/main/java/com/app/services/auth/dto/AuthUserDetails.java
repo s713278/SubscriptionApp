@@ -54,9 +54,9 @@ public class AuthUserDetails implements UserDetails {
 
     if (!isAdminRole && user.getDeliveryAddress() != null) {
       this.address = user.getDeliveryAddress();
-      this.address.remove("address1");
+      /* this.address.remove("address1");
       this.address.remove("address2");
-      this.address.remove("country");
+      this.address.remove("country");*/
     }
   }
 
