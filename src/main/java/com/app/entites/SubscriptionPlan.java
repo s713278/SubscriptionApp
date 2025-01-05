@@ -19,15 +19,18 @@ public class SubscriptionPlan implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column(name = "subscription_eligible")
+  private boolean subscriptionEligible;
+
   @Enumerated(EnumType.STRING)
   @JdbcType(value = PostgreSQLEnumJdbcType.class)
   @Column(name = "frequency", columnDefinition = "subscription_frequency")
   private SubFrequency frequency;
 
-  private String description;
-
   @JdbcType(value = PostgreSQLEnumJdbcType.class)
   @Enumerated(EnumType.STRING)
   @Column(name = "delivery_mode", columnDefinition = "delivery_mode_enum")
   private DeliveryMode deliveryMode;
+
+  private String description;
 }

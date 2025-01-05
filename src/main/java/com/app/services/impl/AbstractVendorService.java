@@ -421,7 +421,7 @@ public abstract class AbstractVendorService {
     Set<Long> alreadyAssignedProductIds =
         getRepoManager()
             .getVendorProductRepo()
-            .findAssignedProductIdsForVendor(vendorId, validProductIds);
+            .validateAssignedProductIdsForVendor(vendorId, validProductIds);
     if (!alreadyAssignedProductIds.isEmpty()) {
       throw new IllegalArgumentException(
           "The following products are already assigned: " + alreadyAssignedProductIds);

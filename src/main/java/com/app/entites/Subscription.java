@@ -1,8 +1,10 @@
 package com.app.entites;
 
+import com.app.entites.type.DeliveryMode;
 import com.app.entites.type.SkuType;
 import com.app.entites.type.SubFrequency;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -46,11 +48,7 @@ public class Subscription extends AbstractAuditingEntity<Long> implements Serial
   @Column(name = "end_date")
   private LocalDate endDate;
 
-  @Enumerated(EnumType.STRING)
-  @JdbcType(value = PostgreSQLEnumJdbcType.class)
-  @Column(name = "frequency", columnDefinition = "subscription_frequency")
-  private SubFrequency frequency; // one_time, daily, weekly, custom
-
+  @NotNull(message = "Subscription status  is mandatory.")
   @JdbcType(value = PostgreSQLEnumJdbcType.class)
   @Enumerated(EnumType.STRING)
   @Column(name = "status", columnDefinition = "subscription_status")
@@ -64,6 +62,7 @@ public class Subscription extends AbstractAuditingEntity<Long> implements Serial
 
   // 1 - Monday
 
+  @NotNull(message = "Delivery date is mandatory.")
   @Column(name = "next_delivery_date")
   private LocalDate nextDeliveryDate;
 
@@ -74,10 +73,31 @@ public class Subscription extends AbstractAuditingEntity<Long> implements Serial
   @Column(name = "update_version", updatable = true)
   private Integer updateVersion = 0;
 
+  // TODO: It can be derived from subscriptionPlan reference
+  @Deprecated(forRemoval = true)
+  @Enumerated(EnumType.STRING)
+  @JdbcType(value = PostgreSQLEnumJdbcType.class)
+  @Column(name = "frequency", columnDefinition = "subscription_frequency")
+  private SubFrequency frequency; // one_time, daily, weekly, custom
+
+  // TODO: It can be derived from subscriptionPlan reference
+  @Deprecated(forRemoval = true)
+  @JdbcType(value = PostgreSQLEnumJdbcType.class)
+  @Enumerated(EnumType.STRING)
+  @Column(name = "delivery_mode", columnDefinition = "delivery_mode_enum")
+  private DeliveryMode deliveryMode; // FIXED,FLEXIBLE
+
+  @Deprecated(forRemoval = true)
   @Column(name = "subscription_type", columnDefinition = "sku_type")
   @JdbcType(value = PostgreSQLEnumJdbcType.class)
   @Enumerated(EnumType.STRING)
   private SkuType subscriptionType;
 
+  // TODO : Future enhancement and replace for frequency ,deliveryMode
+  @ManyToOne(
+      cascade = CascadeType.ALL,
+      fetch = FetchType.LAZY) // Sku is the "owner" of the relationship
+  @JoinColumn(name = "subscription_plan_id", nullable = true)
+  private SkuSubscriptionPlan subscriptionPlan;
   // Getters and Setters
 }

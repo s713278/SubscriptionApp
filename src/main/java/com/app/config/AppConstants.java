@@ -42,7 +42,7 @@ public class AppConstants {
     "/v1/categories/*",
     "/v1/categories/*/products/**",
     "/v1/vendors/zipcode/*",
-    "/v1/vendors/*/products",
+    "/v1/vendors/*/products/**",
     "/custom-api-docs/**"
   };
 

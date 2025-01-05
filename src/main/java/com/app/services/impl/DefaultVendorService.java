@@ -16,6 +16,8 @@ import com.app.payloads.response.APIResponse;
 import com.app.payloads.response.PaginationResponse;
 import com.app.repositories.RepositoryManager;
 import com.app.repositories.projections.CategoryProjection;
+import com.app.repositories.projections.ProductProjection;
+import com.app.repositories.projections.SkuProjection;
 import com.app.services.auth.dto.UserAuthentication;
 import com.app.services.notification.NotificationContext;
 import com.app.services.notification.NotificationTemplate;
@@ -246,5 +248,15 @@ public class DefaultVendorService extends AbstractVendorService {
   public List<CategoryProjection> fetchAssignedCategories(Long vendorId) {
     log.debug("Fetching assigned categories for vendor : {}", vendorId);
     return getRepoManager().getVendorCategoryRepo().findCategoriesByVendorId(vendorId);
+  }
+
+  public List<ProductProjection> fetchAssignedProducts(Long vendorId) {
+    log.debug("Fetching assigned products for vendor : {}", vendorId);
+    return getRepoManager().getVendorProductRepo().findProductsByVendor(vendorId);
+  }
+
+  public List<SkuProjection> fetchSkusByVendorProductId(Long vendorId, Long productId) {
+    log.debug("Fetching skus for vendor product id: {}", productId);
+    return getRepoManager().getSkuRepo().findSkusVendorProductId(productId);
   }
 }
