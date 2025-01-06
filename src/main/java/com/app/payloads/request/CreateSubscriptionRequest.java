@@ -30,8 +30,13 @@ public class CreateSubscriptionRequest {
   @NotNull(message = "Quantity is required")
   private Integer quantity;
 
+  @Deprecated
   @NotNull(message = "Frequency is required")
   private SubFrequency frequency;
+
+  // TODO: This can be used for fetching frequency and delivery_mode
+  @JsonProperty("subscription_plan_id")
+  private Long subscriptionPlanId;
 
   // @NotNull(message = "Delivery date is required")
   @JsonProperty("delivery_date")

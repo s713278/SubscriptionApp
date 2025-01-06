@@ -58,8 +58,8 @@ public abstract class AbstractCreateSubscriptionService {
     var skuSub =
         serviceManager
             .getSkuSubscriptionService()
-            .fetchBySkuIdAndFrequency(request.getSkuId(), request.getFrequency());
-    if (request.getFrequency() == SubFrequency.ONE_TIME) {
+            .fetchSkuSubscriptionPlan(request.getSubscriptionPlanId());
+    if (skuSub.getFrequency() == SubFrequency.ONE_TIME) {
       ObjectMapper objectMapper = new ObjectMapper();
       Map<String, Object> map = skuSub.getEligibleDeliveryDays();
       List<String> deliveryDaysList =
@@ -114,7 +114,7 @@ public abstract class AbstractCreateSubscriptionService {
     subscription.setPriceId(request.getPriceId());
     subscription.setStatus(SubscriptionStatus.PENDING);
     subscription.setQuantity(request.getQuantity());
-    subscription.setFrequency(request.getFrequency());
+    // subscription.setFrequency(request.getFrequency());
     switch (subscription.getFrequency()) {
       case ONE_TIME -> {
         if (sku.getSkuType() == SkuType.SERVICE) {

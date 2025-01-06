@@ -107,7 +107,7 @@ public class CategoryController {
     */
 
   @Operation(
-      summary = "Fetch products by category",
+      summary = "Fetch products by category_id",
       description = "API accessed by Admin/Customer_Care role only")
   // @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN') or
   // hasAuthority('VENDOR'))")

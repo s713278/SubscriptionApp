@@ -6,6 +6,7 @@ import com.app.entites.type.SubFrequency;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.repositories.RepositoryManager;
+import com.app.repositories.projections.SKUSubscriptionPlanProjection;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -52,5 +53,16 @@ public class SkuSubscriptionService {
                         + skuId
                         + " with frequency: "
                         + frequency));
+  }
+
+  @Cacheable(value = CacheType.CACHE_TYPE_PRODUCTS, key = "#planId")
+  public SKUSubscriptionPlanProjection fetchSkuSubscriptionPlan(Long planId) {
+    return repositoryManager
+        .getSkuSubscriptionRepo()
+        .findSkuSubscriptionPlanById(planId)
+        .orElseThrow(
+            () ->
+                new APIException(
+                    APIErrorCode.BAD_REQUEST_RECEIVED, "Invalid subscription plan id " + planId));
   }
 }

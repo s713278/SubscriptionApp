@@ -1,7 +1,6 @@
 package com.app.services.impl;
 
 import com.app.config.GlobalConfig;
-import com.app.constants.CacheType;
 import com.app.entites.Cart;
 import com.app.entites.Category;
 import com.app.entites.Product;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -182,7 +180,7 @@ public class ProductServiceImpl implements ProductService {
     return "Product with productId: " + productId + " deleted successfully !!!";
   }
 
-  @Cacheable(value = CacheType.CACHE_TYPE_PRODUCTS, key = "#categoryId")
+  // @Cacheable(value = CacheType.CACHE_TYPE_PRODUCTS, key = "#categoryId")
   @Override
   public List<ProductProjection> fetchProductsByCategory(Long categoryId) {
     return repoManager.getProductRepo().findProductsByCategory(categoryId);
