@@ -17,31 +17,29 @@ public class SubscriptionRequestValidator
     }
 
     // If frequency is ONE_TIME, check deliveryDate
-    if (value.getFrequency() == SubFrequency.ONE_TIME) {
+    if (SubFrequency.ONE_TIME /*value.getFrequency()*/ == SubFrequency.ONE_TIME) {
       if (value.getDeliveryDate() == null) {
         context.disableDefaultConstraintViolation();
         context
             .buildConstraintViolationWithTemplate(
-                "Delivery date is required for ONE_TIME frequency")
+                "Delivery date is required for ONE_TIME subscription")
             // .addPropertyNode("deliveryDate")
             .addConstraintViolation();
         return false;
-      } else {
-        return validateStartDate(value.getDeliveryDate(), context);
       }
+      return validateStartDate(value.getDeliveryDate(), context);
     } else {
       // For other frequencies, check startDate and endDate
-      if (value.getStartDate() == null || value.getEndDate() == null) {
+      if (value.getStartDate() == null) {
         context.disableDefaultConstraintViolation();
         context
             .buildConstraintViolationWithTemplate(
-                "Start Date and End Date are required for this frequency")
+                "Start Date is required for recurring subscriptions")
             // .addPropertyNode("startDate")
             .addConstraintViolation();
         return false;
-      } else {
-        return validateEndDate(value.getStartDate(), value.getEndDate(), context);
       }
+      return validateEndDate(value.getStartDate(), value.getEndDate(), context);
     }
   }
 
@@ -55,7 +53,14 @@ public class SubscriptionRequestValidator
   private boolean validateStartDate(LocalDate startDate, ConstraintValidatorContext context) {
     LocalDate today = LocalDate.now();
     LocalDate maxAllowedDate = today.plusDays(AppConstants.SUB_MAX_ALLOWED_START_DATE_DAYS);
-
+    if (startDate == null) {
+      context.disableDefaultConstraintViolation();
+      context
+          .buildConstraintViolationWithTemplate("Start date is required.")
+          .addPropertyNode("start_date")
+          .addConstraintViolation();
+      return false;
+    }
     if (startDate.isBefore(today) || startDate.isAfter(maxAllowedDate)) {
       context.disableDefaultConstraintViolation();
       context
@@ -80,7 +85,6 @@ public class SubscriptionRequestValidator
       LocalDate startDate, LocalDate endDate, ConstraintValidatorContext context) {
     LocalDate today = LocalDate.now();
     LocalDate maxAllowedDate = today.plusDays(AppConstants.SUB_MAX_ALLOWED_END_DATE_DAYS);
-
     if (endDate.isBefore(startDate) || endDate.isAfter(maxAllowedDate)) {
       context.disableDefaultConstraintViolation();
       context

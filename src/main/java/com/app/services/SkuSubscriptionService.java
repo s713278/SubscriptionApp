@@ -8,7 +8,6 @@ import com.app.exceptions.APIException;
 import com.app.repositories.RepositoryManager;
 import com.app.repositories.projections.SKUSubscriptionPlanProjection;
 import java.util.List;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -30,8 +29,14 @@ public class SkuSubscriptionService {
   }
 
   // Get a SkuSubscription by ID
-  public Optional<SkuSubscriptionPlan> getSkuSubscriptionById(Long id) {
-    return repositoryManager.getSkuSubscriptionRepo().findById(id);
+  public SkuSubscriptionPlan fetchSkuSubscriptionById(Long id) {
+    return repositoryManager
+        .getSkuSubscriptionRepo()
+        .findById(id)
+        .orElseThrow(
+            () ->
+                new APIException(
+                    APIErrorCode.BAD_REQUEST_RECEIVED, "Invalid subscription plan id " + id));
   }
 
   // Delete a SkuSubscription

@@ -1,8 +1,8 @@
 package com.app.payloads.request;
 
 import com.app.entites.SubscriptionStatus;
-import com.app.entites.type.SubFrequency;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -28,8 +28,10 @@ public class UpdateSubscriptionRequest {
   @NotNull(message = "Quantity is required")
   private Integer quantity;
 
-  @NotNull(message = "Frequency is required")
-  private SubFrequency frequency;
+  @Schema(example = "9")
+  @NotNull(message = "SKU subscription eligible plan is required.")
+  @JsonProperty("sku_subscription_plan_id")
+  private Long skuSubscriptionPlanId;
 
   // @NotNull(message = "Delivery date is required")
   @JsonProperty("delivery_date")

@@ -132,7 +132,7 @@ public class DefaultVendorService extends AbstractVendorService {
         .orElseThrow(
             () ->
                 new APIException(
-                    APIErrorCode.BAD_REQUEST_RECEIVED, "Vendor not exited in the system."));
+                    APIErrorCode.BAD_REQUEST_RECEIVED, "Invalid vendor id " + vendorId));
   }
 
   public PaginationResponse<VendorBasicDTO> fetchActiveVendorsByZipCode(

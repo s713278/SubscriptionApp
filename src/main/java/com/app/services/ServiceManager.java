@@ -21,7 +21,7 @@ public class ServiceManager {
   private final TokenService tokenService;
   private final RefreshTokenService refreshTokenService;
   private final AuthService authService;
-  private final SubscriptionService subscriptionService;
+  private final SubscriptionQueryService subscriptionService;
   private final SkuSubscriptionService skuSubscriptionService;
   private final SkuPriceService priceService;
 }

@@ -2,6 +2,7 @@ package com.app.repositories;
 
 import com.app.entites.VendorProduct;
 import com.app.repositories.projections.ProductProjection;
+import com.app.repositories.projections.VendorProjection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -32,4 +33,13 @@ public interface VendorProductRepo extends CrudRepository<VendorProduct, Long> {
      ORDER BY p.name ASC
 """)
   List<ProductProjection> findProductsByVendor(@Param("vendorId") Long vendorId);
+
+  @Query(
+      """
+      SELECT v.id as id, v.businessName as businessName
+         FROM Vendor  v
+         JOIN VendorProduct vp ON v.id = vp.vendorId
+         WHERE vp.id = :id
+    """)
+  Optional<VendorProjection> findVendorByProductId(@Param("id") Long id);
 }

@@ -6,7 +6,7 @@ import com.app.payloads.request.UpdateMobileRequest;
 import com.app.payloads.request.UpdateUserRequest;
 import com.app.payloads.response.APIResponse;
 import com.app.payloads.response.UserListingResponse;
-import com.app.services.SubscriptionService;
+import com.app.services.SubscriptionQueryService;
 import com.app.services.impl.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.*;
 public class CustomerController {
 
   private final UserService userService;
-  private final SubscriptionService subscriptionService;
+  private final SubscriptionQueryService subscriptionService;
 
   @PreAuthorize("#userId == authentication.principal and (hasAuthority('ADMIN'))")
   @GetMapping("/admin")

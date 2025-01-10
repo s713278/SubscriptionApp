@@ -8,9 +8,10 @@ import com.app.payloads.request.SubscriptionStatusRequest;
 import com.app.payloads.request.UpdateSubscriptionRequest;
 import com.app.payloads.response.APIResponse;
 import com.app.payloads.response.SubscriptionResponse;
-import com.app.services.AbstractCreateSubscriptionService;
-import com.app.services.SubscriptionService;
+import com.app.services.AbstractSubscriptionCreateService;
+import com.app.services.SubscriptionQueryService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -32,8 +33,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserSubscriptionController extends AbstractRequestValidation {
 
-  private final SubscriptionService subscriptionService;
-  private final AbstractCreateSubscriptionService createSubscriptionService;
+  private final SubscriptionQueryService subscriptionQueryService;
+  private final AbstractSubscriptionCreateService createSubscriptionService;
 
   @PreAuthorize(
       "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER') or hasAuthority('VENDOR'))")
@@ -42,11 +43,10 @@ public class UserSubscriptionController extends AbstractRequestValidation {
       description = "API accessed through Bearer Token only.")
   @PostMapping("/")
   public ResponseEntity<APIResponse<?>> createSubscription(
-      @PathVariable("user_id") Long userId,
+      @Schema(example = "3302") @PathVariable("user_id") Long userId,
       @Valid @RequestBody CreateSubscriptionRequest request,
       BindingResult bindingResult) {
     validateRequest(bindingResult);
-
     log.debug("Entered create subscription for customer {}", userId);
     var subscription = createSubscriptionService.createSubscription(userId, request);
     // Return the response wrapped in ResponseEntity with HTTP status 201 (Created)
@@ -64,7 +64,7 @@ public class UserSubscriptionController extends AbstractRequestValidation {
       BindingResult bindingResult) {
     validateRequest(bindingResult);
     SubscriptionResponse subscription =
-        subscriptionService.updateSubscription(userId, subId, request);
+        subscriptionQueryService.updateSubscription(userId, subId, request);
     return new ResponseEntity<>(APIResponse.success(subscription), HttpStatus.OK);
   }
 
@@ -77,17 +77,20 @@ public class UserSubscriptionController extends AbstractRequestValidation {
       @PathVariable("sub_id") Long subId,
       @Valid @RequestBody SubscriptionStatusRequest request) {
     SubscriptionResponse subscription =
-        subscriptionService.updateSubscriptionStatus(userId, subId, request.getStatus());
+        subscriptionQueryService.updateSubscriptionStatus(userId, subId, request.getStatus());
     return new ResponseEntity<>(APIResponse.success(subscription), HttpStatus.NO_CONTENT);
   }
 
   @PreAuthorize(
       "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER') or hasAuthority('VENDOR'))")
   @GetMapping("/{sub_id}")
-  @Operation(summary = "Fetch Subscription Details By ID")
+  @Operation(
+      summary = "Fetch subscription ",
+      description = "Accessed by signin user with bearer token only.")
   public ResponseEntity<Subscription> fetchSubscription(
-      @PathVariable("sub_id") Long subId, @PathVariable("user_id") Long userId) {
-    var sub = subscriptionService.fetchSubscription(subId);
+      @Schema(example = "2552") @PathVariable("sub_id") Long subId,
+      @Schema(example = "3302") @PathVariable("user_id") Long userId) {
+    var sub = subscriptionQueryService.fetchSubscription(subId);
     return ResponseEntity.ok(sub);
   }
 
@@ -105,7 +108,7 @@ public class UserSubscriptionController extends AbstractRequestValidation {
   @PreAuthorize(
       "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
   public ResponseEntity<APIResponse<?>> fetchAllSubsByUserId(@PathVariable("user_id") Long userId) {
-    var subscriptions = subscriptionService.fetchSubsByUserId(userId);
+    var subscriptions = subscriptionQueryService.fetchSubsByUserId(userId);
     return ResponseEntity.ok(APIResponse.success(subscriptions));
   }
 
@@ -115,7 +118,7 @@ public class UserSubscriptionController extends AbstractRequestValidation {
       "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
   public ResponseEntity<APIResponse<?>> fetchSubsByUserAndVendor(
       @PathVariable("vendor_id") Long vendorId, @PathVariable("user_id") Long userId) {
-    var subscriptions = subscriptionService.fetchSubsByUserAndVendor(userId, vendorId);
+    var subscriptions = subscriptionQueryService.fetchSubsByUserAndVendor(userId, vendorId);
     return ResponseEntity.ok(APIResponse.success(subscriptions));
   }
 }

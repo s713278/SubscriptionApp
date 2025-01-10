@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Primary
-public class VendorCreateSubscriptionService extends AbstractCreateSubscriptionService {
+public class DefaultSubscriptionCreateService extends AbstractSubscriptionCreateService {
 
-  public VendorCreateSubscriptionService(
+  public DefaultSubscriptionCreateService(
       ServiceManager serviceManager,
       RepositoryManager repoManager,
       SubscriptionServiceHelper serviceHelper) {
@@ -18,5 +18,5 @@ public class VendorCreateSubscriptionService extends AbstractCreateSubscriptionS
 
   @Async
   @Override
-  protected void updateInventory(Long skuId) {}
+  protected void updateInventory(Long skuId, Integer quantity) {}
 }

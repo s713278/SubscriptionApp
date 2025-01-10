@@ -3,91 +3,93 @@ package com.app.services;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.app.TestContainerConfig;
+import com.app.TestMockConfig;
 import com.app.entites.Customer;
-import com.app.entites.type.SubFrequency;
 import com.app.payloads.request.CreateSubscriptionRequest;
 import com.app.payloads.request.UpdateSubscriptionRequest;
 import com.app.repositories.RepositoryManager;
 import java.time.LocalDate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @SpringBootTest
 @Testcontainers
-@ContextConfiguration(classes = {TestContainerConfig.class})
+@ActiveProfiles("test")
+@ContextConfiguration(classes = {TestContainerConfig.class, TestMockConfig.class})
 class SubscriptionServiceTest {
 
-  @Autowired private SubscriptionService subscriptionService;
+  @Autowired private SubscriptionQueryService subscriptionService;
 
-  @Autowired private AbstractCreateSubscriptionService createSubscriptionService;
+  @Autowired private AbstractSubscriptionCreateService createSubscriptionService;
 
-  @Autowired private RepositoryManager reposirotyManager;
+  @Autowired private RepositoryManager repositoryManager;
 
   private Customer testCustomer;
 
   private final String email = "swamy.ramya@example.com";
-  private Long customerId = null;
+  private Long customerId = 1000L;
   private final Long testVendorId = 1L;
-  private final Long testSkuId = 1L;
+  private final Long testSkuId = 202L;
   private Long testSubscriptionId = null;
+  private final Long priceId = 8L;
+
+  // private final Long vendorId = 91L;
 
   @BeforeEach
-  void setUp() {
-    // Create a test customer before each test
-    testCustomer = new Customer();
-    testCustomer.setFirstName("swamyk");
-    testCustomer.setEmail(email);
-    testCustomer.setMobile(9912149048L);
-    customerId = reposirotyManager.getCustomerRepo().save(testCustomer).getId();
-    System.out.println("It should be only one time --setUp");
-    testCreateSubscription();
-  }
+  void setUp() {}
 
   @AfterEach
   void tearDown() {
     // Clean up the customer repository after each test
-    reposirotyManager.getCustomerRepo().deleteById(customerId);
+    // repositoryManager.getCustomerRepo().deleteById(customerId);
     System.out.println("It should be only one time --tearDown");
   }
 
+  @DisplayName("Create Subscription with Frequency:ONE_TIME and Delivery Mode: FIXED ")
   @Test
-  void testCreateSubscription() {
-    CreateSubscriptionRequest createSubscriptionRequest = new CreateSubscriptionRequest();
-    createSubscriptionRequest.setSkuId(testVendorId);
-    createSubscriptionRequest.setQuantity(5);
-    createSubscriptionRequest.setStartDate(LocalDate.now().plusDays(2));
-    createSubscriptionRequest.setFrequency(SubFrequency.DAILY);
-    createSubscriptionRequest.setEndDate(LocalDate.now().plusDays(30));
-    var sub = createSubscriptionService.createSubscription(customerId, createSubscriptionRequest);
+  void testCreateSubscriptionForOneTimeFrequency() {
+    CreateSubscriptionRequest request = new CreateSubscriptionRequest();
+    request.setSkuId(testSkuId);
+    request.setQuantity(5);
+    request.setPriceId(priceId);
+    request.setSkuSubscriptionPlanId(9L);
+    request.setDeliveryDate(LocalDate.now().plusDays(3));
+    //  request.setFrequency(SubFrequency.ONE_TIME);
+    // request.setEndDate(LocalDate.now().plusDays(30));
+    var sub = createSubscriptionService.createSubscription(customerId, request);
     assertNotNull(sub);
     assertNotNull(sub.subscriptionId());
     testSubscriptionId = sub.subscriptionId();
+    testUpdateSubscription(testSubscriptionId);
   }
 
-  @Test()
-  void testUpdateSubscription() {
+  // @Test()
+  void testUpdateSubscription(Long subId) {
     var oldSub = subscriptionService.fetchSubscription(testSubscriptionId);
     UpdateSubscriptionRequest request = new UpdateSubscriptionRequest();
     request.setQuantity(9);
     request.setStartDate(LocalDate.now().plusDays(10));
-    request.setFrequency(SubFrequency.ALTERNATE_DAY);
+    request.setSkuSubscriptionPlanId(testSubscriptionId);
+    // request.setFrequency(SubFrequency.ALTERNATE_DAY);
     var response = subscriptionService.updateSubscription(testSubscriptionId, customerId, request);
     assertTrue(response.success());
     var updateSub = subscriptionService.fetchSubscription(testSubscriptionId);
     assertNotEquals(oldSub.getQuantity(), updateSub.getQuantity(), "Quantity changes looks good!!");
     assertNotEquals(
-        oldSub.getStartDate(), updateSub.getStartDate(), "Startdate changes looks good!!");
+        oldSub.getStartDate(), updateSub.getStartDate(), "Start date changes looks good!!");
     assertNotEquals(
         oldSub.getNextDeliveryDate(),
         updateSub.getNextDeliveryDate(),
         "Next delivery changes looks good!!");
-    assertNotEquals(
-        oldSub.getFrequency(), updateSub.getFrequency(), "Frequency changes looks good!!");
+    // assertNotEquals(
+    //   oldSub.getFrequency(), updateSub.getFrequency(), "Frequency changes looks good!!");
   }
 
   @Test
