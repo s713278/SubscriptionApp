@@ -13,18 +13,21 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class SubscriptionService {
+public class SubscriptionQueryService {
 
   private final RepositoryManager repoManager;
   private final SubscriptionServiceHelper serviceHelper;
+  private final SkuSubscriptionService skuSubscriptionService;
 
   private void notifyCustomer(Subscription subscription) {
     // Send email or SMS notification to the customer
@@ -48,15 +51,24 @@ public class SubscriptionService {
                 () ->
                     new APIException(
                         APIErrorCode.BAD_REQUEST_RECEIVED,
-                        subId + " Subscription not existed for user " + userId));
+                        subId
+                            + " Subscription with id "
+                            + subId
+                            + " not existed for user "
+                            + userId));
 
     boolean changedFound = false;
-    if (request.getFrequency() != null && request.getFrequency() != subscription.getFrequency()) {
+    var entityFrequency = subscription.getSubscriptionPlan().getFrequency();
+    if (request.getSkuSubscriptionPlanId() != null
+        && !request.getSkuSubscriptionPlanId().equals(subscription.getSubscriptionPlan().getId())) {
+      var skuSubPlan =
+          skuSubscriptionService
+              .fetchSkuSubscriptionById(request.getSkuSubscriptionPlanId())
+              .getSubscriptionPlan();
       log.info(
-          "Change found in frequency from {} ==>> {} ",
-          subscription.getFrequency(),
-          request.getFrequency());
-      subscription.setFrequency(request.getFrequency());
+          "Change found in frequency from {} ==>> {} ", entityFrequency, skuSubPlan.getFrequency());
+      // subscription.setFrequency(request.getFrequency());
+      subscription.setSubscriptionPlan(skuSubPlan);
       changedFound = true;
     }
     if (request.getQuantity() != null
@@ -75,7 +87,9 @@ public class SubscriptionService {
           subscription.getStartDate(),
           request.getStartDate());
       subscription.setStartDate(request.getStartDate());
-      subscription.setNextDeliveryDate(serviceHelper.calculateNextDeliveryDate(subscription));
+      subscription.setNextDeliveryDate(
+          serviceHelper.calculateNextDeliveryDate(
+              subscription.getSubscriptionPlan().getFrequency(), subscription));
       changedFound = true;
     }
     if (request.getEndDate() != null && !request.getEndDate().equals(subscription.getEndDate())) {
@@ -152,16 +166,15 @@ public class SubscriptionService {
     repoManager.getSubscriptionRepo().deleteById(subscriptionId);
   }
 
+  @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
   public Subscription fetchSubscription(final Long subId) {
-    Subscription sub =
-        repoManager
-            .getSubscriptionRepo()
-            .findById(subId)
-            .orElseThrow(
-                () ->
-                    new APIException(
-                        APIErrorCode.BAD_REQUEST_RECEIVED, "Subsction details not found"));
-    return sub;
+    return repoManager
+        .getSubscriptionRepo()
+        .findById(subId)
+        .orElseThrow(
+            () ->
+                new APIException(
+                    APIErrorCode.BAD_REQUEST_RECEIVED, "Invalid subscription id " + subId));
   }
 
   /**
@@ -194,10 +207,9 @@ public class SubscriptionService {
     return subs.stream().map(this::convertToDTO).toList();
   }
 
-  // TODO : Simplify the query
   @Transactional(readOnly = true)
-  public boolean fetchByUserIdAndSkuId(final Long userId, final Long skuId) {
-    return repoManager.getSubscriptionRepo().findByUserIdAndSkuId(userId, skuId).isPresent();
+  public Optional<Subscription> fetchByUserIdAndSkuId(final Long userId, final Long skuId) {
+    return repoManager.getSubscriptionRepo().findByUserIdAndSkuId(userId, skuId);
   }
 
   @Transactional(readOnly = true)

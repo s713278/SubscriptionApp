@@ -4,22 +4,27 @@ import com.app.constants.CacheType;
 import com.app.constants.NotificationType;
 import com.app.entites.Vendor;
 import com.app.entites.type.ApprovalStatus;
+import com.app.entites.type.SkuType;
 import com.app.entites.type.UserRoleEnum;
 import com.app.entites.type.VendorStatus;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import com.app.exceptions.ResourceNotFoundException;
-import com.app.payloads.LegalDetailsDTO;
-import com.app.payloads.VendorBasicDTO;
+import com.app.payloads.*;
 import com.app.payloads.request.VendorProfileRequest;
 import com.app.payloads.response.APIResponse;
 import com.app.payloads.response.PaginationResponse;
 import com.app.repositories.RepositoryManager;
 import com.app.repositories.projections.CategoryProjection;
+import com.app.repositories.projections.ProductProjection;
 import com.app.services.auth.dto.UserAuthentication;
 import com.app.services.notification.NotificationContext;
 import com.app.services.notification.NotificationTemplate;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
+import java.math.BigDecimal;
+import java.sql.Date;
 import java.util.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -127,7 +132,7 @@ public class DefaultVendorService extends AbstractVendorService {
         .orElseThrow(
             () ->
                 new APIException(
-                    APIErrorCode.BAD_REQUEST_RECEIVED, "Vendor not exited in the system."));
+                    APIErrorCode.BAD_REQUEST_RECEIVED, "Invalid vendor id " + vendorId));
   }
 
   public PaginationResponse<VendorBasicDTO> fetchActiveVendorsByZipCode(
@@ -246,5 +251,65 @@ public class DefaultVendorService extends AbstractVendorService {
   public List<CategoryProjection> fetchAssignedCategories(Long vendorId) {
     log.debug("Fetching assigned categories for vendor : {}", vendorId);
     return getRepoManager().getVendorCategoryRepo().findCategoriesByVendorId(vendorId);
+  }
+
+  public List<ProductProjection> fetchAssignedProducts(Long vendorId) {
+    log.debug("Fetching assigned products for vendor : {}", vendorId);
+    return getRepoManager().getVendorProductRepo().findProductsByVendor(vendorId);
+  }
+
+  public List<SkuDTO> fetchSkusByVendorProductId(Long vendorId, Long productId) {
+    log.debug("Fetching skus for vendor product id: {}", productId);
+    var queryResults = getRepoManager().getSkuRepo().findSkusVendorProductId(productId);
+    ;
+
+    List<SkuDTO> productSkus =
+        queryResults.stream()
+            .map(
+                result -> {
+                  try {
+
+                    /* ts.vendor_product_id AS vendorProductId,
+                            ts.id AS skuId,
+                    ts.name AS skuName,
+                            ts.image_path AS imagePath,
+                    ts.weight AS skuSize,
+                            ts.type AS skuType,
+                    ts.is_active AS active,
+                            tsa.valid_days AS validDays,
+                    led.price_id AS priceId,
+                            led.list_price AS latestListPrice,
+                    led.sale_price AS latestSalePrice,
+                            led.effective_date AS latestEffectiveDate,*/
+
+                    return SkuDTO.builder()
+                        .vendorProductId((Long) result[0])
+                        .skuId((Long) result[1])
+                        .skuName((String) result[2])
+                        .imagePath((String) result[3])
+                        .skuSize((String) result[4])
+                        .skuType(SkuType.valueOf((String) result[5]))
+                        .active((Boolean) result[6])
+                        .validDays((Integer) result[7])
+                        .priceId((Long) result[8])
+                        .listPrice(((BigDecimal) result[9]).doubleValue())
+                        .salePrice(
+                            (result[10]) != null
+                                ? ((BigDecimal) result[10]).doubleValue()
+                                : 0) // salePrice)
+                        .effectiveDate(((Date) result[11]).toLocalDate())
+                        .eligibleSubscriptionDetails(
+                            new ObjectMapper()
+                                .readValue(
+                                    (String) result[12],
+                                    new TypeReference<List<SkuDTO.SubscriptionDetails>>() {}))
+                        .build();
+                  } catch (Exception e) {
+                    log.error("Unable to parse SQL result into ProductSkuDTO  :", e);
+                    throw new RuntimeException(e);
+                  }
+                })
+            .toList();
+    return productSkus;
   }
 }

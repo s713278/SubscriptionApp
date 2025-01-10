@@ -24,12 +24,13 @@ public enum APIErrorCode {
   API_429(HttpStatus.TOO_MANY_REQUESTS, "Maximum attempts exceeded. Please try again later."),
 
   // Subscription Errors
-  USER_SIGNUP_VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "User signup validation failed."),
-  USER_CREATION_FAILED(HttpStatus.EXPECTATION_FAILED, "Unable to create new signup."),
+  USER_SIGNUP_VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "Unable to complete signup process."),
+  USER_CREATION_FAILED(HttpStatus.EXPECTATION_FAILED, "Unable to complete signup process."),
   DUPLICATE_REQUEST(HttpStatus.CONFLICT, "Resource is already existed."),
 
   // Subscription Errors
-  SUBSCRIPTION_VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "Subscription validation failed."),
+  SUBSCRIPTION_VALIDATION_FAILED(
+      ReasonCodeEnum.BAD_REQUEST, HttpStatus.BAD_REQUEST, "Subscription creation is failed."),
   SUBSCRIPTION_CREATION_FAILED(HttpStatus.EXPECTATION_FAILED, "Subscription creation is failed."),
 
   // Address Errors

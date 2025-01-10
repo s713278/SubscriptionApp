@@ -1,6 +1,7 @@
 package com.app.services;
 
 import com.app.entites.Subscription;
+import com.app.entites.type.SubFrequency;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
 import java.time.DayOfWeek;
@@ -12,8 +13,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class SubscriptionServiceHelper {
 
-  public LocalDate calculateNextDeliveryDate(Subscription item) {
-    return switch (item.getFrequency()) {
+  public LocalDate calculateNextDeliveryDate(SubFrequency frequency, Subscription item) {
+    return switch (frequency) {
       case DAILY -> item.getStartDate().plusDays(1);
       case ALTERNATE_DAY -> item.getStartDate().plusDays(2);
       case WEEKLY -> item.getStartDate().plusWeeks(1);
@@ -22,7 +23,7 @@ public class SubscriptionServiceHelper {
       default ->
           throw new APIException(
               APIErrorCode.BAD_REQUEST_RECEIVED,
-              "Invalid Subscription Frequency " + item.getFrequency());
+              "Invalid Subscription Frequency " + item.getSubscriptionPlan().getFrequency());
     };
   }
 

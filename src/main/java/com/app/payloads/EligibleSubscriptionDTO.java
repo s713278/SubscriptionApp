@@ -8,6 +8,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EligibleSubscriptionDTO {
+
+  @JsonProperty("id")
+  private Long id;
+
   @JsonProperty("frequency")
   private String frequency;
 

@@ -5,7 +5,7 @@ import com.app.controllers.validator.AbstractRequestValidation;
 import com.app.payloads.request.SubscriptionStatusRequest;
 import com.app.payloads.response.APIResponse;
 import com.app.payloads.response.SubscriptionResponse;
-import com.app.services.SubscriptionService;
+import com.app.services.SubscriptionQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,14 +27,14 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class VendorSubscriptionController extends AbstractRequestValidation {
 
-  private final SubscriptionService subscriptionService;
+  private final SubscriptionQueryService subscriptionQueryService;
 
   @Operation(summary = "Fetch Subscriptions By Vendor ID")
   @GetMapping("/{vendorId}/subs")
   @PreAuthorize(
       "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('VENDOR'))")
   public ResponseEntity<APIResponse<?>> fetchSubsByVendorId(@PathVariable Long vendorId) {
-    var subscriptions = subscriptionService.fetchSubsByVendor(vendorId);
+    var subscriptions = subscriptionQueryService.fetchSubsByVendor(vendorId);
     return ResponseEntity.ok(APIResponse.success(subscriptions));
   }
 
@@ -47,7 +47,7 @@ public class VendorSubscriptionController extends AbstractRequestValidation {
       @PathVariable Long subId,
       @Valid @RequestBody SubscriptionStatusRequest request) {
     SubscriptionResponse subscription =
-        subscriptionService.updateSubscriptionStatus(userId, subId, request.getStatus());
+        subscriptionQueryService.updateSubscriptionStatus(userId, subId, request.getStatus());
     return new ResponseEntity<>(APIResponse.success(subscription), HttpStatus.NO_CONTENT);
   }
 }

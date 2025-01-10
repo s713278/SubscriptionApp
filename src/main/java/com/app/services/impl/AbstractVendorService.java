@@ -33,6 +33,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Setter
@@ -79,7 +80,7 @@ public abstract class AbstractVendorService {
         .collect(Collectors.toSet());
   }
 
-  @Transactional
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public final CreateItemResponse createVendorProfile(
       VendorProfileRequest vendorRequest, Authentication authentication) {
     preCreateVendorProfile(vendorRequest);
@@ -99,7 +100,6 @@ public abstract class AbstractVendorService {
       Customer customer = new Customer();
       customer.setCountryCode("+91");
       customer.setMobile(Long.parseLong(vendorRequest.getContactNumber()));
-      customer.setCreatedBy(principal + "");
       var vendorEntity = getUserService().createUser(customer);
       vendor.setUserId(vendorEntity.getId());
       postCreateVendorProfile(vendorEntity.getId(), customer.getFullMobileNumber());
@@ -121,7 +121,7 @@ public abstract class AbstractVendorService {
           String.format("User %s not allowed to have vendor profile", principal));
     }
     Vendor vendorEntity = getRepoManager().getVendorRepo().save(vendor);
-    if (isAdmin || isCustomerCare) {
+    if ((isAdmin || isCustomerCare) && vendorRequest.getAssignCategories() != null) {
       assignCategories(vendorEntity.getId(), vendorRequest.getAssignCategories());
     }
     return new CreateItemResponse(vendorEntity.getId(), "Vendor profile created successfully.");
@@ -421,7 +421,7 @@ public abstract class AbstractVendorService {
     Set<Long> alreadyAssignedProductIds =
         getRepoManager()
             .getVendorProductRepo()
-            .findAssignedProductIdsForVendor(vendorId, validProductIds);
+            .validateAssignedProductIdsForVendor(vendorId, validProductIds);
     if (!alreadyAssignedProductIds.isEmpty()) {
       throw new IllegalArgumentException(
           "The following products are already assigned: " + alreadyAssignedProductIds);

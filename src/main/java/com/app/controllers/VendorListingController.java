@@ -12,7 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "2. Vendor's Listing API", description = "APIs for listing vendors based on zipcode.")
+@Tag(
+    name = "2. Vendors and Products Listing API",
+    description =
+        "APIs for fetching vendors details based on zipcode and vendor's assigned categories , products,skus for displaying on UI.")
 @RestController
 @RequestMapping("/v1/vendors")
 @Slf4j
@@ -76,11 +79,42 @@ public class VendorListingController {
    }
   */
 
-  @Operation(summary = "Vendor's products listing", description = "Test data: vendor_id:91")
-  @GetMapping("/{vendor_id}/products")
+  @Deprecated
+  @Operation(
+      summary = "Vendor's product/skus listing--DO NOT USE",
+      description =
+          """
+          This API used for fetching all the assigned products and SKUs in order to
+          display on vendor's skus listing page. <br>VendorsTest data: vendor_id:91
+          """)
+  @GetMapping("/{vendor_id}/products/skus")
   public ResponseEntity<APIResponse<?>> fetchVendorProductSkus(
       @PathVariable("vendor_id") @Schema(example = "91") Long vendorId) {
     var response = serviceManager.getSkuService().fetchProductSkusByVendorId(vendorId);
+    return new ResponseEntity<>(APIResponse.success(response), HttpStatus.OK);
+  }
+
+  @Operation(
+      summary = "Vendor assigned products",
+      description =
+          "This API fetches assigned products(array of {id,name}) in order to display the menu option vendor's product/skus listing page.")
+  @GetMapping("/{vendor_id}/products")
+  public ResponseEntity<APIResponse<?>> fetchAssignCategories(
+      @Schema(example = "91") @PathVariable("vendor_id") Long vendorId) {
+    var response = serviceManager.getVendorService().fetchAssignedProducts(vendorId);
+    return new ResponseEntity<>(APIResponse.success(response), HttpStatus.OK);
+  }
+
+  @Operation(
+      summary = "Vendor SKUs by product ID",
+      description = "This API fetches SKUs based on selected product id.")
+  @GetMapping("/{vendor_id}/products/{product_id}")
+  public ResponseEntity<APIResponse<?>> fetchSkusByVendorProduct(
+      @Schema(example = "91") @PathVariable("vendor_id") Long vendorId,
+      @Schema(example = "9") @PathVariable("product_id") Long productId) {
+    log.info("Request received for fetching skus by vendor product id:{}", productId);
+    var response =
+        serviceManager.getVendorService().fetchSkusByVendorProductId(vendorId, productId);
     return new ResponseEntity<>(APIResponse.success(response), HttpStatus.OK);
   }
 }

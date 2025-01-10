@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 public interface SubscriptionRepo extends JpaRepository<Subscription, Long> {
 
   @Query(
-      "Select id,quantity,frequency,status,startDate,nextDeliveryDate from Subscription s where s.id=?1")
+      "Select id,quantity,subscriptionPlan.frequency,status,startDate,nextDeliveryDate from Subscription s where s.id=?1")
   Optional<Subscription> findSubscription(final Long subId);
 
   @Query(
@@ -40,7 +40,7 @@ public interface SubscriptionRepo extends JpaRepository<Subscription, Long> {
               led.sale_price * sub.quantity,
               sku.size,
               sub.start_date,
-              sub.frequency,
+              sub.subscriptionPlan.frequency,
               sub.status,
               sub.next_delivery_date,
               sku."name" ,
@@ -92,7 +92,7 @@ public interface SubscriptionRepo extends JpaRepository<Subscription, Long> {
               led.sale_price * sub.quantity,
               sku.size,
               sub.start_date,
-              sub.frequency,
+              sub.subscriptionPlan.frequency,
               sub.status,
               sub.next_delivery_date,
               sku."name" ,
@@ -113,7 +113,7 @@ public interface SubscriptionRepo extends JpaRepository<Subscription, Long> {
       nativeQuery = true)
   List<Object[]> findByVendorId(@Param("vendorId") Long vendorId);
 
-  Optional<Subscription> findByUserIdAndSkuId(final Long userId, final Long vendorId);
+  Optional<Subscription> findByUserIdAndSkuId(final Long userId, final Long skuId);
 
   @Query(
       value =
@@ -142,7 +142,7 @@ public interface SubscriptionRepo extends JpaRepository<Subscription, Long> {
                 led.sale_price * sub.quantity,
                 sku.size,
                 sub.start_date,
-                sub.frequency,
+                sub.subscriptionPlan.frequency,
                 sub.status,
                 sub.next_delivery_date,
                 sku."name" ,

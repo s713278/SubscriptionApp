@@ -57,7 +57,7 @@ public class DefaultSkuService extends AbstractSkuService {
         .getSkuRepo()
         .findById(skuId)
         .orElseThrow(
-            () -> new APIException(APIErrorCode.ENTITY_NOT_FOUND, "SKU not existed in system."));
+            () -> new APIException(APIErrorCode.ENTITY_NOT_FOUND, "Invalid SKU ID " + skuId));
   }
 
   // @Cacheable(value = CacheType.CACHE_TYPE_VENDORS,key = "'vendor::product::' + #vendorId")
