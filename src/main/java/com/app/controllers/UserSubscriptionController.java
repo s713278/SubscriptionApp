@@ -48,9 +48,9 @@ public class UserSubscriptionController extends AbstractRequestValidation {
       BindingResult bindingResult) {
     validateRequest(bindingResult);
     log.debug("Entered create subscription for customer {}", userId);
-    var subscription = createSubscriptionService.createSubscription(userId, request);
+    var responseDTO = createSubscriptionService.createSubscription(userId, request);
     // Return the response wrapped in ResponseEntity with HTTP status 201 (Created)
-    return new ResponseEntity<>(APIResponse.success(subscription), HttpStatus.CREATED);
+    return new ResponseEntity<>(APIResponse.success(responseDTO), HttpStatus.CREATED);
   }
 
   @PreAuthorize(

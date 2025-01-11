@@ -1174,5 +1174,8 @@ INSERT INTO public.tb_sku_sub_plan (id,eligible_delivery_days,sku_id,sub_plan_id
 	 (18,'{"delivery_days": ["SUNDAY"]}',653,1),
 	 (19,'{"delivery_days": ["SUNDAY"]}',654,1);
 
+INSERT INTO public.tb_service_attributes (id,no_of_uses,valid_days,sku_id) VALUES
+	 (1,1,30,502);
+
 
 

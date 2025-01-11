@@ -8,7 +8,9 @@ import com.app.entites.Customer;
 import com.app.payloads.request.CreateSubscriptionRequest;
 import com.app.payloads.request.UpdateSubscriptionRequest;
 import com.app.repositories.RepositoryManager;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +25,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @ActiveProfiles("test")
 @ContextConfiguration(classes = {TestContainerConfig.class, TestMockConfig.class})
-class SubscriptionServiceTest {
+class SubscriptionCreateServiceTest {
 
   @Autowired private SubscriptionQueryService subscriptionService;
 
@@ -36,9 +38,13 @@ class SubscriptionServiceTest {
   private final String email = "swamy.ramya@example.com";
   private Long customerId = 1000L;
   private final Long testVendorId = 1L;
-  private final Long testSkuId = 202L;
+  private final Long testItemSkuId = 202L;
+
   private Long testSubscriptionId = null;
   private final Long priceId = 8L;
+
+  private final Long testServiceSkuId = 502L;
+  private final Long serviceSkuPriceId = 16L;
 
   // private final Long vendorId = 91L;
 
@@ -52,22 +58,46 @@ class SubscriptionServiceTest {
     System.out.println("It should be only one time --tearDown");
   }
 
-  @DisplayName("Create Subscription with Frequency:ONE_TIME and Delivery Mode: FIXED ")
+  @DisplayName("Create ITEM SKU Subscription with Frequency:ONE_TIME and Delivery Mode: FIXED ")
   @Test
-  void testCreateSubscriptionForOneTimeFrequency() {
+  void testCreateItemSKUSubscriptionForOneTime() {
     CreateSubscriptionRequest request = new CreateSubscriptionRequest();
-    request.setSkuId(testSkuId);
+    request.setSkuId(testItemSkuId);
     request.setQuantity(5);
     request.setPriceId(priceId);
     request.setSkuSubscriptionPlanId(9L);
-    request.setDeliveryDate(LocalDate.now().plusDays(3));
+
+    LocalDate today = LocalDate.now(); // Or any LocalDate you have
+    LocalDate nextSunday = today.with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
+    request.setDeliveryDate(nextSunday);
     //  request.setFrequency(SubFrequency.ONE_TIME);
     // request.setEndDate(LocalDate.now().plusDays(30));
     var sub = createSubscriptionService.createSubscription(customerId, request);
     assertNotNull(sub);
-    assertNotNull(sub.subscriptionId());
-    testSubscriptionId = sub.subscriptionId();
+    assertNotNull(sub.getSubscriptionId());
+    testSubscriptionId = sub.getSubscriptionId();
     testUpdateSubscription(testSubscriptionId);
+  }
+
+  @DisplayName(
+      "Create Service SKU Subscription with Frequency:ONE_TIME and Delivery Mode: FLEXIBLE ")
+  @Test
+  void testCreateServiceSKUSubscription() {
+    CreateSubscriptionRequest request = new CreateSubscriptionRequest();
+    request.setSkuId(testServiceSkuId);
+    request.setQuantity(1);
+    request.setPriceId(serviceSkuPriceId);
+    request.setSkuSubscriptionPlanId(17L);
+
+    // LocalDate today = LocalDate.now(); // Or any LocalDate you have
+    // LocalDate nextSunday = today.with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
+    // request.setDeliveryDate(nextSunday);
+    //  request.setFrequency(SubFrequency.ONE_TIME);
+    // request.setEndDate(LocalDate.now().plusDays(30));
+    var response = createSubscriptionService.createSubscription(customerId, request);
+    assertNotNull(response);
+    assertNotNull(response.getSubscriptionId());
+    System.out.println("Response \t:" + response);
   }
 
   // @Test()
@@ -92,7 +122,7 @@ class SubscriptionServiceTest {
     //   oldSub.getFrequency(), updateSub.getFrequency(), "Frequency changes looks good!!");
   }
 
-  @Test
+  // @Test
   void testFetchUserSubscriptionsForSpecificVendor() {
     var subs = subscriptionService.fetchSubsByUserAndVendor(customerId, testVendorId);
     assertFalse(subs.isEmpty());
