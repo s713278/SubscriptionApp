@@ -1,7 +1,7 @@
 package com.app.repositories;
 
-import com.app.TestContainerConfig;
-import com.app.TestMockConfig;
+import com.app.config.TestContainerConfig;
+import com.app.config.TestMockConfig;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

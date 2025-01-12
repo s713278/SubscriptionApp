@@ -63,15 +63,16 @@ public abstract class AbstractSubscriptionCreateService implements SubscriptionC
     subscription.setStatus(SubscriptionStatus.PENDING);
     subscription.setQuantity(request.getQuantity());
     subscription.setSubscriptionPlan(skuSubPlan.getSubscriptionPlan());
+    subscription.setType(sku.getSkuType());
+    subscription.setVendorId(vendor.get().getId());
     // Address
     subscription.setDeliveryAddress(customer.getDeliveryAddress());
     switch (skuSubPlan.getSubscriptionPlan().getFrequency()) {
       case ONE_TIME -> {
+        var serviceAttributes = sku.getServiceAttributes();
         // Update customer validation period
         if (sku.getSkuType() == SkuType.SERVICE) {
           subscription.setStartDate(LocalDate.now());
-          var serviceAttributes =
-              getServiceManager().getSkuService().fetchServiceAttributesBySkuId(sku.getId());
           subscription.setEndDate(LocalDate.now().plusDays(serviceAttributes.getValidDays()));
           subscription.setQuantity(serviceAttributes.getNoOfUses());
         } else {

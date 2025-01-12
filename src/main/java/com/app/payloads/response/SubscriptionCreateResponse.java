@@ -19,6 +19,9 @@ public class SubscriptionCreateResponse {
   @JsonProperty("create_date")
   public LocalDateTime createDate;
 
+  @JsonProperty("item_name")
+  protected String skuName;
+
   @JsonProperty("vendor_name")
   protected String vendorName;
 

@@ -75,9 +75,9 @@ public class DefaultSubscriptionCreateService extends AbstractSubscriptionCreate
       case SERVICE -> {
         ServiceSubscriptionResponse response1 = new ServiceSubscriptionResponse();
         var skuServiceAttributes = sku.getServiceAttributes();
+        response1.setStartDate(subscription.getStartDate());
+        response1.setExpirationDate(subscription.getEndDate());
         response1.setServiceValidity(skuServiceAttributes.getValidDays());
-        response1.setExpirationDate(
-            sku.getCreatedDate().plusDays(skuServiceAttributes.getValidDays()).toLocalDate());
         response1.setNoOfUses(skuServiceAttributes.getNoOfUses());
         response1.setServiceLocation(Map.of("address", "address1"));
         response = response1;
@@ -91,6 +91,7 @@ public class DefaultSubscriptionCreateService extends AbstractSubscriptionCreate
       }
       default -> throw new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, "");
     }
+    response.setStatus(subscription.getStatus());
     response.setSubscriptionId(subscription.getId());
     response.setCreateDate(subscription.getCreatedDate());
     var subPlan = subscription.getSubscriptionPlan();
@@ -100,6 +101,7 @@ public class DefaultSubscriptionCreateService extends AbstractSubscriptionCreate
     response.setSkuType(sku.getSkuType());
     response.setVendorName(vendor.getBusinessName());
     response.setMobileNumber(customer.getFullMobileNumber());
+    response.setSkuName(sku.getName());
     return response;
   }
 

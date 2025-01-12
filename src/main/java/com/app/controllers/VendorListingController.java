@@ -95,7 +95,7 @@ public class VendorListingController {
   }
 
   @Operation(
-      summary = "Vendor assigned products",
+      summary = "Fetch vendor assigned products",
       description =
           "This API fetches assigned products(array of {id,name}) in order to display the menu option vendor's product/skus listing page.")
   @GetMapping("/{vendor_id}/products")
@@ -106,15 +106,27 @@ public class VendorListingController {
   }
 
   @Operation(
-      summary = "Vendor SKUs by product ID",
+      summary = "Fetch vendor SKUs by product ID",
       description = "This API fetches SKUs based on selected product id.")
   @GetMapping("/{vendor_id}/products/{product_id}")
   public ResponseEntity<APIResponse<?>> fetchSkusByVendorProduct(
       @Schema(example = "91") @PathVariable("vendor_id") Long vendorId,
-      @Schema(example = "9") @PathVariable("product_id") Long productId) {
+      @Schema(example = "9") @PathVariable("product_id") Long productId,
+      @RequestParam(
+              name = AppConstants.REQ_PARAM_PAGE_NUMBER,
+              defaultValue = AppConstants.PAGE_NUMBER,
+              required = false)
+          Integer pageNumber,
+      @RequestParam(
+              name = AppConstants.REQ_PARAM_PAGE_SIZE,
+              defaultValue = AppConstants.PAGE_SIZE,
+              required = false)
+          Integer pageSize) {
     log.info("Request received for fetching skus by vendor product id:{}", productId);
     var response =
-        serviceManager.getVendorService().fetchSkusByVendorProductId(vendorId, productId);
+        serviceManager
+            .getVendorService()
+            .fetchSkusByVendorProductId(vendorId, productId, pageNumber, pageSize);
     return new ResponseEntity<>(APIResponse.success(response), HttpStatus.OK);
   }
 }

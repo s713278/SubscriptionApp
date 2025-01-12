@@ -1,7 +1,7 @@
 package com.app.services.impl;
 
-import com.app.TestContainerConfig;
-import com.app.TestMockConfig;
+import com.app.config.TestContainerConfig;
+import com.app.config.TestMockConfig;
 import com.app.entites.Customer;
 import com.app.entites.type.UserRoleEnum;
 import com.app.payloads.request.MobileSignUpRequest;

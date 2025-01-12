@@ -258,11 +258,12 @@ public class DefaultVendorService extends AbstractVendorService {
     return getRepoManager().getVendorProductRepo().findProductsByVendor(vendorId);
   }
 
-  public List<SkuDTO> fetchSkusByVendorProductId(Long vendorId, Long productId) {
+  public PaginationResponse<SkuDTO> fetchSkusByVendorProductId(
+      Long vendorId, Long productId, Integer pageNumber, Integer pageSize) {
     log.debug("Fetching skus for vendor product id: {}", productId);
-    var queryResults = getRepoManager().getSkuRepo().findSkusVendorProductId(productId);
-    ;
-
+    Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
+    var pageResult = getRepoManager().getSkuRepo().findSkusVendorProductId(productId, pageDetails);
+    List<Object[]> queryResults = pageResult.getContent();
     List<SkuDTO> productSkus =
         queryResults.stream()
             .map(
@@ -310,6 +311,12 @@ public class DefaultVendorService extends AbstractVendorService {
                   }
                 })
             .toList();
-    return productSkus;
+    return new PaginationResponse<>(
+        productSkus,
+        pageResult.getNumber(),
+        pageResult.getSize(),
+        pageResult.getTotalElements(),
+        pageResult.getTotalPages(),
+        pageResult.isLast());
   }
 }

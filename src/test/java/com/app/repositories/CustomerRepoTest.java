@@ -3,7 +3,7 @@ package com.app.repositories;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.app.TestContainerConfig;
+import com.app.config.TestContainerConfig;
 import com.app.entites.Customer;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;

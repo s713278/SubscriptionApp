@@ -176,7 +176,8 @@ CREATE TYPE public."subscriptionstatus" AS ENUM (
 
 CREATE TYPE public."user_type" AS ENUM (
 	'USER',
-	'VENDOR');
+	'VENDOR',
+	'ADMIN');
 
 -- DROP TYPE public."usertype";
 
@@ -196,13 +197,6 @@ CREATE TYPE public."vendor_status_enum" AS ENUM (
 	'SUSPENDED',
 	'INACTIVE');
 
--- DROP TYPE public."vendorstatus";
-
-CREATE TYPE public."vendorstatus" AS ENUM (
-	'ACTIVE',
-	'INACTIVE',
-	'SUSPENDED');
-
 -- DROP TYPE public."verification_status_enum";
 
 CREATE TYPE public."verification_status_enum" AS ENUM (
@@ -210,12 +204,6 @@ CREATE TYPE public."verification_status_enum" AS ENUM (
 	'APPROVED',
 	'REJECTED');
 
--- DROP TYPE public."verificationstatus";
-
-CREATE TYPE public."verificationstatus" AS ENUM (
-	'APPROVED',
-	'PENDING',
-	'REJECTED');
 
 -- DROP SEQUENCE carts_seq;
 
@@ -930,8 +918,8 @@ CREATE TABLE tb_subscription (
 	id int8 NOT NULL,
 	created_date timestamp(6) NOT NULL,
 	delivery_address jsonb NULL,
-	frequency public."subscription_frequency" NULL,
 	start_date date NULL,
+	vendor_id int8 NULL,
 	last_modified_date timestamp(6) NOT NULL,
 	next_delivery_date date NULL,
 	quantity int4 NOT NULL,
@@ -946,6 +934,7 @@ CREATE TABLE tb_subscription (
 	subscription_type public."sku_type" NULL,
 	delivery_mode public."delivery_mode_enum" NULL,
 	subscription_plan_id int8 NULL,
+	special_notes varchar(150) NULL,
 	CONSTRAINT pk_sub_id PRIMARY KEY (id),
 	CONSTRAINT unique_customer_vendor_sku UNIQUE (customer_id, sku_id),
 	CONSTRAINT fk_customer_id FOREIGN KEY (customer_id) REFERENCES tb_customer(id) ON DELETE CASCADE,
@@ -1170,6 +1159,7 @@ INSERT INTO public.tb_sku_sub_plan (id,eligible_delivery_days,sku_id,sub_plan_id
 	 (9,'{"delivery_days": ["SUNDAY", "WEDNESDAY"]}',202,1),
 	 (15,'{"delivery_days": ["ANYDAY"]}',652,3),
 	 (16,'{"delivery_days": ["ANYDAY"]}',652,2),
+	 (20,'{"delivery_days": ["ANYDAY"]}',652,4),
 	 (17,'{"delivery_days": ["ANYDAY"]}',502,4),
 	 (18,'{"delivery_days": ["SUNDAY"]}',653,1),
 	 (19,'{"delivery_days": ["SUNDAY"]}',654,1);

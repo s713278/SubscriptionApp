@@ -1,7 +1,7 @@
 package com.app.services;
 
-import com.app.TestContainerConfig;
-import com.app.TestMockConfig;
+import com.app.config.TestContainerConfig;
+import com.app.config.TestMockConfig;
 import com.app.entites.ServiceAttribute;
 import com.app.repositories.RepositoryManager;
 import com.app.services.impl.DefaultSkuService;

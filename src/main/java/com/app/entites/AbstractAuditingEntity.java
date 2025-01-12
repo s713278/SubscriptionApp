@@ -2,6 +2,7 @@ package com.app.entites;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import java.io.Serial;
 import java.io.Serializable;
@@ -12,6 +13,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * Base abstract class for entities which will hold definitions for created, last modified, created
@@ -20,6 +22,7 @@ import org.springframework.data.annotation.LastModifiedBy;
 @Getter
 @Setter
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(
     value = {"createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"},
     allowGetters = true)

@@ -6,10 +6,12 @@ import java.util.Map;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
+@ToString
 public class ServiceSubscriptionResponse extends SubscriptionCreateResponse {
 
   @JsonProperty("start_date")
