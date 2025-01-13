@@ -51,6 +51,12 @@ public class SkuDTO {
   @JsonProperty("eligible_subscription_details")
   private List<SubscriptionDetails> eligibleSubscriptionDetails;
 
+  @JsonProperty("discount")
+  private Double discount;
+
+  @JsonProperty("on_sale")
+  private Boolean onSale;
+
   // Getters and setters...
   @Getter
   @Setter
@@ -60,5 +66,13 @@ public class SkuDTO {
     private String frequency;
     private List<String> eligibleDeliveryDays;
     // Getters and setters...
+  }
+
+  public void setDiscount() {
+    this.discount = (this.listPrice != null && salePrice != null) ? listPrice - salePrice : null;
+  }
+
+  public void setOnSale() {
+    this.onSale = (listPrice != null && salePrice != null) && salePrice < listPrice;
   }
 }

@@ -41,7 +41,7 @@ public class AppConstants {
     "/swagger-ui.**",
     "/v1/categories/*",
     "/v1/categories/*/products/**",
-    "/v1/vendors/zipcode/*",
+    "/v1/vendors/service_area/**",
     "/v1/vendors/*/products/**",
     "/custom-api-docs/**"
   };

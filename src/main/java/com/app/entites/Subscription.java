@@ -1,5 +1,6 @@
 package com.app.entites;
 
+import com.app.entites.type.SkuType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serial;
@@ -33,11 +34,22 @@ public class Subscription extends AbstractAuditingEntity<Long> implements Serial
   // Foreign column to tb_vendor_sku table
   private Long skuId;
 
+  @Column(name = "vendor_id", nullable = false)
+  // Foreign column to tb_vendor table
+  private Long vendorId;
+
   @Column(name = "price_id", nullable = false)
   // Foreign column to tb_sku_price table
   private Long priceId;
 
   private Integer quantity;
+
+  // This can be fetched to get the service_attributes if the item type is SERVICE by skipping the
+  // sku table.
+  @JdbcType(value = PostgreSQLEnumJdbcType.class)
+  @Enumerated(EnumType.STRING)
+  @Column(name = "subscription_type", columnDefinition = "sku_type")
+  private SkuType type;
 
   @Column(name = "start_date")
   private LocalDate startDate;
@@ -58,7 +70,6 @@ public class Subscription extends AbstractAuditingEntity<Long> implements Serial
   private List<Integer> customDays; // For custom date range
 
   // 1 - Monday
-
   @NotNull(message = "Delivery date is mandatory.")
   @Column(name = "next_delivery_date")
   private LocalDate nextDeliveryDate;
@@ -77,5 +88,9 @@ public class Subscription extends AbstractAuditingEntity<Long> implements Serial
   @ManyToOne
   @JoinColumn(name = "subscription_plan_id", nullable = false)
   private SubscriptionPlan subscriptionPlan;
+
   // Getters and Setters
+
+  @Column(name = "special_notes")
+  private String specialNotes;
 }

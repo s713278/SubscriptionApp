@@ -1,7 +1,7 @@
 package com.app.services;
 
-import com.app.TestContainerConfig;
 import com.app.config.AppConstants;
+import com.app.config.TestContainerConfig;
 import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;

@@ -98,17 +98,17 @@ public class CustomerController {
       })
   @io.swagger.v3.oas.annotations.parameters.RequestBody(
       description =
-          "A map containing valid delivery address fields. Valid keys: address1, address2, city, state, zipCode, country.",
+          "A map containing valid delivery address fields. Valid keys: type,address1, address2, city, state, zipCode, country.",
       required = true,
       content =
           @Content(
               mediaType = "application/json",
               schema = @Schema(implementation = NameAndAddressRequest.class)))
-  @PatchMapping("/{userId}")
+  @PatchMapping("/{user_id}")
   @PreAuthorize(
       "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER'))")
   public ResponseEntity<APIResponse<?>> addNameAndAddress(
-      @PathVariable Long userId, @RequestBody NameAndAddressRequest request) {
+      @PathVariable("user_id") Long userId, @RequestBody NameAndAddressRequest request) {
     userService.addNameAndAddress(userId, request.name(), request.address());
     return ResponseEntity.ok(APIResponse.success("Address updated successfully."));
   }

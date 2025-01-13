@@ -1,6 +1,7 @@
 package com.app.services;
 
 import com.app.entites.Subscription;
+import com.app.entites.type.SkuType;
 import com.app.entites.type.SubFrequency;
 import com.app.exceptions.APIErrorCode;
 import com.app.exceptions.APIException;
@@ -14,6 +15,9 @@ import org.springframework.stereotype.Component;
 public class SubscriptionServiceHelper {
 
   public LocalDate calculateNextDeliveryDate(SubFrequency frequency, Subscription item) {
+    if (SkuType.SERVICE == item.getType()) {
+      return item.getStartDate(); // TODO: This needs to be reviewed.
+    }
     return switch (frequency) {
       case DAILY -> item.getStartDate().plusDays(1);
       case ALTERNATE_DAY -> item.getStartDate().plusDays(2);

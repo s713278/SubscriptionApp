@@ -2,7 +2,7 @@ package com.app.services.auth.signup;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.app.TestContainerConfig;
+import com.app.config.TestContainerConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -44,6 +44,7 @@ public abstract class AbstractSkuDTO implements Serializable {
 
   @JsonIgnore private Integer stock;
 
+  @JsonProperty("is_active")
   private boolean active = true;
 
   @JsonProperty("subscription_eligible")

@@ -2,7 +2,7 @@ package com.app.repositories;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.app.TestContainerConfig;
+import com.app.config.TestContainerConfig;
 import com.app.entites.Customer;
 import com.app.entites.Vendor;
 import com.app.entites.type.ApprovalStatus;
