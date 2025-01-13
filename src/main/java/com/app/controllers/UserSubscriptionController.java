@@ -54,7 +54,7 @@ public class UserSubscriptionController extends AbstractRequestValidation {
                         @ExampleObject(
                             name =
                                 """
-                            This is example payload for ONE_TIME item subscription with Fixed Delivery mode.It means user can choose ONLY vendor defined 
+                            This is example payload for ONE_TIME item subscription with Fixed Delivery mode.It means user can choose ONLY vendor defined
                              delivery date.
                             """,
                             summary = "OneTime Item Subscription-Fixed",
@@ -68,12 +68,13 @@ public class UserSubscriptionController extends AbstractRequestValidation {
                                       "delivery_date": "2025-01-11"
                                     }
                                     """),
-                          @ExampleObject(
-                                  name ="""
+                        @ExampleObject(
+                            name =
+                                """
                                   This is example payload for ONE_TIME item subscription with Flexible Delivery mode.It means user can choose any future delivery date.
                                   """,
-                                  summary = "OneTime Item Subscription-Flexible",
-                                  value =
+                            summary = "OneTime Item Subscription-Flexible",
+                            value =
                                 """
                                     {
                                       "quantity": 2,

@@ -29,7 +29,7 @@ class SkuServiceTest {
 
   @Test
   void fetchVendorProductSkusById() {
-    var vendorProductsMap = skuService.fetchProductSkusByVendorId(1L);
+    var vendorProductsMap = skuService.fetchAllProductSkusByVendorId(1L);
     // Assertions.assertEquals(2,vendorProductsMap.size());
   }
 

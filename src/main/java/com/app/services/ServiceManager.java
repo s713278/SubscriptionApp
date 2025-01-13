@@ -24,4 +24,5 @@ public class ServiceManager {
   private final SubscriptionQueryService subscriptionService;
   private final SkuSubscriptionService skuSubscriptionService;
   private final SkuPriceService priceService;
+  private final CategoryService categoryService;
 }

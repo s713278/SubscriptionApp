@@ -64,7 +64,7 @@ public class DefaultSkuService extends AbstractSkuService {
 
   // @Cacheable(value = CacheType.CACHE_TYPE_VENDORS,key = "'vendor::product::' + #vendorId")
   @Transactional(readOnly = true)
-  public Map<String, List<ProductSkuDTO>> fetchProductSkusByVendorId(Long vendorId) {
+  public Map<String, List<ProductSkuDTO>> fetchAllProductSkusByVendorId(Long vendorId) {
     var queryResults = repositoryManager.getSkuRepo().findVendorProductSkus(vendorId);
     List<ProductSkuDTO> productSkus =
         queryResults.stream()

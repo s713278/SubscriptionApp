@@ -1090,8 +1090,8 @@ INSERT INTO public.tb_customer (id,created_date,delivery_address,email,email_ver
 INSERT INTO public.tb_vendor (id,business_address,business_name,contact_number,created_date,communication_email,last_modified_date,owner_name,service_area,
 user_id,status,last_modified_by,created_by,approval_status,banner_image,business_type,contact_person,description) VALUES
 	 (91,'{"city": "3", "state": "3", "country": "3", "addrees1": "1", "address2": "2"}','H2A2 Farms',
-	 '9090909090','2024-12-20 15:02:46.037657-05','Hafeez@gmail.com','2024-12-20 15:02:46.037657-05','Hafeez','{"areas": {},
-	  "additionalProp2": {}, "additionalProp3": {}}',1001,'ACTIVE'::public."vendor_status_enum",NULL,NULL,'APPROVED'::public."verification_status_enum",
+	 '9090909090','2024-12-20 15:02:46.037657-05','Hafeez@gmail.com','2024-12-20 15:02:46.037657-05','Hafeez',
+	 '{"areas": ["Siddipet", "Mirdoddi", "502018"], "zipcode": ["502103", "502108"]}',1001,'ACTIVE'::public."vendor_status_enum",NULL,NULL,'APPROVED'::public."verification_status_enum",
 	  'string','Farming','string','string');
 
 INSERT INTO public.tb_category (id,description,"name",image_path,"type") VALUES

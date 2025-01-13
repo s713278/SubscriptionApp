@@ -25,17 +25,33 @@ public class VendorListingController {
   private final ServiceManager serviceManager;
 
   @Operation(
-      summary = "Vendor's listing by zipcode and/or category",
+      summary = "Fetch Categories by service_area",
       description =
           """
-              This API used for fetching categories based on <b>zipcode</b>.<br>
-              This API also used for fetching the categories by <b>zipcode</b> and <b>category_id</b><br>
-              <b>Test data: zipcode</b>: 502108,502103
-              <b>Test data: category_id</b>: 102,103
+                      This API used for fetching all categories based on service_area/zipcode.
+                      <br>Test data: service_area:502108,502103,Siddpet,Mayurinagar.
+                      """)
+  @GetMapping("service_area/categories")
+  public ResponseEntity<APIResponse<?>> fetchCategoriesByZipCode(
+      @RequestParam(value = "service_area", required = true) @Schema(example = "502018")
+          String serviceArea) {
+    log.debug("Request received for fetching categories for service area :{} ", serviceArea);
+    var response = serviceManager.getCategoryService().fetchCategoriesByServiceArea(serviceArea);
+    return new ResponseEntity<>(APIResponse.success(response), HttpStatus.OK);
+  }
+
+  @Operation(
+      summary = "Fetch Vendor's by service_area/zipcode with/without category_id",
+      description =
+          """
+              This API used for fetching all the vendors and specific vendors based on zipcode and/or category_id.
+              <br>If <b>category_id</b> is NULL: Vendors will be filtered by zipcode only.
+              <br>If <b>category_id</b> is not NULL: Vendors will be filtered by zipcode & product_id.
+              <br>Test data: zipcode:502108,502103,Siddipet,Hyderabad and category_id: 102,103
               """)
-  @GetMapping("zipcode/{zipcode}")
-  public ResponseEntity<APIResponse<?>> fetchActiveVendorsByZipCode(
-      @PathVariable("zipcode") @Schema(example = "502018") String zipCode,
+  @GetMapping("service_area/{service_area}")
+  public ResponseEntity<APIResponse<?>> fetchActiveVendorsByServiceArea(
+      @PathVariable("service_area") @Schema(example = "502018") String serviceArea,
       @RequestParam(name = "category_id", required = false) Long categoryId,
       @RequestParam(
               name = AppConstants.REQ_PARAM_PAGE_NUMBER,
@@ -48,14 +64,14 @@ public class VendorListingController {
               required = false)
           Integer pageSize) {
     log.debug(
-        "Request received for fetching vendors for zipcode :{} and/or categoryId: {}",
-        zipCode,
+        "Request received for fetching vendors for service_area :{} and/or categoryId: {}",
+        serviceArea,
         categoryId);
     return new ResponseEntity<>(
         APIResponse.success(
             serviceManager
                 .getVendorService()
-                .fetchActiveVendorsByZipCode(zipCode, categoryId, pageNumber, pageSize)),
+                .fetchActiveVendorsByServiceArea(serviceArea, categoryId, pageNumber, pageSize)),
         HttpStatus.OK);
   }
 
@@ -87,10 +103,10 @@ public class VendorListingController {
           This API used for fetching all the assigned products and SKUs in order to
           display on vendor's skus listing page. <br>VendorsTest data: vendor_id:91
           """)
-  @GetMapping("/{vendor_id}/products/skus")
+  @GetMapping("/{vendor_id}/all_product_skus")
   public ResponseEntity<APIResponse<?>> fetchVendorProductSkus(
       @PathVariable("vendor_id") @Schema(example = "91") Long vendorId) {
-    var response = serviceManager.getSkuService().fetchProductSkusByVendorId(vendorId);
+    var response = serviceManager.getSkuService().fetchAllProductSkusByVendorId(vendorId);
     return new ResponseEntity<>(APIResponse.success(response), HttpStatus.OK);
   }
 
@@ -106,12 +122,18 @@ public class VendorListingController {
   }
 
   @Operation(
-      summary = "Fetch vendor SKUs by product ID",
-      description = "This API fetches SKUs based on selected product id.")
-  @GetMapping("/{vendor_id}/products/{product_id}")
+      summary = "Fetch SKUs with vendor_if and/or without product_id",
+      description =
+          """
+  This API used for fetching all the SKUs and specific SKUs based on vendor_id and/or product_id.
+  <br>If <b>product_id</b> is NULL: SKUs will be filtered by vendor_id only.
+  <br>If <b>product_id</b> is not NULL: SKUs will be filtered by vendor_id & product_id.
+  <br>Test data: vendor_id:91 and product_id:9
+  """)
+  @GetMapping("/{vendor_id}/products/skus")
   public ResponseEntity<APIResponse<?>> fetchSkusByVendorProduct(
       @Schema(example = "91") @PathVariable("vendor_id") Long vendorId,
-      @Schema(example = "9") @PathVariable("product_id") Long productId,
+      @Schema(example = "9") @RequestParam(value = "product_id", required = false) Long productId,
       @RequestParam(
               name = AppConstants.REQ_PARAM_PAGE_NUMBER,
               defaultValue = AppConstants.PAGE_NUMBER,

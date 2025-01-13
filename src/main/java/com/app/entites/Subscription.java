@@ -48,7 +48,7 @@ public class Subscription extends AbstractAuditingEntity<Long> implements Serial
   // sku table.
   @JdbcType(value = PostgreSQLEnumJdbcType.class)
   @Enumerated(EnumType.STRING)
-  @Column(name = "subscription_type",columnDefinition = "sku_type")
+  @Column(name = "subscription_type", columnDefinition = "sku_type")
   private SkuType type;
 
   @Column(name = "start_date")
