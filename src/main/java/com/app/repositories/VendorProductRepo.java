@@ -6,7 +6,6 @@ import com.app.repositories.projections.VendorProjection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -44,7 +43,6 @@ public interface VendorProductRepo extends CrudRepository<VendorProduct, Long> {
          WHERE vp.id = :id
     """)
   Optional<VendorProjection> findVendorByProductId(@Param("id") Long id);
-
 
   @Modifying
   @Query("DELETE FROM VendorProduct vp WHERE vp.vendorId = :vendorId AND vp.id IN :ids")

@@ -24,7 +24,6 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -244,12 +243,14 @@ public class VendorController extends AbstractRequestValidation {
     return ResponseEntity.ok(APIResponse.success("Products assigned successfully."));
   }
 
-  @Operation(summary = "Delete products from a vendor",description = "Un-Assign one or more products from a vendor by Admin/Customer_Care role")
+  @Operation(
+      summary = "Delete products from a vendor",
+      description = "Un-Assign one or more products from a vendor by Admin/Customer_Care role")
   @PatchMapping("/{vendor_id}/delete/products")
   @PreAuthorize("(hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")
   public ResponseEntity<APIResponse<?>> unAssignProducts(
-          @PathVariable("vendor_id") @Schema(example = "91") Long vendorId,
-          @RequestBody Set<Long> vendorProductIds) {
+      @PathVariable("vendor_id") @Schema(example = "91") Long vendorId,
+      @RequestBody Set<Long> vendorProductIds) {
     serviceManager.getVendorService().deleteVendorProducts(vendorId, vendorProductIds);
     return ResponseEntity.ok(APIResponse.success("Products deleted successfully."));
   }

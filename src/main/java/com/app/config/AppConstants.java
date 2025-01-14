@@ -56,7 +56,10 @@ public class AppConstants {
   public static final String[] VENDOR_USER_SUB_GET_URLS = {"/v1/vendors/*/users/*/subs/*"};
   public static final String[] VENDOR_USER_SUB_DELETE_URLS = {"/v1/vendors/*/users/*/subs/*"};
   public static final String[] VENDOR_USER_SUB_PATCH_URLS = {
-    "/v1/vendors/*/users/*/subs/*", "/v1/vendors/*/users/*/subs/*/status","/v1/vendors/*/delete/*/products","/v1/vendors/*/assign/*/products"
+    "/v1/vendors/*/users/*/subs/*",
+    "/v1/vendors/*/users/*/subs/*/status",
+    "/v1/vendors/*/delete/*/products",
+    "/v1/vendors/*/assign/*/products"
   };
 
   public static final String[] ADMIN_URLS = {"/api/store/*/admin/**"};

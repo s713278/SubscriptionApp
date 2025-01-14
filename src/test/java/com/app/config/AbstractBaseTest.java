@@ -11,6 +11,5 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(classes = {TestContainerConfig.class, TestMockConfig.class})
 public abstract class AbstractBaseTest {
 
-    @Autowired
-    protected RepositoryManager repositoryManager;
+  @Autowired protected RepositoryManager repositoryManager;
 }
