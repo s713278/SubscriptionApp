@@ -250,12 +250,12 @@ public class DefaultVendorService extends AbstractVendorService {
 
   public List<CategoryProjection> fetchAssignedCategories(Long vendorId) {
     log.debug("Fetching assigned categories for vendor : {}", vendorId);
-    return getRepoManager().getVendorCategoryRepo().findCategoriesByVendorId(vendorId);
+    return getRepoManager().getVendorCategoryRepo().findAssignedCategoriesByVendorId(vendorId);
   }
 
   public List<ProductProjection> fetchAssignedProducts(Long vendorId) {
     log.debug("Fetching assigned products for vendor : {}", vendorId);
-    return getRepoManager().getVendorProductRepo().findProductsByVendor(vendorId);
+    return getRepoManager().getVendorProductRepo().findAssignedProductsByVendor(vendorId);
   }
 
   /**

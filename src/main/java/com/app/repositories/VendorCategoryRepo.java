@@ -19,10 +19,10 @@ public interface VendorCategoryRepo extends CrudRepository<VendorCategory, Long>
 
   @Query(
       """
-              SELECT c.id as id, c.name as name, c.imagePath as imagePath
+              SELECT vc.id as id, c.name as name, c.imagePath as imagePath , vc.categoryId as categoryRefId
                         FROM Category c
                         JOIN VendorCategory vc ON c.id = vc.categoryId
                         WHERE vc.vendorId = :vendorId
               """)
-  List<CategoryProjection> findCategoriesByVendorId(Long vendorId);
+  List<CategoryProjection> findAssignedCategoriesByVendorId(Long vendorId);
 }

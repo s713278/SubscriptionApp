@@ -9,6 +9,9 @@ public interface ProductProjection {
   @JsonProperty("id")
   Long getId();
 
+  @JsonProperty("ref_id")
+  Long getProductRefId();
+
   String getName();
 
   @JsonProperty("image_path")

@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/multi_ecommerce
-    username: ${DB_USERNAME:}
-    password: ${DB_PASSWORD:}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:admin}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -13,6 +13,9 @@ spring:
     properties:
       hibernate:
         ddl-auto: update
+        format_sql: true
+        SQL: DEBUG
+        type.descriptor.sql.BasicBinder: TRACE
         #dialect: org.hibernate.dialect.PostgreSQLDialect
         #transaction:
           #jta:
@@ -27,8 +30,8 @@ application:
   jwt_config:
     issuer: MithraDirect
     secret: cl$ksc^nas%lkdm!cz@xclk#as&dmka;s28*392da%jskd#n9827@3498%
-    access_exp_time: 7776000000 #Short-lived (e.g., 15 minutes, 1 hour).
-    refresh_exp_time: 1800  #Stored securely on the client.
+    access_exp_time: 1800 #Short-lived (e.g., 15 minutes, 1 hour).
+    refresh_exp_time: 7776000000  #Stored securely on the client.
   vendor_config:
   customer_config:
     signup_props:

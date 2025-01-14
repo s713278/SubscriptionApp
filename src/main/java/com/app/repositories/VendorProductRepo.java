@@ -6,6 +6,8 @@ import com.app.repositories.projections.VendorProjection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -26,13 +28,13 @@ public interface VendorProductRepo extends CrudRepository<VendorProduct, Long> {
 
   @Query(
       """
-  SELECT vp.id as id, p.name as name
+  SELECT vp.id as id, p.name as name,vp.productId as productRefId(
      FROM VendorProduct vp
      JOIN Product p ON p.id = vp.productId
      WHERE vp.vendorId = :vendorId
      ORDER BY p.name ASC
 """)
-  List<ProductProjection> findProductsByVendor(@Param("vendorId") Long vendorId);
+  List<ProductProjection> findAssignedProductsByVendor(@Param("vendorId") Long vendorId);
 
   @Query(
       """
@@ -42,4 +44,9 @@ public interface VendorProductRepo extends CrudRepository<VendorProduct, Long> {
          WHERE vp.id = :id
     """)
   Optional<VendorProjection> findVendorByProductId(@Param("id") Long id);
+
+
+  @Modifying
+  @Query("DELETE FROM VendorProduct vp WHERE vp.vendorId = :vendorId AND vp.id IN :ids")
+  Integer deleteProductsByVendorId(@Param("vendorId") Long vendorId, @Param("ids") Set<Long> ids);
 }
