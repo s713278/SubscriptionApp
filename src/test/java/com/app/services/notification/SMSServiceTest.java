@@ -1,6 +1,6 @@
 package com.app.services.notification;
 
-import com.app.TestContainerConfig;
+import com.app.config.TestContainerConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

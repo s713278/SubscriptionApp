@@ -1,6 +1,6 @@
 package com.app.repositories;
 
-import com.app.TestContainerConfig;
+import com.app.config.TestContainerConfig;
 import com.app.entites.Sku;
 import com.app.entites.type.SkuType;
 import java.time.LocalDate;

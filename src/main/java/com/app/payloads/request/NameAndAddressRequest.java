@@ -5,17 +5,19 @@ import jakarta.validation.constraints.NotBlank;
 import java.util.Map;
 
 public record NameAndAddressRequest(
-    @NotBlank(message = "Name is required.") @Schema(example = "Swamy K") String name,
+    @NotBlank(message = "Name is required.") @Schema(example = "Swamy Kunta") String name,
     @Schema(
             example =
                 "{ \"country\": \"India\", "
-                    + "\"name\": \"Swamy K \", "
-                    + "\"address1\": \"Survey No#190,900 \", "
-                    + "\"address2\": \"Kasulabad\", "
-                    + "\"city\": \"Mirdoddi\", "
+                    + "\"type\": \"Home \", "
+                    + "\"house_no\": \"MIG-3-973/L \", "
+                    + "\"address1\": \"Road No-27F ,Mayurinagar\", "
+                    + "\"address2\": \"Miyapur\", "
+                    + "\"city\": \"Hyderabad\", "
                     + "\"state\": \"Telangana\", "
-                    + "\"zipCode\": \"502108\", "
+                    + "\"landmark\": \"Near Ramalayam Temple\", "
+                    + "\"zipCode\": \"500049\", "
                     + "\"longitude\": \"909.90.9\", "
                     + "\"latitude\": \"129.90.9\", "
-                    + "\"district\": \"Siddipet\" }")
+                    + "\"district\": \"RangaReddy\" }")
         Map<String, String> address) {}

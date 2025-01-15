@@ -2,7 +2,7 @@ package com.app.services.validator;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-import com.app.TestContainerConfig;
+import com.app.config.TestContainerConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;

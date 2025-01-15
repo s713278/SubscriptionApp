@@ -1,4 +1,4 @@
-package com.app;
+package com.app.config;
 
 import static org.mockito.Mockito.mock;
 

@@ -109,8 +109,10 @@ application:
       - house_no
       - longitude
       - latitude
+      - type
       - address1
       - address2
+      - landmark
       - city
       - state
       - zipCode
