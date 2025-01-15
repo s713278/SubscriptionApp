@@ -135,10 +135,10 @@ public class DefaultVendorService extends AbstractVendorService {
                     APIErrorCode.BAD_REQUEST_RECEIVED, "Invalid vendor id " + vendorId));
   }
 
-  public PaginationResponse<VendorBasicDTO> fetchActiveVendorsByZipCode(
+  public PaginationResponse<VendorBasicDTO> fetchActiveVendorsByServiceArea(
       String zipCode, Long categoryId, Integer pageNumber, Integer pageSize) {
     Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
-    log.debug("Fetch vendors for zipcode : {}", zipCode);
+    log.debug("Fetch vendors for service_area : {}", zipCode);
     if (categoryId == null)
       return processPaginationResult(
           repoManager.getVendorRepo().findActiveVendorsByZipCode(zipCode, pageDetails));
@@ -250,66 +250,77 @@ public class DefaultVendorService extends AbstractVendorService {
 
   public List<CategoryProjection> fetchAssignedCategories(Long vendorId) {
     log.debug("Fetching assigned categories for vendor : {}", vendorId);
-    return getRepoManager().getVendorCategoryRepo().findCategoriesByVendorId(vendorId);
+    return getRepoManager().getVendorCategoryRepo().findAssignedCategoriesByVendorId(vendorId);
   }
 
   public List<ProductProjection> fetchAssignedProducts(Long vendorId) {
     log.debug("Fetching assigned products for vendor : {}", vendorId);
-    return getRepoManager().getVendorProductRepo().findProductsByVendor(vendorId);
+    return getRepoManager().getVendorProductRepo().findAssignedProductsByVendor(vendorId);
   }
 
-  public List<SkuDTO> fetchSkusByVendorProductId(Long vendorId, Long productId) {
-    log.debug("Fetching skus for vendor product id: {}", productId);
-    var queryResults = getRepoManager().getSkuRepo().findSkusVendorProductId(productId);
-    ;
-
+  /**
+   * This method fetch SKUs by vendor product ID.
+   *
+   * @param vendorId
+   * @param productId
+   * @param pageNumber
+   * @param pageSize
+   * @return
+   */
+  public PaginationResponse<SkuDTO> fetchSkusByVendorProductId(
+      Long vendorId, Long productId, Integer pageNumber, Integer pageSize) {
+    log.debug("Fetching skus for vendor id {} and product id: {}", vendorId, productId);
+    Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
+    Page<Object[]> pageResult = null;
+    if (productId == null) {
+      pageResult = getRepoManager().getSkuRepo().findSkusByVendorId(vendorId, pageDetails);
+    } else {
+      pageResult = getRepoManager().getSkuRepo().findSkusByVendorProductId(productId, pageDetails);
+    }
+    List<Object[]> queryResults = pageResult.getContent();
     List<SkuDTO> productSkus =
         queryResults.stream()
             .map(
                 result -> {
                   try {
-
-                    /* ts.vendor_product_id AS vendorProductId,
-                            ts.id AS skuId,
-                    ts.name AS skuName,
-                            ts.image_path AS imagePath,
-                    ts.weight AS skuSize,
-                            ts.type AS skuType,
-                    ts.is_active AS active,
-                            tsa.valid_days AS validDays,
-                    led.price_id AS priceId,
-                            led.list_price AS latestListPrice,
-                    led.sale_price AS latestSalePrice,
-                            led.effective_date AS latestEffectiveDate,*/
-
-                    return SkuDTO.builder()
-                        .vendorProductId((Long) result[0])
-                        .skuId((Long) result[1])
-                        .skuName((String) result[2])
-                        .imagePath((String) result[3])
-                        .skuSize((String) result[4])
-                        .skuType(SkuType.valueOf((String) result[5]))
-                        .active((Boolean) result[6])
-                        .validDays((Integer) result[7])
-                        .priceId((Long) result[8])
-                        .listPrice(((BigDecimal) result[9]).doubleValue())
-                        .salePrice(
-                            (result[10]) != null
-                                ? ((BigDecimal) result[10]).doubleValue()
-                                : 0) // salePrice)
-                        .effectiveDate(((Date) result[11]).toLocalDate())
-                        .eligibleSubscriptionDetails(
-                            new ObjectMapper()
-                                .readValue(
-                                    (String) result[12],
-                                    new TypeReference<List<SkuDTO.SubscriptionDetails>>() {}))
-                        .build();
+                    var skuDto =
+                        SkuDTO.builder()
+                            .vendorProductId((Long) result[0])
+                            .skuId((Long) result[1])
+                            .skuName((String) result[2])
+                            .imagePath((String) result[3])
+                            .skuSize((String) result[4])
+                            .skuType(SkuType.valueOf((String) result[5]))
+                            .active((Boolean) result[6])
+                            .validDays((Integer) result[7])
+                            .priceId((Long) result[8])
+                            .listPrice(((BigDecimal) result[9]).doubleValue())
+                            .salePrice(
+                                (result[10]) != null
+                                    ? ((BigDecimal) result[10]).doubleValue()
+                                    : 0) // salePrice)
+                            .effectiveDate(((Date) result[11]).toLocalDate())
+                            .eligibleSubscriptionDetails(
+                                new ObjectMapper()
+                                    .readValue(
+                                        (String) result[12],
+                                        new TypeReference<List<SkuDTO.SubscriptionDetails>>() {}))
+                            .build();
+                    skuDto.setOnSale();
+                    skuDto.setDiscount();
+                    return skuDto;
                   } catch (Exception e) {
                     log.error("Unable to parse SQL result into ProductSkuDTO  :", e);
                     throw new RuntimeException(e);
                   }
                 })
             .toList();
-    return productSkus;
+    return new PaginationResponse<>(
+        productSkus,
+        pageResult.getNumber(),
+        pageResult.getSize(),
+        pageResult.getTotalElements(),
+        pageResult.getTotalPages(),
+        pageResult.isLast());
   }
 }

@@ -22,4 +22,5 @@ public class RepositoryManager {
   private final VendorLegalDetailsRepo vendorLegalDetailsRepo;
   private final VendorCategoryRepo vendorCategoryRepo;
   private final VendorProductRepo vendorProductRepo;
+  private final ServiceAttributesRepo serviceAttributesRepo;
 }

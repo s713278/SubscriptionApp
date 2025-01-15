@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -52,6 +53,7 @@ public class DefaultSkuService extends AbstractSkuService {
     return "SKU " + skuId + " deleted successfully !!!";
   }
 
+  @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
   public Sku fetchSkuEntityById(final Long skuId) {
     return repositoryManager
         .getSkuRepo()
@@ -62,7 +64,7 @@ public class DefaultSkuService extends AbstractSkuService {
 
   // @Cacheable(value = CacheType.CACHE_TYPE_VENDORS,key = "'vendor::product::' + #vendorId")
   @Transactional(readOnly = true)
-  public Map<String, List<ProductSkuDTO>> fetchProductSkusByVendorId(Long vendorId) {
+  public Map<String, List<ProductSkuDTO>> fetchAllProductSkusByVendorId(Long vendorId) {
     var queryResults = repositoryManager.getSkuRepo().findVendorProductSkus(vendorId);
     List<ProductSkuDTO> productSkus =
         queryResults.stream()
@@ -149,5 +151,18 @@ public class DefaultSkuService extends AbstractSkuService {
     sku.setPriceList(skuPriceList);
     log.debug("SKU Price List Size : {}", skuPriceList.size());
     return sku;
+  }
+
+  public ServiceAttribute fetchServiceAttributesBySkuId(Long skuId) {
+    return getRepositoryManager()
+        .getServiceAttributesRepo()
+        .findBySkuId(skuId)
+        .orElseThrow(
+            () ->
+                new APIException(
+                    APIErrorCode.ENTITY_NOT_FOUND,
+                    "Service attributes not found for the SKU "
+                        + skuId
+                        + ". Please check its TYPE."));
   }
 }

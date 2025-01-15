@@ -381,6 +381,9 @@ public abstract class AbstractVendorService {
 
   @Transactional
   public void assignProducts(Long vendorId, Map<Long, List<AssignProductsRequest>> request) {
+    if (request == null || request.isEmpty()) {
+      throw new APIException(APIErrorCode.BAD_REQUEST_RECEIVED, "Request is null/empty.");
+    }
     // Step 1: Validate the vendor ID
     Vendor vendor =
         getRepoManager()
@@ -398,7 +401,17 @@ public abstract class AbstractVendorService {
             .map(AssignProductsRequest::productId)
             .collect(Collectors.toSet());
 
-    Long categoryId = request.keySet().stream().findFirst().get();
+    Long vendorCategoryId = request.keySet().stream().findFirst().get();
+    var vendorCategory =
+        getRepoManager()
+            .getVendorCategoryRepo()
+            .findById(vendorCategoryId)
+            .orElseThrow(
+                () ->
+                    new APIException(
+                        APIErrorCode.BAD_REQUEST_RECEIVED,
+                        "Invalid vendor category id " + vendorCategoryId));
+    Long categoryId = vendorCategory.getCategoryId();
     // Step 3: Validate product IDs whether all the productId are same Category or not
     Set<Long> validProductIds =
         getRepoManager()
@@ -412,9 +425,7 @@ public abstract class AbstractVendorService {
                             + categoryId));
 
     if (validProductIds.size() != productIds.size()) {
-      throw new IllegalArgumentException(
-          "One or more product IDs are invalid or might be not assigned to category #"
-              + categoryId);
+      throw new IllegalArgumentException("One or more product IDs are invalid" + categoryId);
     }
 
     // Step 4: Validate product IDs against VendorProduct entity (already assigned check)
@@ -446,5 +457,14 @@ public abstract class AbstractVendorService {
         "Assign products to vendor  #{} and products ids :#{} is success.",
         vendorId,
         validProductIds);
+  }
+
+  @Transactional(readOnly = false, propagation = Propagation.REQUIRED)
+  public void deleteVendorProducts(Long vendorId, Set<Long> vendorProductIds) {
+    int count =
+        getRepoManager()
+            .getVendorProductRepo()
+            .deleteProductsByVendorId(vendorId, vendorProductIds);
+    log.debug("No of vendor products deleted :{}", count);
   }
 }

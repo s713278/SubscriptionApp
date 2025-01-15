@@ -23,6 +23,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -98,6 +99,7 @@ public class VendorController extends AbstractRequestValidation {
     return new ResponseEntity<>(APIResponse.success(response), HttpStatus.OK);
   }
 
+  /*
   @PreAuthorize(
       "#vendorId == authentication.principal OR (hasAuthority('VENDOR') or hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")
   @PutMapping("/{vendor_id}")
@@ -112,7 +114,7 @@ public class VendorController extends AbstractRequestValidation {
         serviceManager.getVendorService().updateVendorProfile(storeDTO, vendorId, authentication);
     return new ResponseEntity<>(
         APIResponse.success(HttpStatus.OK.value(), response), HttpStatus.OK);
-  }
+  }*/
 
   @Operation(
       summary = "Access vendor profile by vendorId",
@@ -197,7 +199,7 @@ public class VendorController extends AbstractRequestValidation {
   }
 
   @Operation(
-      summary = "Assign categories to a vendor",
+      summary = "Assign categories to vendor",
       description = "Assign one or more categories to a vendor by Admin/Customer_Care role")
   @PatchMapping("/{vendor_id}/categories")
   @PreAuthorize("(hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")
@@ -232,13 +234,25 @@ public class VendorController extends AbstractRequestValidation {
                                           ]
                                         }
                                         """))))
-  @PatchMapping("/{vendor_id}/products")
+  @PatchMapping("/{vendor_id}/assign/products")
   @PreAuthorize("(hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")
   public ResponseEntity<APIResponse<?>> assignProducts(
       @PathVariable("vendor_id") @Schema(example = "91") Long vendorId,
       @RequestBody Map<Long, List<AssignProductsRequest>> assignProductsRequest) {
     serviceManager.getVendorService().assignProducts(vendorId, assignProductsRequest);
     return ResponseEntity.ok(APIResponse.success("Products assigned successfully."));
+  }
+
+  @Operation(
+      summary = "Delete products from a vendor",
+      description = "Un-Assign one or more products from a vendor by Admin/Customer_Care role")
+  @PatchMapping("/{vendor_id}/delete/products")
+  @PreAuthorize("(hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")
+  public ResponseEntity<APIResponse<?>> unAssignProducts(
+      @PathVariable("vendor_id") @Schema(example = "91") Long vendorId,
+      @RequestBody Set<Long> vendorProductIds) {
+    serviceManager.getVendorService().deleteVendorProducts(vendorId, vendorProductIds);
+    return ResponseEntity.ok(APIResponse.success("Products deleted successfully."));
   }
 
   @PreAuthorize(

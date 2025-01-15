@@ -1,4 +1,4 @@
-package com.app;
+package com.app.config;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -21,18 +21,6 @@ public class TestContainerConfig {
           .withUsername("test")
           .withPassword("test")
           .withInitScript("init_test_data.sql");
-
-  /*@DynamicPropertySource
-  static void configureProperties(DynamicPropertyRegistry registry) {
-    registry.add("spring.datasource.url", POSTGRESQL_CONTAINER::getJdbcUrl);
-    registry.add("spring.datasource.username", POSTGRESQL_CONTAINER::getUsername);
-    registry.add("spring.datasource.password", POSTGRESQL_CONTAINER::getPassword);
-    //   registry.add("spring.jpa.properties.hibernate.dialect",() ->
-    // "org.hibernate.dialect.PostgreSQLDialect");
-    //  registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
-  }
-
-   */
 
   static {
     POSTGRESQL_CONTAINER.start();

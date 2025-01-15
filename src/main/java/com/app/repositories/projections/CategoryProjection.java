@@ -7,6 +7,9 @@ public interface CategoryProjection {
   @JsonProperty("id")
   Long getId();
 
+  @JsonProperty("ref_id")
+  Long getCategoryRefId();
+
   String getName();
 
   @JsonProperty("image_path")

@@ -13,6 +13,7 @@ import com.app.repositories.projections.CategoryProjection;
 import com.app.repositories.projections.ProductProjection;
 import com.app.services.CategoryService;
 import com.app.services.ProductService;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -114,5 +115,10 @@ public class CategoryServiceImpl implements CategoryService {
 
   private CategoryDTO convertToCategoryDTO(Category category) {
     return new CategoryDTO(category.getId(), category.getName());
+  }
+
+  @Override
+  public List<CategoryProjection> fetchCategoriesByServiceArea(@NotNull String serviceArea) {
+    return categoryRepo.findCategoriesByServiceArea(serviceArea);
   }
 }
