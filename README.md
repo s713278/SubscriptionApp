@@ -1,14 +1,13 @@
-# Multi-Vendor Subscription Model App
+# Mithra Direct
+MithraDirect aspires to become a one-stop digital platform for managing subscriptions of goods and services, tailored specifically for rural and small-town India. By leveraging technology, we aim to empower local vendors and customers, simplify daily routines, and foster direct and seamless vendor-customer interactions.
 
-This is a **multi-vendor subscription-based application** designed for managing milk and vegetable subscriptions, supporting multiple vendors. The app allows users to sign up, select vendors, and create subscriptions with options for recurring orders. It includes OTP verification for secure access and utilizes access/refresh token mechanisms for session management.
-
-## Features
+## Key Features
 
 - **User Registration & Authentication**
   - Sign up via mobile number
   - OTP verification for secure sign-in
   - Access and Refresh tokens for session management
-- **Multi-Vendor Catalog**
+- **-Vendor Catalog**
   - Location based vendors listing
   - Preferred vendor's product listing
   - Each vendor can manage their own subscription items
@@ -55,15 +54,8 @@ This is a **multi-vendor subscription-based application** designed for managing 
 4. **Access API documentation (Swagger UI):**
    Navigate to `http://localhost:8080/api/swagger-ui.html` to explore available API endpoints.
 
-## API Endpoints
-
-- **User Sign Up**: `POST /api/v1/signup`
-- **OTP Verification**: `POST /api/v1/verify-otp`
-- **Vendor Listing**: `GET /api/v1/vendors`
-- **Create Subscription**: `POST /api/v1/subscriptions`
 
 ## Future Enhancements
-
 - Integration with payment gateways
 - Advanced reporting for vendors
 - Redis can be used for tracking OTP attempts and other caching needs
