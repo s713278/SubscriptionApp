@@ -27,7 +27,7 @@ public interface VendorProductRepo extends CrudRepository<VendorProduct, Long> {
 
   @Query(
       """
-  SELECT vp.id as id, p.name as name,vp.productId as productRefId(
+  SELECT vp.id as id, p.name as name,vp.productId as productRefId
      FROM VendorProduct vp
      JOIN Product p ON p.id = vp.productId
      WHERE vp.vendorId = :vendorId
