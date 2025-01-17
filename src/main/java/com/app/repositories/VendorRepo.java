@@ -112,6 +112,7 @@ public interface VendorRepo extends JpaRepository<Vendor, Long> {
               tcv.category_id = tc.id
           WHERE
               tv.status = 'ACTIVE'
+              AND EXISTS (select 1 from tb_product_vendor tpv where tpv.vendor_id = tv.id )
               AND EXISTS (
                   SELECT 1
                   FROM jsonb_array_elements_text(tv.service_area->'areas') AS area

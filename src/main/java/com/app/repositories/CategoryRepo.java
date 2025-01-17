@@ -29,6 +29,7 @@ public interface CategoryRepo extends JpaRepository<Category, Long> {
           SELECT
                  -- tv.id AS vendorId,
                  -- tv.business_name AS businessName,
+                  DISTINCT
                   tcv.category_id AS id,
                   tc.name AS name,
                   tc.image_path  as imagePath

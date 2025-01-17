@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(
     name = "2. Vendors and Products Listing API",
     description =
-        "APIs for fetching vendors details based on zipcode and vendor's assigned categories , products,skus for displaying on UI.")
+        "APIs for fetching vendors listing and SKU listing in order to display on UI for User journey.")
 @RestController
 @RequestMapping("/v1/vendors")
 @Slf4j
@@ -28,16 +28,48 @@ public class VendorListingController {
       summary = "Fetch Categories by service_area",
       description =
           """
-                      This API used for fetching all categories based on service_area/zipcode.
-                      <br>Test data: service_area:502108,502103,Siddpet,Mayurinagar.
-                      """)
+              This API used for fetching all categories served by the vendors based on service_area/zipcode.
+              <br>Test data: service_area:502108,502103,Siddpet,Mayurinagar.
+          """)
   @GetMapping("service_area/categories")
   public ResponseEntity<APIResponse<?>> fetchCategoriesByZipCode(
-      @RequestParam(value = "service_area", required = true) @Schema(example = "502018")
+      @RequestParam(value = "service_area", required = true) @Schema(example = "502108")
           String serviceArea) {
     log.debug("Request received for fetching categories for service area :{} ", serviceArea);
     var response = serviceManager.getCategoryService().fetchCategoriesByServiceArea(serviceArea);
     return new ResponseEntity<>(APIResponse.success(response), HttpStatus.OK);
+  }
+
+  // TODO: Actual implementation is pending
+  @Operation(
+      summary = "Searching vendors by keyword[ category name,product name and sku name ]",
+      description =
+          """
+                      This API used for search and list marched vendors for given pattern.
+                      """)
+  @GetMapping("/search")
+  public ResponseEntity<APIResponse<?>> searchVendorsByKeyword(
+      @RequestParam(value = "service_area", required = false) @Schema(example = "502108")
+          String serviceArea,
+      @RequestParam(value = "keyword", required = true) @Schema(example = "Catering")
+          String keyword,
+      @RequestParam(
+              name = AppConstants.REQ_PARAM_PAGE_NUMBER,
+              defaultValue = AppConstants.PAGE_NUMBER,
+              required = false)
+          Integer pageNumber,
+      @RequestParam(
+              name = AppConstants.REQ_PARAM_PAGE_SIZE,
+              defaultValue = AppConstants.PAGE_SIZE,
+              required = false)
+          Integer pageSize) {
+    log.debug("Request received for searching vendors by keyword :{}", keyword);
+    return new ResponseEntity<>(
+        APIResponse.success(
+            serviceManager
+                .getVendorService()
+                .fetchActiveVendorsByServiceArea("502108", null, pageNumber, pageSize)),
+        HttpStatus.OK);
   }
 
   @Operation(
@@ -51,7 +83,7 @@ public class VendorListingController {
               """)
   @GetMapping("service_area/{service_area}")
   public ResponseEntity<APIResponse<?>> fetchActiveVendorsByServiceArea(
-      @PathVariable("service_area") @Schema(example = "502018") String serviceArea,
+      @PathVariable("service_area") @Schema(example = "502108") String serviceArea,
       @RequestParam(name = "category_id", required = false) Long categoryId,
       @RequestParam(
               name = AppConstants.REQ_PARAM_PAGE_NUMBER,
@@ -122,7 +154,7 @@ public class VendorListingController {
   }
 
   @Operation(
-      summary = "Fetch SKUs with vendor_if and/or without product_id",
+      summary = "Fetch SKUs with vendor_id and/or without product_id",
       description =
           """
   This API used for fetching all the SKUs and specific SKUs based on vendor_id and/or product_id.
@@ -149,6 +181,34 @@ public class VendorListingController {
         serviceManager
             .getVendorService()
             .fetchSkusByVendorProductId(vendorId, productId, pageNumber, pageSize);
+    return new ResponseEntity<>(APIResponse.success(response), HttpStatus.OK);
+  }
+
+  @Operation(
+      summary = "SKU Search by category name,product name and sku name in vendor context",
+      description =
+          """
+                      This API used for search and list matched skus for given search criteria.
+                      """)
+  @GetMapping("/{vendor_id}/skus")
+  public ResponseEntity<APIResponse<?>> searchSkusByKeyword(
+      @Schema(example = "91") @PathVariable("vendor_id") Long vendorId,
+      @Schema(example = "milk") @RequestParam(value = "keyword", required = true) String keyword,
+      @RequestParam(
+              name = AppConstants.REQ_PARAM_PAGE_NUMBER,
+              defaultValue = AppConstants.PAGE_NUMBER,
+              required = false)
+          Integer pageNumber,
+      @RequestParam(
+              name = AppConstants.REQ_PARAM_PAGE_SIZE,
+              defaultValue = AppConstants.PAGE_SIZE,
+              required = false)
+          Integer pageSize) {
+    log.info("Request received for search skus by keyword?:{}", keyword);
+    var response =
+        serviceManager
+            .getVendorService()
+            .fetchSkusByVendorProductId(vendorId, null, pageNumber, pageSize);
     return new ResponseEntity<>(APIResponse.success(response), HttpStatus.OK);
   }
 }
