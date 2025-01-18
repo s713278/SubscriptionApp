@@ -160,12 +160,12 @@ public class VendorListingController {
   This API used for fetching all the SKUs and specific SKUs based on vendor_id and/or product_id.
   <br>If <b>product_id</b> is NULL: SKUs will be filtered by vendor_id only.
   <br>If <b>product_id</b> is not NULL: SKUs will be filtered by vendor_id & product_id.
-  <br>Test data: vendor_id:91 and product_id:9
+  <br>Test data: vendor_id:91 and product_id:1
   """)
   @GetMapping("/{vendor_id}/products/skus")
   public ResponseEntity<APIResponse<?>> fetchSkusByVendorProduct(
       @Schema(example = "91") @PathVariable("vendor_id") Long vendorId,
-      @Schema(example = "9") @RequestParam(value = "product_id", required = false) Long productId,
+      @RequestParam(value = "product_id", required = false) Long productId,
       @RequestParam(
               name = AppConstants.REQ_PARAM_PAGE_NUMBER,
               defaultValue = AppConstants.PAGE_NUMBER,

@@ -143,6 +143,12 @@ public interface SkuRepo extends JpaRepository<Sku, Long> {
              ts.vendor_product_id, ts.id, ts.image_path, ts.name, ts.weight, ts.type, ts.is_active, tsa.valid_days,
              led.price_id, led.list_price, led.sale_price, led.effective_date;
         """,
+      countQuery =
+          """
+            SELECT COUNT(*)
+            FROM tb_sku ts
+            WHERE ts.vendor_product_id = :vendorProductId
+        """,
       nativeQuery = true)
   Page<Object[]> findSkusByVendorProductId(
       @Param("vendorProductId") Long vendorProductId, Pageable pageDetails);
