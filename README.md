@@ -1,4 +1,5 @@
 # Mithra Direct
+
 MithraDirect aspires to become a one-stop digital platform for managing subscriptions of goods and services, tailored specifically for rural and small-town India. By leveraging technology, we aim to empower local vendors and customers, simplify daily routines, and foster direct and seamless vendor-customer interactions.
 
 ## Key Features
@@ -54,8 +55,8 @@ MithraDirect aspires to become a one-stop digital platform for managing subscrip
 4. **Access API documentation (Swagger UI):**
    Navigate to `http://localhost:8080/api/swagger-ui.html` to explore available API endpoints.
 
-
 ## Future Enhancements
+
 - Integration with payment gateways
 - Advanced reporting for vendors
 - Redis can be used for tracking OTP attempts and other caching needs

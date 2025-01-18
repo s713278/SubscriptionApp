@@ -31,7 +31,10 @@ public class VendorQueryController {
   @Operation(
       summary = "Vendor assigned categories",
       description =
-          "This API fetches assigned categories and This API accessed by Vendor/Admin/Customer_Care role.")
+          """
+                      This API fetches assigned categories and This API accessed by Vendor/Admin/Customer_Care role.
+                      <br> This response.data.id has to be used for assigning products to vendor.
+                      """)
   @GetMapping("/{vendor_id}/categories")
   @PreAuthorize(
       "(hasAuthority('VENDOR') or hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE'))")

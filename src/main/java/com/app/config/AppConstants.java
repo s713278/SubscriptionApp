@@ -43,6 +43,7 @@ public class AppConstants {
     "/v1/categories/*/products/**",
     "/v1/vendors/service_area/**",
     "/v1/vendors/*/products/**",
+    "/v1/vendors/search/**",
     "/custom-api-docs/**"
   };
 

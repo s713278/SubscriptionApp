@@ -213,7 +213,10 @@ public class VendorController extends AbstractRequestValidation {
   @Operation(
       summary = "Assign products to a vendor",
       description =
-          "Assigns one or more products to a vendor with their features by Admin/Customer_Care role",
+          """
+Assigns one or more products to a vendor with their features by Admin/Customer_Care role. <br>
+In the request, the key should be vendor assigned category. Refer the /{vendor_id}/categories API to get it.
+""",
       requestBody =
           @io.swagger.v3.oas.annotations.parameters.RequestBody(
               content =

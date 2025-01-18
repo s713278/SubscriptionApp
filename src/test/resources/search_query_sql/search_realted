@@ -1,0 +1,4 @@
+CREATE INDEX idx_product_name ON tb_product USING gin(to_tsvector('english', name));
+CREATE INDEX idx_sku_name ON tb_sku USING gin(to_tsvector('english', name));
+CREATE INDEX idx_vendor_name ON tb_vendor USING gin(to_tsvector('english', name));
+CREATE INDEX idx_category_name ON tb_category USING gin(to_tsvector('english', name));
