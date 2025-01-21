@@ -50,6 +50,7 @@ spring:
     caffeine:
       skus: "maximumSize=500,expireAfterAccess=600s"
       products: "maximumSize=500,expireAfterAccess=600s"
+      vendors: "maximumSize=500,expireAfterAccess=600s"
       otpCache: "maximumSize=200,expireAfterAccess=600s"
       attemptsCache: "maximumSize=200,expireAfterAccess=600s"
       prices: "maximumSize=200,expireAfterAccess=600s"

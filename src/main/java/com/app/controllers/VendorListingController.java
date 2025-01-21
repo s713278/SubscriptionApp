@@ -73,7 +73,7 @@ public class VendorListingController {
   }
 
   @Operation(
-      summary = "Fetch Vendor's by service_area/zipcode with/without category_id",
+      summary = "Fetch Vendors by service_area/zipcode with/without category_id",
       description =
           """
               This API used for fetching all the vendors and specific vendors based on zipcode and/or category_id.
@@ -160,7 +160,7 @@ public class VendorListingController {
   This API used for fetching all the SKUs and specific SKUs based on vendor_id and/or product_id.
   <br>If <b>product_id</b> is NULL: SKUs will be filtered by vendor_id only.
   <br>If <b>product_id</b> is not NULL: SKUs will be filtered by vendor_id & product_id.
-  <br>Test data: vendor_id:91 and product_id:1
+  <br>Test data: vendor_id:91 and Items product_id:1 and Service product_id: 2
   """)
   @GetMapping("/{vendor_id}/products/skus")
   public ResponseEntity<APIResponse<?>> fetchSkusByVendorProduct(

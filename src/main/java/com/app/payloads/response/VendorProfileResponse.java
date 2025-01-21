@@ -2,12 +2,15 @@ package com.app.payloads.response;
 
 import com.app.entites.type.ApprovalStatus;
 import com.app.entites.type.VendorStatus;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Map;
 import lombok.Data;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 public class VendorProfileResponse implements Serializable {
 
@@ -67,4 +70,7 @@ public class VendorProfileResponse implements Serializable {
 
   @JsonProperty("created_by")
   private String createdBy;
+
+  @JsonProperty("images")
+  private ObjectNode images;
 }

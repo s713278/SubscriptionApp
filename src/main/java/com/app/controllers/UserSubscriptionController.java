@@ -42,8 +42,12 @@ public class UserSubscriptionController extends AbstractRequestValidation {
   @PreAuthorize(
       "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('USER') or hasAuthority('VENDOR'))")
   @Operation(
-      summary = "Create a new subscription",
-      description = "Creates a subscription with the specified details.",
+      summary = "Create new subscription",
+      description =
+          """
+              Creates a subscription with the specified details.
+              <br> Test Data: SKUID : 664 to 680
+              """,
       requestBody =
           @io.swagger.v3.oas.annotations.parameters.RequestBody(
               description = "Subscription details",

@@ -120,7 +120,7 @@ public class VendorController extends AbstractRequestValidation {
       summary = "Access vendor profile by vendorId",
       description = "Fetch vendor profile by Vendor/Admin/Customer_Care after login.")
   @PreAuthorize(
-      "((#vendorId == authentication.principal AND hasAuthority('VENDOR'))  or (hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE')))")
+      "((#vendorId == authentication.principal AND hasAuthority('VENDOR'))  or (hasAuthority('USER') or hasAuthority('ADMIN') or hasAuthority('CUSTOMER_CARE')))")
   @GetMapping("/{vendor_id}")
   public ResponseEntity<APIResponse<?>> getVendorProfileById(
       @PathVariable("vendor_id") Long vendorId, Authentication authentication) {

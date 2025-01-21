@@ -6,15 +6,15 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
       show-sql: true
     show-sql: true
     open-in-view: false
     properties:
       hibernate:
-        ddl-auto: update
-        format_sql: true
-        SQL: DEBUG
+        ddl-auto: none
+        format_sql: false
+        SQL: INFO
         type.descriptor.sql.BasicBinder: TRACE
         #dialect: org.hibernate.dialect.PostgreSQLDialect
         #transaction:

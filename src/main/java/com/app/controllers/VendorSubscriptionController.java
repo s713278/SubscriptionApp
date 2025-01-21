@@ -30,21 +30,22 @@ public class VendorSubscriptionController extends AbstractRequestValidation {
   private final SubscriptionQueryService subscriptionQueryService;
 
   @Operation(summary = "Fetch Subscriptions By Vendor ID")
-  @GetMapping("/{vendorId}/subs")
+  @GetMapping("/{vendor_id}/subs")
   @PreAuthorize(
       "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('VENDOR'))")
-  public ResponseEntity<APIResponse<?>> fetchSubsByVendorId(@PathVariable Long vendorId) {
+  public ResponseEntity<APIResponse<?>> fetchSubsByVendorId(
+      @PathVariable("vendor_id") Long vendorId) {
     var subscriptions = subscriptionQueryService.fetchSubsByVendor(vendorId);
     return ResponseEntity.ok(APIResponse.success(subscriptions));
   }
 
   @PreAuthorize(
       "#userId == authentication.principal and (hasAuthority('ADMIN') or hasAuthority('VENDOR'))")
-  @PatchMapping("/{subId}/status")
+  @PatchMapping("/users/{user_id}/subs/{sub_id}/status")
   @Operation(description = "Update subscription status")
   public ResponseEntity<APIResponse<?>> updateSubscriptionStatus(
-      @PathVariable Long userId,
-      @PathVariable Long subId,
+      @PathVariable("user_id") Long userId,
+      @PathVariable("sub_id") Long subId,
       @Valid @RequestBody SubscriptionStatusRequest request) {
     SubscriptionResponse subscription =
         subscriptionQueryService.updateSubscriptionStatus(userId, subId, request.getStatus());

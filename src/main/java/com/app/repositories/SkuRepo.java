@@ -118,11 +118,12 @@ public interface SkuRepo extends JpaRepository<Sku, Long> {
              led.effective_date AS latestEffectiveDate,
              JSON_AGG(
                  JSON_BUILD_OBJECT(
-                     'id', tsp.id,
+                     'id', tssp.id,
                      'frequency', tsp.frequency,
                      'eligibleDeliveryDays', COALESCE(tssp.eligible_delivery_days->'delivery_days', '[]')
                  )
-             ) AS eligibleSubscriptionDetails
+             ) AS eligibleSubscriptionDetails,
+             ts.subscription_eligible AS subscriptionEligible
          FROM
              tb_sku ts
          LEFT JOIN
@@ -141,7 +142,7 @@ public interface SkuRepo extends JpaRepository<Sku, Long> {
              ts.vendor_product_id = :vendorProductId
          GROUP BY
              ts.vendor_product_id, ts.id, ts.image_path, ts.name, ts.weight, ts.type, ts.is_active, tsa.valid_days,
-             led.price_id, led.list_price, led.sale_price, led.effective_date;
+             led.price_id, led.list_price, led.sale_price, led.effective_date,ts.subscription_eligible;
         """,
       countQuery =
           """
@@ -184,11 +185,12 @@ public interface SkuRepo extends JpaRepository<Sku, Long> {
              led.effective_date AS latestEffectiveDate,
              JSON_AGG(
                  JSON_BUILD_OBJECT(
-                     'id', tsp.id,
+                     'id', tssp.id,
                      'frequency', tsp.frequency,
                      'eligibleDeliveryDays', COALESCE(tssp.eligible_delivery_days->'delivery_days', '[]')
                  )
-             ) AS eligibleSubscriptionDetails
+             ) AS eligibleSubscriptionDetails,
+             ts.subscription_eligible AS subscriptionEligible
          FROM
              tb_sku ts
          JOIN
@@ -210,7 +212,7 @@ public interface SkuRepo extends JpaRepository<Sku, Long> {
              tpv.vendor_id = :vendorId
          GROUP BY
              ts.vendor_product_id, ts.id, ts.image_path, ts.name, ts.weight, ts.type, ts.is_active, tsa.valid_days,
-             led.price_id, led.list_price, led.sale_price, led.effective_date
+             led.price_id, led.list_price, led.sale_price, led.effective_date,ts.subscription_eligible
          """,
       countQuery =
           """

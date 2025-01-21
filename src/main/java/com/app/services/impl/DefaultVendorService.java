@@ -141,7 +141,7 @@ public class DefaultVendorService extends AbstractVendorService {
     log.debug("Fetch vendors for service_area : {}", zipCode);
     if (categoryId == null)
       return processPaginationResult(
-          repoManager.getVendorRepo().findActiveVendorsByZipCode(zipCode, pageDetails));
+          repoManager.getVendorRepo().findActiveVendorsByServiceArea(zipCode, pageDetails));
     else
       return processPaginationResult(
           repoManager
@@ -154,7 +154,7 @@ public class DefaultVendorService extends AbstractVendorService {
     Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
     log.debug("Fetch vendors for product : {}", productId);
     return processPaginationResult(
-        repoManager.getVendorRepo().findActiveVendorsByZipCode(zipCode, pageDetails));
+        repoManager.getVendorRepo().findActiveVendorsByServiceArea(zipCode, pageDetails));
   }
 
   private PaginationResponse<VendorBasicDTO> processPaginationResult(Page<Object[]> pageResult) {
@@ -255,6 +255,7 @@ public class DefaultVendorService extends AbstractVendorService {
 
   public List<ProductProjection> fetchAssignedProducts(Long vendorId) {
     log.debug("Fetching assigned products for vendor : {}", vendorId);
+    var profileResponse = fetchVendorById(vendorId);
     return getRepoManager().getVendorProductRepo().findAssignedProductsByVendor(vendorId);
   }
 

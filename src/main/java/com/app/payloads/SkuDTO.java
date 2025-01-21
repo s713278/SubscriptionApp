@@ -57,6 +57,9 @@ public class SkuDTO {
   @JsonProperty("on_sale")
   private Boolean onSale;
 
+  @JsonProperty("subscription_eligible")
+  private Boolean subscriptionEligible;
+
   // Getters and setters...
   @Getter
   @Setter
