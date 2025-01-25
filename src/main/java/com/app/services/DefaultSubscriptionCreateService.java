@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.scheduling.annotation.Async;
@@ -197,6 +198,15 @@ public class DefaultSubscriptionCreateService extends AbstractSubscriptionCreate
     log.debug("Validating is there any price change for sku :{}", request.getSkuId());
     var dbPriceId =
         getServiceManager().getPriceService().fetchTodayPriceBySkuId(request.getSkuId());
+    if (!Objects.equals(request.getSkuId(), dbPriceId.getSku().getId())) {
+      log.error(
+          "Price id not belongs to {} for sku id {}", request.getPriceId(), request.getSkuId());
+      throw new APIException(
+          APIErrorCode.SUBSCRIPTION_VALIDATION_FAILED,
+          String.format(
+              "Price id not belongs to %s for sku id %s",
+              request.getPriceId(), request.getSkuId()));
+    }
     if (!dbPriceId.getId().equals(request.getPriceId())) {
       log.warn(
           "Price has been changed to {}  for selected item {}",

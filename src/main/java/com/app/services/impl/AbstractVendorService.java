@@ -205,17 +205,27 @@ public abstract class AbstractVendorService {
     boolean isAdmin = roles.contains(UserRoleEnum.ADMIN.name());
     boolean isVendor = roles.contains(UserRoleEnum.VENDOR.name());
     boolean isCustomerCare = roles.contains(UserRoleEnum.CUSTOMER_CARE.name());
+    boolean isUser = roles.contains(UserRoleEnum.USER.name());
     var vendorDetails = fetchVendorById(vendorId);
     if (isAdmin) {
       return vendorDetails;
     }
     if (isCustomerCare) {
-      vendorDetails.setPANNumber("");
-      vendorDetails.setGSTNumber("");
-      vendorDetails.setRegNumber("");
+      vendorDetails.setPANNumber("**");
+      vendorDetails.setGSTNumber("**");
+      vendorDetails.setRegNumber("**");
       return vendorDetails;
     } else if (isVendor) {
       return validateOwnershipAndGet(vendorId, userId);
+    } else if (isUser) {
+      vendorDetails.setPANNumber(null);
+      vendorDetails.setGSTNumber(null);
+      vendorDetails.setRegNumber(null);
+      vendorDetails.setOwnerName(null);
+      vendorDetails.setStatus(null);
+      vendorDetails.setApprovalStatus(null);
+      vendorDetails.setUserId(null);
+      return vendorDetails;
     }
     log.warn("User #{} doesn't have access to view vendor profile #{}", userId, vendorId);
     throw new APIException(APIErrorCode.API_403, "Unauthorized to fetch vendor profile");

@@ -12,7 +12,7 @@ public class SubscriptionStatusRequest {
   @JsonIgnore private Long vendorId;
   @JsonIgnore private Long subscriptionId;
 
-  @Schema(description = "Status of the subscription", example = "NEW")
+  @Schema(description = "Status of the subscription", example = "ACTIVE")
   @NotNull(message = "Status is required")
   private SubscriptionStatus status;
   // Getters and Setters

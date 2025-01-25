@@ -2,6 +2,7 @@ package com.app.entites;
 
 import com.app.entites.type.ApprovalStatus;
 import com.app.entites.type.VendorStatus;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -89,4 +90,8 @@ public class Vendor extends AbstractAuditingEntity<Long> implements Serializable
   // @JoinColumn(name = "user_id")
   @Column(name = "user_id")
   private Long userId;
+
+  @JdbcTypeCode(SqlTypes.JSON)
+  @Column(name = "images", columnDefinition = "jsonb")
+  private ObjectNode images;
 }

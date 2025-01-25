@@ -116,14 +116,14 @@ public interface VendorRepo extends JpaRepository<Vendor, Long> {
               AND EXISTS (
                   SELECT 1
                   FROM jsonb_array_elements_text(tv.service_area->'areas') AS area
-                  WHERE area LIKE CONCAT('%', :zipCode, '%')
+                  WHERE area LIKE CONCAT('%', :serviceArea, '%')
               )
           GROUP BY
               tv.id, tv.business_name, tv.banner_image, tv.service_area;
         """,
       nativeQuery = true)
   // List<Object[]> findAllUniqueVendorsWithCategories(String zipCode, Pageable pageable);
-  Page<Object[]> findActiveVendorsByZipCode(String zipCode, Pageable pageable);
+  Page<Object[]> findActiveVendorsByServiceArea(String serviceArea, Pageable pageable);
 
   @Query(
       value =
@@ -149,7 +149,7 @@ public interface VendorRepo extends JpaRepository<Vendor, Long> {
               AND EXISTS (
                   SELECT 1
                   FROM jsonb_array_elements_text(tv.service_area->'areas') AS area
-                  WHERE area LIKE CONCAT('%', :zipCode, '%')
+                  WHERE area ILIKE CONCAT('%', :zipCode, '%')
               )
               AND tcv.category_id = :category
           GROUP BY

@@ -1,0 +1,1 @@
+ALTER TABLE public.tb_vendor ADD images jsonb NULL;

@@ -44,7 +44,9 @@ public class AppConstants {
     "/v1/vendors/service_area/**",
     "/v1/vendors/*/products/**",
     "/v1/vendors/search/**",
-    "/custom-api-docs/**"
+    "/custom-api-docs/**",
+    "/actuator/**",
+    "/v1/home/**"
   };
 
   public static final String[] USER_PUT_URLS = {"/v1/users/*"};

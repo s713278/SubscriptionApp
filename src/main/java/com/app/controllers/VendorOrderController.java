@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "9. Vendor's Order API", description = "APIs for vendor's order management.")
 @RestController
-@RequestMapping("/v1/vendors/{vendorId}/orders")
+@RequestMapping("/v1/vendors/{vendor_id}/orders")
 @SecurityRequirement(name = AppConstants.SECURITY_CONTEXT_PARAM)
 @AllArgsConstructor
 public class VendorOrderController {
@@ -31,31 +31,32 @@ public class VendorOrderController {
   @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('VENDOR')")
   @GetMapping("/")
   public ResponseEntity<APIResponse<List<OrderDTO>>> getOrdersByVendor(
-      @PathVariable Long vendorId) {
+      @PathVariable("vendor_id") Long vendorId) {
     APIResponse<List<OrderDTO>> orders = orderService.getOrderByStoreId(vendorId);
     return new ResponseEntity<>(orders, HttpStatus.FOUND);
   }
 
   @Operation(summary = "Get a specific order")
   @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('VENDOR')")
-  @GetMapping("/{orderId}")
-  public ResponseEntity<APIResponse<OrderDTO>> getOrdersById(@PathVariable Long orderId) {
+  @GetMapping("/{order_id}")
+  public ResponseEntity<APIResponse<OrderDTO>> getOrdersById(
+      @PathVariable("order_id") Long orderId) {
     APIResponse<OrderDTO> order = orderService.getOrderById(orderId);
     return new ResponseEntity<>(order, HttpStatus.FOUND);
   }
 
   @PostMapping("/")
   public ResponseEntity<APIResponse<OrderDTO>> placeOrder(
-      @PathVariable("store_id") Long storeId, @RequestBody OrderRequest request) {
+      @PathVariable(("vendor_id")) Long storeId, @RequestBody OrderRequest request) {
     APIResponse<OrderDTO> order = orderService.placeOrder(storeId, request);
     return new ResponseEntity<>(order, HttpStatus.CREATED);
   }
 
   @Operation(summary = "Update and existing order")
   @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('VENDOR')")
-  @PutMapping("/{orderId}")
+  @PutMapping("/{order_id}")
   public ResponseEntity<APIResponse<OrderUpdateResponse>> updateOrder(
-      @PathVariable Long orderId, @RequestBody OrderUpdateRequest request) {
+      @PathVariable("order_id") Long orderId, @RequestBody OrderUpdateRequest request) {
     return new ResponseEntity<>(orderService.updateOrder(orderId, request), HttpStatus.OK);
   }
 
@@ -72,21 +73,21 @@ public class VendorOrderController {
           String sortOrder) {
     OrderResponse orderResponse =
         orderService.getAllOrders(pageNumber, pageSize, sortBy, sortOrder);
-    return new ResponseEntity<OrderResponse>(orderResponse, HttpStatus.FOUND);
+    return new ResponseEntity<OrderResponse>(orderResponse, HttpStatus.OK);
   }
 
-  @GetMapping("public/users/{userId}/orders")
-  public ResponseEntity<List<OrderDTO>> getOrdersByUser(@PathVariable Long userId) {
+  @GetMapping("public/users/{user_id}/orders")
+  public ResponseEntity<List<OrderDTO>> getOrdersByUser(@PathVariable("user_id") Long userId) {
     List<OrderDTO> orders = orderService.getOrdersByUser(userId);
 
-    return new ResponseEntity<List<OrderDTO>>(orders, HttpStatus.FOUND);
+    return new ResponseEntity<List<OrderDTO>>(orders, HttpStatus.OK);
   }
 
-  @GetMapping("public/users/{emailId}/orders/{orderId}")
+  @GetMapping("public/users/{email_id}/orders/{order_id}")
   public ResponseEntity<OrderDTO> getOrderByUser(
-      @PathVariable String emailId, @PathVariable Long orderId) {
+      @PathVariable("email_id") String emailId, @PathVariable("order_id") Long orderId) {
     OrderDTO order = orderService.getOrder(emailId, orderId);
 
-    return new ResponseEntity<OrderDTO>(order, HttpStatus.FOUND);
+    return new ResponseEntity<OrderDTO>(order, HttpStatus.OK);
   }
 }

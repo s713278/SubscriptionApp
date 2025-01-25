@@ -31,6 +31,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,10 +43,12 @@ public class UserOrderService {
   private final SkuService skuService;
   private final ServiceManager serviceManager;
 
+  @Transactional(readOnly = true)
   public List<OrderDetailsDTO> getUserOrderHistory(Long userId) {
     return get(repositoryManager.getOrderRepo().findAllBySubscriptionUserId(userId));
   }
 
+  @Transactional(readOnly = true)
   public List<OrderDetailsDTO> getOrderHistoryByDateRange(
       Long userId, LocalDate startDate, LocalDate endDate) {
     var orders =
@@ -55,6 +58,7 @@ public class UserOrderService {
     return get(orders);
   }
 
+  @Transactional(readOnly = true)
   public Resource exportOrderHistoryToCsv(Long userId, LocalDate startDate, LocalDate endDate) {
     List<OrderDetailsDTO> orderHistory = getOrderHistoryByDateRange(userId, startDate, endDate);
     try (StringWriter writer = new StringWriter();
@@ -116,6 +120,7 @@ public class UserOrderService {
     }
   }
 
+  @Transactional(readOnly = true)
   public Resource exportOrderHistoryToPdf(Long userId, LocalDate startDate, LocalDate endDate) {
     List<OrderDetailsDTO> orderHistory = getOrderHistoryByDateRange(userId, startDate, endDate);
 
@@ -198,10 +203,7 @@ public class UserOrderService {
                   //     .getPriceListService().fetchVendorSkuPrice(skuId);
                   // var sku = priceList.getSku();
                   var skuDto = serviceManager.getSkuService().fetchSkuById(skuId);
-                  var vendor =
-                      serviceManager
-                          .getVendorService()
-                          .fetchVendorByMobile("" + order.getVendorId(), null);
+                  var vendor = serviceManager.getVendorService().fetchVendor(order.getVendorId());
                   return OrderDetailsDTO.builder()
                       .orderId(order.getId())
                       .deliveryDate(order.getDeliveryDate())
